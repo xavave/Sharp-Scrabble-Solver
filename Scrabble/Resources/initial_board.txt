@@ -1,0 +1,15 @@
+﻿RE, RE, RE, TW, RE, RE, TL, RE, TL, RE, RE, TW, RE, RE, RE
+RE, RE, DL, RE, RE, DW, RE, RE, RE, DW, RE, RE, DL, RE, RE
+RE, DL, RE, RE, DL, RE, RE, RE, RE, RE, DL, RE, RE, DL, RE
+TW, RE, RE, TL, RE, RE, RE, DW, RE, RE, RE, TL, RE, RE, TW
+RE, RE, DL, RE, RE, RE, DL, RE, DL, RE, RE, RE, DL, RE, RE
+RE, DW, RE, RE, RE, TL, RE, RE, RE, TL, RE, RE, RE, DW, RE
+TL, RE, RE, RE, DL, RE, RE, RE, RE, RE, DL, RE, RE, RE, TL
+RE, RE, RE, DW, RE, RE, RE, CE, RE, RE, RE, DW, RE, RE, RE
+TL, RE, RE, RE, DL, RE, RE, RE, RE, RE, DL, RE, RE, RE, TL
+RE, DW, RE, RE, RE, TL, RE, RE, RE, TL, RE, RE, RE, DW, RE
+RE, RE, DL, RE, RE, RE, DL, RE, DL, RE, RE, RE, DL, RE, RE
+TW, RE, RE, TL, RE, RE, RE, DW, RE, RE, RE, TL, RE, RE, TW
+RE, DL, RE, RE, DL, RE, RE, RE, RE, RE, DL, RE, RE, DL, RE
+RE, RE, DL, RE, RE, DW, RE, RE, RE, DW, RE, RE, DL, RE, RE
+RE, RE, RE, TW, RE, RE, TL, RE, TL, RE, RE, TW, RE, RE, RE
