@@ -54,6 +54,10 @@
       <Project>{e12bb466-f92a-40dc-b0c7-4ce18ee15eb9}</Project>
       <Name>DawgResolver</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Dawg\Dawg.csproj">
+      <Project>{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}</Project>
+      <Name>Dawg</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

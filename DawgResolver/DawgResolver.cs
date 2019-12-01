@@ -16,7 +16,7 @@ namespace Dawg
         const int TerminalNode = 27;
         const int WildCardShift = 32;
         const int AscShift = 64;
-        const int MoveLimit = 30;
+        const int MoveLimit = 50;
         const int All = 102;
         //variables definition
 
@@ -53,8 +53,8 @@ namespace Dawg
         int Score { get; set; }
         public int PlayedLetters { get; private set; }
         int MinPoint { get; set; }
-        static long[,] Dictionary { get; set; }
-        static long CurrentNode { get; set; }
+         long[,] Dictionary { get; set; }
+         long CurrentNode { get; set; }
         long nbPossibleMoves { get; set; }
         long nbMoves { get; set; }
         long nbAcceptedMoves { get; set; }
@@ -67,7 +67,7 @@ namespace Dawg
         static string[] Draught;
         public string DraughtRange { get; set; }
         string[,] LegalMoves { get; set; }
-        Move Node { get; set; } = new Move();
+        static Move Node;
         Move LegalMove = new Move();
         public int LeftLetters { get; private set; }
         public Dictionnaire Dictionnaire { get; private set; }
@@ -496,7 +496,7 @@ namespace Dawg
         private void FindMovesPerAnchor()
         {
 
-            string root;
+            string root = "";
 
             bool b;
             // Pour chaque ancre identifiée,
@@ -505,8 +505,8 @@ namespace Dawg
             // en respectant la taille limite des préfixes précédement calculés
 
 
-            for (int i = 0; i < 15; i++)
-                for (int j = 0; j < 15; j++)
+            for (int i = 1; i <= 15; i++)
+                for (int j = 1; j <= 15; j++)
                     if (Anchors[i, j])
                     {
                         //if (Timer - Debut > TimeLimit)  break;
@@ -585,14 +585,14 @@ namespace Dawg
                 }
 
 
-                for (int letterIdx = 0; letterIdx < 26; letterIdx++)
+                for (int letterIdx = 1; letterIdx <= 26; letterIdx++)
                 {
-                    if (Dictionary[letterIdx + 1, node] != 0)
+                    if (Dictionary[letterIdx, node] != 0)
                     {
                         // On recherche les lettres qui rajoutées au préfixe permettrait d'aboutir à des mots dans le dictionnaire
                         for (int la = 0; la < nbLetters; la++)
                         {
-                            if (leftLetters[la] == ((char)(letterIdx + 1 + AscShift)).ToString())
+                            if (leftLetters[la] == ((char)(letterIdx + AscShift)).ToString())
                             {
                                 // Pour chacune des lettres qui répondent au précédent critère dans le tirage
                                 if (Controlers[line, column, letterIdx] > 0 || Controlers[line, column, 26] == 26)
@@ -604,11 +604,11 @@ namespace Dawg
                                     leftLetters[la] = leftLetters[nbLetters - 1];
                                     nbLetters--;
                                     // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-                                    GoOn(root + ((char)(letterIdx + 1 + AscShift)), ref leftLetters, minSize, Dictionary[letterIdx + 1, node], line, column + 1, ref nbLetters);
+                                    GoOn(root + ((char)(letterIdx + AscShift)), ref leftLetters, minSize, Dictionary[letterIdx, node], line, column, ref nbLetters);
 
                                     // Au retour de l'appel recursif on restitue la lettre dans le tirage
                                     nbLetters++;
-                                    leftLetters[nbLetters - 1] = ((char)(letterIdx + 1 + AscShift)).ToString();
+                                    leftLetters[nbLetters - 1] = ((char)(letterIdx + AscShift)).ToString();
                                 }
 
                                 if (!wildcardInDraught) break;
@@ -626,7 +626,7 @@ namespace Dawg
                                     nbLetters--;
 
                                     // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
-                                    GoOn(root + ((char)(la + AscShift)).ToString().ToLower(), ref leftLetters, minSize, Dictionary[la, node], line, column + 1, ref nbLetters);
+                                    GoOn(root + ((char)(la + AscShift)).ToString().ToLower(), ref leftLetters, minSize, Dictionary[la, node], line, column, ref nbLetters);
 
 
                                     // Au retour de l'appel recursif on restitue le joker dans le tirage
@@ -644,7 +644,7 @@ namespace Dawg
                 if (Dictionary[(int)((Grid[line, column].ToUpper())[0] - AscShift), node] != 0)
                 { // Si un mot du dictionnaire est susceptible de débuter par le nouveau préfixe ainsi obtenu
                   // alors on peut essayer de continuer le préfixe avec cette lettre vers la droite
-                    GoOn(root + Grid[line, column], ref leftLetters, 0, Dictionary[((int)(Grid[line, column].ToUpper()[0]) - AscShift), node], line, column + 1, ref nbLetters);
+                    GoOn(root + Grid[line, column], ref leftLetters, 0, Dictionary[((int)(Grid[line, column].ToUpper()[0]) - AscShift), node], line, column, ref nbLetters);
                 }
             }
         }
@@ -955,7 +955,7 @@ namespace Dawg
             // le mot formé
             // le point que le coup rapporte
 
-            int start = column - move.Length;
+            int start = column + move.Length;
             int multiplier = 1;
             int horizontalPoints = 0;
             int verticalPoints = 0;
@@ -969,24 +969,24 @@ namespace Dawg
                 // Le calcul des points prend en compte les cases bonus non encore utilisées
                 // Il faut noter que seules les lettres du tirage permettent de bénéficier des bonus
                 // Les points verticaux ont été précalculés au moment du recensement des contrôleurs
-                if (Grid[line, start + letterIdx - 1] == "")
+                if (Grid[line, start - letterIdx] == "")
                 {
                     if ((int)l < 91)
                     {
-                        horizontalPoints += LetterValue[(int)l - AscShift] * LetterMultiplier[line, start + letterIdx - 1];
-                        verticalPoints += Controlers[line, start + letterIdx - 1, (int)l - AscShift];
+                        horizontalPoints += LetterValue[(int)l - AscShift] * LetterMultiplier[line, start - letterIdx];
+                        verticalPoints += Controlers[line, start - letterIdx, (int)l - AscShift];
                     }
                     else
                     {
                         wildcardIndice = (int)l - AscShift - WildCardShift;
-                        if (Controlers[line, start + letterIdx - 1, wildcardIndice] > 0)
+                        if (Controlers[line, start - letterIdx, wildcardIndice] > 0)
                         {
-                            verticalPoints += Controlers[line, start + letterIdx - 1, wildcardIndice] - LetterValue[wildcardIndice]
-                                * LetterMultiplier[line, start + letterIdx - 1] * WordMultiplier[line, start + letterIdx - 1];
+                            verticalPoints += Controlers[line, start + letterIdx, wildcardIndice] - LetterValue[wildcardIndice]
+                                * LetterMultiplier[line, start - letterIdx] * WordMultiplier[line, start - letterIdx];
                         }
                     }
 
-                    multiplier *= WordMultiplier[line, start + letterIdx - 1];
+                    multiplier *= WordMultiplier[line, start - letterIdx];
                     UsedDraughtLetters++;
                 }
                 else
@@ -1013,8 +1013,8 @@ namespace Dawg
             // La liste des coups légaux est stockée sous forme de chaine dont les maillons représentent un coup
             // Le tri se fait par insertion : on parcourt la chaine pour repérer l'endroit où le coup doit être inséré
 
-            var PreviousNext = new Dawg.Move();
-            var NewNext = new Dawg.Move();
+            Move PreviousNext;
+            Move NewNext;
 
             if (nbAcceptedMoves >= MoveLimit && point <= MinPoint) return;
 
@@ -1032,13 +1032,15 @@ namespace Dawg
                 {
                     nbAcceptedMoves++;
                     PreviousNext = Node.Next;
-                    NewNext = new Move();
-                    NewNext.Direction = direction;
-                    NewNext.Line = line;
-                    NewNext.Column = column;
-                    NewNext.Word = word;
-                    NewNext.Point = point;
-                    NewNext.Scramble = scramble;
+                    NewNext = new Move()
+                    {
+                        Direction = direction,
+                        Line = line,
+                        Column = column,
+                        Word = word,
+                        Point = point,
+                        Scramble = scramble
+                    };
                     Node.Next = NewNext;
                     NewNext.Next = PreviousNext;
                     if (nbAcceptedMoves > MoveLimit)
@@ -1063,13 +1065,15 @@ namespace Dawg
             nbAcceptedMoves++;
             MinPoint = point;
             PreviousNext = Node.Next;
-            NewNext = new Move();
-            NewNext.Direction = direction;
-            NewNext.Line = line;
-            NewNext.Column = column;
-            NewNext.Word = word;
-            NewNext.Point = point;
-            NewNext.Scramble = scramble;
+            NewNext = new Move()
+            {
+                Direction = direction,
+                Line = line,
+                Column = column,
+                Word = word,
+                Point = point,
+                Scramble = scramble
+            };
             Node.Next = NewNext;
             NewNext.Next = PreviousNext;
 
@@ -1086,9 +1090,9 @@ namespace Dawg
 
         private bool Found(long node, string letter)
         {
-            //Cette fonction vérifie si un arc représenant une lettre sort d'un noeud
+            //Cette fonction vérifie si un arc représentant une lettre sort d'un noeud
             //Si l'arc existe, la fonction retourne vrai comme valeur et la variable Noeud_Actuel pointe sur le noeud où atteint par l'arc
-            var found = false;
+            bool found;
 
             if (Dictionary[((int)letter.ToUpper()[0]) - AscShift, node] == 0)
                 found = false;

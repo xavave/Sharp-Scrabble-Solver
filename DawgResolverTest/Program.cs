@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dawg;
 
 namespace DawgResolverTest
 {
@@ -11,9 +7,13 @@ namespace DawgResolverTest
         static void Main(string[] args)
         {
             var dr = new Dawg.Resolver();
+            var dic = new Dictionnaire();
+            dic.ChargerFichierDAWG();
+           var ret =  dic.AllWordsStartingWith("ANN");
             dr.NewGame();
             dr.NewDraught("[TBERLE");
             dr.FindMoves();
         }
     }
 }
+
