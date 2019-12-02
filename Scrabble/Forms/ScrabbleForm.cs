@@ -1,4 +1,5 @@
-﻿using Scrabble.Core;
+﻿using DawgResolver;
+using Scrabble.Core;
 using Scrabble.Core.Log;
 using Scrabble.Core.Players;
 using Scrabble.Core.Stats;
@@ -26,28 +27,33 @@ namespace Scrabble
         public const int RACK_TILES = 7;
         public bool GamePlaying { get; set; }
 
-        public WordValidator WordValidator { get; set; }
+        //public WordValidator WordValidator { get; set; }
         public WordSolver WordSolver { get; set; }
         public StatManager StatManager { get; set; }
         public RackManager RackManager { get; set; }
         public TileManager TileManager { get; set; }
         public PlayerManager PlayerManager { get; set; }
-        public WordScorer WordScorer { get; set; }
+        //public WordScorer WordScorer { get; set; }
         public GameLog Logger { get; set; }
         public WordHint WordHint { get; set; }
 
+
+        public Game Game { get; set; }
         public ScrabbleForm()
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.None;
-            this.WordScorer = new WordScorer(this);
+            Game = new Game();
+
+
+            //this.WordScorer = new WordScorer(this);
             this.TileManager = new TileManager(this);
             TileManager.SetupTiles();
 
-            this.WordValidator = new WordValidator { ScrabbleForm = this };
+            //this.WordValidator = new WordValidator { ScrabbleForm = this };
             this.WordSolver = new WordSolver { ScrabbleForm = this };
             this.StatManager = new StatManager();
-            this.RackManager = new RackManager { ScrabbleForm = this };
+            this.RackManager = new RackManager(this);
 
             this.Logger = new GameLog(this);
             this.WordHint = new WordHint(this);
@@ -106,22 +112,27 @@ namespace Scrabble
             }
 
             var checkTilePositions = TileManager.ValidateTilePositions();
-            var moveResult = WordValidator.ValidateWordsInPlay();
+            //var moveResult = WordValidator.ValidateWordsInPlay();
 
             if (!checkTilePositions)
                 MessageBox.Show("The placement of your tiles is invalid.");
-            else if (!moveResult.Valid)
-                moveResult.Words.Where(w => !w.Valid).ToList().ForEach(w => MessageBox.Show($"{w.Text} is not a valid word"));
+            //else if (!moveResult.Valid)
+            //    moveResult.Words.Where(w => !w.Valid).ToList().ForEach(w => MessageBox.Show($"{w.Text} is not a valid word"));
             else
             {
+                foreach (var t in this.TileManager.TilesInPlay)
+                {
+                    Game.Grid[t.XLoc, t.YLoc].Letter = Game.Alphabet.Find(a => a.Char == t.Text[0]);
+                }
+
                 TileManager.ResetTilesInPlay();
                 RackManager.FillRack(PlayerManager.CurrentPlayer.Tiles);
 
                 StatManager.Moves += 1;
                 StatManager.ConsecutivePasses = 0;
 
-                moveResult.Words.ForEach(w => Logger.LogMessage($"{PlayerManager.CurrentPlayer.Name} played {w.Text} for {w.Score} points"));
-                Logger.LogMessage($"Turn ended - total score: {moveResult.TotalScore}");
+                //moveResult.Words.ForEach(w => Logger.LogMessage($"{PlayerManager.CurrentPlayer.Name} played {w.Text} for {w.Score} points"));
+                //Logger.LogMessage($"Turn ended - total score: {moveResult.TotalScore}");
 
                 btnLetters.Text = $"{TileManager.TileBag.LetterCountRemaining()} Letters Remaining";
 
@@ -129,7 +140,7 @@ namespace Scrabble
                 if (PlayerManager.PlayerOne.Tiles.Count == 0 || PlayerManager.PlayerTwo.Tiles.Count == 0)
                     GameOver();
 
-                PlayerManager.CurrentPlayer.Score += moveResult.TotalScore;
+                //PlayerManager.CurrentPlayer.Score += moveResult.TotalScore;
                 PlayerManager.SwapCurrentPlayer();
             }
         }
@@ -229,21 +240,22 @@ namespace Scrabble
             Cursor.Current = Cursors.WaitCursor;
             var tilesCopy = TileManager.Tiles.TileClone(this);
             WordHint.ClearText();
-            List<Word> anagrams = new List<Word>();
-            anagrams = WordSolver.Anagrams(PlayerManager.CurrentPlayer.Tiles);
-            foreach (var t in this.TileManager.Tiles.OfType<ScrabbleTile>().Where(t => t.Text != "").Distinct())
-            {
-                var ana = WordSolver.Anagrams(PlayerManager.CurrentPlayer.Tiles, t);
-                anagrams.AddRange(ana);
-            }
+           
+            //List<Word> anagrams = new List<Word>();
+            //anagrams = WordSolver.Anagrams(PlayerManager.CurrentPlayer.Tiles);
+            //foreach (var t in this.TileManager.Tiles.OfType<ScrabbleTile>().Where(t => t.Text != "").Distinct())
+            //{
+            //    var ana = WordSolver.Anagrams(PlayerManager.CurrentPlayer.Tiles, t);
+            //    anagrams.AddRange(ana);
+            //}
             WordHint.BeginUpdate();
-            foreach (var ana in anagrams.Distinct().OrderByDescending(t => t.Score))
-            {
-
-                
-                if (WordHint.CheckHintWord(ana, tilesCopy))
-                    WordHint.AddWord(ana);
-            }
+            //foreach (var ana in anagrams.Distinct().OrderByDescending(t => t.Score))
+            //{
+            foreach (var s in Game.Resolver.FindMove(PlayerManager.CurrentPlayer.Name== PlayerManager.PlayerOne.Name ?  Game.Player1: Game.Player2))
+                WordHint.AddString(s);
+            //    if (WordHint.CheckHintWord(ana, tilesCopy))
+            //        WordHint.AddWord(ana);
+            //}
             WordHint.EndUpdate();
             Cursor.Current = Cursors.Default;
         }

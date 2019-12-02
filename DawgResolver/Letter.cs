@@ -1,5 +1,8 @@
-﻿namespace Dawg
+﻿using System;
+
+namespace Dawg
 {
+    [Serializable]
     public class Letter
     {
         public Letter()
@@ -16,5 +19,10 @@
         public char Char { get; set; }
         public int Value { get; set; }
         public int Count { get; set; }
+
+        public override string ToString()
+        {
+            return this.Char.ToString();
+        }
     }
 }

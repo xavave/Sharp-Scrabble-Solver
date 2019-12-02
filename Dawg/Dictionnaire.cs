@@ -13,15 +13,16 @@ namespace Dawg
     /// Cette classe permet de construire, enregistrer et utiliser un dictionnaire DAWG.
     /// Le principe de focntionnement est l'adapation en C# du tutoriel de CarlVB http://codes-sources.commentcamarche.net/faq/10903-compression-d-un-dictionnaire-sous-forme-de-premiereEtape#construction-directe-du-premiereEtape
     /// </summary>
+    [Serializable]
     public class Dictionnaire
     {
         public const int AscShift = 64;
         /// <summary>
         /// Chronomètre utilisé uniquement pour comparer les performances des 2 méthodes de construtions
         /// </summary>
-        private Stopwatch chrono = new Stopwatch();
+        //private Stopwatch chrono = new Stopwatch();
 
-        private Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+        //private Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
 
         /// <summary>
         /// Cette liste est consituée lors de la construction ou lors de la lecture du fichier compressé.
@@ -65,12 +66,12 @@ namespace Dawg
         /// <param name="Texte"></param>
         private void AnnonceEtape(string Texte)
         {
-            long duree = chrono.ElapsedMilliseconds;
-            if (this.EtapeAtteinte != null)
-                dispatcher.Invoke(new Action(delegate
-                    {
-                        this.EtapeAtteinte(Texte + " Chrono: ", duree);
-                    }), DispatcherPriority.Send);
+            //long duree = chrono.ElapsedMilliseconds;
+            //if (this.EtapeAtteinte != null)
+            //    dispatcher.Invoke(new Action(delegate
+            //        {
+            //            this.EtapeAtteinte(Texte + " Chrono: ", duree);
+            //        }), DispatcherPriority.Send);
         }
 
         /// <summary>
@@ -79,11 +80,11 @@ namespace Dawg
         /// <param name="Pourcent"></param>
         private void AnnonceProgression(int Pourcent)
         {
-            if (this.Progression != null)
-                dispatcher.Invoke(new Action(delegate
-                    {
-                        this.Progression(Pourcent);
-                    }), DispatcherPriority.Normal);
+            //if (this.Progression != null)
+            //    dispatcher.Invoke(new Action(delegate
+            //        {
+            //            this.Progression(Pourcent);
+            //        }), DispatcherPriority.Normal);
         }
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace Dawg
         /// </summary>
         private void ComparerListeMotsEtDAWG()
         {
-            chrono.Restart();
+            //chrono.Restart();
 
             AnnonceEtape("Comparaison entre la liste de mots et le DAWG");
 
@@ -126,7 +127,7 @@ namespace Dawg
             else
                 AnnonceEtape("La liste de mots et le DAWG sont identiques");
 
-            chrono.Stop();
+            //chrono.Stop();
         }
 
         #endregion
@@ -138,7 +139,7 @@ namespace Dawg
         /// </summary>
         public void ConstruireDawgEnDeuxTemps()
         {
-            chrono.Restart();
+            //chrono.Restart();
 
             this.TravailEnCours = TravailEnCours.CreationDawgEn2Etapes;
             Noeud.ResetCompteur();
@@ -163,7 +164,7 @@ namespace Dawg
 
             AnnonceEtape("Ecriture du fichier.");
             Noeud.Serialize(dawg, Mots.Count, "DawgEn2Temps.txt");
-            chrono.Stop();
+            //chrono.Stop();
 
             //==================Ici la construction est finie
 
@@ -387,7 +388,7 @@ namespace Dawg
         /// <param name="FileName">Chemin du fichier</param>
         public void ChargerDictionnaireAscii(string FileName)
         {
-            chrono.Restart();
+            //chrono.Restart();
             this.TravailEnCours = TravailEnCours.ChargementFichierASCII;
 
             AnnonceEtape("Début du chargement du dictionnaire Ascii.");
@@ -397,7 +398,7 @@ namespace Dawg
             AnnonceEtape(string.Format("Dictionnaire de {0:#,0} mots, chargé et trié.", Mots.Count));
 
             this.TravailEnCours = TravailEnCours.Aucun;
-            chrono.Stop();
+            //chrono.Stop();
         }
 
         /// <summary>
@@ -440,7 +441,7 @@ namespace Dawg
         {
             TravailEnCours = Dawg.TravailEnCours.ChargementFichierDAWG;
 
-            chrono.Restart();
+            //chrono.Restart();
             AnnonceEtape("Début du chargement du dictionnaire DAWG.");
             var assembly = Assembly.GetExecutingAssembly();
             string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("dico_dawg.txt"));
@@ -487,7 +488,7 @@ namespace Dawg
 
                 AnnonceEtape("Fin du chargement du dictionnaire DAWG.");
 
-                chrono.Stop();
+                //chrono.Stop();
 
                 //==================Ici la lecture du fichier est finie
 
@@ -535,6 +536,7 @@ namespace Dawg
             return ret;
 
         }
+
         /// <summary>
         /// Vérifie la présence d'un mot dans le dictionnaire.
         /// </summary>
@@ -548,7 +550,7 @@ namespace Dawg
 
             for (int i = 0; i < mot.Length; i++)
             {
-                List<Arc> sortants = enCours.Sortants.Where(a => a.Lettre == mot[i]).ToList();
+                List<Arc> sortants = enCours.Sortants.Where(a => a.Lettre == char.ToUpper(mot[i])).ToList();
                 switch (sortants.Count)
                 {
                     case 0:
@@ -566,8 +568,8 @@ namespace Dawg
 
                 }
             }
-            ParcoursDAWG(arcs, ret);
-            return ret.Any();
+            return enCours.Sortants.Any();
+
 
         }
 
@@ -599,11 +601,8 @@ namespace Dawg
                         //il ne devrait jamais y avoir plus d'un arc pour une lettre sortant d'un noeud, si ça passe ici il y a un problème
                         AnnonceEtape(string.Format("Problème lors de la lecture du DAWG, le noeud n°{0} possède plusieurs arcs sortants avec la lettre {1}.", enCours.Numero, Mot[i]));
                         break;
-
                 }
             }
-
-
             return enCours.IsTerminal;
         }
 
@@ -614,7 +613,7 @@ namespace Dawg
         /// <remarks>On vérifie d'abord que le mot n'est pas déjà présent</remarks>
         public void AjouterUnMot(string Mot)
         {
-            chrono.Restart();
+            //chrono.Restart();
             TravailEnCours = Dawg.TravailEnCours.AjoutMot;
 
             Mot = Mot.ToUpper();//au cas ou il soit en minuscule
@@ -668,7 +667,7 @@ namespace Dawg
                 AnnonceEtape(string.Format("Le mot \"{0}\" existe déja.", Mot));
 
 
-            chrono.Stop();
+            //chrono.Stop();
 
 
 

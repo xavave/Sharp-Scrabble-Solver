@@ -8,6 +8,7 @@ namespace Dawg
     /// <summary>
     /// Représente un noeud du DAWG
     /// </summary>
+    [Serializable]
     public class Noeud
     {
         //Compteur statique qui va permettre lors de la création du DAWG d'affecter un numéro à chaque noeud

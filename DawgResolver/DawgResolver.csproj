@@ -41,12 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bag.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="DawgResolver.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Letter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rack.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileType.cs" />
+    <Compile Include="Word.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\dico_dawg.txt" />
@@ -56,6 +60,11 @@
       <Project>{95af0c36-e8cb-422a-9060-aca73ccd0c36}</Project>
       <Name>Dawg</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\initial_board.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

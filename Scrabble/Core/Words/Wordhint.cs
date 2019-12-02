@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DawgResolver;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -30,7 +31,6 @@ namespace Scrabble.Core.Words
             this.SelectionMode = SelectionMode.One;
             this.SelectedIndexChanged += WordHint_SelectedIndexChanged;
             this.MouseMove += listBox_MouseMove;
-
             ScrabbleForm.Controls.Add(this);
         }
         private void listBox_MouseMove(object sender, MouseEventArgs e)
@@ -65,78 +65,76 @@ namespace Scrabble.Core.Words
             //    ti.TileInPlay = false;
             //    ti.ClearHighlight();
             //});
-            if (this.SelectedIndex > -1)
-                SetHintWord(this.Items[this.SelectedIndex] as Word, ScrabbleForm.TileManager.Tiles);
+            //if (this.SelectedIndex > -1)
+            //    SetHintWord(this.Items[this.SelectedIndex] as Word, ScrabbleForm.TileManager.Tiles);
 
         }
 
         public void PrintGridConsole(ScrabbleTile[,] Tiles)
         {
 
-            var specialTilePositions = ScrabbleForm.WordScorer.GetTileTypes();
-
-            for (int x = 1; x <= ScrabbleForm.BOARD_WIDTH; x++)
+            for (int x = 0; x < Game.BoardSize; x++)
             {
-                for (int y = 1; y <= ScrabbleForm.BOARD_HEIGHT; y++)
+                for (int y = 0; y < Game.BoardSize; y++)
                 {
-                    var tile = Tiles[x - 1, y - 1];
+                    var tile = ScrabbleForm.Game.Grid[x, y];
 
-                    var t = string.IsNullOrEmpty(tile.Text) ? "#" : tile.Text;
-                    Debug.Write(t);
+                    var txt = tile.IsEmpty ? "#" : tile.Letter.ToString();
+                    Debug.Write(txt);
                 }
                 Debug.WriteLine("|");
             }
             Debug.WriteLine("___________________________");
         }
-        public bool CheckHintWord(Word word, ITile[,] scrabbleTile = null)
-        {
-            if (word.Direction == MovementDirection.None)
-            {
-                word.StartX = 7;
-                word.StartY = 7;
-                word.EndX = 7 + word.Text.Length;
-                word.EndY = 7+1;
-                word.Direction = MovementDirection.Across;
-            }
-            for (int i = 0; i < word.Text.Length; i++)
-            {
-                var tile = scrabbleTile[word.StartX + (word.Direction == MovementDirection.Across ? i : 0), word.StartY + (word.Direction == MovementDirection.Down ? i : 0)];
-               
-                if (tile.Text == "")
-                {
-                    tile.Text = word.Text[i].ToString();
-                    tile.TileInPlay = true;
-                }
-               
-            }
-            //PrintGridConsole(scrabbleTile);
-            var valid = ScrabbleForm.WordValidator.ValidateWordsInPlay(scrabbleTile).Valid;
-            
-            
-            return valid;
+        //public bool CheckHintWord(Word word, ITile[,] scrabbleTile = null)
+        //{
+        //    if (word.Direction == MovementDirection.None)
+        //    {
+        //        word.StartX = 7;
+        //        word.StartY = 7;
+        //        word.EndX = 7 + word.Text.Length;
+        //        word.EndY = 7+1;
+        //        word.Direction = MovementDirection.Across;
+        //    }
+        //    for (int i = 0; i < word.Text.Length; i++)
+        //    {
+        //        var tile = scrabbleTile[word.StartX + (word.Direction == MovementDirection.Across ? i : 0), word.StartY + (word.Direction == MovementDirection.Down ? i : 0)];
 
-        }
-        public bool SetHintWord(Word word, ITile[,] scrabbleTile = null)
-        {
-           
-            if (word.Direction == MovementDirection.None)
-            {
-                word.StartX = 7;
-                word.StartY = 7;
-                word.Direction = MovementDirection.Across;
-            }
+        //        if (tile.Text == "")
+        //        {
+        //            tile.Text = word.Text[i].ToString();
+        //            tile.TileInPlay = true;
+        //        }
 
-            for (int i = 0; i < word.Text.Length; i++)
-            {
-                var tile = scrabbleTile[word.StartX + (word.Direction == MovementDirection.Across ? i : 0), word.StartY + (word.Direction == MovementDirection.Down ? i : 0)];
-                if (tile.Text == "")// || tile.Text == word.Text[i].ToString() && ScrabbleForm.WordValidator.GetSurroundingWords(tile.XLoc, tile.YLoc).All(w => w.Valid))
-                                    //{
-                    tile.Text = word.Text[i].ToString();
-                
+        //    }
+        //    //PrintGridConsole(scrabbleTile);
+        //    var valid = ScrabbleForm.WordValidator.ValidateWordsInPlay(scrabbleTile).Valid;
 
-            }
-            return ScrabbleForm.WordValidator.ValidateWordsInPlay(scrabbleTile).Valid;
-        }
+
+        //    return valid;
+
+        //}
+        //public bool SetHintWord(Word word, ITile[,] scrabbleTile = null)
+        //{
+
+        //    //if (word.Direction == MovementDirection.None)
+        //    //{
+        //    //    word.StartX = 7;
+        //    //    word.StartY = 7;
+        //    //    word.Direction = MovementDirection.Across;
+        //    //}
+
+        //    //for (int i = 0; i < word.Text.Length; i++)
+        //    //{
+        //    //    var tile = scrabbleTile[word.StartX + (word.Direction == MovementDirection.Across ? i : 0), word.StartY + (word.Direction == MovementDirection.Down ? i : 0)];
+        //    //    if (tile.Text == "")// || tile.Text == word.Text[i].ToString() && ScrabbleForm.WordValidator.GetSurroundingWords(tile.XLoc, tile.YLoc).All(w => w.Valid))
+        //    //                        //{
+        //    //        tile.Text = word.Text[i].ToString();
+
+
+        //    //}
+        //    //return ScrabbleForm.WordValidator.ValidateWordsInPlay(scrabbleTile).Valid;
+        //}
 
         public void ClearText()
         {
@@ -146,6 +144,10 @@ namespace Scrabble.Core.Words
         {
             var idx = this.Items.Add(word);
 
+        }
+        public void AddString(string word)
+        {
+            var idx = this.Items.Add(word);
         }
 
         private void InitializeComponent()

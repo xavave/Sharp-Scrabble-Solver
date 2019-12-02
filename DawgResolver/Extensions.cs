@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dawg;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,15 +23,12 @@ namespace DawgResolver
             }
         }
 
-        public static IEnumerable<T> Flatten<T>(this T[,] map)
+        public static Letter GetRandomLetter(this List<Letter> letters)
         {
-            for (int row = 0; row < map.GetLength(0); row++)
-            {
-                for (int col = 0; col < map.GetLength(1); col++)
-                {
-                    yield return map[row, col];
-                }
-            }
+            Random rng = new Random();
+            int index = rng.Next(letters.Where(l => l.Count > 0).Count());
+            letters[index].Count--;
+            return letters[index];
         }
     }
 }

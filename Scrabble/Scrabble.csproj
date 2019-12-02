@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Scrabble</RootNamespace>
     <AssemblyName>Scrabble</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -65,13 +66,10 @@
     <Compile Include="Core\Tile\TileBag.cs" />
     <Compile Include="Core\Tile\TileManager.cs" />
     <Compile Include="Core\Tile\TileType.cs" />
-    <Compile Include="Core\Words\Word.cs" />
     <Compile Include="Core\Words\WordHint.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Core\Words\WordScorer.cs" />
     <Compile Include="Core\Words\WordSolver.cs" />
-    <Compile Include="Core\Words\WordValidator.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Forms\LettersForm.cs">
       <SubType>Form</SubType>
@@ -107,6 +105,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="Forms\ScrabbleForm.resx">
       <DependentUpon>ScrabbleForm.cs</DependentUpon>
@@ -136,6 +135,12 @@
     <Content Include="Resources\valid_words.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DawgResolver\DawgResolver.csproj">
+      <Project>{e12bb466-f92a-40dc-b0c7-4ce18ee15eb9}</Project>
+      <Name>DawgResolver</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

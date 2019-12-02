@@ -13,6 +13,7 @@ namespace Scrabble.Core.Tile
     {
         public ScrabbleForm ScrabbleForm { get; set; }
         public TileBag TileBag { get; set; }
+        public List<ScrabbleTile> TilesInPlay { get;  set; }
 
         public ScrabbleTile[,] Tiles;
 
@@ -28,31 +29,32 @@ namespace Scrabble.Core.Tile
         {
             Tiles = new ScrabbleTile[ScrabbleForm.BOARD_WIDTH, ScrabbleForm.BOARD_HEIGHT];
             TileBag = new TileBag();
-            var specialTilePositions = ScrabbleForm.WordScorer.GetTileTypes();
+            //var specialTilePositions = ScrabbleForm.WordScorer.GetTileTypes();
 
-            for (int x = 1; x <= ScrabbleForm.BOARD_WIDTH; x++)
+            foreach (var virtualTile in ScrabbleForm.Game.Grid)
             {
-                for (int y = 1; y <= ScrabbleForm.BOARD_HEIGHT; y++)
+                //for (int x = 1; x <= ScrabbleForm.BOARD_WIDTH; x++)
+                //{
+                //    for (int y = 1; y <= ScrabbleForm.BOARD_HEIGHT; y++)
+                //    {
+                var tile = new ScrabbleTile(ScrabbleForm)
                 {
-                    var tile = new ScrabbleTile(ScrabbleForm)
-                    {
-                        XLoc = x - 1,
-                        YLoc = y - 1
-                    };
-                    tile.BackColor = SystemColors.ButtonFace;
-                    tile.Location = new Point(x * (ScrabbleForm.TILE_SIZE + 2), y * (ScrabbleForm.TILE_SIZE + 2));
-                    tile.Size = new Size(ScrabbleForm.TILE_SIZE, ScrabbleForm.TILE_SIZE);
-                    //tile.UseVisualStyleBackColor = false;
-                    tile.Font = new Font("Verdana", 25.75F, FontStyle.Regular);
-                    tile.Click += Tile_Click;
-                    tile.DragDrop += Tile_DragDrop;
-                    tile.TileType = specialTilePositions[x - 1, y - 1];
-                    tile.SetRegularBackgroundColour();
-                    ScrabbleForm.Controls.Add(tile);
+                    XLoc = virtualTile.XLoc,
+                    YLoc = virtualTile.YLoc,
+                    TileType = virtualTile.TileType
+                };
+                tile.BackColor = SystemColors.ButtonFace;
+                tile.Location = new Point(virtualTile.XLoc * (ScrabbleForm.TILE_SIZE + 2), virtualTile.YLoc * (ScrabbleForm.TILE_SIZE + 2));
+                tile.Size = new Size(ScrabbleForm.TILE_SIZE, ScrabbleForm.TILE_SIZE);
+                //tile.UseVisualStyleBackColor = false;
+                tile.Font = new Font("Verdana", 25.75F, FontStyle.Regular);
+                tile.Click += Tile_Click;
+                tile.DragDrop += Tile_DragDrop;
+                tile.SetRegularBackgroundColour();
+                ScrabbleForm.Controls.Add(tile);
 
+                Tiles[virtualTile.XLoc, virtualTile.YLoc] = tile;
 
-                    Tiles[x - 1, y - 1] = tile;
-                }
             }
         }
 
@@ -134,7 +136,7 @@ namespace Scrabble.Core.Tile
         /// <returns></returns>
         public bool ValidateTilePositions()
         {
-            var tilesInPlay = new List<ScrabbleTile>();
+             TilesInPlay = new List<ScrabbleTile>();
 
             if (ScrabbleForm.StatManager.Moves == 0)
             {
@@ -161,21 +163,21 @@ namespace Scrabble.Core.Tile
                 for (int y = 0; y < ScrabbleForm.BOARD_HEIGHT; y++)
                 {
                     if (Tiles[x, y].TileInPlay)
-                        tilesInPlay.Add(Tiles[x, y]);
+                        TilesInPlay.Add(Tiles[x, y]);
                 }
             }
 
             var direction = GetMovementDirection();
 
             // Only one tile in play and/or we aren't moving in any direction so the move should be valid.
-            if (direction == MovementDirection.None || tilesInPlay.Count() <= 1)
+            if (direction == MovementDirection.None || TilesInPlay.Count() <= 1)
                 return true;
 
             // For every tile in play, ensure the player hasn't tried to move in two directions at once.
-            for (int x = 1; x < tilesInPlay.Count; x++)
+            for (int x = 1; x < TilesInPlay.Count; x++)
             {
-                int xChange = tilesInPlay[x - 1].XLoc - tilesInPlay[x].XLoc;
-                int yChange = tilesInPlay[x - 1].YLoc - tilesInPlay[x].YLoc;
+                int xChange = TilesInPlay[x - 1].XLoc - TilesInPlay[x].XLoc;
+                int yChange = TilesInPlay[x - 1].YLoc - TilesInPlay[x].YLoc;
 
                 if (direction == MovementDirection.Across)
                 {
@@ -190,10 +192,10 @@ namespace Scrabble.Core.Tile
                 }
             }
 
-            int xLoc = tilesInPlay[0].XLoc;
-            int yLoc = tilesInPlay[0].YLoc;
-            int lastX = tilesInPlay[tilesInPlay.Count() - 1].XLoc;
-            int lastY = tilesInPlay[tilesInPlay.Count() - 1].YLoc;
+            int xLoc = TilesInPlay[0].XLoc;
+            int yLoc = TilesInPlay[0].YLoc;
+            int lastX = TilesInPlay[TilesInPlay.Count() - 1].XLoc;
+            int lastY = TilesInPlay[TilesInPlay.Count() - 1].YLoc;
 
             // Ensure that there are no gaps inbetween the tile placements even in the same direction
             if (direction == MovementDirection.Across)
@@ -302,8 +304,8 @@ namespace Scrabble.Core.Tile
                         tile.OnLetterRemoved();
 
                         // Highlight on the remaining tiles if there are any valid words.
-                        var mr = ScrabbleForm.WordValidator.ValidateWordsInPlay();
-                        ScrabbleForm.btnPlay.Text = $"Play {mr.TotalScore} pts";
+                        //var mr = ScrabbleForm.WordValidator.ValidateWordsInPlay();
+                        //ScrabbleForm.btnPlay.Text = $"Play {mr.TotalScore} pts";
                         return;
                     }
                 }
@@ -325,8 +327,8 @@ namespace Scrabble.Core.Tile
                 }
             }
 
-            var moveResult = ScrabbleForm.WordValidator.ValidateWordsInPlay();
-            ScrabbleForm.btnPlay.Text = $"Play {moveResult.TotalScore} pts";
+            //var moveResult = ScrabbleForm.WordValidator.ValidateWordsInPlay();
+            //ScrabbleForm.btnPlay.Text = $"Play {moveResult.TotalScore} pts";
         }
     }
 }

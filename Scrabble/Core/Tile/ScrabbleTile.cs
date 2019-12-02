@@ -1,4 +1,5 @@
-﻿using Scrabble.Core.Tile;
+﻿using Dawg;
+using Scrabble.Core.Tile;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

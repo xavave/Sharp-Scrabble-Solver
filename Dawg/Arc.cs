@@ -7,6 +7,7 @@ namespace Dawg
     /// <summary>
     /// Décrit un arc reliant un noeud à un autre en représentant une lettre
     /// </summary>
+    [Serializable]
     public class Arc
     {
         /// <summary>

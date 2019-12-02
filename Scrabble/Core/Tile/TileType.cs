@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Scrabble.Core.Tile
 {
-    public enum TileType
-    {
-        Regular, Center, DoubleLetter, TripleLetter, DoubleWord, TripleWord
-    }
+    //public enum TileType
+    //{
+    //    Regular, Center, DoubleLetter, TripleLetter, DoubleWord, TripleWord
+    //}
 }

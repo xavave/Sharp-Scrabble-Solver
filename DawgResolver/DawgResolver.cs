@@ -1,178 +1,149 @@
 ﻿using DawgResolver;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using static Dawg.Word;
+
 
 namespace Dawg
 {
+    [Serializable]
     public class Resolver
     {
         //const definition 
-        const int TimeLimit = 60;
-        const int TerminalNode = 27;
+
         const int WildCardShift = 32;
         const int MoveLimit = 50;
-        const int All = 102;
+
         const int BoardSize = 15;
-        const int NbOfLettersPlusJokerInAlphabet = 27;
         //variables definition
 
-        public decimal[] DoubleLetters { get; set; }
-        public decimal[] TripleLetters { get; set; }
-        public decimal[] DoubleWords { get; set; }
-        public decimal[] TripleWords { get; set; }
-        public int[] LettersCount { get; set; } = new int[NbOfLettersPlusJokerInAlphabet];
-        public int[] LetterPoints { get; set; }
         public int WordCount { get; set; }
         public int NodeCount { get; private set; }
-        public List<string> Dawg { get; set; }
 
-        string[,] GridCopy { get; set; }
-        bool DicLoaded { get; set; }
-        bool BoardDef { get; set; }
-        bool[,] Connected { get; set; }
         bool FirstMove { get; set; }
         static bool[,] Anchors { get; set; } = new bool[17, 17];
         bool PossibleMove { get; set; }
-        bool ValidMove { get; set; }
-        int[,] LetterMultiplier { get; set; } = new int[17, 17];
-        int[,] WordMultiplier { get; set; } = new int[17, 17];
-        int[] LetterValue { get; set; } = new int[27];
-        int[] BagContent { get; set; } = new int[27];
-        int LettersPlayed { get; set; }
+
         static int[,,] AnchorLimits { get; set; } = new int[17, 17, 2];
-        Tile[,] Temp1 { get; set; } = new Tile[Board.BoardSize, Board.BoardSize];
-        Tile[,] Temp2 { get; set; } = new Tile[Board.BoardSize, Board.BoardSize];
+        Tile[,] Temp1 { get; set; } = new Tile[Game.BoardSize, Game.BoardSize];
+        Tile[,] Temp2 { get; set; } = new Tile[Game.BoardSize, Game.BoardSize];
         int[,,] Controlers { get; set; } = new int[17, 17, 27];
         int Direction { get; set; }
 
         int MoveNumber { get; set; }
-        int Score { get; set; }
         public int PlayedLetters { get; private set; }
         int MinPoint { get; set; }
         long[,] Dictionary { get; set; }
-        long CurrentNode { get; set; }
         long nbPossibleMoves { get; set; }
         long nbMoves { get; set; }
         long nbAcceptedMoves { get; set; }
-        float Start { get; set; }
-        float AnchorStart { get; set; }
-        float AnchorTimeLimit { get; set; }
-        Tile[,] RealBoard { get; set; } = new Tile[17, 17];
-        string[,] DisplayBoard { get; set; } = new string[17, 17];
+        Tile[,] BoardCopy { get; set; } = new Tile[Game.BoardSize, Game.BoardSize];
+        //string[,] DisplayBoard { get; set; } = new string[Game.BoardSize, Game.BoardSize];
 
-        static string[] Draught;
-        public string DraughtRange { get; set; }
         string[,] LegalMoves { get; set; }
         static Move Node;
         Move LegalMove = new Move();
-        public int LeftLetters { get; private set; }
+
+        Game Game { get; }
+
+        public Resolver(Game g)
+        {
+            Game = g;
+
+            LoadDic();
+        }
+
         public Dictionnaire Dictionnaire { get; private set; }
         public Noeud Noeud { get; private set; }
 
-        Tile[,] CopyBoard(Tile[,] source)
-        {
-            var dest = new Tile[source.GetUpperBound(0) + 1, source.GetUpperBound(1) + 1];
-            Array.Copy(source, 0, dest, 0, source.Length);
-            return dest;
-        }
+        //Tile[,] CopyBoard(Tile[,] source)
+        //{
+        //    var dest = new Tile[source.GetUpperBound(0) + 1, source.GetUpperBound(1) + 1];
+        //    Array.Copy(source, 0, dest, 0, source.Length);
+        //    return dest;
+        //}
         /// <summary>
         /// Cette procédure génère un nouveau tirage
         /// en choisissant au hasard parmi les lettres disponibles dans le sac
         /// </summary>
-        public string NewDraught(string forcedLetters = null)
+        public List<Letter> NewDraught(Player p, string forcedLetters = null)
         {
-            string chaine = "";
-            string letters = forcedLetters;
-            if (!string.IsNullOrWhiteSpace(letters))
+            if (p.Rack.Count >= 7) return p.Rack;
+
+            if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
-                DraughtRange = letters;
-                return letters;
+                p.Rack = forcedLetters.Select(c => Game.Alphabet.Find(a => a.Char == c)).ToList();
+                return p.Rack;
             }
-            //'Initialisation du générateur de nombre aléatoire
-            //'Randomize Timer
-            int j;
-
-            // On compte le nombre de lettres restantes dans le sac et on établit la liste des choix
-            for (int i = 0; i < 27; i++)
-            {
-                chaine += new String((char)(i + 1 + Dictionnaire.AscShift), BagContent[i]);
-            }
-            LeftLetters = chaine.Length;
-
-
             // Si le sac est vide
-            if (LeftLetters == 0)
+            if (Game.Bag.LeftLetters == 0)
                 throw new Exception("Il n'y a plus de lettres dans le sac");
 
             // S'il reste 7 lettres ou moins dans le sac, on n'a pas le choix, on les prend toutes
-            if (LeftLetters <= 7)
-                letters = chaine;
-            else
+
+            Random rnd = new Random();
+            // Sinon on tire 7 lettres du sac à condition qu'il en reste suffisament
+            for (int i = 0; i < Math.Min(Game.Bag.LeftLetters, 7); i++)
             {
-                Random rnd = new Random();
-                // Sinon on tire 7 lettres du sac à condition qu'il en reste suffisament
-                for (int i = 0; i < 7; i++)
-                {
-                    j = rnd.Next(1, chaine.Length);
-                    letters += chaine[j];
-                    chaine = chaine.Remove(j, 1);
-                }
+                int letterIdx = rnd.Next(0, Game.Alphabet.Count - 1);
+                var letter = Bag.Letters.GetRandomLetter();
+                p.Rack.Add(letter);
+
             }
-            DraughtRange = letters;
-            Debug.WriteLine(letters);
-            return letters;
-            // On affiche le tirage ainsi proposé
-            // Plage_Tirage = Lettres
+
+
+            Debug.WriteLine(p.DisplayRack());
+
+            return p.Rack;
+
         }
-        public void FindMove()
+
+        private void DetectTiles(Player p, Tile[,] grid )
         {
             string[] Temp;
-            LegalMove = new Move();
+            LegalMove = new Move()
+            {
+                Point = 32767
+            };
 
-            LegalMove.Point = 32767;
             MinPoint = 0;
             nbAcceptedMoves = 0;
 
-            Board.Grid = CopyBoard(RealBoard);
+            //Game.Grid = RealBoard.DeepClone();
             Direction = 0;
-            Board.AnchorCount = 0;
+            Game.AnchorCount = 0;
 
             // On efface les informations précédentes en vue d'une nouvelle analyse
-            for (int y = 0; y < Board.BoardSize; y++)
-                for (int x = 0; x < Board.BoardSize; x++)
-                    Board.Grid[x, y] = new Tile();
+            foreach (var t in grid)
+            {
+                t.IsAnchor = false;
+                t.PrefixMinSize = 0;
+                t.PrefixMaxSize = 0;
+                t.PossibleLetterPoints = new Dictionary<char, int>(27);
+            }
 
             // Le premier est un cas particulier où aucune lettre n'est encore posée sur le plateau
             // Tous les mots formés doivent toucher la case centrale qui constitue ainsi la seule ancre
             // Les mots formés au premier peuvent commencer six cases au plus vers la gauche de la case centrale
             // Comme aucune lettre n'est encore présente sur le plateau, il n'y a aucune vérification à faire
             // par rapport aux mots formés verticalement (les 26 lettres peuvent être utilisées)
-            if (Board.FirstMove)
+
+            if (Game.FirstMove)
             {
-                Board.Grid[7, 7].IsAnchor = true;
-                Board.Grid[7, 7].PrefixMinSize = 0;
-                Board.Grid[7, 7].PrefixMaxSize = 6;
+                grid[7, 7].IsAnchor = true;
+                grid[7, 7].PrefixMinSize = 0;
+                grid[7, 7].PrefixMaxSize = 6;
 
                 //AnchorLimits[7, 7, 0] = 0;
                 //AnchorLimits[7, 7, 1] = 6;
-                foreach (var t in Board.Grid)
+                foreach (var t in grid)
                 {
                     t.PossibleLetterPoints['z'] = 26;
                 }
-                //for (int cpti = 0; cpti < 15; cpti++)
-                //{
-                //    for (int j = 0; j < 15; j++)
-                //    {
-                //        Controlers[cpti, j, 26] = 26;
-                //    }
-                //}
 
             }
             else
@@ -183,73 +154,22 @@ namespace Dawg
                 // Et vérifier les lettres qu'on peut y placer pour que les éventuels mots formés verticalement soient valide
                 FindControlers();
             }
+        }
+        public List<string> FindMove(Player p)
+        {
+            DetectTiles(p, Game.Grid);
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            FindMovesPerAnchor();
+            FindMovesPerAnchor(p);
 
             // Recherche des coups verticaux
             // par transposition de la grille, on refait tout le processus
-            TransposeGrid(RealBoard, Board.Grid);
+            BoardCopy = TransposeGrid(Game.Grid);
             Direction = 1;
-
-            // On efface les informations précédentes en vue d'une nouvelle analyse
-            for (int cinfo = 0; cinfo < BoardSize; cinfo++)
-            {
-                Board.Grid[0, cinfo] = new Tile();
-                Board.Grid[BoardSize - 1, cinfo] = new Tile();
-                Board.Grid[cinfo, 0] = new Tile();
-                Board.Grid[cinfo, BoardSize - 1] = new Tile();
-                for (int j = 0; j < Board.BoardSize; j++)
-                {
-                    // On commence la transposition des cases bonus...
-                    Temp1[cinfo, j] = new Tile() { TileType = Board.Grid[j, cinfo].TileType };
-                    //Temp2[cinfo, j] = Board.Grid[j, cinfo];
-                    Board.Grid[cinfo, j].IsAnchor = false;
-                    Board.Grid[cinfo, j].PrefixMinSize = 0;
-                    Board.Grid[cinfo, j].PrefixMaxSize = 0;
-                    Board.Grid[cinfo, j].PossibleLetterPoints = new Dictionary<char, int>(27);
-
-                }
-            }
-
-            //for (int final = 0; final < BoardSize; final++)
-            //{
-            //    for (int j = 0; j < BoardSize; j++)
-            //    {
-            //        //... et on finalise ici
-            //        LetterMultiplier[final, j] = Temp1[final, j];
-            //        WordMultiplier[final, j] = Temp2[final, j];
-            //    }
-            //}
-
-            if (FirstMove)
-            {
-                // Le premier est un cas particulier où aucune lettre n'est encore posée sur le plateau
-                // Tous les mots formés doivent toucher la case centrale qui constitue ainsi la seule ancre
-                // Les mots formés au premier peuvent commencer six cases au plus vers la gauche de la case centrale
-                // Comme aucune lettre n'est encore présente sur le plateau, il n'y a aucune vérification à faire
-                // par rapport aux mots formés verticalement (les 26 lettres peuvent être utilisées)
-                Anchors[7, 7] = true;
-                AnchorLimits[7, 7, 0] = 0;
-                AnchorLimits[7, 7, 1] = 6;
-                foreach (var t in Board.Grid)
-                {
-                    t.PossibleLetterPoints['z'] = 26;
-                }
-
-                FirstMove = false;
-            }
-            else
-            {
-                // A partir du deuxième coup
-                // Il faut recenser les cases où l'on peut commencer de nouveaux mots ou continuer des mots existants
-                FindAnchors();
-                // Et vérifier les lettres qu'on peut y placer pour que les éventuels mots formés verticalement soient valide
-                FindControlers();
-            }
+            DetectTiles(p, BoardCopy);
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            FindMovesPerAnchor();
+            FindMovesPerAnchor(p);
 
             // Mise en forme des coups enregistrés et affichage
 
@@ -270,7 +190,7 @@ namespace Dawg
             }
             ClearNode(ref LegalMove); // Pour libérer la mémoire et prévenir une erreur de gestion de pile
 
-            Temp = new string[LegalMoves.GetUpperBound(1) + 1];// (UBound(Coups_Legaux, 2))
+           var Temp = new string[LegalMoves.GetUpperBound(1) + 1];// (UBound(Coups_Legaux, 2))
 
             for (i = 0; i <= LegalMoves.GetUpperBound(1); i++)
             {
@@ -284,10 +204,12 @@ namespace Dawg
 
             // Cas où aucun coup légal n'a été trouvé
             var ret = nbPossibleMoves == 0 ? new string[] { "Aucun coup legal" } : Temp;
+
             Debug.WriteLine(string.Join(Environment.NewLine, ret));
             if (nbPossibleMoves > 0) PossibleMove = true;
             nbMoves = nbPossibleMoves;
             nbPossibleMoves = 0;
+            return ret.ToList();
         }
         void ClearNode(ref Move move)
         {
@@ -306,14 +228,22 @@ namespace Dawg
 
 
             int l = 0;
-            var myWordStart = new Word();
-            var myWordEnd = new Word();
-            foreach (var t in Board.Grid)
+            var myWordStart = new Word(Game);
+            var myWordEnd = new Word(Game);
+            foreach (var t in Game.Grid)
             {
                 if (t.IsAnchor)
                 {
                     int points = 0;
-                    var tileCpy = t.DeepClone();
+                    var tileCpy = new Tile(Game, t.XLoc, t.YLoc)
+                    {
+                        PossibleLetterPoints = t.PossibleLetterPoints,
+                        Letter = t.Letter,
+                        IsAnchor = t.IsAnchor,
+                        TileType = t.TileType,
+                        PrefixMaxSize = t.PrefixMaxSize,
+                        PrefixMinSize = t.PrefixMinSize,
+                    };
                     //On rassemble le début éventuel des mots (lettres situées au dessus de la case)
                     while (!tileCpy.UpTile.IsEmpty)
                     {
@@ -333,10 +263,10 @@ namespace Dawg
                     //Si tel est le cas, la lettre L est jouable pour la case considérée
                     //et on précalcule le point que le mot verticalement formé permettrait de gagner si L était jouée
                     l = 0;
-                    foreach (var c in Board.Alphabet)
+                    foreach (var c in Game.Alphabet)
                     {
-                        var currentWord = new Word() { Tiles = myWordStart.Tiles };
-                        currentWord.Tiles.Append(new Word.Tile() { Letter = c });
+                        var currentWord = new Word(Game) { Tiles = myWordStart.Tiles };
+                        currentWord.Tiles.Append(t);
                         currentWord.Tiles.AddRange(myWordEnd.Tiles);
                         if (currentWord.Tiles.Count > 1 && currentWord.IsAllowed)
                         {
@@ -366,99 +296,21 @@ namespace Dawg
                     t.PossibleLetterPoints['z'] = 26;
             }
 
-            //for (int i = 1; i <= 15; i++)
-            //    for (int j = 1; j <= 15; i++)
-            //    {
-            //        if (Anchors[i, j])
-            //        {
-            //            //On rassemble le début éventuel des mots (lettres situées au dessus de la case)
-            //            points = 0;
-            //            k = i;
-            //            start = "";
-            //            while (k - 1 > 0 && Grid[k - 1, j] != "")
-            //            {
-            //                k--;
-            //                if (Grid[k, j] != "")
-            //                {
-            //                    start = Grid[k, j] + start;
-            //                    if (((int)Grid[k, j].First()) < 91) points += LetterValue[(int)Grid[k, j].First() - AscShift];
 
-            //                }
-            //            }
-
-
-            //            //On rassemble la fin éventuelle des mots (lettres situées en dessous de la case)
-            //            k = i;
-            //            end = "";
-            //            while (k + 1 < 16 && Grid[k + 1, j] != "")
-            //            {
-            //                k++;
-            //                if (Grid[k, j] != "")
-            //                {
-            //                    end = end + Grid[k, j];
-            //                    if (((int)Grid[k, j].First()) < 91) points += LetterValue[(int)Grid[k, j].First() - AscShift];
-            //                }
-            //            }
-
-            //            //On vérifie pour chaque Lettre L de A à Z si Debut+L+Fin forme un mot valide
-            //            //Si tel est le cas, la lettre L est jouable pour la case considérée
-            //            //et on précalcule le point que le mot verticalement formé permettrait de gagner si L était jouée
-            //            l = 0;
-            //            for (k = 0; k < 27; k++)
-            //            {
-
-            //                word = (start + (char)(k + AscShift) + end).ToUpper();
-            //                if (PossibleWord(word) && word.Length > 1)
-            //                {
-            //                    Controlers[i, j, k] = (points + LetterValue[k] * LetterMultiplier[i, j]) * WordMultiplier[i, j];
-            //                    l++;
-            //                }
-            //                else
-            //                    Controlers[i, j, k] = 0;
-
-            //            }
-
-            //            //Si aucune lettre ne se trouve ni au dessus ni en dessous de la case, il n'y aucune contrainte à respecter
-            //            //toutes les lettres peuvent être placées dans la case considérée.
-            //            if (start + end == "")
-            //                Controlers[i, j, 26] = 26;
-            //            else
-            //                Controlers[i, j, 26] = l;
-
-            //        }
-            //        else if (Grid[i, j] == "") Controlers[i, j, 26] = 26;
-            //    }
         }
+
+
         /// <summary>
-        /// Cette fonction teste si un mot est présent dans le dictionnaire
+        /// Cette procédure repère les ancres ligne par ligne
+        /// Il s'agit des cases inocupées adjacentes à une case déjà occupée
+        /// Ce recensement est utile afin de limiter les recherches aux cases où l'on peut jouer des coups
         /// </summary>
-        /// <param name="word"></param>
-        /// <returns></returns>
-        //private bool PossibleWord(string word)
-        //{
-
-        //    int i;
-        //    CurrentNode = 0; //Noeud Racine
-
-        //    // La fonction utilise le mot à tester comme un chemin dans le DAWG à partir du noeud racine
-        //    foreach (var l in word)
-        //        if (!Found(CurrentNode, l.ToString()))
-        //            return false;
-
-        //    //Si le chemin est valide et s'il aboutit à un noeud terminal c'est que le mot existe dans le dictionnaire
-        //    return Dictionary[TerminalNode, CurrentNode] == 1;
-        //}
-
         private void FindAnchors()
         {
-            int k = 0;
-            // Cette procédure repère les ancres ligne par ligne
-            // Il s'agit des cases inoccupées adjacentes à une case déjà occupée
-            // Ce recensement est utile afin de limiter les recherches aux cases où l'on peut jouer des coups
 
-            foreach (var t in Board.Grid)
+            foreach (var t in Game.Grid)
             {
-
+                t.IsAnchor = (t.UpTile != null && !t.UpTile.IsEmpty) || (t.DownTile != null && !t.DownTile.IsEmpty) || (t.RightTile != null && !t.RightTile.IsEmpty) || (t.LeftTile != null && !t.LeftTile.IsEmpty);
                 // Cas où l'ancre est à l'extrème gauche du plateau, la taille du préfixe est exactement 0
                 // Cas où l'ancre est précédée d'une autre ancre, la taille du préfixe est exactement 0
                 if (t.YLoc == 0 || t.IsAnchor && t.LeftTile.IsAnchor)
@@ -474,7 +326,15 @@ namespace Dawg
                     // Cas où l'ancre est précédée d'une case occupée, la taille du préfixe est exactement également la taille du mot
                     // ou de la chaîne qui précède l'ancre
                     int cptPrefix = 0;
-                    var tileCpy = t.DeepClone();
+                    var tileCpy = new Tile(Game, t.XLoc, t.YLoc)
+                    {
+                        PossibleLetterPoints = t.PossibleLetterPoints,
+                        Letter = t.Letter,
+                        IsAnchor = t.IsAnchor,
+                        TileType = t.TileType,
+                        PrefixMaxSize = t.PrefixMaxSize,
+                        PrefixMinSize = t.PrefixMinSize,
+                    };
                     while (!tileCpy.LeftTile.IsEmpty)
                     {
                         tileCpy = tileCpy.LeftTile;
@@ -485,7 +345,7 @@ namespace Dawg
                     // Cas où l'ancre est précédée par un case vide,
                     // la taille du préfixe varie de 0 à k où k représente le nombre de cases vides non identifiées comme des ancres
                     cptPrefix = 0;
-                    while (tileCpy.LeftTile.IsEmpty && !tileCpy.LeftTile.IsAnchor)
+                    while (tileCpy.LeftTile != null && tileCpy.LeftTile.IsEmpty && !tileCpy.LeftTile.IsAnchor)
                     {
                         tileCpy = tileCpy.LeftTile;
                         cptPrefix++;
@@ -496,111 +356,37 @@ namespace Dawg
                 }
 
             }
-            Board.AnchorCount = Board.Grid.OfType<Tile>().Count(t => t.IsAnchor);
+            Game.AnchorCount = Game.Grid.OfType<Tile>().Count(t => t.IsAnchor);
 
-
-
-            //for (int i = 0; i < 15; i++)
-            //    for (int j = 0; j < 15; i++)
-            //    {
-
-            //        // cas d'une cellule avec une case occupée au dessus
-            //        if (i - 1 > 0)
-            //            if (Grid[i - 1, j].Letter != '')
-            //                Anchors[i, j] = true;
-
-
-            //        // cas d'une cellule avec une case occupée à gauche
-            //        if (j - 1 > 0)
-            //            if (Grid[i, j - 1] != "")
-            //                Anchors[i, j] = true;
-
-
-            //        // cas d'une cellule avec une case occupée à droite
-            //        if (j + 1 < 15)
-            //            if (Grid[i, j + 1] != "")
-            //                Anchors[i, j] = true;
-
-
-            //        // cas d'une cellule avec une case occupée en dessous
-            //        if (i + 1 < 15)
-            //            if (Grid[i + 1, j].Letter != '')
-            //                Anchors[i, j] = true;
-
-            //        // Elimination des cases ocupées
-            //        if (Grid[i, j] != '')
-            //            Anchors[i, j] = false;
-
-            //        // Pour chaque ancre, déterminer la taille du préfixe qu'on peut rajouter
-            //        // La règle est que le développement du préfixe ne doit pas empieter sur une autre ancre
-            //        if (Anchors[i, j])
-            //            AnchorCount++;
-            //        if (j == 1)
-            //        {
-            //            // Cas où l'ancre est à l'extrème gauche du plateau, la taille du préfixe est exactement 0
-            //            AnchorLimits[i, j, 0] = 0;
-            //            AnchorLimits[i, j, 1] = 0;
-            //        }
-            //        else if (Anchors[i, j - 1])
-            //        {
-            //            // Cas où l'ancre est précédée d'une autre ancre, la taille du préfixe est exactement 0
-            //            AnchorLimits[i, j, 0] = 0;
-            //            AnchorLimits[i, j, 1] = 0;
-            //        }
-            //        else if (Grid[i, j - 1] != '')
-            //        {
-            //            // Cas où l'ancre est précédée d'une case occupée, la taille du préfixe est exactement également la taille du mot
-            //            // ou de la chaîne qui précède l'ancre
-            //            k = 1;
-            //            while (Grid[i, j - k] != "")
-            //            {
-            //                k++;
-            //            }
-            //            AnchorLimits[i, j, 0] = k - 1;
-            //            AnchorLimits[i, j, 1] = k - 1;
-            //        }
-            //        else if (Grid[i, j - 1] == '')
-            //        {
-            //            // Cas où l'ancre est précédée par un case vide,
-            //            // la taille du préfixe varie de 0 à k où k représente le nombre de cases vides non identifiées comme des ancres
-            //            k = 1;
-            //            while (j - k > 0 && k < (Draught.Length + 1) && !Anchors[i, j - k])
-            //            {
-            //                if (Grid[i, j - k].Letter == '') k++;
-            //            }
-            //            AnchorLimits[i, j, 0] = 0;
-            //            AnchorLimits[i, j, 1] = k - 1;
-            //        }
-            //        // If Sens = 0 Then Plage_Plateau(i, j) = Limites_Ancres(i, j, 1) & Limites_Ancres(i, j, 2)
-            //    }
-            //// If Sens = 0 Then MsgBox "ancres recensées"
 
         }
 
-        private void TransposeGrid(Tile[,] realBoard, Tile[,] board)
+        private Tile[,] TransposeGrid(Tile[,] source)
         {
+            Tile[,] dest = new Tile[BoardSize, BoardSize];
             for (int i = 0; i < BoardSize; i++)
             {
                 for (int j = 0; j < BoardSize; j++)
                 {
-                    board[i, j] = realBoard[j, i];
+                    dest[i, j] = source[j, i];
                 }
             }
+            return dest;
         }
 
-        private void FindMovesPerAnchor()
+        private void FindMovesPerAnchor(Player p)
         {
 
-            string root = "";
+            Noeud root = Game.Dico.DAWG;
 
-            bool b;
+
             // Pour chaque ancre identifiée,
             // Cette procédure lance la recherche des différents mots formables à partir de l'ancre
             // en utilisant les mots du tirage et ceux déjà placés
             // en respectant la taille limite des préfixes précédement calculés
-            foreach (var t in Board.Grid.OfType<Tile>().Where(t => t.IsAnchor))
+            foreach (var t in Game.Grid.OfType<Tile>().Where(t => t.IsAnchor).ToList())
             {
-
+                var prefixe = "";
                 // Cas où la taille du préfixe est imposée
                 if (t.PrefixMinSize == t.PrefixMaxSize)
                 {
@@ -608,70 +394,35 @@ namespace Dawg
                     // On ne peut que former un nouveau mot vers la droite
                     if (t.PrefixMinSize == 0)
                     {
-                        //TODO
+                        ExtendRight("", p.Rack, 1, root, t, p.Rack.Count);
                     }
                     else
                     {
                         // Cas où le préfixe est déjà placé sur la grille
                         // On ne peut que continuer le préfixe vers la droite
+                        for (int k = t.YLoc - t.PrefixMinSize; k <= t.YLoc - 1; k++)
+                        {
+                            if (Game.Dico.HasWordsStartingWith(prefixe + Game.Grid[t.XLoc, k].Letter))
+                                prefixe += Game.Grid[t.XLoc, k].Letter;
+                        }
 
-                        //TODO
+                        ExtendRight(prefixe.ToUpper(), p.Rack, 1, root, t, p.Rack.Count);
                     }
                 }
                 else
                 {
                     // Cas où k cases vides non identifiés comme ancres se trouvent devant l'ancre
                     // On essaie les différents préfixes possibles allant de 0 à k lettres
-                    for (int minA = 0; minA < t.PrefixMaxSize; minA++)
+                    for (int minA = t.PrefixMinSize; minA <= t.PrefixMaxSize; minA++)
                     {
-                        var len = DraughtRange.Length;
-                        GoOn("", ref Draught, minA, 1, t, ref len);
+
+                        ExtendRight("", p.Rack, minA, root, t, p.Rack.Count);
                     }
                 }
 
             }
 
-            //for (int i = 1; i <= 15; i++)
-            //    for (int j = 1; j <= 15; j++)
-            //        if (Anchors[i, j])
-            //        {
-            //            //if (Timer - Debut > TimeLimit)  break;
-            //            //AnchorStart = Timer
-            //            if (AnchorLimits[i, j, 0] == AnchorLimits[i, j, 1])
-            //                // Cas où la taille du préfixe est imposée
-            //                if (AnchorLimits[i, j, 0] == 0)
-            //                {
-            //                    // Cas du préfixe vide
-            //                    // On ne peut que former un nouveau mot vers la droite
-            //                    var len = DraughtRange.Length;
-            //                    GoOn("", ref Draught, 1, 1, i, j, ref len);
-            //                }
-            //                else
-            //                {
-            //                    // Cas où le préfixe est déjà placé sur la grille
-            //                    // On ne peut que continuer le préfixe vers la droite
-            //                    root = "";
-            //                    CurrentNode = 1;
-            //                    for (int k = j - AnchorLimits[i, j, 0]; k <= j - 1; k++)
-            //                    {
-            //                        root += Grid[i, k];
-            //                        b = Found(CurrentNode, Grid[i, k]);
-            //                    }
-            //                    var len = DraughtRange.Length;
-            //                    GoOn(root.ToUpper(), ref Draught, 1, CurrentNode, i, j, ref len);
-            //                }
 
-            //            else
-            //            {
-            //                // Cas où k cases vides non identifiés comme ancres se trouvent devant l'ancre
-            //                // On essaie les différents préfixes possibles allant de 0 à k lettres
-            //                for (int kk = 0; kk <= AnchorLimits[i, j, 1]; kk++)
-            //                {
-            //                    var len = DraughtRange.Length;
-            //                    GoOn("", ref Draught, kk, 1, i, j - kk, ref len);
-            //                }
-            //            }
-            //        }
         }
         /// <summary>
         /// Cette procédure teste les différentes combinaisons possibles
@@ -684,21 +435,22 @@ namespace Dawg
         /// <param name="line"></param>
         /// <param name="column"></param>
         /// <param name="nbLetters"></param>
-        private void GoOn(string prefix, ref string[] leftLetters, int minSize, int node, Tile t, ref int nbLetters)
+        private void ExtendRight(string prefix, List<Letter> leftLetters, int minSize, Noeud node, Tile t, int nbLetters)
         {
 
             // If Controleurs(Ligne, Colonne, 27) = 0 And Grille(Ligne, Colonne) = "" Then Exit Sub
 
 
             //If Timer -Debut > Limite_Temps Then Exit Sub
-            bool wildcardInDraught = leftLetters.Contains("[");
+            bool jokerInDraught = leftLetters.Take(nbLetters).Any(l => l.Char == Game.Joker);
 
             if (t.IsEmpty)
             {
 
                 // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions
-                if (Board.Dico.dawg.Find(n => n.Numero == node).IsTerminal && prefix.Length > 1 && prefix.Length > minSize && nbLetters < Draught.Length)
+                if (Game.Dico.MotAdmis(prefix) && prefix.Length > 1 && prefix.Length > minSize && nbLetters <= leftLetters.Count)
                 {
+
                     // Si le préfixe constitue déjà un mot valide
                     // alors on peut rajouter le préfixe dans la liste des coups admis
                     Add(prefix, t);
@@ -709,15 +461,15 @@ namespace Dawg
                 // // alors on peut rajouter le préfixe dans la liste des coups admis
                 //    Add(root, line, column);
                 //}
-                foreach (var c in Board.Alphabet.Select(a => a.Char))
+                foreach (var c in Game.Alphabet.Take(26).Select(a => a.Char))
                 {
-                    if (Board.Dico.HasWordsStartingWith(prefix.ToUpper() + c))
+                    if (Game.Dico.HasWordsStartingWith(prefix + c))
                     {
                         for (int la = 0; la < nbLetters; la++)
                         {
-                            if (leftLetters[la] == c.ToString())
+                            if (leftLetters[la].Char == c)
                             {
-                                if (t.PossibleLetterPoints.ContainsKey(c) || t.PossibleLetterPoints['z'] == 26)
+                                if ((t.PossibleLetterPoints.ContainsKey(char.ToUpper(c)) && t.PossibleLetterPoints[c] > 0) || t.PossibleLetterPoints['z'] == 26)
                                 // Pour chacune des lettres qui répondent au précédent critère dans le tirage
                                 //if (Controlers[line, column, letterIdx] > 0 || Controlers[line, column, 26] == 26)
                                 {
@@ -728,21 +480,21 @@ namespace Dawg
                                     leftLetters[la] = leftLetters[nbLetters - 1];
                                     nbLetters--;
                                     // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-                                    GoOn(prefix + c, ref leftLetters, minSize, node, t, ref nbLetters);
+                                    ExtendRight(prefix + c, leftLetters, minSize, node, t, nbLetters);
 
                                     // Au retour de l'appel recursif on restitue la lettre dans le tirage
                                     nbLetters++;
-                                    leftLetters[nbLetters - 1] = c.ToString();
+                                    leftLetters[nbLetters - 1] = Game.Alphabet.Find(ch => ch.Char == c);
                                 }
 
-                                if (!wildcardInDraught) break;
+                                if (!jokerInDraught) continue;
                             }
-                            else if (leftLetters[la] == "[")
+                            else if (leftLetters[la].Char == Game.Joker)
                             {
                                 // Cas d'un joker
-                                if (t.PossibleLetterPoints.ContainsKey(c) || t.PossibleLetterPoints['z'] == 26)
+                                if ((t.PossibleLetterPoints.ContainsKey(c) && t.PossibleLetterPoints[c] > 0) || t.PossibleLetterPoints['z'] == 26)
                                 {
-                                    // Si une lettre quelquonque (représentée par le joker) permet également de former des mots verticalement
+                                    // Si une lettre quelconque (représentée par le joker) permet également de former des mots verticalement
                                     // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
                                     // alors on peut essayer de continuer le préfixe avec cette lettre
                                     // le joker utilisé est alors retiré du tirage
@@ -750,12 +502,12 @@ namespace Dawg
                                     nbLetters--;
 
                                     // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
-                                    GoOn(prefix + leftLetters[la].ToLower(), ref leftLetters, minSize, node, t, ref nbLetters);
+                                    ExtendRight(prefix + c, leftLetters, minSize, node, t, nbLetters);
 
 
                                     // Au retour de l'appel recursif on restitue le joker dans le tirage
                                     nbLetters++;
-                                    leftLetters[nbLetters - 1] = "[";
+                                    leftLetters[nbLetters - 1] = Game.Alphabet.Find(ch => ch.Char == Game.Joker);
                                 }
                             }
                         }
@@ -765,15 +517,11 @@ namespace Dawg
             }
             else
             {
-                if (Board.Dico.HasWordsStartingWith(prefix))
+                if (Game.Dico.HasWordsStartingWith(prefix + t.Letter))
                 {
-                    GoOn(prefix + t.Letter, ref leftLetters, minSize, node, t, ref nbLetters);
+                    ExtendRight(prefix + t.Letter, leftLetters, minSize, node, t, nbLetters);
                 }
-                // Si la case n'est pas vide, on fait une concatenation du préfixe avec la lettre de la case courante
-                //    if (Dictionary[(int)((Grid[line, column].ToUpper())[0] - Dictionnaire.AscShift), node] != 0)
-                //    { // Si un mot du dictionnaire est susceptible de débuter par le nouveau préfixe ainsi obtenu
-                //      // alors on peut essayer de continuer le préfixe avec cette lettre vers la droite
-                //        GoOn(root + Grid[line, column], ref leftLetters, 0, Dictionary[((int)(Grid[line, column].ToUpper()[0]) - AscShift), node], line, column, ref nbLetters);
+
 
             }
             //    for (int letterIdx = 1; letterIdx <= 26; letterIdx++)
@@ -842,11 +590,11 @@ namespace Dawg
         /// <summary>
         /// Recherche des différents coups admis
         /// </summary>
-        public void FindMoves()
+        public void FindMoves(Player p)
         {
 
             PossibleMove = false;
-            Debug.WriteLine(FindLegalMoves());
+            Debug.WriteLine(FindLegalMoves(p));
             if (PossibleMove)
             {
                 //       Bouton_Jouer_Coup.Enabled = True
@@ -856,29 +604,29 @@ namespace Dawg
             {
                 //       Bouton_Chercher_Coups.Enabled = True
                 //Bouton_Jouer_Coup.Enabled = False
-                if (DraughtRange.Any())
+                if (p.Rack.Any())
                 {
                     // Les lettres non utilisées sont "reversées dans le sac"
-                    foreach (var l in Draught)
-                        BagContent[(int)l.First() - Dictionnaire.AscShift - 1]++;
+                    foreach (var l in p.Rack)
+                        Bag.Letters.Add(l);
                 }
             }
         }
 
-        private string FindLegalMoves()
+        private string FindLegalMoves(Player p)
         {
 
             // Cette procédure appelle la rechercher des coups admis
             // Après vérification de la régularité du tirage
             //Start = Timer
 
-            if (!LoadDraught(BagContent))
-            {
-                //Bouton_Chercher_Coups.Enabled = True
-                //Bouton_Jouer_Coup.Enabled = False
-            }
+            //if (!LoadDraught(Bag.Letters))
+            //{
+            //    //Bouton_Chercher_Coups.Enabled = True
+            //    //Bouton_Jouer_Coup.Enabled = False
+            //}
 
-            FindMove();
+            FindMove(p);
             return nbMoves + " coups trouvés ";// en " + (Int((Timer - Debut) * 100)) / 100 & " s."
 
 
@@ -891,7 +639,6 @@ namespace Dawg
             Dictionnaire = new Dictionnaire();
 
             Noeud = Dictionnaire.ChargerFichierDAWG();
-            DicLoaded = true;
 
             var assembly = Assembly.GetExecutingAssembly();
             string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("dico_dawg.txt"));
@@ -933,209 +680,105 @@ namespace Dawg
             return Noeud;
             //return DicLoaded;
         }
-        /// <summary>
-        /// Lancement d'une nouvelle partie
-        /// </summary>
-        public void NewGame()
-        {
-
-            if (!DicLoaded)
-                LoadDic();
-            //throw new Exception("Vous devez d'abord charger un dictionnaire");
-
-            //if (RealBoard[8, 8] != "" )
-            //    Reponse = MsgBox("Une partie est en cours, êtes-vous sur de vouloir d'en démarrer une autre?", vbYesNo)
-            //    If Reponse = vbNo Then Exit Sub
-            //End If
-            //Definir_Plages
-            InitBoard();
-            //Bouton_Chercher_Coups.Enabled = True
-            //Bouton_Jouer_Coup.Enabled = False
-            //Historique.AddItem "Debut de la partie : " & Time()
-        }
-        /// <summary>
-        /// Cette procédure initialise ou réinitialise le plateau de jeu ainsi que différentes variables
-        /// </summary>
-        private void InitBoard()
-        {
-            // Définition des cases bonus
-            DoubleLetters = new decimal[] { 2.03M, 2.13M, 3.02M, 3.05M, 3.11M, 3.14M, 5.03M, 5.07M, 5.09M, 5.13M, 7.05M, 7.11M, 9.05M, 9.11M, 11.03M, 11.07M, 11.09M, 11.13M, 13.02M, 13.05M, 13.11M, 13.14M, 14.03M, 14.13M };
-            TripleLetters = new decimal[] { 1.07M, 1.09M, 4.04M, 4.12M, 6.06M, 6.1M, 7.01M, 7.15M, 9.01M, 9.15M, 10.06M, 10.1M, 12.04M, 12.12M, 15.07M, 15.09M };
-            DoubleWords = new decimal[] { 2.06M, 2.1M, 4.08M, 6.02M, 6.14M, 8.04M, 8.12M, 10.02M, 10.14M, 12.08M, 14.06M, 14.1M };
-            TripleWords = new decimal[] { 1.04M, 1.12M, 4.01M, 4.15M, 12.01M, 12.15M, 15.04M, 15.12M };
-
-            // Définition des lettres disponibles au début d'une partie et des points associés à chaque lettre
-            LettersCount = new int[] { 9, 2, 2, 3, 15, 2, 2, 2, 8, 1, 1, 5, 3, 6, 6, 2, 1, 6, 6, 6, 6, 2, 1, 1, 1, 1, 2 };
-            LetterPoints = new int[] { 1, 5, 4, 3, 1, 5, 5, 5, 1, 10, 10, 2, 4, 1, 4, 4, 10, 1, 1, 1, 2, 8, 10, 10, 10, 10, 0 };
-            MoveNumber = 0;
-            Score = 0;
-            PlayedLetters = 0;
-
-            // Initialisation du plateau
-            for (int i = 0; i < 15; i++)
-                for (int j = 0; j < 15; j++)
-                {
-                    RealBoard[i, j] = new Tile();
-                    DisplayBoard[i, j] = "";
-                    LetterMultiplier[i, j] = 1;
-                    WordMultiplier[i, j] = 1;
-
-                }
-            //        Plage_Plateau = Grille_Affichage
-            //Plage_Copie = Grille_Affichage
-
-            //         for (i = 1; i <= 15; i++)
-            //             for (j = 1; j <= 15; j++)
-            //             {
-            //                 Plage_Plateau(i, j).Borders.Color = RGB(255, 255, 255)
-            //  Plage_Plateau(i, j).Interior.Color = RGB(246, 245, 238)
-            //}
-            // Initialisation des cases bonus
-            //For i = 1 To UBound(Lettre_Compte_Double)
-            //    Ligne = Int(Lettre_Compte_Double(i))
-            //    Colonne = 100 * (Lettre_Compte_Double(i) - Ligne)
-            //    Multiplicateur_Lettre(Ligne, Colonne) = 2
-            //    Plage_Plateau(Ligne, Colonne).Interior.Color = RGB(51, 153, 255) 'bleu
-            //Next i
 
 
-            //For i = 1 To UBound(Lettre_Compte_Triple)
-            //    Ligne = Int(Lettre_Compte_Triple(i))
-            //    Colonne = 100 * (Lettre_Compte_Triple(i) - Ligne)
-            //    Multiplicateur_Lettre(Ligne, Colonne) = 3
-            //    Plage_Plateau(Ligne, Colonne).Interior.Color = RGB(102, 255, 102) 'vert
-            //Next i
 
-            //For i = 1 To UBound(Mot_Compte_Double)
-            //    Ligne = Int(Mot_Compte_Double(i))
-            //    Colonne = 100 * (Mot_Compte_Double(i) - Ligne)
-            //    Multiplicateur_Mot(Ligne, Colonne) = 2
-            //    Plage_Plateau(Ligne, Colonne).Interior.Color = RGB(255, 0, 0) 'rouge
-            //Next i
+        //private bool LoadDraught(List<Letter> bag)
+        //{
+        //    // Cette fonction vérifie la régularité du tirage proposé, retourne Vrai le cas échéant et charge le tirage en mémoire
 
-            //For i = 1 To UBound(Mot_Compte_Triple)
-            //    Ligne = Int(Mot_Compte_Triple(i))
-            //    Colonne = 100 * (Mot_Compte_Triple(i) - Ligne)
-            //    Multiplicateur_Mot(Ligne, Colonne) = 3
-            //    Plage_Plateau(Ligne, Colonne).Interior.Color = RGB(255, 102, 0) 'orange
+        //    bool loadDraught = false;
+        //    int[] tempBag = new int[26];
+        //    List<string> tempDraught = new List<string>();
 
+        //    //Cas d'un tirage vide
+        //    if (!Player.Rack.Any())
+        //        throw new Exception("Le tirage est vide.");
 
-            //Next i
+        //    //Cas d'un tirage contenant plus de 7 lettres
+        //    if (Player.Rack.Count > 7)
+        //        throw new Exception("Le tirage ne doit pas compter plus de sept lettres.");
 
+        //    // 'Comme le tirage est provisoire jusqu'à ce qu'il ait été validé
+        //    //        'on travaille sur une copie du contenu du sac
+        //    // ReDim Tirage_Provisoire(1)
+        //    tempBag = CopyBag(bag);
 
-            //'Initialisation du contenu du sac d'où sont tirées les lettres
-            for (int nl = 0; nl < 27; nl++)
-            {
-                BagContent[nl] = LettersCount[nl];
-                LetterValue[nl] = LetterPoints[nl];
-            }
-            //Afficher_Contenu_Sac
+        //    foreach (var l in Player.Rack)
+        //    {
 
-            //'Gestion du cas particulier du premier coup
-            FirstMove = true;
+        //        // Contrôle de la régularité des lettres du tirage (lettres A à Z uniquement et joker noté '['
+        //        if (!Char.IsLetter(l.Char) || l.Char != Game.Joker)
+        //            throw new Exception($"Le tirage ne doit comporter que les lettres de A à Z ou les jokers notés '{Game.Joker}', " + l.Char + " n'est pas admis.");
 
+        //        // Contrôle de la disponibilité des lettres du tirage dans le sac
+        //        if (Bag.Letters.Where(le => le.Char == l.Char).Sum(s => s.Count) == 0)
+        //            throw new Exception($"Le tirage n'est pas possible, il n'y a pas assez de " + (l.Char == Game.Joker ? "joker" : l.Char.ToString()) + " dans le sac.");
+        //        else
+        //            tempBag[(int)l - Dictionnaire.AscShift - 1]--;
 
-            //'Remise à zéro de la liste des coups admis et de l'historique
-            //Liste_Coups_Legaux.List = Array()
-            //Historique.List = Array()
-        }
+        //        // Validation du tirage provisoire au fur et à mesure
+        //        // ReDim Preserve Tirage_Provisoire(1 To UBound(Tirage_Provisoire) + 1)
 
-        private bool LoadDraught(int[] bag)
-        {
-            // Cette fonction vérifie la régularité du tirage proposé, retourne Vrai le cas échéant et charge le tirage en mémoire
+        //        tempDraught.Add(l.ToString());
+        //    }
 
-            bool loadDraught = false;
-            int[] tempBag = new int[26];
-            List<string> tempDraught = new List<string>();
+        //    // Si l'on arrive ici c'est que tirage est validé
+        //    // Ainsi on passe de provisoire à définitif et on peut mettre à jour l'affichage du contenu du sac
+        //    Draught = CopyDraught(tempDraught);
 
-            //Cas d'un tirage vide
-            if (DraughtRange == "")
-                throw new Exception("Le tirage est vide.");
+        //    bag = CopyBag(tempBag);
 
-            //Cas d'un tirage contenant plus de 7 lettres
-            if (DraughtRange.Length > 7)
-                throw new Exception("Le tirage ne doit pas compter plus de sept lettres.");
+        //    loadDraught = true;
+        //    //for (int i = 0; i < Draught.Length - 2; i++)
+        //    //{
+        //    //    Draught[i] = Draught[i + 1];
+        //    //}
+        //    // ReDim Preserve Tirage(1 To UBound(Tirage) - 1)
+        //    DisplayBagContent();
+        //    return loadDraught;
+        //}
 
-            // 'Comme le tirage est provisoire jusqu'à ce qu'il ait été validé
-            //        'on travaille sur une copie du contenu du sac
-            // ReDim Tirage_Provisoire(1)
-            tempBag = CopyBag(bag);
+        ///// <summary>
+        ///// Cette procédure affiche le contenu du sac
+        ///// </summary>
+        //private List<string> DisplayBagContent()
+        //{
+        //    int total = 0;
+        //    string[] temp = new string[28];
 
-            foreach (var l in DraughtRange)
-            {
+        //    for (int i = 0; i < 27; i++)
+        //    {
+        //        temp[i] = i == 26 ? "Joker" : (char)(i + Dictionnaire.AscShift) + " : " + BagContent[i + 1];
+        //        total += BagContent[i];
+        //    }
+        //    temp[27] = "Lettres : " + total;
+        //    return temp.ToList();
+        //}
+        ///// <summary>
+        ///// Cette procédure copie le contenu d'un sac vers un autre
+        ///// </summary>
+        ///// <param name="tempBag"></param>
+        ///// <param name="bag"></param>
+        //private int[] CopyBag(int[] source)
+        //{
+        //    var dest = new List<int>();
+        //    dest.AddRange(source);
+        //    return dest.ToArray();
 
-                // Contrôle de la régularité des lettres du tirage (lettres A à Z uniquement et joker noté '['
-                if (!((int)l >= 65 && (int)l <= 91))
-                    throw new Exception("Le tirage ne doit comporter que les lettres de A à Z ou les jokers notés '[', " + l + " n'est pas admis.");
+        //}
+        ///// <summary>
+        ///// Cette procédure copie un tirage vers un autre
+        ///// </summary>
+        ///// <param name="tempDraught"></param>
+        ///// <param name="draught"></param>
+        //private string[] CopyDraught(List<string> source)
+        //{
 
-                // Contrôle de la disponibilité des lettres du tirage dans le sac
-                if (tempBag[(int)l - Dictionnaire.AscShift - 1] == 0)
-                    throw new Exception("Le tirage n'est pas possible, il n'y a pas assez de " + (l == '[' ? "joker" : l.ToString()) + " dans le sac.");
-                else
-                    tempBag[(int)l - Dictionnaire.AscShift - 1]--;
-
-                // Validation du tirage provisoire au fur et à mesure
-                // ReDim Preserve Tirage_Provisoire(1 To UBound(Tirage_Provisoire) + 1)
-
-                tempDraught.Add(l.ToString());
-            }
-
-            // Si l'on arrive ici c'est que tirage est validé
-            // Ainsi on passe de provisoire à définitif et on peut mettre à jour l'affichage du contenu du sac
-            Draught = CopyDraught(tempDraught);
-
-            bag = CopyBag(tempBag);
-
-            loadDraught = true;
-            //for (int i = 0; i < Draught.Length - 2; i++)
-            //{
-            //    Draught[i] = Draught[i + 1];
-            //}
-            // ReDim Preserve Tirage(1 To UBound(Tirage) - 1)
-            DisplayBagContent();
-            return loadDraught;
-        }
-
-        /// <summary>
-        /// Cette procédure affiche le contenu du sac
-        /// </summary>
-        private List<string> DisplayBagContent()
-        {
-            int total = 0;
-            string[] temp = new string[28];
-
-            for (int i = 0; i < 27; i++)
-            {
-                temp[i] = i == 26 ? "Joker" : (char)(i + Dictionnaire.AscShift) + " : " + BagContent[i + 1];
-                total += BagContent[i];
-            }
-            temp[27] = "Lettres : " + total;
-            return temp.ToList();
-        }
-        /// <summary>
-        /// Cette procédure copie le contenu d'un sac vers un autre
-        /// </summary>
-        /// <param name="tempBag"></param>
-        /// <param name="bag"></param>
-        private int[] CopyBag(int[] source)
-        {
-            var dest = new List<int>();
-            dest.AddRange(source);
-            return dest.ToArray();
-
-        }
-        /// <summary>
-        /// Cette procédure copie un tirage vers un autre
-        /// </summary>
-        /// <param name="tempDraught"></param>
-        /// <param name="draught"></param>
-        private string[] CopyDraught(List<string> source)
-        {
-
-            var dest = new List<string>();
-            dest.AddRange(source);
-            return dest.ToArray();
-        }
+        //    var dest = new List<string>();
+        //    dest.AddRange(source);
+        //    return dest.ToArray();
+        //}
 
         /// <summary>
         /// Cette procédure ajoute un coup à la liste des coups admis recensés
@@ -1162,20 +805,20 @@ namespace Dawg
                 // Le calcul des points prend en compte les cases bonus non encore utilisées
                 // Il faut noter que seules les lettres du tirage permettent de bénéficier des bonus
                 // Les points verticaux ont été précalculés au moment du recensement des contrôleurs
-                var startTile = Board.Grid[t.XLoc, start - letterIdx];
+                var startTile = Game.Grid[t.XLoc, start + letterIdx];
                 if (t.IsEmpty)
                 {
                     if (char.IsLetter(l))
                     {
-                        horizontalPoints += Board.Alphabet.Find(c => c.Char == l).Value * (startTile.TileType == TileType.DoubleLetter ? 2 : startTile.TileType == TileType.TripleLetter ? 3 : 1);
-                        verticalPoints += startTile.PossibleLetterPoints[l];
+                        horizontalPoints += Game.Alphabet.Find(c => c.Char == l).Value * (startTile.TileType == TileType.DoubleLetter ? 2 : startTile.TileType == TileType.TripleLetter ? 3 : 1);
+                        verticalPoints += startTile.PossibleLetterPoints.ContainsKey(l) ? startTile.PossibleLetterPoints[l] : 0;
                     }
                     else
                     {
                         wildcardIndice = (int)l - Dictionnaire.AscShift - WildCardShift;
                         if (startTile.PossibleLetterPoints[(char)wildcardIndice] > 0)
                         {
-                            verticalPoints += startTile.PossibleLetterPoints[(char)wildcardIndice] - Board.Alphabet.Find(c => c.Char == (char)wildcardIndice).Value
+                            verticalPoints += (startTile.PossibleLetterPoints.ContainsKey((char)wildcardIndice) ? startTile.PossibleLetterPoints[(char)wildcardIndice] : 0) - Game.Alphabet.Find(c => c.Char == (char)wildcardIndice).Value
                                 * (startTile.TileType == TileType.DoubleLetter ? 2 : startTile.TileType == TileType.TripleLetter ? 3 : 1);
                         }
                     }
@@ -1185,7 +828,7 @@ namespace Dawg
                 }
                 else
                 {
-                    if (char.IsLetter(l)) horizontalPoints += Board.Alphabet.Find(c => c.Char == l).Value;
+                    if (char.IsLetter(l)) horizontalPoints += Game.Alphabet.Find(c => c.Char == l).Value;
                 }
 
             }
@@ -1364,7 +1007,7 @@ namespace Dawg
 
 
     }
-
+    [Serializable]
     public class Move
     {
         public Move()
