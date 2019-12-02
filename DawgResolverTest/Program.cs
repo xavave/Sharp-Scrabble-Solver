@@ -9,7 +9,7 @@ namespace DawgResolverTest
             var dr = new Dawg.Resolver();
             var dic = new Dictionnaire();
             dic.ChargerFichierDAWG();
-           var ret =  dic.AllWordsStartingWith("ANN");
+           //var ret =  dic.AllWordsStartingWith("ANN");
             dr.NewGame();
             dr.NewDraught("[TBERLE");
             dr.FindMoves();

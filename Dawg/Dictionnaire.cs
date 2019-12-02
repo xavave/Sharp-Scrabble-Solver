@@ -15,6 +15,7 @@ namespace Dawg
     /// </summary>
     public class Dictionnaire
     {
+        public const int AscShift = 64;
         /// <summary>
         /// Chronomètre utilisé uniquement pour comparer les performances des 2 méthodes de construtions
         /// </summary>
@@ -38,12 +39,12 @@ namespace Dawg
         /// <summary>
         /// Liste des mots dans le dictionnaire, cette liste est issue du fichier ASCII servant de base à la construction
         /// </summary>
-        public List<string> Mots { get; private set; }
+        public List<string> Mots { get;  set; }
 
         /// <summary>
         /// Noeud père de tout le graphe
         /// </summary>
-        public Noeud DAWG { get; private set; }
+        public Noeud DAWG { get;  set; }
 
         /// <summary>
         /// Retourne quel travail est en cours dans le dictionnaire
@@ -53,7 +54,7 @@ namespace Dawg
         /// <summary>
         /// Nombre de noeuds contenus dans le DAWG
         /// </summary>
-        public int NombreNoeuds { get; private set; }
+        public int NombreNoeuds { get;  set; }
 
         #endregion
 

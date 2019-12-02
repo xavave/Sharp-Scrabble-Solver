@@ -42,7 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DawgResolver.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Letter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tile.cs" />
+    <Compile Include="TileType.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\dico_dawg.txt" />
