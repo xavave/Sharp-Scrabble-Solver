@@ -47,8 +47,8 @@ namespace Dawg
         int[] BagContent { get; set; } = new int[27];
         int LettersPlayed { get; set; }
         static int[,,] AnchorLimits { get; set; } = new int[17, 17, 2];
-        int[,] Temp1 { get; set; } = new int[17, 17];
-        int[,] Temp2 { get; set; } = new int[17, 17];
+        Tile[,] Temp1 { get; set; } = new Tile[Board.BoardSize, Board.BoardSize];
+        Tile[,] Temp2 { get; set; } = new Tile[Board.BoardSize, Board.BoardSize];
         int[,,] Controlers { get; set; } = new int[17, 17, 27];
         int Direction { get; set; }
 
@@ -199,31 +199,28 @@ namespace Dawg
                 Board.Grid[BoardSize - 1, cinfo] = new Tile();
                 Board.Grid[cinfo, 0] = new Tile();
                 Board.Grid[cinfo, BoardSize - 1] = new Tile();
-                for (int j = 0; j <= 16; j++)
+                for (int j = 0; j < Board.BoardSize; j++)
                 {
                     // On commence la transposition des cases bonus...
-                    Temp1[cinfo, j] = LetterMultiplier[j, cinfo];
-                    Temp2[cinfo, j] = WordMultiplier[j, cinfo];
-                    Anchors[cinfo, j] = false;
-                    AnchorLimits[cinfo, j, 0] = 0;
-                    AnchorLimits[cinfo, j, 1] = 0;
-                    for (int k = 0; k < 27; k++)
-                    {
-                        Controlers[cinfo, j, k] = 0;
-                    }
+                    Temp1[cinfo, j] = new Tile() { TileType = Board.Grid[j, cinfo].TileType };
+                    //Temp2[cinfo, j] = Board.Grid[j, cinfo];
+                    Board.Grid[cinfo, j].IsAnchor = false;
+                    Board.Grid[cinfo, j].PrefixMinSize = 0;
+                    Board.Grid[cinfo, j].PrefixMaxSize = 0;
+                    Board.Grid[cinfo, j].PossibleLetterPoints = new Dictionary<char, int>(27);
 
                 }
             }
 
-            for (int final = 0; final < BoardSize; final++)
-            {
-                for (int j = 0; j < BoardSize; j++)
-                {
-                    //... et on finalise ici
-                    LetterMultiplier[final, j] = Temp1[final, j];
-                    WordMultiplier[final, j] = Temp2[final, j];
-                }
-            }
+            //for (int final = 0; final < BoardSize; final++)
+            //{
+            //    for (int j = 0; j < BoardSize; j++)
+            //    {
+            //        //... et on finalise ici
+            //        LetterMultiplier[final, j] = Temp1[final, j];
+            //        WordMultiplier[final, j] = Temp2[final, j];
+            //    }
+            //}
 
             if (FirstMove)
             {
@@ -235,13 +232,11 @@ namespace Dawg
                 Anchors[7, 7] = true;
                 AnchorLimits[7, 7, 0] = 0;
                 AnchorLimits[7, 7, 1] = 6;
-                for (int contI = 1; contI <= 15; contI++)
+                foreach (var t in Board.Grid)
                 {
-                    for (int j = 1; j <= 15; j++)
-                    {
-                        Controlers[contI, j, 26] = 26;
-                    }
+                    t.PossibleLetterPoints['z'] = 26;
                 }
+
                 FirstMove = false;
             }
             else
@@ -279,10 +274,11 @@ namespace Dawg
 
             for (i = 0; i <= LegalMoves.GetUpperBound(1); i++)
             {
-                if (LegalMoves[0, i] == "0")
-                    Temp[i] = (char)(int.Parse(LegalMoves[1, i]) + Dictionnaire.AscShift + 1) + (int.Parse(LegalMoves[2, i]) + 1).ToString() + " - " + LegalMoves[3, i] + " = " + LegalMoves[4, i] + LegalMoves[5, i];
-                else
-                    Temp[i] = (int.Parse(LegalMoves[2, i]) + 1).ToString() + (char)(int.Parse(LegalMoves[1, i]) + 1 + Dictionnaire.AscShift) + " - " + LegalMoves[3, i] + " = " + LegalMoves[4, i] + LegalMoves[5, i];
+                if (LegalMoves[0, i] != null)
+                    if (LegalMoves[0, i] == "0")
+                        Temp[i] = (char)(int.Parse(LegalMoves[1, i]) + Dictionnaire.AscShift + 1) + (int.Parse(LegalMoves[2, i]) + 1).ToString() + " - " + LegalMoves[3, i] + " = " + LegalMoves[4, i] + LegalMoves[5, i];
+                    else
+                        Temp[i] = (int.Parse(LegalMoves[2, i]) + 1).ToString() + (char)(int.Parse(LegalMoves[1, i]) + 1 + Dictionnaire.AscShift) + " - " + LegalMoves[3, i] + " = " + LegalMoves[4, i] + LegalMoves[5, i];
 
             }
 
@@ -715,13 +711,13 @@ namespace Dawg
                 //}
                 foreach (var c in Board.Alphabet.Select(a => a.Char))
                 {
-                    if (Board.Dico.dawg.Find(n => n.Numero == node).IsTerminal)
+                    if (Board.Dico.HasWordsStartingWith(prefix.ToUpper() + c))
                     {
                         for (int la = 0; la < nbLetters; la++)
                         {
                             if (leftLetters[la] == c.ToString())
                             {
-                                if (t.PossibleLetterPoints[c] > 0 || t.PossibleLetterPoints['z'] == 26)
+                                if (t.PossibleLetterPoints.ContainsKey(c) || t.PossibleLetterPoints['z'] == 26)
                                 // Pour chacune des lettres qui répondent au précédent critère dans le tirage
                                 //if (Controlers[line, column, letterIdx] > 0 || Controlers[line, column, 26] == 26)
                                 {
@@ -732,11 +728,11 @@ namespace Dawg
                                     leftLetters[la] = leftLetters[nbLetters - 1];
                                     nbLetters--;
                                     // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-                                    //TODO GoOn(root + ((char)(letterIdx + AscShift)), ref leftLetters, minSize, Dictionary[letterIdx, node], t, ref nbLetters);
+                                    GoOn(prefix + c, ref leftLetters, minSize, node, t, ref nbLetters);
 
                                     // Au retour de l'appel recursif on restitue la lettre dans le tirage
                                     nbLetters++;
-                                    //TODO leftLetters[nbLetters - 1] = ((char)(letterIdx + AscShift)).ToString();
+                                    leftLetters[nbLetters - 1] = c.ToString();
                                 }
 
                                 if (!wildcardInDraught) break;
@@ -744,7 +740,7 @@ namespace Dawg
                             else if (leftLetters[la] == "[")
                             {
                                 // Cas d'un joker
-                                if (t.PossibleLetterPoints[(char)la] > 0 || t.PossibleLetterPoints['z'] == 26)
+                                if (t.PossibleLetterPoints.ContainsKey(c) || t.PossibleLetterPoints['z'] == 26)
                                 {
                                     // Si une lettre quelquonque (représentée par le joker) permet également de former des mots verticalement
                                     // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
@@ -754,7 +750,7 @@ namespace Dawg
                                     nbLetters--;
 
                                     // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
-                                    //TODO GoOn(root + ((char)(la + Dictionnaire.AscShift)).ToString().ToLower(), ref leftLetters, minSize, Dictionary[la, node], line, column, ref nbLetters);
+                                    GoOn(prefix + leftLetters[la].ToLower(), ref leftLetters, minSize, node, t, ref nbLetters);
 
 
                                     // Au retour de l'appel recursif on restitue le joker dans le tirage
@@ -766,69 +762,82 @@ namespace Dawg
                     }
 
                 }
-
-                //    for (int letterIdx = 1; letterIdx <= 26; letterIdx++)
-                //    {
-                //        if (Dictionary[letterIdx, node] != 0)
-                //        {
-                //            // On recherche les lettres qui rajoutées au préfixe permettrait d'aboutir à des mots dans le dictionnaire
-                //            for (int la = 0; la < nbLetters; la++)
-                //            {
-                //                //if (leftLetters[la] == ((char)(letterIdx + AscShift)).ToString())
-                //                //{
-                //                //    // Pour chacune des lettres qui répondent au précédent critère dans le tirage
-                //                //    if (Controlers[line, column, letterIdx] > 0 || Controlers[line, column, 26] == 26)
-                //                //    {
-                //                //        // Si la lettre permet également de former des mots verticalement
-                //                //        // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
-                //                //        // alors on peut essayer de continuer le préfixe avec cette lettre
-                //                //        // la lettre utilisée est alors retirée du tirage
-                //                //        leftLetters[la] = leftLetters[nbLetters - 1];
-                //                //        nbLetters--;
-                //                //        // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-                //                //        GoOn(root + ((char)(letterIdx + AscShift)), ref leftLetters, minSize, Dictionary[letterIdx, node], line, column, ref nbLetters);
-
-                //                //        // Au retour de l'appel recursif on restitue la lettre dans le tirage
-                //                //        nbLetters++;
-                //                //        leftLetters[nbLetters - 1] = ((char)(letterIdx + AscShift)).ToString();
-                //                //    }
-
-                //                //    if (!wildcardInDraught) break;
-                //                //}
-                //                //else if (leftLetters[la] == "[")
-                //                //{
-                //                //    // Cas d'un joker
-                //                //    if (Controlers[line, column, la] > 0 || Controlers[line, column, 26] == 26)
-                //                //    {
-                //                //        // Si une lettre quelquonque (représentée par le joker) permet également de former des mots verticalement
-                //                //        // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
-                //                //        // alors on peut essayer de continuer le préfixe avec cette lettre
-                //                //        // le joker utilisé est alors retiré du tirage
-                //                //        leftLetters[la] = leftLetters[nbLetters - 1];
-                //                //        nbLetters--;
-
-                //                //        // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
-                //                //        GoOn(root + ((char)(la + AscShift)).ToString().ToLower(), ref leftLetters, minSize, Dictionary[la, node], line, column, ref nbLetters);
-
-
-                //                //        // Au retour de l'appel recursif on restitue le joker dans le tirage
-                //                //        nbLetters++;
-                //                //        leftLetters[nbLetters - 1] = "[";
-                //                //    }
-                //                //}
-                //            }
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    // Si la case n'est pas vide, on fait une concatenation du préfixe avec la lettre de la case courante
+            }
+            else
+            {
+                if (Board.Dico.HasWordsStartingWith(prefix))
+                {
+                    GoOn(prefix + t.Letter, ref leftLetters, minSize, node, t, ref nbLetters);
+                }
+                // Si la case n'est pas vide, on fait une concatenation du préfixe avec la lettre de la case courante
                 //    if (Dictionary[(int)((Grid[line, column].ToUpper())[0] - Dictionnaire.AscShift), node] != 0)
                 //    { // Si un mot du dictionnaire est susceptible de débuter par le nouveau préfixe ainsi obtenu
                 //      // alors on peut essayer de continuer le préfixe avec cette lettre vers la droite
                 //        GoOn(root + Grid[line, column], ref leftLetters, 0, Dictionary[((int)(Grid[line, column].ToUpper()[0]) - AscShift), node], line, column, ref nbLetters);
-                //    }
+
             }
+            //    for (int letterIdx = 1; letterIdx <= 26; letterIdx++)
+            //    {
+            //        if (Dictionary[letterIdx, node] != 0)
+            //        {
+            //            // On recherche les lettres qui rajoutées au préfixe permettrait d'aboutir à des mots dans le dictionnaire
+            //            for (int la = 0; la < nbLetters; la++)
+            //            {
+            //                //if (leftLetters[la] == ((char)(letterIdx + AscShift)).ToString())
+            //                //{
+            //                //    // Pour chacune des lettres qui répondent au précédent critère dans le tirage
+            //                //    if (Controlers[line, column, letterIdx] > 0 || Controlers[line, column, 26] == 26)
+            //                //    {
+            //                //        // Si la lettre permet également de former des mots verticalement
+            //                //        // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
+            //                //        // alors on peut essayer de continuer le préfixe avec cette lettre
+            //                //        // la lettre utilisée est alors retirée du tirage
+            //                //        leftLetters[la] = leftLetters[nbLetters - 1];
+            //                //        nbLetters--;
+            //                //        // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
+            //                //        GoOn(root + ((char)(letterIdx + AscShift)), ref leftLetters, minSize, Dictionary[letterIdx, node], line, column, ref nbLetters);
+
+            //                //        // Au retour de l'appel recursif on restitue la lettre dans le tirage
+            //                //        nbLetters++;
+            //                //        leftLetters[nbLetters - 1] = ((char)(letterIdx + AscShift)).ToString();
+            //                //    }
+
+            //                //    if (!wildcardInDraught) break;
+            //                //}
+            //                //else if (leftLetters[la] == "[")
+            //                //{
+            //                //    // Cas d'un joker
+            //                //    if (Controlers[line, column, la] > 0 || Controlers[line, column, 26] == 26)
+            //                //    {
+            //                //        // Si une lettre quelquonque (représentée par le joker) permet également de former des mots verticalement
+            //                //        // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
+            //                //        // alors on peut essayer de continuer le préfixe avec cette lettre
+            //                //        // le joker utilisé est alors retiré du tirage
+            //                //        leftLetters[la] = leftLetters[nbLetters - 1];
+            //                //        nbLetters--;
+
+            //                //        // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
+            //                //        GoOn(root + ((char)(la + AscShift)).ToString().ToLower(), ref leftLetters, minSize, Dictionary[la, node], line, column, ref nbLetters);
+
+
+            //                //        // Au retour de l'appel recursif on restitue le joker dans le tirage
+            //                //        nbLetters++;
+            //                //        leftLetters[nbLetters - 1] = "[";
+            //                //    }
+            //                //}
+            //            }
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    // Si la case n'est pas vide, on fait une concatenation du préfixe avec la lettre de la case courante
+            //    if (Dictionary[(int)((Grid[line, column].ToUpper())[0] - Dictionnaire.AscShift), node] != 0)
+            //    { // Si un mot du dictionnaire est susceptible de débuter par le nouveau préfixe ainsi obtenu
+            //      // alors on peut essayer de continuer le préfixe avec cette lettre vers la droite
+            //        GoOn(root + Grid[line, column], ref leftLetters, 0, Dictionary[((int)(Grid[line, column].ToUpper()[0]) - AscShift), node], line, column, ref nbLetters);
+            //    }
+
         }
         /// <summary>
         /// Recherche des différents coups admis

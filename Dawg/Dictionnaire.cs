@@ -39,12 +39,12 @@ namespace Dawg
         /// <summary>
         /// Liste des mots dans le dictionnaire, cette liste est issue du fichier ASCII servant de base à la construction
         /// </summary>
-        public List<string> Mots { get;  set; }
+        public List<string> Mots { get; set; }
 
         /// <summary>
         /// Noeud père de tout le graphe
         /// </summary>
-        public Noeud DAWG { get;  set; }
+        public Noeud DAWG { get; set; }
 
         /// <summary>
         /// Retourne quel travail est en cours dans le dictionnaire
@@ -54,7 +54,7 @@ namespace Dawg
         /// <summary>
         /// Nombre de noeuds contenus dans le DAWG
         /// </summary>
-        public int NombreNoeuds { get;  set; }
+        public int NombreNoeuds { get; set; }
 
         #endregion
 
@@ -399,7 +399,7 @@ namespace Dawg
             this.TravailEnCours = TravailEnCours.Aucun;
             chrono.Stop();
         }
-       
+
         /// <summary>
         /// Parcours le DAWG pour en extraire tous les mots
         /// </summary>
@@ -516,7 +516,7 @@ namespace Dawg
                 switch (sortants.Count)
                 {
                     case 0:
-                        return null;
+                        return ret;
 
                     case 1:
                         enCours = sortants[0].Destination;
@@ -530,11 +530,47 @@ namespace Dawg
 
                 }
             }
-           
-                    ParcoursDAWG(arcs, ret);
+
+            ParcoursDAWG(arcs, ret);
             return ret;
-            
+
         }
+        /// <summary>
+        /// Vérifie la présence d'un mot dans le dictionnaire.
+        /// </summary>
+        /// <param name="mot">Mot à vérifier</param>
+        /// <returns></returns>
+        public bool HasWordsStartingWith(string mot)
+        {
+            List<string> ret = new List<string>();
+            Noeud enCours = DAWG;
+            List<Arc> arcs = new List<Arc>();
+
+            for (int i = 0; i < mot.Length; i++)
+            {
+                List<Arc> sortants = enCours.Sortants.Where(a => a.Lettre == mot[i]).ToList();
+                switch (sortants.Count)
+                {
+                    case 0:
+                        return false;
+
+                    case 1:
+                        enCours = sortants[0].Destination;
+                        arcs.Add(sortants[0]);
+                        break;
+
+                    default:
+                        //il ne devrait jamais y avoir plus d'un arc pour une lettre sortant d'un noeud, si ça passe ici il y a un problème
+                        AnnonceEtape(string.Format("Problème lors de la lecture du DAWG, le noeud n°{0} possède plusieurs arcs sortants avec la lettre {1}.", enCours.Numero, mot[i]));
+                        break;
+
+                }
+            }
+            ParcoursDAWG(arcs, ret);
+            return ret.Any();
+
+        }
+
         /// <summary>
         /// Vérifie la présence d'un mot dans le dictionnaire.
         /// </summary>
