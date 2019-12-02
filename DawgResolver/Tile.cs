@@ -103,6 +103,14 @@ namespace Dawg
                 if (grid == null) grid = value;
             }
         }
+
+        public static bool FirstMove
+        {
+            get
+            {
+                return grid[7, 7].IsEmpty;
+            }
+        }
     }
     public class Word
     {
@@ -147,26 +155,22 @@ namespace Dawg
         }
         public class Tile
         {
-
+            private bool isAnchor = false;
 
 
             public Tile()
             {
+                IsAnchor = (UpTile != null && !UpTile.IsEmpty) || (DownTile != null && !DownTile.IsEmpty) || (RightTile != null && !RightTile.IsEmpty) || (LeftTile != null && !LeftTile.IsEmpty);
             }
-            public Dictionary<char, int> PossibleLetterPoints { get; set; } = new Dictionary<char, int>();
+            public Dictionary<char, int> PossibleLetterPoints { get; set; } = new Dictionary<char, int>(27);
             public int XLoc { get; set; }
             public int YLoc { get; set; }
             public TileType TileType { get; set; }
             public Letter Letter { get; set; } = new Letter() { Char = char.MinValue };
             public int PrefixMinSize { get; set; } = 0;
             public int PrefixMaxSize { get; set; } = 0;
-            public bool IsAnchor
-            {
-                get
-                {
-                    return !UpTile.IsEmpty || !DownTile.IsEmpty || !RightTile.IsEmpty || !LeftTile.IsEmpty;
-                }
-            }
+            public bool IsAnchor { get => isAnchor; set => isAnchor = value; }
+
 
             public bool IsEmpty
             {
@@ -182,7 +186,7 @@ namespace Dawg
                 {
                     if (XLoc > 0)
                         return Board.Grid[this.XLoc - 1, this.YLoc];
-                    return new Tile();
+                    return null;
                 }
             }
             public Tile RightTile
@@ -191,7 +195,7 @@ namespace Dawg
                 {
                     if (XLoc < Board.BoardSize - 1)
                         return Board.Grid[this.XLoc + 1, this.YLoc];
-                    return new Tile();
+                    return null;
                 }
             }
             public Tile DownTile
@@ -200,7 +204,7 @@ namespace Dawg
                 {
                     if (YLoc < Board.BoardSize - 1)
                         return Board.Grid[this.XLoc, this.YLoc + 1];
-                    return new Tile();
+                    return null;
                 }
             }
             public Tile UpTile
@@ -209,7 +213,7 @@ namespace Dawg
                 {
                     if (XLoc > 0)
                         return Board.Grid[this.XLoc - 1, this.YLoc];
-                    return new Tile();
+                    return null;
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿using Dawg;
+using System.Linq;
 
 namespace DawgResolverTest
 {
@@ -12,6 +13,8 @@ namespace DawgResolverTest
            //var ret =  dic.AllWordsStartingWith("ANN");
             dr.NewGame();
             dr.NewDraught("[TBERLE");
+
+            var test = dr.Dictionnaire.dawg.Find(n => n.Numero == 131).IsTerminal;
             dr.FindMoves();
         }
     }

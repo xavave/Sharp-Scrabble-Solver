@@ -27,7 +27,7 @@ namespace Dawg
         /// Cette liste est consituée lors de la construction ou lors de la lecture du fichier compressé.
         /// Elle est nécessaire à l'écriture du fichier après construction ou modification
         /// </summary>
-        List<Noeud> dawg;
+        public List<Noeud> dawg;
 
         #region Propriétés
 

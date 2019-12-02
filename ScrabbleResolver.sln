@@ -11,6 +11,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DawgResolverTest", "DawgRes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg", "Dawg\Dawg.csproj", "{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "legacyVBAscramble", "legacyVBAscramble", "{BCE298ED-04F1-4AF7-8702-B5BF2E24EAF3}"
+	ProjectSection(SolutionItems) = preProject
+		legacyVBAscramble\dico_dawg.txt = legacyVBAscramble\dico_dawg.txt
+		legacyVBAscramble\readme.txt = legacyVBAscramble\readme.txt
+		legacyVBAscramble\Scramble V1.xls = legacyVBAscramble\Scramble V1.xls
+		legacyVBAscramble\Scramble V2.xlsm = legacyVBAscramble\Scramble V2.xlsm
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

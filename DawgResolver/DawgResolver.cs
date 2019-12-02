@@ -145,41 +145,34 @@ namespace Dawg
             Board.AnchorCount = 0;
 
             // On efface les informations précédentes en vue d'une nouvelle analyse
-            for (int info = 0; info < BoardSize; info++)
-            {
-                Board.Grid[0, info] = new Tile();
-                Board.Grid[BoardSize-1, info] = new Tile();
-                Board.Grid[info, 0] = new Tile();
-                Board.Grid[info, BoardSize-1] = new Tile();
-                for (int j = 0; j < BoardSize; j++)
-                {
-                    Anchors[info, j] = false;
-                    AnchorLimits[info, j, 0] = 0;
-                    AnchorLimits[info, j, 1] = 0;
-                    for (int k = 0; k < 27; k++)
-                    {
-                        Controlers[info, j, k] = 0;
-                    }
+            for (int y = 0; y < Board.BoardSize; y++)
+                for (int x = 0; x < Board.BoardSize; x++)
+                    Board.Grid[x, y] = new Tile();
 
-                }
-            }
             // Le premier est un cas particulier où aucune lettre n'est encore posée sur le plateau
             // Tous les mots formés doivent toucher la case centrale qui constitue ainsi la seule ancre
             // Les mots formés au premier peuvent commencer six cases au plus vers la gauche de la case centrale
             // Comme aucune lettre n'est encore présente sur le plateau, il n'y a aucune vérification à faire
             // par rapport aux mots formés verticalement (les 26 lettres peuvent être utilisées)
-            if (FirstMove)
+            if (Board.FirstMove)
             {
-                Anchors[7, 7] = true;
-                AnchorLimits[7, 7, 0] = 0;
-                AnchorLimits[7, 7, 1] = 6;
-                for (int cpti = 0; cpti < 15; cpti++)
+                Board.Grid[7, 7].IsAnchor = true;
+                Board.Grid[7, 7].PrefixMinSize = 0;
+                Board.Grid[7, 7].PrefixMaxSize = 6;
+
+                //AnchorLimits[7, 7, 0] = 0;
+                //AnchorLimits[7, 7, 1] = 6;
+                foreach (var t in Board.Grid)
                 {
-                    for (int j = 0; j < 15; j++)
-                    {
-                        Controlers[cpti, j, 26] = 26;
-                    }
+                    t.PossibleLetterPoints['z'] = 26;
                 }
+                //for (int cpti = 0; cpti < 15; cpti++)
+                //{
+                //    for (int j = 0; j < 15; j++)
+                //    {
+                //        Controlers[cpti, j, 26] = 26;
+                //    }
+                //}
 
             }
             else
@@ -203,9 +196,9 @@ namespace Dawg
             for (int cinfo = 0; cinfo < BoardSize; cinfo++)
             {
                 Board.Grid[0, cinfo] = new Tile();
-                Board.Grid[BoardSize-1, cinfo] = new Tile();
+                Board.Grid[BoardSize - 1, cinfo] = new Tile();
                 Board.Grid[cinfo, 0] = new Tile();
-                Board.Grid[cinfo, BoardSize-1] = new Tile();
+                Board.Grid[cinfo, BoardSize - 1] = new Tile();
                 for (int j = 0; j <= 16; j++)
                 {
                     // On commence la transposition des cases bonus...
@@ -609,8 +602,9 @@ namespace Dawg
             // Cette procédure lance la recherche des différents mots formables à partir de l'ancre
             // en utilisant les mots du tirage et ceux déjà placés
             // en respectant la taille limite des préfixes précédement calculés
-            foreach (var t in Board.Grid.OfType<Tile>().Where(tt => tt.IsAnchor))
+            foreach (var t in Board.Grid.OfType<Tile>().Where(t => t.IsAnchor))
             {
+
                 // Cas où la taille du préfixe est imposée
                 if (t.PrefixMinSize == t.PrefixMaxSize)
                 {
@@ -634,7 +628,8 @@ namespace Dawg
                     // On essaie les différents préfixes possibles allant de 0 à k lettres
                     for (int minA = 0; minA < t.PrefixMaxSize; minA++)
                     {
-                        //TODO
+                        var len = DraughtRange.Length;
+                        GoOn("", ref Draught, minA, 1, t, ref len);
                     }
                 }
 
@@ -686,14 +681,14 @@ namespace Dawg
         /// Cette procédure teste les différentes combinaisons possibles
         /// pour continuer un préfixe vers la droite
         /// </summary>
-        /// <param name="root"></param>
+        /// <param name="prefix"></param>
         /// <param name="leftLetters"></param>
         /// <param name="minSize"></param>
         /// <param name="node"></param>
         /// <param name="line"></param>
         /// <param name="column"></param>
         /// <param name="nbLetters"></param>
-        private void GoOn(string root, ref string[] leftLetters, int minSize, Noeud node, Tile t, ref int nbLetters)
+        private void GoOn(string prefix, ref string[] leftLetters, int minSize, int node, Tile t, ref int nbLetters)
         {
 
             // If Controleurs(Ligne, Colonne, 27) = 0 And Grille(Ligne, Colonne) = "" Then Exit Sub
@@ -701,23 +696,16 @@ namespace Dawg
 
             //If Timer -Debut > Limite_Temps Then Exit Sub
             bool wildcardInDraught = leftLetters.Contains("[");
-            //for (int di = 0; di < nbLetters; di++)
-            //{
-            //    if (leftLetters[di] == "[")
-            //    {
-            //        wildcardInDraught = true;
-            //        break;
-            //    }
-            //}
 
             if (t.IsEmpty)
             {
+
                 // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions
-                if (Board.Dico.MotAdmis(root) && root.Length > 1 && root.Length > minSize && nbLetters < Draught.Length)
+                if (Board.Dico.dawg.Find(n => n.Numero == node).IsTerminal && prefix.Length > 1 && prefix.Length > minSize && nbLetters < Draught.Length)
                 {
                     // Si le préfixe constitue déjà un mot valide
                     // alors on peut rajouter le préfixe dans la liste des coups admis
-                    Add(root, t);
+                    Add(prefix, t);
                 }
 
                 //if (Dictionary[TerminalNode, node] == 1 && root.Length > 1 && root.Length > minSize && nbLetters < Draught.Length) //  Or Lettres_Restantes(1) = "") Then
@@ -727,7 +715,7 @@ namespace Dawg
                 //}
                 foreach (var c in Board.Alphabet.Select(a => a.Char))
                 {
-                    if (node.Sortants.Where(s => s.Destination.Numero == (c - Dictionnaire.AscShift)).First().Destination.IsTerminal)
+                    if (Board.Dico.dawg.Find(n => n.Numero == node).IsTerminal)
                     {
                         for (int la = 0; la < nbLetters; la++)
                         {
