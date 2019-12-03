@@ -251,8 +251,8 @@ namespace Scrabble
             WordHint.BeginUpdate();
             //foreach (var ana in anagrams.Distinct().OrderByDescending(t => t.Score))
             //{
-            foreach (var s in Game.Resolver.FindMove(PlayerManager.CurrentPlayer.Name== PlayerManager.PlayerOne.Name ?  Game.Player1: Game.Player2))
-                WordHint.AddString(s);
+            foreach (var w in Game.Resolver.FindMove(PlayerManager.CurrentPlayer.Name== PlayerManager.PlayerOne.Name ?  Game.Player1: Game.Player2))
+                WordHint.AddWord(w);
             //    if (WordHint.CheckHintWord(ana, tilesCopy))
             //        WordHint.AddWord(ana);
             //}

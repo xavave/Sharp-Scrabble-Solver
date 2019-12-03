@@ -20,6 +20,7 @@ namespace Scrabble.Core.Words
         public WordHint(ScrabbleForm _scrabbleForm)
         {
             InitializeComponent();
+            this.DisplayMember = "Text";
             this.Enabled = true;
             this.Location = new Point(836, 500);
             this.Name = "wordHintTxtBox";
@@ -32,6 +33,8 @@ namespace Scrabble.Core.Words
             this.SelectedIndexChanged += WordHint_SelectedIndexChanged;
             this.MouseMove += listBox_MouseMove;
             ScrabbleForm.Controls.Add(this);
+           
+            
         }
         private void listBox_MouseMove(object sender, MouseEventArgs e)
         {

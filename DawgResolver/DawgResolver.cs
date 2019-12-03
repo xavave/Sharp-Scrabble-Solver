@@ -102,7 +102,7 @@ namespace Dawg
 
         }
 
-        private void DetectTiles(Player p, Tile[,] grid )
+        private void DetectTiles(Player p, Tile[,] grid)
         {
             string[] Temp;
             LegalMove = new Move()
@@ -155,7 +155,7 @@ namespace Dawg
                 FindControlers();
             }
         }
-        public List<string> FindMove(Player p)
+        public List<Word> FindMove(Player p)
         {
             DetectTiles(p, Game.Grid);
 
@@ -173,43 +173,42 @@ namespace Dawg
 
             // Mise en forme des coups enregistrés et affichage
 
-            LegalMoves = new string[6, nbAcceptedMoves == 0 ? 1 : nbAcceptedMoves];
+            //LegalMoves = new string[6, nbAcceptedMoves == 0 ? 1 : nbAcceptedMoves];
 
-            Node = LegalMove.Next;
-            int i = 0;
-            while (Node != null)
-            {
-                LegalMoves[0, i] = Node.Direction.ToString();
-                LegalMoves[1, i] = Node.Direction == 0 ? Node.Line.ToString() : Node.Column.ToString();
-                LegalMoves[2, i] = Node.Direction == 1 ? Node.Line.ToString() : Node.Column.ToString();
-                LegalMoves[3, i] = Node.Word;
-                LegalMoves[4, i] = Node.Point.ToString();
-                LegalMoves[5, i] = Node.Scramble ? "*" : "";
-                Node = Node.Next;
-                i++;
-            }
-            ClearNode(ref LegalMove); // Pour libérer la mémoire et prévenir une erreur de gestion de pile
+            //Node = LegalMove.Next;
+            //int i = 0;
+            //while (Node != null)
+            //{
+            //    LegalMoves[0, i] = Node.Direction.ToString();
+            //    LegalMoves[1, i] = Node.Direction == 0 ? Node.Line.ToString() : Node.Column.ToString();
+            //    LegalMoves[2, i] = Node.Direction == 1 ? Node.Line.ToString() : Node.Column.ToString();
+            //    LegalMoves[3, i] = Node.Word;
+            //    LegalMoves[4, i] = Node.Point.ToString();
+            //    LegalMoves[5, i] = Node.Scramble ? "*" : "";
+            //    Node = Node.Next;
+            //    i++;
+            //}
+            //ClearNode(ref LegalMove); // Pour libérer la mémoire et prévenir une erreur de gestion de pile
 
-           var Temp = new string[LegalMoves.GetUpperBound(1) + 1];// (UBound(Coups_Legaux, 2))
 
-            for (i = 0; i <= LegalMoves.GetUpperBound(1); i++)
-            {
-                if (LegalMoves[0, i] != null)
-                    if (LegalMoves[0, i] == "0")
-                        Temp[i] = (char)(int.Parse(LegalMoves[1, i]) + Dictionnaire.AscShift + 1) + (int.Parse(LegalMoves[2, i]) + 1).ToString() + " - " + LegalMoves[3, i] + " = " + LegalMoves[4, i] + LegalMoves[5, i];
-                    else
-                        Temp[i] = (int.Parse(LegalMoves[2, i]) + 1).ToString() + (char)(int.Parse(LegalMoves[1, i]) + 1 + Dictionnaire.AscShift) + " - " + LegalMoves[3, i] + " = " + LegalMoves[4, i] + LegalMoves[5, i];
+            //for (i = 0; i <= LegalMoves.GetUpperBound(1); i++)
+            //{
+            //    if (LegalMoves[0, i] != null)
+            //        if (LegalMoves[0, i] == "0")
+            //            Temp[i] = (char)(int.Parse(LegalMoves[1, i]) + Dictionnaire.AscShift + 1) + (int.Parse(LegalMoves[2, i]) + 1).ToString() + " - " + LegalMoves[3, i] + " = " + LegalMoves[4, i] + LegalMoves[5, i];
+            //        else
+            //            Temp[i] = (int.Parse(LegalMoves[2, i]) + 1).ToString() + (char)(int.Parse(LegalMoves[1, i]) + 1 + Dictionnaire.AscShift) + " - " + LegalMoves[3, i] + " = " + LegalMoves[4, i] + LegalMoves[5, i];
 
-            }
+            //}
 
             // Cas où aucun coup légal n'a été trouvé
-            var ret = nbPossibleMoves == 0 ? new string[] { "Aucun coup legal" } : Temp;
+            //var ret = !LegalWords.Any() ? new string[] { "Aucun coup legal" } : LegalWords.Select(t => t.Text);
 
-            Debug.WriteLine(string.Join(Environment.NewLine, ret));
+            Debug.WriteLine(string.Join(Environment.NewLine, LegalWords.Select(t => t.Text)));
             if (nbPossibleMoves > 0) PossibleMove = true;
             nbMoves = nbPossibleMoves;
             nbPossibleMoves = 0;
-            return ret.ToList();
+            return LegalWords.ToList();
         }
         void ClearNode(ref Move move)
         {
@@ -524,67 +523,7 @@ namespace Dawg
 
 
             }
-            //    for (int letterIdx = 1; letterIdx <= 26; letterIdx++)
-            //    {
-            //        if (Dictionary[letterIdx, node] != 0)
-            //        {
-            //            // On recherche les lettres qui rajoutées au préfixe permettrait d'aboutir à des mots dans le dictionnaire
-            //            for (int la = 0; la < nbLetters; la++)
-            //            {
-            //                //if (leftLetters[la] == ((char)(letterIdx + AscShift)).ToString())
-            //                //{
-            //                //    // Pour chacune des lettres qui répondent au précédent critère dans le tirage
-            //                //    if (Controlers[line, column, letterIdx] > 0 || Controlers[line, column, 26] == 26)
-            //                //    {
-            //                //        // Si la lettre permet également de former des mots verticalement
-            //                //        // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
-            //                //        // alors on peut essayer de continuer le préfixe avec cette lettre
-            //                //        // la lettre utilisée est alors retirée du tirage
-            //                //        leftLetters[la] = leftLetters[nbLetters - 1];
-            //                //        nbLetters--;
-            //                //        // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-            //                //        GoOn(root + ((char)(letterIdx + AscShift)), ref leftLetters, minSize, Dictionary[letterIdx, node], line, column, ref nbLetters);
 
-            //                //        // Au retour de l'appel recursif on restitue la lettre dans le tirage
-            //                //        nbLetters++;
-            //                //        leftLetters[nbLetters - 1] = ((char)(letterIdx + AscShift)).ToString();
-            //                //    }
-
-            //                //    if (!wildcardInDraught) break;
-            //                //}
-            //                //else if (leftLetters[la] == "[")
-            //                //{
-            //                //    // Cas d'un joker
-            //                //    if (Controlers[line, column, la] > 0 || Controlers[line, column, 26] == 26)
-            //                //    {
-            //                //        // Si une lettre quelquonque (représentée par le joker) permet également de former des mots verticalement
-            //                //        // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
-            //                //        // alors on peut essayer de continuer le préfixe avec cette lettre
-            //                //        // le joker utilisé est alors retiré du tirage
-            //                //        leftLetters[la] = leftLetters[nbLetters - 1];
-            //                //        nbLetters--;
-
-            //                //        // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
-            //                //        GoOn(root + ((char)(la + AscShift)).ToString().ToLower(), ref leftLetters, minSize, Dictionary[la, node], line, column, ref nbLetters);
-
-
-            //                //        // Au retour de l'appel recursif on restitue le joker dans le tirage
-            //                //        nbLetters++;
-            //                //        leftLetters[nbLetters - 1] = "[";
-            //                //    }
-            //                //}
-            //            }
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    // Si la case n'est pas vide, on fait une concatenation du préfixe avec la lettre de la case courante
-            //    if (Dictionary[(int)((Grid[line, column].ToUpper())[0] - Dictionnaire.AscShift), node] != 0)
-            //    { // Si un mot du dictionnaire est susceptible de débuter par le nouveau préfixe ainsi obtenu
-            //      // alors on peut essayer de continuer le préfixe avec cette lettre vers la droite
-            //        GoOn(root + Grid[line, column], ref leftLetters, 0, Dictionary[((int)(Grid[line, column].ToUpper()[0]) - AscShift), node], line, column, ref nbLetters);
-            //    }
 
         }
         /// <summary>
@@ -626,8 +565,8 @@ namespace Dawg
             //    //Bouton_Jouer_Coup.Enabled = False
             //}
 
-            FindMove(p);
-            return nbMoves + " coups trouvés ";// en " + (Int((Timer - Debut) * 100)) / 100 & " s."
+            var ret = FindMove(p);
+            return ret.Count() + " coups trouvés ";// en " + (Int((Timer - Debut) * 100)) / 100 & " s."
 
 
             //If Timer -Debut > Limite_Temps Then MsgBox "Recherche intérrompue car le temps limite a été dépassé", vbInformation
@@ -908,85 +847,115 @@ namespace Dawg
         //    AddLegalMove(Direction, line, start, move, points, UsedDraughtLetters == 7);
 
         //}
-
+        public List<Word> LegalWords = new List<Word>();
+        /// <summary>
+        /// La liste des coups légaux est stockée sous forme de chaine dont les maillons représentent un coup
+        /// Le tri se fait par insertion : on parcourt la chaine pour repérer l'endroit où le coup doit être inséré
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <param name="t"></param>
+        /// <param name="word"></param>
+        /// <param name="point"></param>
+        /// <param name="scramble"></param>
         private void AddLegalMove(int direction, Tile t, string word, int point, bool scramble)
         {
-            // La liste des coups légaux est stockée sous forme de chaine dont les maillons représentent un coup
-            // Le tri se fait par insertion : on parcourt la chaine pour repérer l'endroit où le coup doit être inséré
 
-            Move PreviousNext;
-            Move NewNext;
+            //Move PreviousNext;
+            //Move NewNext;
 
-            if (nbAcceptedMoves >= MoveLimit && point <= MinPoint) return;
+            if (nbAcceptedMoves >= MoveLimit || point <= MinPoint) return;
 
-            Node = LegalMove;
-
-            while (Node.Next != null)
+            if (!LegalWords.Any(w => w.Direction == direction && w.Text == word && w.Tiles[0].XLoc == t.XLoc && w.Tiles[0].YLoc == t.YLoc))
             {
-                if (Node.Next.Direction == direction && Node.Next.Word == word && Node.Next.Line == t.XLoc && Node.Next.Column == t.YLoc)
-                {
-                    nbPossibleMoves--;
-                    return;
-                }
+                var tiles = new List<Tile>();
 
-                if (Node.Next.Point < point)
+                foreach (var c in word)
                 {
-                    nbAcceptedMoves++;
-                    PreviousNext = Node.Next;
-                    NewNext = new Move()
+                    var tile = t;
+                    if (direction == 0)
                     {
-                        Direction = direction,
-                        Line = t.XLoc,
-                        Column = t.YLoc,
-                        Word = word,
-                        Point = point,
-                        Scramble = scramble
-                    };
-                    Node.Next = NewNext;
-                    NewNext.Next = PreviousNext;
-                    if (nbAcceptedMoves > MoveLimit)
-                    {
-                        while (Node.Next.Next != null)
-                        {
-                            MinPoint = Node.Next.Next.Point;
-                            Node = Node.Next;
-                        }
-                        Node.Next = null;
-                        nbAcceptedMoves--;
-                        return;
+                        tiles.Add(tile);
+                        tile = tile.RightTile;
                     }
-                    else
-                    {
-                        return;
-                    }
-
                 }
-                Node = Node.Next;
-            }
-            nbAcceptedMoves++;
-            MinPoint = point;
-            PreviousNext = Node.Next;
-            NewNext = new Move()
-            {
-                Direction = direction,
-                Line = t.XLoc,
-                Column = t.YLoc,
-                Word = word,
-                Point = point,
-                Scramble = scramble
-            };
-            Node.Next = NewNext;
-            NewNext.Next = PreviousNext;
 
-            if (nbAcceptedMoves > MoveLimit)
-            {
-                while (Node.Next.Next != null)
+                LegalWords.Add(new Word(Game)
                 {
-                    Node = Node.Next;
-                }
-                Node.Next = null;
-                nbAcceptedMoves--;
+                    Tiles = tiles,
+                    Direction = direction,
+                    Text = word,
+
+                });
+                nbAcceptedMoves++;
             }
+            //Node = LegalMove;
+
+            //while (Node.Next != null)
+            //{
+            //    if (Node.Next.Direction == direction && Node.Next.Word == word && Node.Next.Line == t.XLoc && Node.Next.Column == t.YLoc)
+            //    {
+            //        nbPossibleMoves--;
+            //        return;
+            //    }
+
+            //    if (Node.Next.Point < point)
+            //    {
+            //        nbAcceptedMoves++;
+            //        PreviousNext = Node.Next;
+            //        NewNext = new Move()
+            //        {
+            //            Direction = direction,
+            //            Line = t.XLoc,
+            //            Column = t.YLoc,
+            //            Word = word,
+            //            Point = point,
+            //            Scramble = scramble
+            //        };
+            //        Node.Next = NewNext;
+            //        NewNext.Next = PreviousNext;
+            //        if (nbAcceptedMoves > MoveLimit)
+            //        {
+            //            while (Node.Next.Next != null)
+            //            {
+            //                MinPoint = Node.Next.Next.Point;
+            //                Node = Node.Next;
+            //            }
+            //            Node.Next = null;
+            //            nbAcceptedMoves--;
+            //            return;
+            //        }
+            //        else
+            //        {
+            //            return;
+            //        }
+
+            //    }
+            //    Node = Node.Next;
+            //}
+            //nbAcceptedMoves++;
+            //MinPoint = point;
+            //PreviousNext = Node.Next;
+            //NewNext = new Move()
+            //{
+            //    Direction = direction,
+            //    Line = t.XLoc,
+            //    Column = t.YLoc,
+            //    Word = word,
+            //    Point = point,
+            //    Scramble = scramble
+            //};
+            //Node.Next = NewNext;
+            //NewNext.Next = PreviousNext;
+
+            //if (nbAcceptedMoves > MoveLimit)
+            //{
+            //    while (Node.Next.Next != null)
+            //    {
+            //        Node = Node.Next;
+            //    }
+            //    Node.Next = null;
+            //    nbAcceptedMoves--;
+            //}
         }
 
         //private bool Found(long node, string letter)

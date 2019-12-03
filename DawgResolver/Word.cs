@@ -14,8 +14,16 @@ namespace DawgResolver
         public Word(Game g)
         {
             Game = g;
-        }
 
+        }
+        public bool Scramble
+        {
+            get
+            {
+                return Tiles.Count() == 7;
+            }
+        }
+        public int Direction { get; set; }
         public List<Tile> Tiles { get; set; } = new List<Tile>();
         public int Points
         {
@@ -45,7 +53,15 @@ namespace DawgResolver
 
             }
         }
+        public string Text { get; set; }
 
+        //public string Text
+        //{
+        //    get
+        //    {
+        //        return new string(Tiles.Select(t => t.Letter.Char).ToArray());
+        //    }
+        //}
 
         public bool IsAllowed
         {
