@@ -70,6 +70,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\Words\WordSolver.cs" />
+    <Compile Include="Core\Words\WordValidator.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Forms\LettersForm.cs">
       <SubType>Form</SubType>

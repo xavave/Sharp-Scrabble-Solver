@@ -1,6 +1,7 @@
 ﻿using Dawg;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +13,29 @@ namespace DawgResolver
     [Serializable]
     public class Game
     {
+        public void PrintGridConsole(Tile[,] Tiles, bool printAnchor)
+        {
+            var txt = "";
+            for (int y = 0; y < Game.BoardSize; y++)
+            {
+                for (int x = 0; x < Game.BoardSize; x++)
+                {
+
+                    var tile = Grid[x, y];
+                    if (printAnchor)
+                    {
+                        txt = tile.IsAnchor ? "@" : tile.IsEmpty ? "#" : tile.Letter.ToString();
+                    }
+                    else
+                    {
+                        txt = tile.IsEmpty ? "#" : tile.Letter.ToString();
+                    }
+                    Debug.Write(txt);
+                }
+                Debug.WriteLine("|");
+            }
+            Debug.WriteLine("___________________________");
+        }
         public Dictionnaire Dico { get; }
         public const char Joker = '*';
 
@@ -70,7 +94,7 @@ namespace DawgResolver
         };
 
 
-        public int AnchorCount { get; set; } = 0;
+
         public const int BoardSize = 15;
         private Tile[,] grid = new Tile[BoardSize, BoardSize];
         public void InitBoard()

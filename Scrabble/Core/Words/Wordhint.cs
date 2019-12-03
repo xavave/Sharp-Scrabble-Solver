@@ -20,7 +20,7 @@ namespace Scrabble.Core.Words
         public WordHint(ScrabbleForm _scrabbleForm)
         {
             InitializeComponent();
-            this.DisplayMember = "Text";
+            this.DisplayMember = "DisplayText";
             this.Enabled = true;
             this.Location = new Point(836, 500);
             this.Name = "wordHintTxtBox";
@@ -58,18 +58,18 @@ namespace Scrabble.Core.Words
 
             var currentTiles = ScrabbleForm.TileManager.Tiles.OfType<ScrabbleTile>().Where(t => t.TileInPlay).ToList();
             ScrabbleForm.TileManager.ResetTilesOnBoardFromTurn();
-            //currentTiles.ForEach(ti =>
-            //{
-            //    if (ti.TileInPlay)
-            //    {
+            currentTiles.ForEach(ti =>
+            {
+                if (ti.TileInPlay)
+                {
 
-            //        ti.Text = "";
-            //    }
-            //    ti.TileInPlay = false;
-            //    ti.ClearHighlight();
-            //});
-            //if (this.SelectedIndex > -1)
-            //    SetHintWord(this.Items[this.SelectedIndex] as Word, ScrabbleForm.TileManager.Tiles);
+                    ti.Text = "";
+                }
+                ti.TileInPlay = false;
+                ti.ClearHighlight();
+            });
+            if (this.SelectedIndex > -1)
+                SetHintWord(this.Items[this.SelectedIndex] as Word, ScrabbleForm.TileManager.Tiles);
 
         }
 
@@ -117,27 +117,27 @@ namespace Scrabble.Core.Words
         //    return valid;
 
         //}
-        //public bool SetHintWord(Word word, ITile[,] scrabbleTile = null)
-        //{
+        public bool SetHintWord(Word word, ITile[,] scrabbleTile = null)
+        {
 
-        //    //if (word.Direction == MovementDirection.None)
-        //    //{
-        //    //    word.StartX = 7;
-        //    //    word.StartY = 7;
-        //    //    word.Direction = MovementDirection.Across;
-        //    //}
+            if (word.Direction == MovementDirection.None)
+            {
+                word.Tiles[0].XLoc = 7;
+                word.Tiles[0].YLoc = 7;
+                word.Direction = MovementDirection.Across;
+            }
 
-        //    //for (int i = 0; i < word.Text.Length; i++)
-        //    //{
-        //    //    var tile = scrabbleTile[word.StartX + (word.Direction == MovementDirection.Across ? i : 0), word.StartY + (word.Direction == MovementDirection.Down ? i : 0)];
-        //    //    if (tile.Text == "")// || tile.Text == word.Text[i].ToString() && ScrabbleForm.WordValidator.GetSurroundingWords(tile.XLoc, tile.YLoc).All(w => w.Valid))
-        //    //                        //{
-        //    //        tile.Text = word.Text[i].ToString();
+            for (int i = 0; i < word.Text.Length; i++)
+            {
+                var tile = scrabbleTile[word.Tiles[0].XLoc + (word.Direction == MovementDirection.Across ? i : 0), word.Tiles[0].YLoc+ (word.Direction == MovementDirection.Down ? i : 0)];
+                if (tile.Text == "")// || tile.Text == word.Text[i].ToString() && ScrabbleForm.WordValidator.GetSurroundingWords(tile.XLoc, tile.YLoc).All(w => w.Valid))
+                                    //{
+                    tile.Text = word.Text[i].ToString();
 
 
-        //    //}
-        //    //return ScrabbleForm.WordValidator.ValidateWordsInPlay(scrabbleTile).Valid;
-        //}
+            }
+            return word.IsAllowed;
+        }
 
         public void ClearText()
         {

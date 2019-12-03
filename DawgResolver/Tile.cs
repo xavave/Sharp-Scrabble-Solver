@@ -23,14 +23,14 @@ namespace Dawg
             IsAnchor = (UpTile != null && !UpTile.IsEmpty) || (DownTile != null && !DownTile.IsEmpty) || (RightTile != null && !RightTile.IsEmpty) || (LeftTile != null && !LeftTile.IsEmpty);
         }
 
-
+        public bool FromJoker { get; set; } = false;
         public Dictionary<char, int> PossibleLetterPoints { get; set; } = new Dictionary<char, int>(27);
         public int XLoc { get; set; }
         public int YLoc { get; set; }
         public TileType TileType { get; set; }
         public Letter Letter { get; set; } = new Letter() { Char = char.MinValue };
-        public int PrefixMinSize { get; set; } = 0;
-        public int PrefixMaxSize { get; set; } = 0;
+        public int AnchorLimit2 { get; set; } = 0;
+        public int AnchorLimit1 { get; set; } = 0;
         public bool IsAnchor { get => isAnchor; set => isAnchor = value; }
 
 
@@ -38,7 +38,7 @@ namespace Dawg
         {
             get
             {
-                return this == null || Letter.Char == char.MinValue;
+                return this == null || Letter == null || Letter.Char == char.MinValue;
             }
         }
 
@@ -73,14 +73,14 @@ namespace Dawg
         {
             get
             {
-                if (XLoc > 0)
-                    return Game.Grid[this.XLoc - 1, this.YLoc];
+                if (YLoc > 0)
+                    return Game.Grid[this.XLoc, this.YLoc - 1];
                 return null;
             }
         }
         public override string ToString()
         {
-            return this.Letter.Char.ToString() + "[" + XLoc.ToString() + "," + YLoc.ToString() + "]";
+            return $"{this.Letter.Char} [{Game.Alphabet[YLoc]}{ XLoc + 1}] {(isAnchor ? " Ancre" : "")}";
         }
     }
 

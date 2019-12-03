@@ -21,29 +21,29 @@ namespace Scrabble.Core
         string Text { get; set; }
         bool TileInPlay { get; set; }
     }
-    public class VirtualTile : ITile
-    {
-        public ScrabbleForm ScrabbleForm { get; set; }
-        public VirtualTile(ScrabbleForm scrabbleForm)
-        {
-            ScrabbleForm = scrabbleForm;
-        }
-        public int XLoc { get; set; }
-        public int YLoc { get; set; }
-        public TileType TileType { get; set; }
-        public string Text { get; set; }
-        public bool TileInPlay { get; set; }
+    //public class VirtualTile : ITile
+    //{
+    //    public ScrabbleForm ScrabbleForm { get; set; }
+    //    public VirtualTile(ScrabbleForm scrabbleForm)
+    //    {
+    //        ScrabbleForm = scrabbleForm;
+    //    }
+    //    public int XLoc { get; set; }
+    //    public int YLoc { get; set; }
+    //    public TileType TileType { get; set; }
+    //    public string Text { get; set; }
+    //    public bool TileInPlay { get; set; }
 
-        public void ClearHighlight()
-        {
-            throw new NotImplementedException();
-        }
+    //    public void ClearHighlight()
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-        public void OnHighlight(bool valid)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public void OnHighlight(bool valid)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 
     public class ScrabbleTile : TextBox, ITile
     {

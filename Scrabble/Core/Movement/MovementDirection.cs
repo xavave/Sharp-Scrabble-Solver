@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace Scrabble.Core
 {
-    public enum MovementDirection
-    {
-        Across, Down, None
-    };
+    
 }

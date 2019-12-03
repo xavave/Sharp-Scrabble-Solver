@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace DawgResolver
 {
+    public enum MovementDirection
+    {
+        Across, Down, None
+    };
     [Serializable]
     public class Word
     {
@@ -23,57 +27,61 @@ namespace DawgResolver
                 return Tiles.Count() == 7;
             }
         }
-        public int Direction { get; set; }
+        public MovementDirection Direction { get; set; }
         public List<Tile> Tiles { get; set; } = new List<Tile>();
         public int Points
         {
+            get; set;
+            //get
+            //{
+            //    int point = 0;
+            //    if (!IsAllowed) return 0;
+            //    int nbMultiX2 = 0;
+            //    int nbMultiX3 = 0;
+            //    foreach (var t in Tiles)
+            //    {
+            //        switch (t.TileType)
+            //        {
+            //            case TileType.DoubleLetter: point += t.Letter.Value * 2; break;
+            //            case TileType.TripleLetter: point += t.Letter.Value * 3; break;
+            //            default: point += t.Letter.Value; break;
+            //        }
+            //    }
+            //    nbMultiX2 = Tiles.Count(ti => ti.TileType == TileType.DoubleWord);
+            //    nbMultiX3 = Tiles.Count(ti => ti.TileType == TileType.TripleWord);
+            //    if (nbMultiX2 > 0)
+            //        point *= 2 * nbMultiX2;
+            //    if (nbMultiX3 > 0)
+            //        point *= 3 * nbMultiX3;
+
+            //    return point;
+
+            //}
+        }
+        //public string Text { get; set; }
+
+        public string Text
+        {
             get
             {
-                int point = 0;
-                if (!IsAllowed) return 0;
-                int nbMultiX2 = 0;
-                int nbMultiX3 = 0;
-                foreach (var t in Tiles)
-                {
-                    switch (t.TileType)
-                    {
-                        case TileType.DoubleLetter: point += t.Letter.Value * 2; break;
-                        case TileType.TripleLetter: point += t.Letter.Value * 3; break;
-                        default: point += t.Letter.Value; break;
-                    }
-                }
-                nbMultiX2 = Tiles.Count(ti => ti.TileType == TileType.DoubleWord);
-                nbMultiX3 = Tiles.Count(ti => ti.TileType == TileType.TripleWord);
-                if (nbMultiX2 > 0)
-                    point *= 2 * nbMultiX2;
-                if (nbMultiX3 > 0)
-                    point *= 3 * nbMultiX3;
-
-                return point;
-
+                return new string(Tiles.Select(t => t.Letter.Char).ToArray());
             }
         }
-        public string Text { get; set; }
-
-        //public string Text
-        //{
-        //    get
-        //    {
-        //        return new string(Tiles.Select(t => t.Letter.Char).ToArray());
-        //    }
-        //}
-
+        public string DisplayText
+        {
+            get => $"[{Game.Alphabet[Tiles[0].YLoc].Char}{Tiles[0].XLoc + 1}] " + Text + $" ({Points})";
+        }
         public bool IsAllowed
         {
             get
             {
-                return Game.Dico.MotAdmis(new string(this.Tiles.Select(cw => cw.Letter.Char).ToArray()));
+                return Game.Dico.MotAdmis(Text);
             }
 
         }
         public override string ToString()
         {
-            return new string(Tiles.Select(t => t.Letter.Char).ToArray()) + " (" + Points.ToString() + ")";
+            return DisplayText;
         }
     }
 }

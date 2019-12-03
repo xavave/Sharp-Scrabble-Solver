@@ -572,6 +572,36 @@ namespace Dawg
 
 
         }
+        public List<char> OutLettersFromWord(string mot)
+        {
+            List<char> ret = new List<char>();
+            Noeud enCours = DAWG;
+            List<Arc> arcs = new List<Arc>();
+
+            for (int i = 0; i < mot.Length; i++)
+            {
+                List<Arc> sortants = enCours.Sortants.Where(a => a.Lettre == char.ToUpper(mot[i])).ToList();
+                switch (sortants.Count)
+                {
+                    case 0:
+                        return ret;
+
+                    case 1:
+                        enCours = sortants[0].Destination;
+                        arcs.Add(sortants[0]);
+                        break;
+
+                    default:
+                        //il ne devrait jamais y avoir plus d'un arc pour une lettre sortant d'un noeud, si ça passe ici il y a un problème
+                        AnnonceEtape(string.Format("Problème lors de la lecture du DAWG, le noeud n°{0} possède plusieurs arcs sortants avec la lettre {1}.", enCours.Numero, mot[i]));
+                        break;
+
+                }
+            }
+            return enCours.Sortants.Select(s => s.Lettre).ToList();
+
+
+        }
 
         /// <summary>
         /// Vérifie la présence d'un mot dans le dictionnaire.

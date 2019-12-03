@@ -1,4 +1,5 @@
-﻿using Scrabble.Core.Words;
+﻿using DawgResolver;
+using Scrabble.Core.Words;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,7 +14,7 @@ namespace Scrabble.Core.Tile
     {
         public ScrabbleForm ScrabbleForm { get; set; }
         public TileBag TileBag { get; set; }
-        public List<ScrabbleTile> TilesInPlay { get;  set; }
+        public List<ScrabbleTile> TilesInPlay { get; set; }
 
         public ScrabbleTile[,] Tiles;
 
@@ -109,23 +110,13 @@ namespace Scrabble.Core.Tile
         /// <returns></returns>
         public MovementDirection GetMovementDirection()
         {
-            var tilesInPlay = new List<ScrabbleTile>();
-
-            for (int x = 0; x < ScrabbleForm.BOARD_WIDTH; x++)
-            {
-                for (int y = 0; y < ScrabbleForm.BOARD_HEIGHT; y++)
-                {
-                    if (Tiles[x, y].TileInPlay)
-                        tilesInPlay.Add(Tiles[x, y]);
-                }
-            }
 
             // No direction because less than 2 tiles have been played
-            if (tilesInPlay.Count <= 1)
+            if (TilesInPlay.Count <= 1)
                 return MovementDirection.None;
 
-            int xChange = tilesInPlay[1].XLoc - tilesInPlay[0].XLoc;
-            int yChange = tilesInPlay[1].YLoc - tilesInPlay[0].YLoc;
+            int xChange = TilesInPlay[1].XLoc - TilesInPlay[0].XLoc;
+            int yChange = TilesInPlay[1].YLoc - TilesInPlay[0].YLoc;
 
             return xChange > 0 ? MovementDirection.Across : yChange > 0 ? MovementDirection.Down : MovementDirection.None;
         }
@@ -136,7 +127,7 @@ namespace Scrabble.Core.Tile
         /// <returns></returns>
         public bool ValidateTilePositions()
         {
-             TilesInPlay = new List<ScrabbleTile>();
+            TilesInPlay = new List<ScrabbleTile>();
 
             if (ScrabbleForm.StatManager.Moves == 0)
             {
@@ -158,14 +149,10 @@ namespace Scrabble.Core.Tile
             }
 
             // Grab all the tiles in play in this turn.
-            for (int x = 0; x < ScrabbleForm.BOARD_WIDTH; x++)
-            {
-                for (int y = 0; y < ScrabbleForm.BOARD_HEIGHT; y++)
-                {
-                    if (Tiles[x, y].TileInPlay)
-                        TilesInPlay.Add(Tiles[x, y]);
-                }
-            }
+
+            foreach (var t in Tiles.OfType<ScrabbleTile>().Where(tt => tt.TileInPlay))
+                TilesInPlay.Add(t);
+
 
             var direction = GetMovementDirection();
 
