@@ -141,7 +141,7 @@ namespace Dawg
         }
         private List<Word> FindMove(Player p)
         {
-            Direction = MovementDirection.Across;
+            Direction = MovementDirection.Down;
             var grid = DetectTiles(p, Game.Grid);
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
@@ -149,12 +149,12 @@ namespace Dawg
             Game.PrintGrid(grid, true);
             //// Recherche des coups verticaux
             //// par transposition de la grille, on refait tout le processus
-            grid = TransposeGrid(grid);
-            Direction = MovementDirection.Down;
-            grid = DetectTiles(p, grid);
+            //grid = TransposeGrid(grid);
+            //Direction = MovementDirection.Down;
+            //grid = DetectTiles(p, grid);
 
-            //// Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            grid = FindMovesPerAnchor(p, grid);
+            ////// Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
+            //grid = FindMovesPerAnchor(p, grid);
 
             return LegalWords.OrderByDescending(t => t.Points).ToList();
         }
@@ -353,9 +353,8 @@ namespace Dawg
         {
             var leftLetters = p.Rack;
             var nbLetters = leftLetters.Count;
-            var prefixe = "";
 
-            foreach (var t in grid.OfType<Tile>().Where(t => t.IsAnchor).ToList())
+            foreach (var t in grid.OfType<Tile>().Where(t => t.IsAnchor))
             {
 
                 // Cas où la taille du préfixe est imposée
@@ -374,6 +373,7 @@ namespace Dawg
                         // Cas où le préfixe est déjà placé sur la grille
                         // On ne peut que continuer le préfixe vers la droite
                         NoeudActuel = 1;
+                        string prefixe = "";
                         for (int k = t.YLoc - t.AnchorLimit1; k <= t.YLoc - 1; k++)
                         {
                             prefixe += Game.Grid[t.XLoc, k].Letter;
@@ -387,7 +387,7 @@ namespace Dawg
                 }
                 else
                 {
-                    // Cas où k cases vides non identifiés comme ancres se trouvent devant l'ancre
+                    // Cas où k cases vides non identifiées comme ancres se trouvent devant l'ancre
                     // On essaie les différents préfixes possibles allant de 0 à k lettres
                     for (int k = 0; k <= t.AnchorLimit2; k++)
                     {
@@ -451,7 +451,7 @@ namespace Dawg
                     foreach (var c in Game.Alphabet.Take(26).Select(cc => cc.Char))
                     {
                         if (Game.Dico.Ancien[(int)c - Dictionnaire.AscShift, noeud] != 0)
-                            for (int la = 1; la < nbLetters; la++)
+                            for (int la = 0; la < nbLetters; la++)
                             {
                                 if (leftLetters[la].Char == c)
                                 {
@@ -690,8 +690,8 @@ namespace Dawg
         private void Add(Tile[,] grid, string word, Tile t)
         {
             //Debug.WriteLine(word);
-            int wordStartY = t.YLoc - word.Length;
-            int wordStartX = t.XLoc - word.Length;
+            int wordStartY = t.YLoc;
+            int wordStartX = t.XLoc;
             int multiplier = 1;
             int horizontalPoints = 0;
             int verticalPoints = 0;
@@ -709,7 +709,7 @@ namespace Dawg
                     startTile = grid[t.XLoc, wordStartY + letterIdx];
                 else
                 {
-                    startTile = grid[wordStartX, t.YLoc];
+                    startTile = grid[wordStartX + letterIdx, t.YLoc];
                 }
                 letterIdx++;
                 // Le calcul des points prend en compte les cases bonus non encore utilisées
