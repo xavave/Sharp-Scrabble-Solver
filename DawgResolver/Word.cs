@@ -18,6 +18,7 @@ namespace DawgResolver
         public Word(Game g)
         {
             Game = g;
+            Tiles = new List<Tile>();
 
         }
         public bool Scramble
@@ -28,7 +29,7 @@ namespace DawgResolver
             }
         }
         public MovementDirection Direction { get; set; }
-        public List<Tile> Tiles { get; set; } = new List<Tile>();
+        public List<Tile> Tiles { get; set; }
         public int Points
         {
             get; set;

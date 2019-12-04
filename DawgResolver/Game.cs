@@ -33,7 +33,7 @@ namespace DawgResolver
                     }
                     Debug.Write(txt);
                 }
-                Debug.WriteLine($"|{y + 1}");
+                Debug.WriteLine($"|{Alphabet[y].Char}");
             }
             Debug.WriteLine("_____________________________________");
         }
