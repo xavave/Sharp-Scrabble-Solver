@@ -64,18 +64,18 @@ namespace DawgResolver
         {
             get
             {
-                return new string(Tiles.Select(t => t.Letter.Char).ToArray());
+                return new string(Tiles.Select(t => t.FromJoker ? char.ToLower(t.Letter.Char) : t.Letter.Char).ToArray());
             }
         }
         public string DisplayText
         {
-            get => $"[{Game.Alphabet[Tiles[0].YLoc].Char}{Tiles[0].XLoc + 1}] " + Text + $" ({Points})";
+            get => Tiles.Any() ? $"[{Game.Alphabet[Tiles[0].YLoc].Char}{Tiles[0].XLoc + 1}] " + Text + $" ({Points})" : "?";
         }
         public bool IsAllowed
         {
             get
             {
-                return Game.Dico.MotAdmis(Text);
+                return Game.Dico.MotAdmis(Text.ToUpper());
             }
 
         }

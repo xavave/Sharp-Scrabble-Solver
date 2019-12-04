@@ -46,7 +46,7 @@ namespace Dawg
         /// Noeud père de tout le graphe
         /// </summary>
         public Noeud DAWG { get; set; }
-
+        public int[,] Ancien { get; set; }
         /// <summary>
         /// Retourne quel travail est en cours dans le dictionnaire
         /// </summary>
@@ -452,12 +452,13 @@ namespace Dawg
                 string[] lignes = content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                 //string[] lignes = File.ReadAllLines(FileName);
                 //le nombre de mots est présent dans le fichier par soucis de compatibilité avec le tutoriel de CArlVB, mais il n'est pas utile 
-                NombreNoeuds = Convert.ToInt32(lignes[1].Split(':')[1]);
+                NombreNoeuds = lignes.Count() - 2; // Convert.ToInt32(lignes[1].Split(':')[1]);
 
                 /*On connait à l'avance le nombre de noeuds car c'est écrit en entête par soucis de compatibilité avec le tutoriel de CArlVB
                  *Cependant, on aurait pu le déduire à partir de lignes.Length
                  *Utiliser un tableau permet de regarder au bon index si le noeud a déjà été créé par un arc entrant ou s'il faut le faire
                  */
+                Ancien = new int[28, NombreNoeuds+1];
                 Noeud[] noeuds = new Noeud[NombreNoeuds];
 
                 for (int i = 0; i < NombreNoeuds; i++)
@@ -480,7 +481,12 @@ namespace Dawg
                         n.Sortants = (from a in arcs
                                       select new Arc(n, a, noeuds)
                                         ).ToList();
+                        foreach (var s in n.Sortants)
+                        {
+                            Ancien[(int)s.Lettre - AscShift, s.Origine.Numero] = s.Destination.Numero;
+                        }
                     }
+                   
                 }
 
                 DAWG = noeuds[0];
@@ -537,6 +543,7 @@ namespace Dawg
 
         }
 
+
         /// <summary>
         /// Vérifie la présence d'un mot dans le dictionnaire.
         /// </summary>
@@ -572,6 +579,7 @@ namespace Dawg
 
 
         }
+       
         public List<char> OutLettersFromWord(string mot)
         {
             List<char> ret = new List<char>();
@@ -633,7 +641,9 @@ namespace Dawg
                         break;
                 }
             }
-            return enCours.IsTerminal;
+            var ret = enCours.IsTerminal;
+           
+            return ret;
         }
 
         /// <summary>

@@ -13,9 +13,10 @@ namespace DawgResolver
     [Serializable]
     public class Game
     {
-        public void PrintGridConsole(Tile[,] Tiles, bool printAnchor)
+        public void PrintGrid(Tile[,] Tiles, bool printAnchor)
         {
             var txt = "";
+            Debug.WriteLine("123456789ABCDEF");
             for (int y = 0; y < Game.BoardSize; y++)
             {
                 for (int x = 0; x < Game.BoardSize; x++)
@@ -24,17 +25,17 @@ namespace DawgResolver
                     var tile = Grid[x, y];
                     if (printAnchor)
                     {
-                        txt = tile.IsAnchor ? "@" : tile.IsEmpty ? "#" : tile.Letter.ToString();
+                        txt = tile.IsAnchor ? "@" : tile.IsEmpty ? "0" : tile.Letter.ToString();
                     }
                     else
                     {
-                        txt = tile.IsEmpty ? "#" : tile.Letter.ToString();
+                        txt = tile.IsEmpty ? "0" : tile.Letter.ToString();
                     }
                     Debug.Write(txt);
                 }
-                Debug.WriteLine("|");
+                Debug.WriteLine($"|{y + 1}");
             }
-            Debug.WriteLine("___________________________");
+            Debug.WriteLine("_____________________________________");
         }
         public Dictionnaire Dico { get; }
         public const char Joker = '*';
@@ -96,7 +97,7 @@ namespace DawgResolver
 
 
         public const int BoardSize = 15;
-        private Tile[,] grid = new Tile[BoardSize, BoardSize];
+        private Tile[,] grid = new Tile[BoardSize+1, BoardSize+1];
         public void InitBoard()
         {
             // Définition des cases bonus
