@@ -18,18 +18,20 @@ namespace DawgResolver
         public Word(Game g)
         {
             Game = g;
-            Tiles = new List<Tile>();
+            StartTile = new Tile(Game, 7, 7);
 
         }
+
+
         public bool Scramble
         {
             get
             {
-                return Tiles.Count() == 7;
+                return Text.Length >= 7;
             }
         }
         public MovementDirection Direction { get; set; }
-        public List<Tile> Tiles { get; set; }
+        public Tile StartTile { get; set; }
         public int Points
         {
             get; set;
@@ -59,24 +61,23 @@ namespace DawgResolver
 
             //}
         }
-        //public string Text { get; set; }
+        public string Text { get; set; }
 
-        public string Text
+        public string DisplayText
         {
             get
             {
-                return new string(Tiles.Select(t => t.FromJoker ? char.ToLower(t.Letter.Char) : t.Letter.Char).ToArray());
+                var pos = $"{Game.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
+                if (Direction == MovementDirection.Down)
+                    pos = $"{StartTile.Col + 1}{Game.Alphabet[StartTile.Ligne]}";
+                return $"[{pos}] {Text} ({Points})";
             }
-        }
-        public string DisplayText
-        {
-            get => Tiles.Any() ? $"[{Game.Alphabet[Tiles[0].YLoc].Char}{Tiles[0].XLoc + 1}] " + Text + $" ({Points})" : "?";
         }
         public bool IsAllowed
         {
             get
             {
-                return Game.Dico.MotAdmis(Text.ToUpper());
+                return Game.Dico.MotAdmis(Text);
             }
 
         }

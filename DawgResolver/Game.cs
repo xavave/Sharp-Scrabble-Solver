@@ -16,13 +16,14 @@ namespace DawgResolver
         public void PrintGrid(Tile[,] Tiles, bool printAnchor)
         {
             var txt = "";
-            Debug.WriteLine("123456789ABCDEF");
-            for (int y = 0; y < Game.BoardSize; y++)
+            Debug.WriteLine("123456789012345");
+            for (int ligne = 0; ligne < Game.BoardSize; ligne++)
             {
-                for (int x = 0; x < Game.BoardSize; x++)
+                for (int col = 0; col < Game.BoardSize; col++)
                 {
 
-                    var tile = Grid[x, y];
+                    var tile = Grid[ligne, col];
+                    if (tile == null) continue;
                     if (printAnchor)
                     {
                         txt = tile.IsAnchor ? "@" : tile.IsEmpty ? "0" : tile.Letter.ToString();
@@ -33,7 +34,7 @@ namespace DawgResolver
                     }
                     Debug.Write(txt);
                 }
-                Debug.WriteLine($"|{Alphabet[y].Char}");
+                Debug.WriteLine($"|{Alphabet[ligne].Char}");
             }
             Debug.WriteLine("_____________________________________");
         }
@@ -96,8 +97,8 @@ namespace DawgResolver
 
 
 
-        public const int BoardSize = 15;
-        private Tile[,] grid = new Tile[BoardSize+1, BoardSize+1];
+        public const int BoardSize = 16;
+        private Tile[,] grid = new Tile[BoardSize, BoardSize];
         public void InitBoard()
         {
             // Définition des cases bonus
@@ -117,22 +118,22 @@ namespace DawgResolver
                     switch (tp.Trim())
                     {
                         case "RE":
-                            grid[row, col].TileType = TileType.Regular;
+                            //grid[row, col].TileType = TileType.Regular;
                             break;
                         case "CE":
-                            grid[row, col].TileType = TileType.Center;
+                            //grid[row, col].TileType = TileType.Center;
                             break;
                         case "TW":
-                            grid[row, col].TileType = TileType.TripleWord;
+                            grid[row, col].WordMultiplier = 3;
                             break;
                         case "TL":
-                            grid[row, col].TileType = TileType.TripleLetter;
+                            grid[row, col].LetterMultiplier = 3;
                             break;
                         case "DW":
-                            grid[row, col].TileType = TileType.DoubleWord;
+                            grid[row, col].WordMultiplier = 2;
                             break;
                         case "DL":
-                            grid[row, col].TileType = TileType.DoubleLetter;
+                            grid[row, col].LetterMultiplier = 2;
                             break;
                         default:
                             throw new Exception($"Unknown tile type in inital_board file: {tp}");

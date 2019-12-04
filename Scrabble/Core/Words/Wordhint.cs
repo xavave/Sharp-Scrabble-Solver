@@ -122,14 +122,14 @@ namespace Scrabble.Core.Words
 
             if (word.Direction == MovementDirection.None)
             {
-                word.Tiles[0].XLoc = 7;
-                word.Tiles[0].YLoc = 7;
+                word.StartTile.Ligne = 7;
+                word.StartTile.Col = 7;
                 word.Direction = MovementDirection.Across;
             }
 
             for (int i = 0; i < word.Text.Length; i++)
             {
-                var tile = scrabbleTile[word.Tiles[0].XLoc + (word.Direction == MovementDirection.Across ? i : 0), word.Tiles[0].YLoc+ (word.Direction == MovementDirection.Down ? i : 0)];
+                var tile = scrabbleTile[word.StartTile.Ligne + (word.Direction == MovementDirection.Across ? i : 0), word.StartTile.Col+ (word.Direction == MovementDirection.Down ? i : 0)];
                 if (tile.Text == "")// || tile.Text == word.Text[i].ToString() && ScrabbleForm.WordValidator.GetSurroundingWords(tile.XLoc, tile.YLoc).All(w => w.Valid))
                                     //{
                     tile.Text = word.Text[i].ToString();

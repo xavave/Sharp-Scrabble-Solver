@@ -13,7 +13,7 @@ namespace DawgResolverTest
             var g = new Game();
 
             g.Grid[(int)Game.BoardSize / 2, (int)Game.BoardSize / 2].Letter = g.Alphabet.Find(c => c.Char == 'A');
-            //g.Grid[8, 7].Letter = g.Alphabet.Find(c => c.Char == 'N');
+            g.Grid[7, 8].Letter = g.Alphabet.Find(c => c.Char == 'A');
             //g.Grid[9, 7].Letter = g.Alphabet.Find(c => c.Char == 'N');
             //g.Grid[10, 7].Letter = g.Alphabet.Find(c => c.Char == 'E');
             //g.Grid[11, 7].Letter = g.Alphabet.Find(c => c.Char == 'E');
@@ -22,7 +22,7 @@ namespace DawgResolverTest
             //g.Grid[7, 9].Letter = g.Alphabet.Find(c => c.Char == 'N');
             //g.Grid[7, 10].Letter = g.Alphabet.Find(c => c.Char == 'E');
             //g.Grid[7, 11].Letter = g.Alphabet.Find(c => c.Char == 'E');
-            g.Resolver.NewDraught(g.Player1, "ASAKESP");
+            g.Resolver.NewDraught(g.Player1, "EUDNA*A");
             //Game.Grid[7, 7].IsAnchor = true;
             //Game.Grid[8, 7].IsAnchor = true;
             //Game.Grid[9, 7].IsAnchor = true;

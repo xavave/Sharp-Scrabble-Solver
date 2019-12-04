@@ -46,7 +46,7 @@ namespace Dawg
         /// Noeud père de tout le graphe
         /// </summary>
         public Noeud DAWG { get; set; }
-        public int[,] Ancien { get; set; }
+        public int[,] Legacy { get; set; }
         /// <summary>
         /// Retourne quel travail est en cours dans le dictionnaire
         /// </summary>
@@ -458,7 +458,7 @@ namespace Dawg
                  *Cependant, on aurait pu le déduire à partir de lignes.Length
                  *Utiliser un tableau permet de regarder au bon index si le noeud a déjà été créé par un arc entrant ou s'il faut le faire
                  */
-                Ancien = new int[28, NombreNoeuds+1];
+                Legacy = new int[28, NombreNoeuds + 1];
                 Noeud[] noeuds = new Noeud[NombreNoeuds];
 
                 for (int i = 0; i < NombreNoeuds; i++)
@@ -472,7 +472,7 @@ namespace Dawg
                     string ligne = lignes[i + 2];//on lit la ligne correspondante, il faut penser à sauter les 2 lignes d'entête
 
                     n.IsTerminal = ligne.EndsWith("#");
-
+                    Legacy[27, n.Numero] = n.IsTerminal ? 1 : 0;
                     if (ligne != "#")//on exclu le cas particulier du noeud terminal sans enfant
                     {
                         //on désérialize les arcs sortants
@@ -483,10 +483,12 @@ namespace Dawg
                                         ).ToList();
                         foreach (var s in n.Sortants)
                         {
-                            Ancien[(int)s.Lettre - AscShift, s.Origine.Numero] = s.Destination.Numero;
+                            Legacy[(int)s.Lettre - AscShift, s.Origine.Numero] = s.Destination.Numero;
                         }
                     }
-                   
+
+
+
                 }
 
                 DAWG = noeuds[0];
@@ -579,7 +581,7 @@ namespace Dawg
 
 
         }
-       
+
         public List<char> OutLettersFromWord(string mot)
         {
             List<char> ret = new List<char>();
@@ -614,17 +616,17 @@ namespace Dawg
         /// <summary>
         /// Vérifie la présence d'un mot dans le dictionnaire.
         /// </summary>
-        /// <param name="Mot">Mot à vérifier</param>
+        /// <param name="mot">Mot à vérifier</param>
         /// <returns></returns>
-        public bool MotAdmis(string Mot)
+        public bool MotAdmis(string mot)
         {
 
             Noeud enCours = DAWG;
-            List<Arc> arcs = new List<Arc>();
+            var arcs = new List<Arc>();
 
-            for (int i = 0; i < Mot.Length; i++)
+            for (int i = 0; i < mot.Length; i++)
             {
-                List<Arc> sortants = enCours.Sortants.Where(a => a.Lettre == Mot[i]).ToList();
+                List<Arc> sortants = enCours.Sortants.Where(a => a.Lettre == char.ToUpper(mot[i])).ToList();
                 switch (sortants.Count)
                 {
                     case 0:
@@ -637,40 +639,40 @@ namespace Dawg
 
                     default:
                         //il ne devrait jamais y avoir plus d'un arc pour une lettre sortant d'un noeud, si ça passe ici il y a un problème
-                        AnnonceEtape(string.Format("Problème lors de la lecture du DAWG, le noeud n°{0} possède plusieurs arcs sortants avec la lettre {1}.", enCours.Numero, Mot[i]));
+                        AnnonceEtape(string.Format("Problème lors de la lecture du DAWG, le noeud n°{0} possède plusieurs arcs sortants avec la lettre {1}.", enCours.Numero, mot[i]));
                         break;
                 }
             }
             var ret = enCours.IsTerminal;
-           
+
             return ret;
         }
 
         /// <summary>
         /// Ajoute un mot au dictionnaire
         /// </summary>
-        /// <param name="Mot">Mot à ajouté</param>
+        /// <param name="mot">Mot à ajouté</param>
         /// <remarks>On vérifie d'abord que le mot n'est pas déjà présent</remarks>
-        public void AjouterUnMot(string Mot)
+        public void AjouterUnMot(string mot)
         {
             //chrono.Restart();
             TravailEnCours = Dawg.TravailEnCours.AjoutMot;
 
-            Mot = Mot.ToUpper();//au cas ou il soit en minuscule
+            mot = mot.ToUpper();//au cas ou il soit en minuscule
 
-            if (!MotAdmis(Mot))
+            if (!MotAdmis(mot))
             {
                 Noeud aRejoinde = DAWG;
-                string suffixe = Mot;
+                string suffixe = mot;
 
-                List<Arc> prefixe = ExtrairePrefixeCommun(Mot, DAWG);
+                List<Arc> prefixe = ExtrairePrefixeCommun(mot, DAWG);
                 int longueur = prefixe.Count;
 
                 if (longueur > 0)//si un suffixe existe, on continue à partir de là
                 {
                     AnnonceEtape(string.Format("Préfixe trouvé \"{0}\".", Arc.RetourneMot(prefixe)));
                     aRejoinde = prefixe.Last().Destination;
-                    suffixe = Mot.Substring(longueur);
+                    suffixe = mot.Substring(longueur);
                 }
                 else
                     AnnonceEtape("Pas de préfixe trouvé");//théoriquement ça n'est pas possible, en effet, il n'existe aucune lettre qui ne commence aucun mot dans le dictionnaire ASCII
@@ -697,14 +699,14 @@ namespace Dawg
                 AnnonceEtape(string.Format("Suffixe trouvé \"{0}\".", Arc.RetourneMot(arcsSuffixe)));
                 JoindreLesChemins(aRejoinde, enCours, suffixe.Take(i + 1).ToArray());
 
-                Mots.Add(Mot);
+                Mots.Add(mot);
 
                 AnnonceEtape("Ecriture du nouveau fichier DAWG.");
                 Noeud.Serialize(dawg, Mots.Count, "DawgEn2Temps.txt");
                 AnnonceEtape("Mot ajouté et fichier enregistré.");
             }
             else
-                AnnonceEtape(string.Format("Le mot \"{0}\" existe déja.", Mot));
+                AnnonceEtape(string.Format("Le mot \"{0}\" existe déja.", mot));
 
 
             //chrono.Stop();

@@ -131,32 +131,6 @@ namespace Scrabble.Core.Words
         //}
 
         /// <summary>
-        /// Get the tiles from the game board that a word has been played on.
-        /// </summary>
-        /// <param name="word"></param>
-        /// <returns></returns>
-        public List<Dawg.Tile> GetWordTiles(Word word, ITile[,] scrabbleTile = null)
-        {
-            var tiles = new List<Dawg.Tile>();
-            if (scrabbleTile == null) scrabbleTile = ScrabbleForm.TileManager.Tiles;
-            if (word.Tiles[0].XLoc != word.Tiles.Last().XLoc)
-            {
-                // Word is played horizontally
-                for (var x = word.Tiles[0].XLoc; x <= word.Tiles.Last().XLoc; x++)
-                    tiles.Add(new Dawg.Tile(ScrabbleForm.Game, x, word.Tiles[0].YLoc) { Letter = ScrabbleForm.Game.Alphabet.Find(t => t.Char == word.Tiles[x].Letter.Char) });
-            }
-            else
-            {
-                // Word is played vertically
-                for (var y = word.Tiles[0].YLoc; y <= word.Tiles.Last().YLoc; y++)
-                tiles.Add(new Dawg.Tile(ScrabbleForm.Game, word.Tiles[0].XLoc,y) { Letter = ScrabbleForm.Game.Alphabet.Find(t => t.Char == word.Tiles[y].Letter.Char) });
-            }
-
-            return tiles;
-        }
-
-
-        /// <summary>
         /// Traverse the board horizontally and vertically from a given point (x, y)
         /// to find the full word in play in both the horizontal and vertical direction.
         /// These words are then validated to ensure that the move is valid.

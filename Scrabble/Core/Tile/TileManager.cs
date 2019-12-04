@@ -40,12 +40,12 @@ namespace Scrabble.Core.Tile
                 //    {
                 var tile = new ScrabbleTile(ScrabbleForm)
                 {
-                    XLoc = virtualTile.XLoc,
-                    YLoc = virtualTile.YLoc,
+                    XLoc = virtualTile.Ligne,
+                    YLoc = virtualTile.Col,
                     TileType = virtualTile.TileType
                 };
                 tile.BackColor = SystemColors.ButtonFace;
-                tile.Location = new Point(virtualTile.XLoc * (ScrabbleForm.TILE_SIZE + 2), virtualTile.YLoc * (ScrabbleForm.TILE_SIZE + 2));
+                tile.Location = new Point(virtualTile.Ligne * (ScrabbleForm.TILE_SIZE + 2), virtualTile.Col * (ScrabbleForm.TILE_SIZE + 2));
                 tile.Size = new Size(ScrabbleForm.TILE_SIZE, ScrabbleForm.TILE_SIZE);
                 //tile.UseVisualStyleBackColor = false;
                 tile.Font = new Font("Verdana", 25.75F, FontStyle.Regular);
@@ -54,7 +54,7 @@ namespace Scrabble.Core.Tile
                 tile.SetRegularBackgroundColour();
                 ScrabbleForm.Controls.Add(tile);
 
-                Tiles[virtualTile.XLoc, virtualTile.YLoc] = tile;
+                Tiles[virtualTile.Ligne, virtualTile.Col] = tile;
 
             }
         }

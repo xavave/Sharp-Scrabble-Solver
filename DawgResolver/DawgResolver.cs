@@ -94,9 +94,6 @@ namespace Dawg
 
         private Tile[,] DetectTiles(Player p, Tile[,] grid)
         {
-            MinPoint = 0;
-            nbAcceptedMoves = 0;
-
             //Game.Grid = RealBoard.DeepClone();
 
             //On efface les informations précédentes en vue d'une nouvelle analyse
@@ -139,13 +136,13 @@ namespace Dawg
             }
             return grid;
         }
-        private List<Word> FindMove(Player p)
+        private List<Word> FindMove(Player p, MovementDirection direction)
         {
-            Direction = MovementDirection.Down;
+
             var grid = DetectTiles(p, Game.Grid);
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            grid = FindMovesPerAnchor(p, grid);
+            grid = FindMovesPerAnchor(p, grid, direction);
             Game.PrintGrid(grid, true);
             //// Recherche des coups verticaux
             //// par transposition de la grille, on refait tout le processus
@@ -172,35 +169,21 @@ namespace Dawg
         /// </summary>
         private Tile[,] FindControlers(Tile[,] grid)
         {
+            int L = 0;
 
-
-            int l = 0;
-
-
-            foreach (var t in grid.OfType<Tile>().Where(til => til != null))
+            foreach (var t in grid.OfType<Tile>())
             {
-
                 if (t.IsAnchor)
                 {
                     var wordStart = "";
                     var wordEnd = "";
                     int points = 0;
-                    var tileCpy = new Tile(Game, t.XLoc, t.YLoc)
-                    {
-                        PossibleLetterPoints = t.PossibleLetterPoints,
-                        Letter = t.Letter,
-                        IsAnchor = t.IsAnchor,
-                        TileType = t.TileType,
-                        AnchorLimit1 = t.AnchorLimit1,
-                        AnchorLimit2 = t.AnchorLimit2,
-                    };
+                    var tileCpy = t.Copy();
 
                     //On rassemble le début éventuel des mots (lettres situées au dessus de la case)
                     while (tileCpy.UpTile != null && !tileCpy.UpTile.IsEmpty)
                     {
-
                         tileCpy = tileCpy.UpTile;
-
                         wordStart += tileCpy.Letter.Char;
                         points += tileCpy.Letter.Value;
 
@@ -218,21 +201,14 @@ namespace Dawg
                     //On vérifie pour chaque Lettre L de A à Z si Debut+L+Fin forme un mot valide
                     //Si tel est le cas, la lettre L est jouable pour la case considérée
                     //et on précalcule le point que le mot verticalement formé permettrait de gagner si L était jouée
-                    l = 0;
+                    L = 0;
                     foreach (var c in Game.Alphabet.Take(26))
                     {
-                        var currentWord = wordStart + c + wordEnd;
+                        var currentWord = (wordStart + c + wordEnd).ToUpper();
                         if (currentWord.Length > 1 && Game.Dico.MotAdmis(currentWord))
                         {
-                            var letterMultiplier = 1;
-                            if (t.TileType == TileType.DoubleLetter) letterMultiplier = 2;
-                            else if (t.TileType == TileType.TripleLetter) letterMultiplier = 3;
-                            var wordMultiplier = 1;
-                            if (t.TileType == TileType.DoubleWord) wordMultiplier = 2;
-                            else if (t.TileType == TileType.TripleWord) wordMultiplier = 3;
-
-                            t.PossibleLetterPoints[c.Char] = points + c.Value * letterMultiplier * wordMultiplier;
-                            l++;
+                            t.PossibleLetterPoints[c.Char] = points + c.Value * t.LetterMultiplier * t.WordMultiplier;
+                            L++;
                         }
                         else
                             t.PossibleLetterPoints[c.Char] = 0;
@@ -243,8 +219,7 @@ namespace Dawg
                     if (string.IsNullOrWhiteSpace(wordStart + wordEnd))
                         t.PossibleLetterPoints[Game.Joker] = 26;
                     else
-                        t.PossibleLetterPoints[Game.Joker] = l;
-
+                        t.PossibleLetterPoints[Game.Joker] = L;
                 }
                 else
                     if (t.IsEmpty)
@@ -265,38 +240,26 @@ namespace Dawg
 
             foreach (var t in grid.OfType<Tile>().Where(ti => ti.IsEmpty))
             {
-                if (t.XLoc == 8 && t.YLoc == 7)
-                {
-
-                }
                 t.IsAnchor = (t.UpTile != null && !t.UpTile.IsEmpty) || (t.DownTile != null && !t.DownTile.IsEmpty) || (t.RightTile != null && !t.RightTile.IsEmpty) || (t.LeftTile != null && !t.LeftTile.IsEmpty);
                 // Cas où l'ancre est à l'extrème gauche du plateau, la taille du préfixe est exactement 0
                 // Cas où l'ancre est précédée d'une autre ancre, la taille du préfixe est exactement 0
                 if (t.IsAnchor)
                 {
-                    var tileCpy = new Tile(Game, t.XLoc, t.YLoc)
-                    {
-                        PossibleLetterPoints = t.PossibleLetterPoints,
-                        Letter = t.Letter,
-                        IsAnchor = t.IsAnchor,
-                        TileType = t.TileType,
-                        AnchorLimit1 = t.AnchorLimit1,
-                        AnchorLimit2 = t.AnchorLimit2,
-                    };
+                    var tileCpy = t.Copy();
+
                     int cptPrefix = 0;
 
-                    if (t.YLoc == 0 || t.UpTile.IsAnchor)
+                    if (t.Col == 0 || t.LeftTile.IsAnchor)
                     {
                         t.AnchorLimit2 = 0;
                         t.AnchorLimit1 = 0;
                     }
-                    else if (!t.UpTile.IsEmpty)
+                    else if (!t.LeftTile.IsEmpty)
                     {
                         // Cas où l'ancre est précédée d'une case occupée, la taille du préfixe est exactement également la taille du mot
                         // ou de la chaîne qui précède l'ancre
 
-
-                        while (tileCpy != null && tileCpy.UpTile != null && !tileCpy.UpTile.IsEmpty)
+                        while (tileCpy != null && tileCpy.LeftTile != null && !tileCpy.LeftTile.IsEmpty)
                         {
                             tileCpy = tileCpy.UpTile;
                             cptPrefix++;
@@ -304,25 +267,24 @@ namespace Dawg
                         t.AnchorLimit2 = cptPrefix;
                         t.AnchorLimit1 = cptPrefix;
                     }
-                    else if (t.UpTile.IsEmpty)
+                    else if (t.LeftTile.IsEmpty)
                     {
                         // Cas où l'ancre est précédée par un case vide,
                         // la taille du préfixe varie de 0 à k où k représente le nombre de cases vides non identifiées comme des ancres
                         cptPrefix = 0;
-                        while (tileCpy != null && tileCpy.UpTile != null && tileCpy.UpTile.IsEmpty && !tileCpy.UpTile.IsAnchor)
+                        while (tileCpy != null && tileCpy.LeftTile != null && !tileCpy.LeftTile.IsAnchor)
                         {
-                            tileCpy = tileCpy.UpTile;
-                            cptPrefix++;
+                            tileCpy = tileCpy.LeftTile;
+                            if (tileCpy.IsEmpty) cptPrefix++;
                         }
-                        t.AnchorLimit1 = 0;
-                        t.AnchorLimit2 = cptPrefix;
                     }
-
+                    t.AnchorLimit1 = 0;
+                    t.AnchorLimit2 = cptPrefix;
                 }
 
             }
-            return grid;
 
+            return grid;
 
         }
 
@@ -349,12 +311,12 @@ namespace Dawg
         /// <param name="p"></param>
         /// <param name="grid"></param>
         /// <returns></returns>
-        private Tile[,] FindMovesPerAnchor(Player p, Tile[,] grid)
+        private Tile[,] FindMovesPerAnchor(Player p, Tile[,] grid, MovementDirection direction)
         {
             var leftLetters = p.Rack;
             var nbLetters = leftLetters.Count;
 
-            foreach (var t in grid.OfType<Tile>().Where(t => t.IsAnchor))
+            foreach (var t in grid.OfType<Tile>().Where(t => t.IsAnchor).OrderBy(o => o.Ligne))
             {
 
                 // Cas où la taille du préfixe est imposée
@@ -362,11 +324,9 @@ namespace Dawg
                 {
                     // Cas du préfixe vide
                     // On ne peut que former un nouveau mot vers la droite
-
-                    if (t.AnchorLimit2 == 0)
+                    if (t.AnchorLimit1 == 0)
                     {
-
-                        ExtendRight(grid, "", ref leftLetters, 1, 1, t.XLoc, t.YLoc, ref nbLetters);
+                        ExtendRight(grid, "", ref leftLetters, 1, 1, t.Ligne, t.Col, ref nbLetters, direction);
                     }
                     else
                     {
@@ -374,15 +334,12 @@ namespace Dawg
                         // On ne peut que continuer le préfixe vers la droite
                         NoeudActuel = 1;
                         string prefixe = "";
-                        for (int k = t.YLoc - t.AnchorLimit1; k <= t.YLoc - 1; k++)
+                        for (int k = t.Col - t.AnchorLimit1; k < t.Col; k++)
                         {
-                            prefixe += Game.Grid[t.XLoc, k].Letter;
-                            var trouv = Trouve(Game.Grid[t.XLoc, k].Letter.Char, NoeudActuel);
-
-
+                            prefixe += Game.Grid[t.Ligne, k].Letter;
+                            var trouv = Trouve(Game.Grid[t.Ligne, k].Letter.Char, NoeudActuel);
                         }
-
-                        ExtendRight(grid, prefixe, ref leftLetters, 1, NoeudActuel, t.XLoc, t.YLoc, ref nbLetters);
+                        ExtendRight(grid, prefixe.ToUpper(), ref leftLetters, 1, NoeudActuel, t.Ligne, t.Col, ref nbLetters, direction);
                     }
                 }
                 else
@@ -391,8 +348,7 @@ namespace Dawg
                     // On essaie les différents préfixes possibles allant de 0 à k lettres
                     for (int k = 0; k <= t.AnchorLimit2; k++)
                     {
-                        ExtendRight(grid, "", ref leftLetters, k, 1, t.XLoc, t.YLoc - k, ref nbLetters);
-
+                        ExtendRight(grid, "", ref leftLetters, k, 1, t.Ligne, t.Col - k, ref nbLetters, direction);
                     }
                 }
 
@@ -409,11 +365,11 @@ namespace Dawg
         private bool Trouve(int lettre, int noeud)
         {
             var trouve = false;
-            if (Game.Dico.Ancien[lettre - Dictionnaire.AscShift, noeud] == 0)
+            if (Game.Dico.Legacy[lettre - Dictionnaire.AscShift, noeud] == 0)
                 return trouve;
             else
                 trouve = true;
-            NoeudActuel = Game.Dico.Ancien[lettre - Dictionnaire.AscShift, noeud];
+            NoeudActuel = Game.Dico.Legacy[lettre - Dictionnaire.AscShift, noeud];
             return trouve;
         }
 
@@ -428,89 +384,84 @@ namespace Dawg
         /// <param name="line"></param>
         /// <param name="column"></param>
         /// <param name="nbLetters"></param>
-        private void ExtendRight(Tile[,] grid, string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne, ref int nbLetters)
+        private void ExtendRight(Tile[,] grid, string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne, ref int nbLetters, MovementDirection direction)
         {
-
             bool jokerInDraught = leftLetters.Take(nbLetters).Any(l => l.Char == Game.Joker);
 
-            Tile t = null;
-            if (ligne < 15 && colonne < 15)
-                t = grid[ligne, colonne];
-            if (t != null)
-                if (t.IsEmpty)
+            Tile t = grid[ligne, colonne];
+
+            if (t.IsEmpty)
+            {
+                // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions
+                if (Game.Dico.Legacy[27, noeud] != 0 && partialWord.Length > minSize && partialWord.Length > 1 && nbLetters < leftLetters.Count())
+                {   // Si le préfixe constitue déjà un mot valide
+                    // alors on peut rajouter le préfixe dans la liste des coups admis
+                    //t.Letter = Game.Alphabet.Find(l => l.Char == prefix[0]);
+                    Add(grid, partialWord, t, direction);
+                }
+
+                for (int i = 1; i <= 26; i++)
                 {
-                    // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions
-                    if (Game.Dico.MotAdmis(partialWord.ToUpper()) && partialWord.Length > minSize && partialWord.Length > 1 && nbLetters < leftLetters.Count())
-                    {
-                        // Si le préfixe constitue déjà un mot valide
-                        // alors on peut rajouter le préfixe dans la liste des coups admis
-                        //t.Letter = Game.Alphabet.Find(l => l.Char == prefix[0]);
-                        Add(grid, partialWord, t);
-                    }
 
-                    foreach (var c in Game.Alphabet.Take(26).Select(cc => cc.Char))
-                    {
-                        if (Game.Dico.Ancien[(int)c - Dictionnaire.AscShift, noeud] != 0)
-                            for (int la = 0; la < nbLetters; la++)
+                    if (Game.Dico.Legacy[i, noeud] != 0)
+                        for (int j = 0; j < nbLetters; j++)
+                        {
+                            if (char.ToUpper(leftLetters[j].Char) == (char)(i + Dictionnaire.AscShift))
                             {
-                                if (leftLetters[la].Char == c)
+                                if (((t.PossibleLetterPoints.ContainsKey((char)(i + Dictionnaire.AscShift)) && t.PossibleLetterPoints[(char)(i + Dictionnaire.AscShift)] > 0)) || t.PossibleLetterPoints[Game.Joker] == 26)
+                                // Pour chacune des lettres qui répondent au précédent critère dans le tirage
+                                //if (Controlers[line, column, letterIdx] > 0 || Controlers[line, column, 26] == 26)
                                 {
+                                    // Si la lettre permet également de former des mots verticalement
+                                    // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
+                                    // alors on peut essayer de continuer le préfixe avec cette lettre
+                                    // la lettre utilisée est alors retirée du tirage
+                                    leftLetters[j] = leftLetters[nbLetters - 1];
+                                    nbLetters--;
+                                    // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
+                                    ExtendRight(grid, partialWord + (char)(i + Dictionnaire.AscShift), ref leftLetters, minSize, Game.Dico.Legacy[i, noeud], ligne, colonne + 1, ref nbLetters, direction);
 
-                                    if ((t.PossibleLetterPoints.ContainsKey(char.ToUpper(c)) && t.PossibleLetterPoints[c] > 0) || t.PossibleLetterPoints[Game.Joker] == 26)
-                                    // Pour chacune des lettres qui répondent au précédent critère dans le tirage
-                                    //if (Controlers[line, column, letterIdx] > 0 || Controlers[line, column, 26] == 26)
-                                    {
-                                        // Si la lettre permet également de former des mots verticalement
-                                        // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
-                                        // alors on peut essayer de continuer le préfixe avec cette lettre
-                                        // la lettre utilisée est alors retirée du tirage
-                                        leftLetters[la] = leftLetters[nbLetters - 1];
-                                        nbLetters--;
-                                        // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-                                        ExtendRight(grid, partialWord + c, ref leftLetters, minSize, Game.Dico.Ancien[(int)c - Dictionnaire.AscShift, noeud], ligne, colonne + 1, ref nbLetters);
-
-                                        // Au retour de l'appel recursif on restitue la lettre dans le tirage
-                                        nbLetters++;
-                                        leftLetters[nbLetters - 1] = Game.Alphabet.Find(ch => ch.Char == c);
-                                    }
-
-                                    if (!jokerInDraught) break;
+                                    // Au retour de l'appel recursif on restitue la lettre dans le tirage
+                                    nbLetters++;
+                                    leftLetters[nbLetters - 1] = Game.Alphabet.Find(ch => ch.Char == (char)(i + Dictionnaire.AscShift));
                                 }
-                                else if (leftLetters[la].Char == Game.Joker)
+
+                                if (!jokerInDraught)
+                                    break;
+                            }
+                            else if (leftLetters[j].Char == Game.Joker)
+                            {
+                                // Cas d'un joker
+                                if (((t.PossibleLetterPoints.ContainsKey((char)(i + Dictionnaire.AscShift)) && t.PossibleLetterPoints[(char)(i + Dictionnaire.AscShift)] > 0)) || t.PossibleLetterPoints[Game.Joker] == 26)
                                 {
-                                    // Cas d'un joker
-                                    if ((t.PossibleLetterPoints.ContainsKey(c) && t.PossibleLetterPoints[c] > 0) || t.PossibleLetterPoints[Game.Joker] == 26)
-                                    {
-                                        // Si une lettre quelconque (représentée par le joker) permet également de former des mots verticalement
-                                        // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
-                                        // alors on peut essayer de continuer le préfixe avec cette lettre
-                                        // le joker utilisé est alors retiré du tirage
-                                        leftLetters[la] = leftLetters[nbLetters - 1];
-                                        nbLetters--;
+                                    // Si une lettre quelconque (représentée par le joker) permet également de former des mots verticalement
+                                    // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
+                                    // alors on peut essayer de continuer le préfixe avec cette lettre
+                                    // le joker utilisé est alors retiré du tirage
+                                    leftLetters[j] = leftLetters[nbLetters - 1];
+                                    nbLetters--;
 
-                                        // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
-                                        ExtendRight(grid, partialWord + char.ToLower(c), ref leftLetters, minSize, Game.Dico.Ancien[(int)c - Dictionnaire.AscShift, noeud], ligne, colonne + 1, ref nbLetters);
+                                    // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
+                                    ExtendRight(grid, partialWord + char.ToLower((char)(i + Dictionnaire.AscShift)), ref leftLetters, minSize, Game.Dico.Legacy[i, noeud], ligne, colonne + 1, ref nbLetters, direction);
 
 
-                                        // Au retour de l'appel recursif on restitue le joker dans le tirage
-                                        nbLetters++;
-                                        leftLetters[nbLetters - 1] = Game.Alphabet.Find(ch => ch.Char == Game.Joker);
-                                    }
+                                    // Au retour de l'appel recursif on restitue le joker dans le tirage
+                                    nbLetters++;
+                                    leftLetters[nbLetters - 1] = Game.Alphabet.Find(ch => ch.Char == Game.Joker);
                                 }
                             }
+                        }
 
-                    }
                 }
-                else
+            }
+            else
+            {
+                if (Game.Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud] != 0)
                 {
-                    if (Game.Dico.Ancien[(int)t.Letter.Char - Dictionnaire.AscShift, noeud] != 0)
-                    {
-
-                        ExtendRight(grid, partialWord + t.Letter.Char, ref leftLetters, minSize, Game.Dico.Ancien[(int)t.Letter.Char - Dictionnaire.AscShift, noeud], ligne, colonne + 1, ref nbLetters);
-                    }
-
-
+                    ExtendRight(grid, partialWord + t.Letter.Char, ref leftLetters, 1, Game.Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud], ligne, colonne + 1, ref nbLetters, direction);
                 }
+
+            }
 
 
         }
@@ -520,7 +471,7 @@ namespace Dawg
         public List<Word> FindMoves(Player p)
         {
 
-            var ret = FindMove(p);
+            var ret = FindMove(p, MovementDirection.Across);
 
             if (p.Rack.Any())
             {
@@ -687,93 +638,65 @@ namespace Dawg
         /// </summary>
         /// <param name="word"></param>
         /// <param name="t"></param>
-        private void Add(Tile[,] grid, string word, Tile t)
+        private void Add(Tile[,] grid, string word, Tile t, MovementDirection direction)
         {
             //Debug.WriteLine(word);
-            int wordStartY = t.YLoc;
-            int wordStartX = t.XLoc;
+            int wordStartY = t.Col - word.Length;
+            //int wordStartX = t.Ligne;
             int multiplier = 1;
             int horizontalPoints = 0;
             int verticalPoints = 0;
             int points = 0;
             int UsedDraughtLetters = 0;
             int letterIdx = 0;
-            int wildcardIndice = 0;
 
-
-
-            foreach (var l in word.ToUpper())
+            foreach (var L in word.ToUpper())
             {
-                Tile startTile = null;
-                if (Direction == MovementDirection.Across)
-                    startTile = grid[t.XLoc, wordStartY + letterIdx];
-                else
-                {
-                    startTile = grid[wordStartX + letterIdx, t.YLoc];
-                }
                 letterIdx++;
-                // Le calcul des points prend en compte les cases bonus non encore utilisées
-                // Il faut noter que seules les lettres du tirage permettent de bénéficier des bonus
-                // Les points verticaux ont été précalculés au moment du recensement des contrôleurs
-
-                if (startTile.IsEmpty)
+                var tile = grid[t.Ligne, wordStartY + letterIdx - 1];
+                if (tile.IsEmpty)
                 {
-                    if (char.IsLetter(l))
+                    // Le calcul des points prend en compte les cases bonus non encore utilisées
+                    // Il faut noter que seules les lettres du tirage permettent de bénéficier des bonus
+                    // Les points verticaux ont été précalculés au moment du recensement des contrôleurs
+                    if (char.IsLetter(L))
                     {
-                        horizontalPoints += Game.Alphabet.Find(c => c.Char == l).Value * (startTile.TileType == TileType.DoubleLetter ? 2 : startTile.TileType == TileType.TripleLetter ? 3 : 1);
-                        verticalPoints += startTile.PossibleLetterPoints.ContainsKey(l) ? startTile.PossibleLetterPoints[l] : 0;
+                        horizontalPoints += Game.Alphabet.Find(c => c.Char == L).Value * tile.LetterMultiplier;
+                        verticalPoints += tile.PossibleLetterPoints.ContainsKey(L) ? tile.PossibleLetterPoints[L] : 0;
                     }
                     else
                     {
-                        wildcardIndice = (int)l - Dictionnaire.AscShift - WildCardShift;
-                        if (startTile.PossibleLetterPoints[(char)wildcardIndice] > 0)
+                        if (tile.PossibleLetterPoints[Game.Joker] > 0)
                         {
-                            verticalPoints += (startTile.PossibleLetterPoints.ContainsKey((char)wildcardIndice) ? startTile.PossibleLetterPoints[(char)wildcardIndice] : 0) - Game.Alphabet.Find(c => c.Char == (char)wildcardIndice).Value
-                                * (startTile.TileType == TileType.DoubleLetter ? 2 : startTile.TileType == TileType.TripleLetter ? 3 : 1);
+                            verticalPoints += (tile.PossibleLetterPoints.ContainsKey(Game.Joker) ? tile.PossibleLetterPoints[Game.Joker] : 0) - Game.Alphabet.Find(c => c.Char == Game.Joker).Value
+                                * tile.LetterMultiplier * tile.WordMultiplier;
                         }
                     }
-
-                    multiplier *= (startTile.TileType == TileType.DoubleWord ? 2 : startTile.TileType == TileType.TripleWord ? 3 : 1);
+                    multiplier *= tile.WordMultiplier;
                     UsedDraughtLetters++;
                 }
                 else
                 {
-                    if (char.IsLetter(l)) horizontalPoints += Game.Alphabet.Find(c => c.Char == l).Value;
+                    if (char.IsLetter(L)) horizontalPoints += Game.Alphabet.Find(c => c.Char == L).Value;
                 }
-                //startTile = startTile.RightTile;
+
             }
             // L'utilisation des 7 lettres du tirage rapporte en plus 50 points de bonus
             points = horizontalPoints * multiplier + verticalPoints + (UsedDraughtLetters == 7 ? 50 : 0);
-
 
             nbPossibleMoves++;
             // Tri et mise en forme des coups
             if (nbAcceptedMoves >= MoveLimit || points <= MinPoint) return;
 
-            if (!LegalWords.Any(w => w.Direction == Direction && w.Text.Equals(word) && w.Tiles[0].XLoc == t.XLoc && w.Tiles[0].YLoc == t.YLoc))
+            if (!LegalWords.Any(w => w.Direction == direction && w.Text.Equals(word) && w.StartTile.Ligne == t.Ligne && w.StartTile.Col == t.Col))
             {
-                var tiles = new List<Tile>();
-                foreach (var c in word)
-                {
-
-                    var tile = new Tile(Game, Direction == MovementDirection.Down ? wordStartX++ : wordStartX, Direction == MovementDirection.Across ? wordStartY++ : wordStartY)
-                    {
-                        Letter = Game.Alphabet.Find(l => char.ToLower(l.Char) == char.ToLower(c)),
-                        FromJoker = char.IsLower(c)
-                    };
-
-                    tiles.Add(tile);
-
-
-                }
-
                 LegalWords.Add(new Word(Game)
                 {
-                    Tiles = tiles,
+                    StartTile = t,
                     Direction = Direction,
                     //Text = word,
-                    Points = points
-
+                    Points = points,
+                    Text = word,
                 });
                 nbAcceptedMoves++;
             }
