@@ -15,14 +15,17 @@ namespace Dawg
             Value = value;
             Count = count;
         }
-
+        public bool HasValue()
+        {
+            return this != null && this.Char != char.MinValue;
+        }
         public char Char { get; set; }
         public int Value { get; set; }
         public int Count { get; set; }
 
         public override string ToString()
         {
-            return this.Char.ToString();
+            return $"{(HasValue()?Char.ToString():"")}";
         }
     }
 }

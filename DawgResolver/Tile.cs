@@ -8,48 +8,48 @@ using System.Reflection;
 
 namespace Dawg
 {
-    public static class TileFluentExtentions
+    public static class Extensions
     {
-        public static Tile Copy(this Tile t, bool transpose = false)
+        public static Tile Copy(this Tile t, Tile[,] grid, bool transpose = false)
         {
-            return new Tile(t.Game, transpose ? t.Col : t.Ligne, transpose ? t.Ligne : t.Col)
+            return new Tile(transpose ? t.Col : t.Ligne, transpose ? t.Ligne : t.Col)
             {
                 Controlers = transpose ? new Dictionary<char, int>(27) : t.Controlers,
                 Letter = t.Letter,
                 IsAnchor = transpose ? false : t.IsAnchor,
                 LetterMultiplier = t.LetterMultiplier,
                 WordMultiplier = t.WordMultiplier,
-                AnchorLimit1 = transpose ? 0 : t.AnchorLimit1,
-                AnchorLimit2 = transpose ? 0 : t.AnchorLimit2,
+                AnchorMinLeftLimit = transpose ? 0 : t.AnchorMinLeftLimit,
+                AnchorMaxLeftLimit = transpose ? 0 : t.AnchorMaxLeftLimit,
                 FromJoker = transpose ? false : t.FromJoker
             };
         }
         public static void SetWord(this Tile t, Game g, string word, MovementDirection direction)
         {
             if (t != null)
-                t.Letter = g.Alphabet.Find(a => a.Char == char.ToUpper(word[0]));
+                t.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(word[0]));
             foreach (var c in word.Skip(1))
             {
                 if (direction == MovementDirection.Across)
-                    t = t.SetRightLetter(g, c);
+                    t = t.SetRightLetter(c);
                 else
-                    t = t.SetDownLetter(g, c);
+                    t = t.SetDownLetter(c);
             }
         }
-        public static Tile SetRightLetter(this Tile t, Game g, char c)
+        public static Tile SetRightLetter(this Tile t, char c)
         {
             if (t.RightTile != null)
             {
-                t.RightTile.Letter = g.Alphabet.Find(a => a.Char == char.ToUpper(c));
+                t.RightTile.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(c));
                 return t.RightTile;
             }
             return null;
         }
-        public static Tile SetDownLetter(this Tile t, Game g, char c)
+        public static Tile SetDownLetter(this Tile t, char c)
         {
             if (t.DownTile != null)
             {
-                t.DownTile.Letter = g.Alphabet.Find(a => a.Char == char.ToUpper(c));
+                t.DownTile.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(c));
                 return t.DownTile;
             }
             return null;
@@ -57,7 +57,7 @@ namespace Dawg
 
         public static Tile[,] Transpose(this Tile[,] tiles)
         {
-            var ret = new Tile[tiles.GetLength(0),tiles.GetLength(1)];
+            var ret = new Tile[tiles.GetLength(0), tiles.GetLength(1)];
             foreach (var t in tiles)
             {
                 ret[t.Col, t.Ligne] = t;
@@ -65,6 +65,7 @@ namespace Dawg
 
             return ret;
         }
+
     }
     public interface VTile
     {
@@ -76,16 +77,23 @@ namespace Dawg
     {
         public Game Game { get; }
         bool isAnchor = false;
-        public Tile(Game g, int ligne, int col)
+        public Tile(int ligne, int col)
         {
-            Game = g;
             Ligne = ligne;
             Col = col;
             Letter = new Letter() { Char = char.MinValue };
             LetterMultiplier = 1;
             WordMultiplier = 1;
-            AnchorLimit1 = AnchorLimit2 = 0;
+            AnchorMinLeftLimit = AnchorMaxLeftLimit = 0;
             IsAnchor = (UpTile != null && !UpTile.IsEmpty) || (DownTile != null && !DownTile.IsEmpty) || (RightTile != null && !RightTile.IsEmpty) || (LeftTile != null && !LeftTile.IsEmpty);
+        }
+
+        internal void Clear()
+        {
+            IsAnchor = false;
+            AnchorMinLeftLimit = 0;
+            AnchorMaxLeftLimit = 0;
+            Controlers = new Dictionary<char, int>(27);
         }
 
         public bool FromJoker { get; set; } = false;
@@ -95,8 +103,8 @@ namespace Dawg
         public int LetterMultiplier { get; set; }
         public int WordMultiplier { get; set; }
         public Letter Letter { get; set; }
-        public int AnchorLimit2 { get; set; }
-        public int AnchorLimit1 { get; set; }
+        public int AnchorMaxLeftLimit { get; set; }
+        public int AnchorMinLeftLimit { get; set; }
         public bool IsAnchor { get => isAnchor; set => isAnchor = value; }
 
 
@@ -104,7 +112,7 @@ namespace Dawg
         {
             get
             {
-                return this == null || Letter == null || Letter.Char == char.MinValue;
+                return this == null || !Letter.HasValue();
             }
         }
 
@@ -146,7 +154,11 @@ namespace Dawg
         }
         public override string ToString()
         {
-            return $"{this.Letter.Char} [{Game.Alphabet[Col]}{ Ligne}] {(isAnchor ? " Ancre" : "")}";
+            var c =   $"{Letter} min / max:{AnchorMinLeftLimit};{AnchorMaxLeftLimit}";
+            var cont = "";
+            foreach (var co in Controlers)
+                cont += $"{Game.Alphabet[co.Key]}{co.Value};";
+            return $"{ c} [{Game.Alphabet[Ligne]}{ Col + 1}] {(isAnchor ? "*" : "")} {cont}";
         }
     }
 

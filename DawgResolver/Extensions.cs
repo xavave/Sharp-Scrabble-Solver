@@ -19,9 +19,9 @@ namespace DawgResolver
             letters[index].Count--;
             return letters[index];
         }
-        public static string GetLetterByIndex(this List<Letter> l, Game g, int index)
+        public static string GetLetterByIndex(this List<Letter> l, int index)
         {
-            return g.Alphabet.Find(t => t.Char == (char)(index + Dictionnaire.AscShift)).Char.ToString();
+            return Game.Alphabet.Find(t => t.Char == (char)(index + Dictionnaire.AscShift)).Char.ToString();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Scrabble.Core.Words;
+﻿using DawgResolver;
+using Scrabble.Core.Words;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -58,7 +59,7 @@ namespace Scrabble.Core.Tile
             if (string.IsNullOrWhiteSpace(s.Text)) return;
             var idx = Tiles.IndexOf(s);
             if (ScrabbleForm.Game.Player1.Rack.Count > idx)
-                ScrabbleForm.Game.Player1.Rack[idx] = ScrabbleForm.Game.Alphabet.Find(c => c.Char == s.Text[0]);
+                ScrabbleForm.Game.Player1.Rack[idx] = Game.Alphabet.Find(c => c.Char == s.Text[0]);
         }
 
         private void Tile_MouseDown(object sender, MouseEventArgs e)

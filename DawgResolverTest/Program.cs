@@ -12,10 +12,11 @@ namespace DawgResolverTest
         {
             var g = new Game();
             //Pour mes tests 
-            var t = g.Grid[7, 4];
+            var t = Game.Grid[7, 5];
             t.SetWord(g, "famille", MovementDirection.Across);
-           
-            
+            t.SetWord(g, "foin", MovementDirection.Down);
+
+
 
             g.Resolver.NewDraught(g.Player1, "EUDNA*A");
             //Game.Grid[7, 7].IsAnchor = true;

@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace DawgResolver
 {
-    [Serializable]
     public class Game
     {
         public void PrintGrid(Tile[,] Tiles, bool printAnchor, bool printLetterValue = false)
@@ -55,7 +54,7 @@ namespace DawgResolver
             Player1 = new Player(this);
             Player2 = new Player(this);
             Resolver = new Resolver(this);
-            Bag = new Bag(this);
+            Bag = new Bag();
 
 
         }
@@ -67,7 +66,7 @@ namespace DawgResolver
             return dic;
         }
 
-        public List<Letter> Alphabet { get; } = new List<Letter>()
+        public static  List<Letter> Alphabet { get; } = new List<Letter>()
         {
             new Letter('A',1,9),
             new Letter('B',5,2),
@@ -102,7 +101,6 @@ namespace DawgResolver
 
 
         public const int BoardSize = 15;
-        private Tile[,] grid = new Tile[BoardSize, BoardSize];
         public void InitBoard()
         {
             // Définition des cases bonus
@@ -114,7 +112,7 @@ namespace DawgResolver
             {
                 foreach (var tp in w.Trim().Split(','))
                 {
-                    grid[row, col] = new Tile(this, row, col);
+                    Grid[row, col] = new Tile(row, col);
 
                     if (string.IsNullOrEmpty(tp))
                         continue;
@@ -128,16 +126,16 @@ namespace DawgResolver
 
                             break;
                         case "TW":
-                            grid[row, col].WordMultiplier = 3;
+                            Grid[row, col].WordMultiplier = 3;
                             break;
                         case "TL":
-                            grid[row, col].LetterMultiplier = 3;
+                            Grid[row, col].LetterMultiplier = 3;
                             break;
                         case "DW":
-                            grid[row, col].WordMultiplier = 2;
+                            Grid[row, col].WordMultiplier = 2;
                             break;
                         case "DL":
-                            grid[row, col].LetterMultiplier = 2;
+                            Grid[row, col].LetterMultiplier = 2;
                             break;
                         default:
                             throw new Exception($"Unknown tile type in inital_board file: {tp}");
@@ -161,20 +159,14 @@ namespace DawgResolver
 
 
         }
-        public Tile[,] Grid
-        {
-            get => grid;
-            set
-            {
-                grid = value;
-            }
-        }
+        public static Tile[,] Grid { get; set; } = new Tile[Game.BoardSize, Game.BoardSize];
+       
 
         public bool FirstMove
         {
             get
             {
-                return grid[7, 7].IsEmpty;
+                return Grid[7, 7].IsEmpty;
             }
         }
     }

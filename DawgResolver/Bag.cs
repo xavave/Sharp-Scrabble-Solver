@@ -10,9 +10,9 @@ namespace DawgResolver
     [Serializable]
     public class Bag
     {
-        public Bag(Game g)
+        public Bag()
         {
-            Letters = g.Alphabet;
+            Letters = Game.Alphabet;
         }
 
         public static List<Letter> Letters { get; set; }

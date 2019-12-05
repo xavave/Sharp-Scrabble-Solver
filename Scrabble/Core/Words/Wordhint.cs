@@ -80,7 +80,7 @@ namespace Scrabble.Core.Words
             {
                 for (int y = 0; y < Game.BoardSize; y++)
                 {
-                    var tile = ScrabbleForm.Game.Grid[x, y];
+                    var tile = Game.Grid[x, y];
 
                     var txt = tile.IsEmpty ? "#" : tile.Letter.ToString();
                     Debug.Write(txt);
@@ -130,7 +130,7 @@ namespace Scrabble.Core.Words
             for (int i = 0; i < word.Text.Length; i++)
             {
                 var tile = scrabbleTile[word.StartTile.Ligne + (word.Direction == MovementDirection.Across ? i : 0), word.StartTile.Col - word.Text.Length + (word.Direction == MovementDirection.Down ? i : 0)];
-                tile.Letter = ScrabbleForm.Game.Alphabet.Find(c => c.Char == word.Text[i]);
+                tile.Letter = Game.Alphabet.Find(c => c.Char == word.Text[i]);
                 tile.Text = tile.Letter.Char.ToString();
 
 
