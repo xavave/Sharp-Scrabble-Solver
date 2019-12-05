@@ -13,30 +13,33 @@ namespace DawgResolver
     [Serializable]
     public class Game
     {
-        public void PrintGrid(Tile[,] Tiles, bool printAnchor)
+        public void PrintGrid(Tile[,] Tiles, bool printAnchor, bool printLetterValue = false)
         {
-            var txt = "";
-            Debug.WriteLine("123456789012345");
-            for (int ligne = 0; ligne < Game.BoardSize; ligne++)
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("123456789012345");
+            for (int ligne = 0; ligne <= Tiles.GetUpperBound(0); ligne++)
             {
-                for (int col = 0; col < Game.BoardSize; col++)
+                for (int col = 0; col <= Tiles.GetUpperBound(1); col++)
                 {
 
-                    var tile = Grid[ligne, col];
-                    if (tile == null) continue;
+                    var tile = Tiles[ligne, col];
+
                     if (printAnchor)
                     {
-                        txt = tile.IsAnchor ? "@" : tile.IsEmpty ? "0" : tile.Letter.ToString();
+                        var lm = tile.LetterMultiplier == 2 ? (char)0xB2 : tile.LetterMultiplier == 3 ? (char)0XB3 : (char)0XB7;
+                        var wm = tile.WordMultiplier == 2 ? '2' : tile.WordMultiplier == 3 ? '3' : (char)0XB7;
+                        sb.Append(tile.IsAnchor ? "@" : tile.IsEmpty ? tile.LetterMultiplier > 1 ? lm.ToString() : wm.ToString() : printLetterValue? (tile.Letter.Value*tile.LetterMultiplier).ToString(): tile.Letter.ToString());
                     }
                     else
                     {
-                        txt = tile.IsEmpty ? "0" : tile.Letter.ToString();
+                        sb.Append(tile.IsEmpty ? "0" : tile.Letter.ToString());
                     }
-                    Debug.Write(txt);
+
                 }
-                Debug.WriteLine($"|{Alphabet[ligne].Char}");
+                sb.AppendLine($"|{Alphabet[ligne].Char}");
             }
-            Debug.WriteLine("_____________________________________");
+            sb.AppendLine("_____________________________________");
+            Debug.WriteLine(sb.ToString());
         }
         public Dictionnaire Dico { get; }
         public const char Joker = '*';
@@ -53,6 +56,7 @@ namespace DawgResolver
             Player2 = new Player(this);
             Resolver = new Resolver(this);
             Bag = new Bag(this);
+
 
         }
         private Dictionnaire LoadDico()
@@ -97,7 +101,7 @@ namespace DawgResolver
 
 
 
-        public const int BoardSize = 16;
+        public const int BoardSize = 15;
         private Tile[,] grid = new Tile[BoardSize, BoardSize];
         public void InitBoard()
         {
@@ -118,10 +122,10 @@ namespace DawgResolver
                     switch (tp.Trim())
                     {
                         case "RE":
-                            //grid[row, col].TileType = TileType.Regular;
+
                             break;
                         case "CE":
-                            //grid[row, col].TileType = TileType.Center;
+
                             break;
                         case "TW":
                             grid[row, col].WordMultiplier = 3;
@@ -162,7 +166,7 @@ namespace DawgResolver
             get => grid;
             set
             {
-                if (grid == null) grid = value;
+                grid = value;
             }
         }
 

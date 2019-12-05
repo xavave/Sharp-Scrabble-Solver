@@ -122,7 +122,7 @@ namespace Scrabble
             {
                 foreach (var t in this.TileManager.TilesInPlay)
                 {
-                    Game.Grid[t.XLoc, t.YLoc].Letter = Game.Alphabet.Find(a => a.Char == t.Text[0]);
+                    Game.Grid[t.Ligne, t.Col].Letter = Game.Alphabet.Find(a => a.Char == t.Text[0]);
                 }
 
                 TileManager.ResetTilesInPlay();
@@ -243,7 +243,7 @@ namespace Scrabble
             
             WordHint.BeginUpdate();
            
-            foreach (var w in Game.Resolver.FindMoves(PlayerManager.CurrentPlayer.Name== PlayerManager.PlayerOne.Name ?  Game.Player1: Game.Player2).OrderByDescending(p=>p.Points))
+            foreach (var w in Game.Resolver.FindMoves(PlayerManager.CurrentPlayer.Name== PlayerManager.PlayerOne.Name ?  Game.Player1: Game.Player2))
                 WordHint.AddWord(w);
            
             WordHint.EndUpdate();

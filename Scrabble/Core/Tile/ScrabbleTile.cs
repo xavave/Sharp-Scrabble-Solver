@@ -10,16 +10,14 @@ using System.Windows.Forms;
 
 namespace Scrabble.Core
 {
-    public interface ITile
+    public interface ITile : VTile
     {
         void ClearHighlight();
         void OnHighlight(bool valid);
         ScrabbleForm ScrabbleForm { get; set; }
-        int XLoc { get; set; }
-        int YLoc { get; set; }
         TileType TileType { get; set; }
-        string Text { get; set; }
         bool TileInPlay { get; set; }
+        string Text { get; set; }
     }
     //public class VirtualTile : ITile
     //{
@@ -64,11 +62,12 @@ namespace Scrabble.Core
             };
         }
         public ScrabbleForm ScrabbleForm { get; set; }
-        public int XLoc { get; set; }
-        public int YLoc { get; set; }
+        public int Ligne { get; set; }
+        public int Col { get; set; }
 
         public bool TileInPlay { get; set; }
         public TileType TileType { get; set; }
+        public Letter Letter { get; set; }
 
         public void OnLetterPlaced(string letter)
         {

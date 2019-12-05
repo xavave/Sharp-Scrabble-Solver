@@ -176,7 +176,7 @@ namespace Scrabble
             this.label4.ForeColor = System.Drawing.Color.White;
             this.label4.Location = new System.Drawing.Point(238, 16);
             this.label4.Name = "label4";
-            this.label4.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.label4.Padding = new System.Windows.Forms.Padding(3);
             this.label4.Size = new System.Drawing.Size(92, 22);
             this.label4.TabIndex = 4;
             this.label4.Text = "Center Tile";
@@ -189,7 +189,7 @@ namespace Scrabble
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(126, 44);
             this.label3.Name = "label3";
-            this.label3.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.label3.Padding = new System.Windows.Forms.Padding(3);
             this.label3.Size = new System.Drawing.Size(112, 22);
             this.label3.TabIndex = 3;
             this.label3.Text = "Double Letter";
@@ -202,7 +202,7 @@ namespace Scrabble
             this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Location = new System.Drawing.Point(126, 15);
             this.label2.Name = "label2";
-            this.label2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.label2.Padding = new System.Windows.Forms.Padding(3);
             this.label2.Size = new System.Drawing.Size(106, 22);
             this.label2.TabIndex = 2;
             this.label2.Text = "Double Word";
@@ -215,7 +215,7 @@ namespace Scrabble
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(18, 44);
             this.label1.Name = "label1";
-            this.label1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.label1.Padding = new System.Windows.Forms.Padding(3);
             this.label1.Size = new System.Drawing.Size(102, 22);
             this.label1.TabIndex = 1;
             this.label1.Text = "Triple Letter";
@@ -228,7 +228,7 @@ namespace Scrabble
             this.lblTripleWord.ForeColor = System.Drawing.Color.White;
             this.lblTripleWord.Location = new System.Drawing.Point(18, 15);
             this.lblTripleWord.Name = "lblTripleWord";
-            this.lblTripleWord.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.lblTripleWord.Padding = new System.Windows.Forms.Padding(3);
             this.lblTripleWord.Size = new System.Drawing.Size(96, 22);
             this.lblTripleWord.TabIndex = 0;
             this.lblTripleWord.Text = "Triple Word";
@@ -259,7 +259,7 @@ namespace Scrabble
             // 
             this.btnExit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.btnExit.ForeColor = System.Drawing.Color.White;
-            this.btnExit.Location = new System.Drawing.Point(723, 17);
+            this.btnExit.Location = new System.Drawing.Point(759, 17);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(75, 23);
             this.btnExit.TabIndex = 10;

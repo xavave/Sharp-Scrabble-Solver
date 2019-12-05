@@ -22,7 +22,7 @@ namespace DawgResolver
 
         }
 
-
+        public Word Suivant { get; set; }
         public bool Scramble
         {
             get
@@ -70,7 +70,7 @@ namespace DawgResolver
                 var pos = $"{Game.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
                 if (Direction == MovementDirection.Down)
                     pos = $"{StartTile.Col + 1}{Game.Alphabet[StartTile.Ligne]}";
-                return $"[{pos}] {Text} ({Points})";
+                return $"[{pos}] {Text} ({Points}){(Scramble?"*":"")}";
             }
         }
         public bool IsAllowed

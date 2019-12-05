@@ -32,20 +32,16 @@ namespace Scrabble.Core.Tile
             TileBag = new TileBag();
             //var specialTilePositions = ScrabbleForm.WordScorer.GetTileTypes();
 
-            foreach (var virtualTile in ScrabbleForm.Game.Grid)
+            foreach (var virtuTile in ScrabbleForm.Game.Grid)
             {
-                //for (int x = 1; x <= ScrabbleForm.BOARD_WIDTH; x++)
-                //{
-                //    for (int y = 1; y <= ScrabbleForm.BOARD_HEIGHT; y++)
-                //    {
+               
                 var tile = new ScrabbleTile(ScrabbleForm)
                 {
-                    XLoc = virtualTile.Ligne,
-                    YLoc = virtualTile.Col,
-                    TileType = virtualTile.TileType
+                    Ligne = virtuTile.Ligne,
+                    Col = virtuTile.Col,
                 };
                 tile.BackColor = SystemColors.ButtonFace;
-                tile.Location = new Point(virtualTile.Ligne * (ScrabbleForm.TILE_SIZE + 2), virtualTile.Col * (ScrabbleForm.TILE_SIZE + 2));
+                tile.Location = new Point(virtuTile.Ligne * (ScrabbleForm.TILE_SIZE + 2), virtuTile.Col * (ScrabbleForm.TILE_SIZE + 2));
                 tile.Size = new Size(ScrabbleForm.TILE_SIZE, ScrabbleForm.TILE_SIZE);
                 //tile.UseVisualStyleBackColor = false;
                 tile.Font = new Font("Verdana", 25.75F, FontStyle.Regular);
@@ -54,7 +50,7 @@ namespace Scrabble.Core.Tile
                 tile.SetRegularBackgroundColour();
                 ScrabbleForm.Controls.Add(tile);
 
-                Tiles[virtualTile.Ligne, virtualTile.Col] = tile;
+                Tiles[virtuTile.Ligne, virtuTile.Col] = tile;
 
             }
         }
@@ -115,8 +111,8 @@ namespace Scrabble.Core.Tile
             if (TilesInPlay.Count <= 1)
                 return MovementDirection.None;
 
-            int xChange = TilesInPlay[1].XLoc - TilesInPlay[0].XLoc;
-            int yChange = TilesInPlay[1].YLoc - TilesInPlay[0].YLoc;
+            int xChange = TilesInPlay[1].Ligne - TilesInPlay[0].Ligne;
+            int yChange = TilesInPlay[1].Col - TilesInPlay[0].Col;
 
             return xChange > 0 ? MovementDirection.Across : yChange > 0 ? MovementDirection.Down : MovementDirection.None;
         }
@@ -163,8 +159,8 @@ namespace Scrabble.Core.Tile
             // For every tile in play, ensure the player hasn't tried to move in two directions at once.
             for (int x = 1; x < TilesInPlay.Count; x++)
             {
-                int xChange = TilesInPlay[x - 1].XLoc - TilesInPlay[x].XLoc;
-                int yChange = TilesInPlay[x - 1].YLoc - TilesInPlay[x].YLoc;
+                int xChange = TilesInPlay[x - 1].Ligne - TilesInPlay[x].Ligne;
+                int yChange = TilesInPlay[x - 1].Col - TilesInPlay[x].Col;
 
                 if (direction == MovementDirection.Across)
                 {
@@ -179,10 +175,10 @@ namespace Scrabble.Core.Tile
                 }
             }
 
-            int xLoc = TilesInPlay[0].XLoc;
-            int yLoc = TilesInPlay[0].YLoc;
-            int lastX = TilesInPlay[TilesInPlay.Count() - 1].XLoc;
-            int lastY = TilesInPlay[TilesInPlay.Count() - 1].YLoc;
+            int xLoc = TilesInPlay[0].Ligne;
+            int yLoc = TilesInPlay[0].Col;
+            int lastX = TilesInPlay[TilesInPlay.Count() - 1].Ligne;
+            int lastY = TilesInPlay[TilesInPlay.Count() - 1].Col;
 
             // Ensure that there are no gaps inbetween the tile placements even in the same direction
             if (direction == MovementDirection.Across)

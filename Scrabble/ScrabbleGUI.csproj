@@ -62,7 +62,9 @@
     <Compile Include="Core\Tile\RackTile.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Core\Tile\ScrabbleTile.cs" />
+    <Compile Include="Core\Tile\ScrabbleTile.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Core\Tile\TileBag.cs" />
     <Compile Include="Core\Tile\TileManager.cs" />
     <Compile Include="Core\Tile\TileType.cs" />

@@ -33,8 +33,8 @@ namespace Scrabble.Core.Words
             this.SelectedIndexChanged += WordHint_SelectedIndexChanged;
             this.MouseMove += listBox_MouseMove;
             ScrabbleForm.Controls.Add(this);
-           
-            
+
+
         }
         private void listBox_MouseMove(object sender, MouseEventArgs e)
         {
@@ -129,10 +129,9 @@ namespace Scrabble.Core.Words
 
             for (int i = 0; i < word.Text.Length; i++)
             {
-                var tile = scrabbleTile[word.StartTile.Ligne + (word.Direction == MovementDirection.Across ? i : 0), word.StartTile.Col+ (word.Direction == MovementDirection.Down ? i : 0)];
-                if (tile.Text == "")// || tile.Text == word.Text[i].ToString() && ScrabbleForm.WordValidator.GetSurroundingWords(tile.XLoc, tile.YLoc).All(w => w.Valid))
-                                    //{
-                    tile.Text = word.Text[i].ToString();
+                var tile = scrabbleTile[word.StartTile.Ligne + (word.Direction == MovementDirection.Across ? i : 0), word.StartTile.Col - word.Text.Length + (word.Direction == MovementDirection.Down ? i : 0)];
+                tile.Letter = ScrabbleForm.Game.Alphabet.Find(c => c.Char == word.Text[i]);
+                tile.Text = tile.Letter.Char.ToString();
 
 
             }

@@ -11,17 +11,6 @@ namespace DawgResolver
 {
     public static class Extensions
     {
-        public static T DeepClone<T>(this T obj)
-        {
-            using (var ms = new MemoryStream())
-            {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(ms, obj);
-                ms.Position = 0;
-
-                return (T)formatter.Deserialize(ms);
-            }
-        }
 
         public static Letter GetRandomLetter(this List<Letter> letters)
         {
@@ -29,6 +18,10 @@ namespace DawgResolver
             int index = rng.Next(letters.Where(l => l.Count > 0).Count());
             letters[index].Count--;
             return letters[index];
+        }
+        public static string GetLetterByIndex(this List<Letter> l, Game g, int index)
+        {
+            return g.Alphabet.Find(t => t.Char == (char)(index + Dictionnaire.AscShift)).Char.ToString();
         }
     }
 }
