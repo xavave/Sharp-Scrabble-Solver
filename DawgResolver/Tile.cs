@@ -14,7 +14,7 @@ namespace Dawg
         {
             return new Tile(transpose ? t.Col : t.Ligne, transpose ? t.Ligne : t.Col)
             {
-                Controlers = transpose ? new Dictionary<char, int>(27) : t.Controlers,
+                Controlers = transpose ? new Dictionary<int, int>(27) : t.Controlers,
                 Letter = t.Letter,
                 IsAnchor = transpose ? false : t.IsAnchor,
                 LetterMultiplier = t.LetterMultiplier,
@@ -93,11 +93,11 @@ namespace Dawg
             IsAnchor = false;
             AnchorMinLeftLimit = 0;
             AnchorMaxLeftLimit = 0;
-            Controlers = new Dictionary<char, int>(27);
+            Controlers = new Dictionary<int, int>(27);
         }
 
         public bool FromJoker { get; set; } = false;
-        public Dictionary<char, int> Controlers { get; set; } = new Dictionary<char, int>(27);
+        public Dictionary<int, int> Controlers { get; set; } = new Dictionary<int, int>(27);
         public int Ligne { get; set; }
         public int Col { get; set; }
         public int LetterMultiplier { get; set; }
@@ -157,8 +157,8 @@ namespace Dawg
             var c =   $"{Letter} min / max:{AnchorMinLeftLimit};{AnchorMaxLeftLimit}";
             var cont = "";
             foreach (var co in Controlers)
-                cont += $"{Game.Alphabet[co.Key]}{co.Value};";
-            return $"{ c} [{Game.Alphabet[Ligne]}{ Col + 1}] {(isAnchor ? "*" : "")} {cont}";
+                cont += $"{Game.AlphabetAvecJoker[co.Key+Dictionnaire.AscShiftBase0]}{co.Value};";
+            return $"{ c} [{Game.AlphabetAvecJoker[Ligne]}{ Col + 1}] {(isAnchor ? "*" : "")} {cont}";
         }
     }
 

@@ -12,7 +12,7 @@ namespace DawgResolver
     {
         public Bag()
         {
-            Letters = Game.Alphabet;
+            Letters = Game.AlphabetAvecJoker;
         }
 
         public static List<Letter> Letters { get; set; }

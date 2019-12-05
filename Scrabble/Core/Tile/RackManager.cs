@@ -59,7 +59,7 @@ namespace Scrabble.Core.Tile
             if (string.IsNullOrWhiteSpace(s.Text)) return;
             var idx = Tiles.IndexOf(s);
             if (ScrabbleForm.Game.Player1.Rack.Count > idx)
-                ScrabbleForm.Game.Player1.Rack[idx] = Game.Alphabet.Find(c => c.Char == s.Text[0]);
+                ScrabbleForm.Game.Player1.Rack[idx] = Game.AlphabetAvecJoker.Find(c => c.Char == s.Text[0]);
         }
 
         private void Tile_MouseDown(object sender, MouseEventArgs e)

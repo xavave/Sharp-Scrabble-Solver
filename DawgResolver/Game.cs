@@ -27,7 +27,7 @@ namespace DawgResolver
                     {
                         var lm = tile.LetterMultiplier == 2 ? (char)0xB2 : tile.LetterMultiplier == 3 ? (char)0XB3 : (char)0XB7;
                         var wm = tile.WordMultiplier == 2 ? '2' : tile.WordMultiplier == 3 ? '3' : (char)0XB7;
-                        sb.Append(tile.IsAnchor ? "@" : tile.IsEmpty ? tile.LetterMultiplier > 1 ? lm.ToString() : wm.ToString() : printLetterValue? (tile.Letter.Value*tile.LetterMultiplier).ToString(): tile.Letter.ToString());
+                        sb.Append(tile.IsAnchor ? "@" : tile.IsEmpty ? tile.LetterMultiplier > 1 ? lm.ToString() : wm.ToString() : printLetterValue ? (tile.Letter.Value * tile.LetterMultiplier).ToString() : tile.Letter.ToString());
                     }
                     else
                     {
@@ -65,8 +65,11 @@ namespace DawgResolver
 
             return dic;
         }
-
-        public static  List<Letter> Alphabet { get; } = new List<Letter>()
+        public static List<Letter> Alphabet
+        {
+            get { return AlphabetAvecJoker.Take(26).ToList(); }
+        }
+        public static List<Letter> AlphabetAvecJoker { get; } = new List<Letter>()
         {
             new Letter('A',1,9),
             new Letter('B',5,2),
@@ -160,7 +163,7 @@ namespace DawgResolver
 
         }
         public static Tile[,] Grid { get; set; } = new Tile[Game.BoardSize, Game.BoardSize];
-       
+
 
         public bool FirstMove
         {

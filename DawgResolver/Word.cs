@@ -35,31 +35,6 @@ namespace DawgResolver
         public int Points
         {
             get; set;
-            //get
-            //{
-            //    int point = 0;
-            //    if (!IsAllowed) return 0;
-            //    int nbMultiX2 = 0;
-            //    int nbMultiX3 = 0;
-            //    foreach (var t in Tiles)
-            //    {
-            //        switch (t.TileType)
-            //        {
-            //            case TileType.DoubleLetter: point += t.Letter.Value * 2; break;
-            //            case TileType.TripleLetter: point += t.Letter.Value * 3; break;
-            //            default: point += t.Letter.Value; break;
-            //        }
-            //    }
-            //    nbMultiX2 = Tiles.Count(ti => ti.TileType == TileType.DoubleWord);
-            //    nbMultiX3 = Tiles.Count(ti => ti.TileType == TileType.TripleWord);
-            //    if (nbMultiX2 > 0)
-            //        point *= 2 * nbMultiX2;
-            //    if (nbMultiX3 > 0)
-            //        point *= 3 * nbMultiX3;
-
-            //    return point;
-
-            //}
         }
         public string Text { get; set; }
 

@@ -21,7 +21,7 @@ namespace DawgResolver
         }
         public static string GetLetterByIndex(this List<Letter> l, int index)
         {
-            return Game.Alphabet.Find(t => t.Char == (char)(index + Dictionnaire.AscShift)).Char.ToString();
+            return Game.AlphabetAvecJoker.Find(t => t.Char == (char)(index + Dictionnaire.AscShift)).Char.ToString();
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Dawg
     public class Dictionnaire
     {
         public const int AscShift = 64;
+        public const int AscShiftBase0 = AscShift+1;
         /// <summary>
         /// Chronomètre utilisé uniquement pour comparer les performances des 2 méthodes de construtions
         /// </summary>
