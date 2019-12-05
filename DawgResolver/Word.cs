@@ -1,4 +1,4 @@
-﻿using Dawg;
+﻿using DawgResolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,8 +44,8 @@ namespace DawgResolver
             {
                 var pos = $"{Game.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
                 if (Direction == MovementDirection.Down)
-                    pos = $"{StartTile.Col + 1}{Game.Alphabet[StartTile.Ligne]}";
-                return $"[{pos}] {Text} ({Points}){(Scramble?"*":"")}";
+                    pos = $"{StartTile.Ligne+1}{Game.Alphabet[StartTile.Col]}";
+                return $"[{pos}] {Text} ({Points}){(Scramble ? "*" : "")}";
             }
         }
         public bool IsAllowed

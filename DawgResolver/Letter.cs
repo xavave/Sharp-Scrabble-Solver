@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace Dawg
+namespace DawgResolver
 {
-    [Serializable]
     public class Letter
     {
         public Letter()

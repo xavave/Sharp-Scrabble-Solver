@@ -1,18 +1,34 @@
-﻿using Dawg;
+﻿using DawgResolver;
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DawgResolver
 {
     public class Game
     {
-        public void PrintGrid(Tile[,] Tiles, bool printAnchor, bool printLetterValue = false)
+        public string GenerateHtml(Tile[,] Tiles)
+        {
+            StringBuilder sb = new StringBuilder("<html><div>");
+            for (int ligne = 0; ligne <= Tiles.GetUpperBound(0); ligne++)
+            {
+                
+                sb.Append("|");
+                for (int col = 0; col <= Tiles.GetUpperBound(1); col++)
+                {
+                    //TODO 
+                }
+                sb.Append("|<br/>");
+            }
+            sb.Append("</div></html>");
+            return sb.ToString();
+        }
+
+        public string GenerateTextGrid(Tile[,] Tiles, bool printAnchor, bool printLetterValue = false)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("123456789012345");
@@ -25,8 +41,8 @@ namespace DawgResolver
 
                     if (printAnchor)
                     {
-                        var lm = tile.LetterMultiplier == 2 ? (char)0xB2 : tile.LetterMultiplier == 3 ? (char)0XB3 : (char)0XB7;
-                        var wm = tile.WordMultiplier == 2 ? '2' : tile.WordMultiplier == 3 ? '3' : (char)0XB7;
+                        var lm = tile.LetterMultiplier == 2 ? (char)0xB2 : tile.LetterMultiplier == 3 ? (char)0XB3 : '0';
+                        var wm = tile.WordMultiplier == 2 ? '2' : tile.WordMultiplier == 3 ? '3' : '0';
                         sb.Append(tile.IsAnchor ? "@" : tile.IsEmpty ? tile.LetterMultiplier > 1 ? lm.ToString() : wm.ToString() : printLetterValue ? (tile.Letter.Value * tile.LetterMultiplier).ToString() : tile.Letter.ToString());
                     }
                     else
@@ -38,7 +54,7 @@ namespace DawgResolver
                 sb.AppendLine($"|{Alphabet[ligne].Char}");
             }
             sb.AppendLine("_____________________________________");
-            Debug.WriteLine(sb.ToString());
+            return sb.ToString();
         }
         public Dictionnaire Dico { get; }
         public const char Joker = '*';

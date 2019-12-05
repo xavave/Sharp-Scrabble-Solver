@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrabbleGUI", "Scrabble\ScrabbleGUI.csproj", "{3D86F1C4-8562-4823-90A7-5805970FA1AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DawgResolver", "DawgResolver\DawgResolver.csproj", "{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver", "DawgResolver\Dawg.Resolver.csproj", "{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DawgResolverTest", "DawgResolverTest\DawgResolverTest.csproj", "{12237048-0C49-446E-A50A-6B66F0D0802D}"
 EndProject
@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "legacyVBAscramble", "legacy
 		legacyVBAscramble\Scramble V1.xls = legacyVBAscramble\Scramble V1.xls
 		legacyVBAscramble\Scramble V2.xlsm = legacyVBAscramble\Scramble V2.xlsm
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver.WPF", "Dawg.Resolver.WPF\Dawg.Resolver.WPF.csproj", "{97D15650-D760-44D8-A92C-3F3AE3C2D4F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97D15650-D760-44D8-A92C-3F3AE3C2D4F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97D15650-D760-44D8-A92C-3F3AE3C2D4F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97D15650-D760-44D8-A92C-3F3AE3C2D4F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97D15650-D760-44D8-A92C-3F3AE3C2D4F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

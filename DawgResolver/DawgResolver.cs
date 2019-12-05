@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 
 
-namespace Dawg
+namespace DawgResolver
 {
     [Serializable]
     public class Resolver
@@ -17,43 +17,24 @@ namespace Dawg
 
         const int BoardSize = 15;
         //variables definition
-
         public int WordCount { get; set; }
         public int NodeCount { get; private set; }
-
-        MovementDirection Direction { get; set; }
-
         public List<Word> LegalWords { get; set; } = new List<Word>();
-
         public int PlayedLetters { get; private set; }
-        int MinPoint { get; set; }
         long[,] Dictionary { get; set; }
         long nbPossibleMoves { get; set; }
-
         long nbAcceptedMoves { get; set; }
-        Tile[,] BoardCopy { get; set; } = new Tile[Game.BoardSize, Game.BoardSize];
-        //string[,] DisplayBoard { get; set; } = new string[Game.BoardSize, Game.BoardSize];
-
-
-
         Game Game { get; }
 
         public Resolver(Game g)
         {
             Game = g;
-
             LoadDic();
         }
 
         public Dictionnaire Dictionnaire { get; private set; }
         public Noeud Noeud { get; private set; }
 
-        //Tile[,] CopyBoard(Tile[,] source)
-        //{
-        //    var dest = new Tile[source.GetUpperBound(0) + 1, source.GetUpperBound(1) + 1];
-        //    Array.Copy(source, 0, dest, 0, source.Length);
-        //    return dest;
-        //}
         /// <summary>
         /// Cette procédure génère un nouveau tirage
         /// en choisissant au hasard parmi les lettres disponibles dans le sac
@@ -82,10 +63,7 @@ namespace Dawg
                 p.Rack.Add(letter);
 
             }
-
-
             Debug.WriteLine(p.DisplayRack());
-
             return p.Rack;
 
         }
@@ -107,8 +85,8 @@ namespace Dawg
             if (Game.FirstMove)
             {
                 grid[7, 7].IsAnchor = true;
-                grid[7, 7].AnchorMinLeftLimit = 0;
-                grid[7, 7].AnchorMaxLeftLimit = 6;
+                grid[7, 7].AnchorLeftMinLimit = 0;
+                grid[7, 7].AnchorLeftMaxLimit = 6;
 
                 foreach (var t in grid.OfType<Tile>())
                 {
@@ -121,7 +99,7 @@ namespace Dawg
                 // Il faut recenser les cases où l'on peut commencer de nouveaux mots ou continuer des mots existants
                 grid = FindAnchors(grid);
 
-                // Et vérifier les lettres qu'on peut y placer pour que les éventuels mots formés verticalement soient valide
+                // Et vérifier les lettres qu'on peut y placer pour que les éventuels mots formés verticalement soient valides
 
                 grid = FindControlers(grid);
             }
@@ -212,8 +190,8 @@ namespace Dawg
 
                     if (t.Col == 0 || t.LeftTile.IsAnchor)
                     {
-                        t.AnchorMinLeftLimit = 0;
-                        t.AnchorMaxLeftLimit = 0;
+                        t.AnchorLeftMinLimit = 0;
+                        t.AnchorLeftMaxLimit = 0;
                     }
                     else if (!t.LeftTile.IsEmpty)
                     {
@@ -226,8 +204,8 @@ namespace Dawg
                             tileCpy = tileCpy.LeftTile;
 
                         }
-                        t.AnchorMinLeftLimit = cptPrefix;
-                        t.AnchorMaxLeftLimit = cptPrefix;
+                        t.AnchorLeftMinLimit = cptPrefix;
+                        t.AnchorLeftMaxLimit = cptPrefix;
                     }
                     else if (t.LeftTile.IsEmpty)
                     {
@@ -241,8 +219,8 @@ namespace Dawg
 
 
                         }
-                        t.AnchorMinLeftLimit = 0;
-                        t.AnchorMaxLeftLimit = cptPrefix;
+                        t.AnchorLeftMinLimit = 0;
+                        t.AnchorLeftMaxLimit = cptPrefix;
                     }
 
                 }
@@ -261,21 +239,23 @@ namespace Dawg
         /// </summary>
         /// <param name="p"></param>
         /// <param name="grid"></param>
+        /// <param name="direction"></param>
+        /// <param name="noeudActuel"></param>
         /// <returns></returns>
         private Tile[,] FindMovesPerAnchor(Player p, Tile[,] grid, MovementDirection direction, int noeudActuel = 1)
         {
             var leftLetters = p.Rack;
             var nbLetters = leftLetters.Count;
 
-            foreach (var t in grid.OfType<Tile>().Where(t => t.IsAnchor).OrderBy(o => o.Ligne))
+            foreach (var t in grid.OfType<Tile>().Where(t => t.IsAnchor))
             {
 
                 // Cas où la taille du préfixe est imposée
-                if (t.AnchorMinLeftLimit == t.AnchorMaxLeftLimit)
+                if (t.AnchorLeftMinLimit == t.AnchorLeftMaxLimit)
                 {
                     // Cas du préfixe vide
                     // On ne peut que former un nouveau mot vers la droite
-                    if (t.AnchorMinLeftLimit == 0)
+                    if (t.AnchorLeftMinLimit == 0)
                     {
                         ExtendRight(grid, string.Empty, ref leftLetters, 1, 1, t.Ligne, t.Col, direction);
                     }
@@ -285,13 +265,12 @@ namespace Dawg
                         // On ne peut que continuer le préfixe vers la droite
                         noeudActuel = 1;
                         string prefixe = "";
-                        for (int k = t.Col - t.AnchorMinLeftLimit; k < t.Col; k++)
+                        for (int k = t.Col - t.AnchorLeftMinLimit; k < t.Col; k++)
                         {
                             if (grid[t.Ligne, k].Letter.HasValue())
                             {
                                 prefixe += grid[t.Ligne, k].Letter;
-                                if (Trouve(grid[t.Ligne, k].Letter.Char, ref noeudActuel))
-                                    break;
+                                Trouve(grid[t.Ligne, k].Letter.Char, ref noeudActuel);
                             }
                         }
                         ExtendRight(grid, prefixe.ToUpper(), ref leftLetters, 1, noeudActuel, t.Ligne, t.Col, direction);
@@ -301,7 +280,7 @@ namespace Dawg
                 {
                     // Cas où k cases vides non identifiées comme ancres se trouvent devant l'ancre
                     // On essaie les différents préfixes possibles allant de 0 à k lettres
-                    for (int k = 0; k <= t.AnchorMaxLeftLimit; k++)
+                    for (int k = 0; k <= t.AnchorLeftMaxLimit; k++)
                     {
                         ExtendRight(grid, string.Empty, ref leftLetters, k, 1, t.Ligne, t.Col - k, direction);
                     }
@@ -343,7 +322,10 @@ namespace Dawg
         {
 
             bool jokerInDraught = leftLetters.Any(l => l.Char == Game.Joker);
+            if (partialWord.ToUpper() == "ADULENT")
+            {
 
+            }
             Tile t = null;
             if (ligne > 0 && colonne > 0 && colonne < 15 && ligne < 15) t = grid[ligne, colonne];
             if (t != null)
@@ -432,15 +414,13 @@ namespace Dawg
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
             grid = FindMovesPerAnchor(p, grid, MovementDirection.Across);
-            Game.PrintGrid(grid, true);
+            Debug.WriteLine(Game.GenerateTextGrid(grid, true));;
             // Recherche des coups verticaux
             // par transposition de la grille, on refait tout le processus
             grid = Game.Grid.Transpose();
             grid = DetectTiles(p, grid);
-           
-
-            //////// Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            //grid = FindMovesPerAnchor(p, grid, MovementDirection.Down);
+            // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
+            grid = FindMovesPerAnchor(p, grid, MovementDirection.Down);
 
             var ret = LegalWords.OrderByDescending(t => t.Points).Take(maxWordCount).ToList();
 
@@ -667,7 +647,7 @@ namespace Dawg
                 LegalWords.Add(new Word(Game)
                 {
                     StartTile = t,
-                    Direction = Direction,
+                    Direction = direction,
                     Text = word,
                     Points = points,
                 });

@@ -140,9 +140,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DawgResolver\DawgResolver.csproj">
+    <ProjectReference Include="..\DawgResolver\Dawg.Resolver.csproj">
       <Project>{e12bb466-f92a-40dc-b0c7-4ce18ee15eb9}</Project>
-      <Name>DawgResolver</Name>
+      <Name>Dawg.Resolver</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

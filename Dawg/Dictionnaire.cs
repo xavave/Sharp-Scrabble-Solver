@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Threading;
 
-namespace Dawg
+namespace DawgResolver
 {
     /// <summary>
     /// Cette classe permet de construire, enregistrer et utiliser un dictionnaire DAWG.
@@ -173,7 +173,7 @@ namespace Dawg
             ComparerListeMotsEtDAWG();
 
 
-            TravailEnCours = Dawg.TravailEnCours.Aucun;
+            TravailEnCours = DawgResolver.TravailEnCours.Aucun;
         }
 
         /// <summary>
@@ -440,7 +440,7 @@ namespace Dawg
         /// <returns>DAWG</returns>
         public Noeud ChargerFichierDAWG()
         {
-            TravailEnCours = Dawg.TravailEnCours.ChargementFichierDAWG;
+            TravailEnCours = DawgResolver.TravailEnCours.ChargementFichierDAWG;
 
             //chrono.Restart();
             AnnonceEtape("Début du chargement du dictionnaire DAWG.");
@@ -504,7 +504,7 @@ namespace Dawg
                 //Cette étape n'est utile que pour la démo et le débug
                 //ComparerListeMotsEtDAWG();
 
-                TravailEnCours = Dawg.TravailEnCours.Aucun;
+                TravailEnCours = DawgResolver.TravailEnCours.Aucun;
 
                 return dawg[0];
             }
@@ -657,7 +657,7 @@ namespace Dawg
         public void AjouterUnMot(string mot)
         {
             //chrono.Restart();
-            TravailEnCours = Dawg.TravailEnCours.AjoutMot;
+            TravailEnCours = DawgResolver.TravailEnCours.AjoutMot;
 
             mot = mot.ToUpper();//au cas ou il soit en minuscule
 
@@ -720,7 +720,7 @@ namespace Dawg
             ComparerListeMotsEtDAWG();
 
 
-            TravailEnCours = Dawg.TravailEnCours.Aucun;
+            TravailEnCours = DawgResolver.TravailEnCours.Aucun;
 
         }
 

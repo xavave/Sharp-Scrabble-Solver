@@ -1,4 +1,4 @@
-﻿using Dawg;
+﻿using DawgResolver;
 using Scrabble.Core;
 using Scrabble.Core.Tile;
 using System.Collections.Generic;

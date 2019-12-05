@@ -1,8 +1,7 @@
-﻿using Dawg;
-using DawgResolver;
+﻿using DawgResolver;
+
 using System;
 using System.Diagnostics;
-using System.Linq;
 
 namespace DawgResolverTest
 {

@@ -126,12 +126,16 @@ namespace Scrabble.Core.Words
                 word.StartTile.Col = 7;
                 word.Direction = MovementDirection.Across;
             }
+            var tile = scrabbleTile[word.StartTile.Ligne, word.StartTile.Col];
 
             for (int i = 0; i < word.Text.Length; i++)
             {
-                var tile = scrabbleTile[word.StartTile.Ligne + (word.Direction == MovementDirection.Across ? i : 0), word.StartTile.Col - word.Text.Length + (word.Direction == MovementDirection.Down ? i : 0)];
-                tile.Letter = Game.Alphabet.Find(c => c.Char == word.Text[i]);
-                tile.Text = tile.Letter.Char.ToString();
+                tile.Letter = Game.Alphabet.Find(c => c.Char == char.ToUpper(word.Text[i]));
+                tile.Text = char.IsLower(word.Text[i]) ? tile.Letter.Char.ToString().ToLower() : tile.Letter.Char.ToString();
+                if (word.Direction == MovementDirection.Across)
+                    tile = scrabbleTile[word.StartTile.Ligne, word.StartTile.Col + i + 1];
+                else
+                    tile = scrabbleTile[word.StartTile.Ligne + i + 1, word.StartTile.Col];
 
 
             }
