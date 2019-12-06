@@ -1,5 +1,5 @@
 ﻿using DawgResolver;
-
+using DawgResolver.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +10,6 @@ using System.Reflection;
 
 namespace DawgResolver
 {
-    [Serializable]
     public class Resolver
     {
         //const definition 
@@ -39,36 +38,9 @@ namespace DawgResolver
         /// Cette procédure génère un nouveau tirage
         /// en choisissant au hasard parmi les lettres disponibles dans le sac
         /// </summary>
-        public List<Letter> NewDraught(Player p, string forcedLetters = null)
-        {
-            if (p.Rack.Count >= 7) return p.Rack;
+        
 
-            if (!string.IsNullOrWhiteSpace(forcedLetters))
-            {
-                p.Rack = forcedLetters.Select(c => Game.AlphabetAvecJoker.Find(a => a.Char == c)).ToList();
-                return p.Rack;
-            }
-            // Si le sac est vide
-            if (Game.Bag.LeftLetters == 0)
-                throw new Exception("Il n'y a plus de lettres dans le sac");
-
-            // S'il reste 7 lettres ou moins dans le sac, on n'a pas le choix, on les prend toutes
-
-            Random rnd = new Random();
-            // Sinon on tire 7 lettres du sac à condition qu'il en reste suffisament
-            for (int i = 0; i < Math.Min(Game.Bag.LeftLetters, 7); i++)
-            {
-                int letterIdx = rnd.Next(0, Game.AlphabetAvecJoker.Count - 1);
-                var letter = Bag.Letters.GetRandomLetter();
-                p.Rack.Add(letter);
-
-            }
-            Debug.WriteLine(p.DisplayRack());
-            return p.Rack;
-
-        }
-
-        private Tile[,] DetectTiles(Player p, Tile[,] grid)
+        private VTile[,] DetectTiles(Player p, VTile[,] grid)
         {
             //On efface les informations précédentes en vue d'une nouvelle analyse
             foreach (var t in grid.OfType<Tile>())
@@ -112,17 +84,17 @@ namespace DawgResolver
         /// dans le sens vertical. Ce travail est effectué avant la recherche proprement dite pour limiter les possibilités à tester
         /// on en profite également pour précalculer le point rapporté par les mots formés verticalement
         /// </summary>
-        private Tile[,] FindControlers(Tile[,] grid)
+        private VTile[,] FindControlers(VTile[,] grid)
         {
             int L = 0;
 
-            foreach (var t in grid.OfType<Tile>())
+            foreach (var t in grid.OfType<VTile>())
             {
                 if (t.IsAnchor)
                 {
                     var wordStart = string.Empty;
                     var wordEnd = string.Empty;
-                    var tileCpy = t.Copy(grid);
+                    var tileCpy = t.Copy(Game, grid);
                     int points = 0;
                     //On rassemble le début éventuel des mots (lettres situées au dessus de la case)
                     while (tileCpy.UpTile != null && !tileCpy.UpTile.IsEmpty)
@@ -134,7 +106,7 @@ namespace DawgResolver
                     }
                     wordStart = string.Join("", wordStart.Reverse());
                     wordEnd = "";
-                    tileCpy = t.Copy(grid);
+                    tileCpy = t.Copy(Game, grid);
                     //On rassemble la fin éventuelle des mots (lettres situées en dessous de la case)
                     while (tileCpy.DownTile != null && !tileCpy.DownTile.IsEmpty)
                     {
@@ -174,17 +146,17 @@ namespace DawgResolver
         /// Il s'agit des cases inocupées adjacentes à une case déjà occupée
         /// Ce recensement est utile afin de limiter les recherches aux cases où l'on peut jouer des coups
         /// </summary>
-        private Tile[,] FindAnchors(Tile[,] grid)
+        private VTile[,] FindAnchors(VTile[,] grid)
         {
 
-            foreach (var t in grid.OfType<Tile>().Where(ti => ti.IsEmpty))
+            foreach (var t in grid.OfType<VTile>().Where(ti => ti.IsEmpty))
             {
                 t.IsAnchor = (t.UpTile != null && !t.UpTile.IsEmpty) || (t.DownTile != null && !t.DownTile.IsEmpty) || (t.RightTile != null && !t.RightTile.IsEmpty) || (t.LeftTile != null && !t.LeftTile.IsEmpty);
                 // Cas où l'ancre est à l'extrème gauche du plateau, la taille du préfixe est exactement 0
                 // Cas où l'ancre est précédée d'une autre ancre, la taille du préfixe est exactement 0
                 if (t.IsAnchor)
                 {
-                    var tileCpy = t.Copy(grid);
+                    var tileCpy = t.Copy(Game, grid);
 
                     int cptPrefix = 0;
 
@@ -242,12 +214,12 @@ namespace DawgResolver
         /// <param name="direction"></param>
         /// <param name="noeudActuel"></param>
         /// <returns></returns>
-        private Tile[,] FindMovesPerAnchor(Player p, Tile[,] grid, MovementDirection direction, int noeudActuel = 1)
+        private VTile[,] FindMovesPerAnchor(Player p, VTile[,] grid, MovementDirection direction, int noeudActuel = 1)
         {
             var leftLetters = p.Rack;
             var nbLetters = leftLetters.Count;
 
-            foreach (var t in grid.OfType<Tile>().Where(t => t.IsAnchor))
+            foreach (var t in grid.OfType<VTile>().Where(t => t.IsAnchor))
             {
 
                 // Cas où la taille du préfixe est imposée
@@ -318,7 +290,7 @@ namespace DawgResolver
         /// <param name="line"></param>
         /// <param name="column"></param>
         /// <param name="nbLetters"></param>
-        private void ExtendRight(Tile[,] grid, string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne, MovementDirection direction)
+        private void ExtendRight(VTile[,] grid, string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne, MovementDirection direction)
         {
 
             bool jokerInDraught = leftLetters.Any(l => l.Char == Game.Joker);
@@ -326,7 +298,7 @@ namespace DawgResolver
             {
 
             }
-            Tile t = null;
+            VTile t = null;
             if (ligne > 0 && colonne > 0 && colonne < 15 && ligne < 15) t = grid[ligne, colonne];
             if (t != null)
                 if (t.IsEmpty)
@@ -414,7 +386,7 @@ namespace DawgResolver
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
             grid = FindMovesPerAnchor(p, grid, MovementDirection.Across);
-            Debug.WriteLine(Game.GenerateTextGrid(grid, true));;
+            Debug.WriteLine(Game.GenerateTextGrid(grid, true)); ;
             // Recherche des coups verticaux
             // par transposition de la grille, on refait tout le processus
             grid = Game.Grid.Transpose();
@@ -589,7 +561,7 @@ namespace DawgResolver
         /// </summary>
         /// <param name="word"></param>
         /// <param name="t"></param>
-        private void Add(Tile[,] grid, string word, Tile t, MovementDirection direction)
+        private void Add(VTile[,] grid, string word, VTile t, MovementDirection direction)
         {
             if (word == "dEDOUANA")
             {
@@ -602,7 +574,7 @@ namespace DawgResolver
             int points = 0;
             int UsedDraughtLetters = 0;
             int letterIdx = 0;
-            Tile tile = t.Copy(grid);
+            VTile tile = t.Copy(Game,grid);
             foreach (var L in word)
             {
                 letterIdx++;

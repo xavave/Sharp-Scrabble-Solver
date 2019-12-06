@@ -24,7 +24,7 @@ namespace DawgResolver.Resolver.WPF
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private Word selectedHintWord;
-
+        private Tile[,] data;
         public Game game { get; set; }
         public MainWindow()
         {
@@ -33,15 +33,34 @@ namespace DawgResolver.Resolver.WPF
             game.InitBoard();
 
         }
+        public Tile[,] Data
+        {
+            get => this.data;
+
+            private set
+            {
+                this.data = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         public Word SelectedHintWord
         {
             get => selectedHintWord; set
             {
-                if (value!=null && selectedHintWord!=value)
-                selectedHintWord = value;
-                selectedHintWord.StartTile.SetWord(game, selectedHintWord.Text, selectedHintWord.Direction);
-                OnPropertyChanged(nameof(Game.Grid));
+                if (value != null && selectedHintWord != value)
+                {
+                    selectedHintWord = value;
+                    selectedHintWord.StartTile.SetWord(game, selectedHintWord.Text, selectedHintWord.Direction);
+                    UpdateData();
+                }
             }
+        }
+        
+        private void UpdateData()
+        {
+            this.Data = this.game.Grid;
+            OnPropertyChanged();
         }
         public string[] RowHeaders
         {

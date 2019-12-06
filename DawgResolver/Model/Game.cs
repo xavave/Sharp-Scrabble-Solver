@@ -2,21 +2,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace DawgResolver
+namespace DawgResolver.Model
 {
-    public class Game
+    public class Game 
     {
-        public string GenerateHtml(Tile[,] Tiles)
+        public string GenerateHtml(VTile[,] Tiles)
         {
             StringBuilder sb = new StringBuilder("<html><div>");
             for (int ligne = 0; ligne <= Tiles.GetUpperBound(0); ligne++)
             {
-                
+
                 sb.Append("|");
                 for (int col = 0; col <= Tiles.GetUpperBound(1); col++)
                 {
@@ -28,7 +30,7 @@ namespace DawgResolver
             return sb.ToString();
         }
 
-        public string GenerateTextGrid(Tile[,] Tiles, bool printAnchor, bool printLetterValue = false)
+        public string GenerateTextGrid(VTile[,] Tiles, bool printAnchor, bool printLetterValue = false)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("123456789012345");
@@ -120,7 +122,9 @@ namespace DawgResolver
 
 
         public const int BoardSize = 15;
-        public void InitBoard()
+        private VTile[,] grid = new VTile[Game.BoardSize, Game.BoardSize];
+
+        public VTile[,] InitBoard()
         {
             // Définition des cases bonus
             string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Resources\initial_board.txt");
@@ -131,7 +135,7 @@ namespace DawgResolver
             {
                 foreach (var tp in w.Trim().Split(','))
                 {
-                    Grid[row, col] = new Tile(row, col);
+                    Grid[row, col] = new Tile(this, row, col);
 
                     if (string.IsNullOrEmpty(tp))
                         continue;
@@ -175,11 +179,13 @@ namespace DawgResolver
             //    //LetterValue[nl] = LetterPoints[nl];
             //}
             //Afficher_Contenu_Sac
-
+            return Grid;
 
         }
-        public static Tile[,] Grid { get; set; } = new Tile[Game.BoardSize, Game.BoardSize];
-
+        public VTile[,] Grid
+        {
+            get => grid; set { grid = value;  }
+        }
 
         public bool FirstMove
         {

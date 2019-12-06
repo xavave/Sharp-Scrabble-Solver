@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,16 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bag.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="Model\Bag.cs" />
+    <Compile Include="Model\Game.cs" />
     <Compile Include="DawgResolver.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Letter.cs" />
+    <Compile Include="Model\Letter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rack.cs" />
-    <Compile Include="Tile.cs" />
-    <Compile Include="TileType.cs" />
-    <Compile Include="Word.cs" />
+    <Compile Include="Model\Player.cs" />
+    <Compile Include="Model\Tile.cs" />
+    <Compile Include="Model\TileType.cs" />
+    <Compile Include="Model\Word.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\dico_dawg.txt" />

@@ -1,4 +1,4 @@
-﻿namespace DawgResolver
+﻿namespace DawgResolver.Model
 {
     public enum TileType
     {

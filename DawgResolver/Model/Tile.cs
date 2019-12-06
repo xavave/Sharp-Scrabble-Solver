@@ -2,25 +2,49 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Windows.Media;
 
-namespace DawgResolver
+namespace DawgResolver.Model
 {
- 
-    public interface VTile
+
+    public interface VTile : INotifyPropertyChanged
     {
+        
+        TileType TileType { get; }
         int Ligne { get; set; }
+        Brush Background { get; set; }
         int Col { get; set; }
         Letter Letter { get; set; }
+        int LetterMultiplier { get; set; }
+        int WordMultiplier { get; set; }
+        int AnchorLeftMinLimit { get; set; }
+        int AnchorLeftMaxLimit { get; set; }
+        bool IsAnchor { get; set; }
+        Dictionary<int, int> Controlers { get; set; }
+        bool FromJoker { get; set; }
+        bool IsEmpty { get; }
+        VTile LeftTile { get; }
+        VTile RightTile { get; }
+        VTile UpTile { get; }
+        VTile DownTile { get; }
     }
-    public class Tile : VTile
+    public class Tile : VTile, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName]string propertyName = "")
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         public Game Game { get; }
         bool isAnchor = false;
-        public Tile(int ligne, int col)
+        public Tile(Game g, int ligne, int col)
         {
+            Game = g;
             Ligne = ligne;
             Col = col;
             Letter = new Letter() { Char = char.MinValue };
@@ -49,6 +73,18 @@ namespace DawgResolver
         public int AnchorLeftMinLimit { get; set; }
         public bool IsAnchor { get => isAnchor; set => isAnchor = value; }
 
+        public TileType TileType
+        {
+            get
+            {
+                if (Ligne == 7 && Col == 7) return TileType.Center;
+                else if (WordMultiplier == 2) return TileType.DoubleWord;
+                else if (LetterMultiplier == 2) return TileType.DoubleLetter;
+                else if (LetterMultiplier == 3) return TileType.TripleLetter;
+                else if (WordMultiplier == 3) return TileType.TripleWord;
+                return TileType.Regular;
+            }
+        }
 
         public bool IsEmpty
         {
@@ -58,7 +94,7 @@ namespace DawgResolver
             }
         }
 
-        public Tile LeftTile
+        public VTile LeftTile
         {
             get
             {
@@ -67,7 +103,7 @@ namespace DawgResolver
                 return null;
             }
         }
-        public Tile RightTile
+        public VTile RightTile
         {
             get
             {
@@ -76,7 +112,7 @@ namespace DawgResolver
                 return null;
             }
         }
-        public Tile DownTile
+        public VTile DownTile
         {
             get
             {
@@ -85,7 +121,7 @@ namespace DawgResolver
                 return null;
             }
         }
-        public Tile UpTile
+        public VTile UpTile
         {
             get
             {
@@ -94,6 +130,9 @@ namespace DawgResolver
                 return null;
             }
         }
+
+        public Brush Background { get; set; }
+
         public override string ToString()
         {
             //var c = $"{Letter} min / max:{AnchorLeftMinLimit};{AnchorLeftMaxLimit}";

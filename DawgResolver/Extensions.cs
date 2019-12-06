@@ -1,4 +1,5 @@
 ﻿using DawgResolver;
+using DawgResolver.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,9 +25,9 @@ namespace DawgResolver
             return Game.AlphabetAvecJoker.Find(t => t.Char == (char)(index + Dictionnaire.AscShift)).Char.ToString();
         }
 
-        public static Tile Copy(this Tile t, Tile[,] grid, bool transpose = false)
+        public static VTile Copy(this VTile t,Game g, VTile[,] grid, bool transpose = false)
         {
-            return new Tile(transpose ? t.Col : t.Ligne, transpose ? t.Ligne : t.Col)
+            return new Tile(g,transpose ? t.Col : t.Ligne, transpose ? t.Ligne : t.Col)
             {
                 Controlers = transpose ? new Dictionary<int, int>(27) : t.Controlers,
                 Letter = t.Letter,
@@ -38,7 +39,7 @@ namespace DawgResolver
                 FromJoker = transpose ? false : t.FromJoker
             };
         }
-        public static void SetWord(this Tile t, Game g, string word, MovementDirection direction)
+        public static void SetWord(this VTile t, Game g, string word, MovementDirection direction)
         {
             if (t != null)
                 t.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(word[0]));
@@ -50,7 +51,7 @@ namespace DawgResolver
                     t = t.SetDownLetter(c);
             }
         }
-        public static Tile SetRightLetter(this Tile t, char c)
+        public static VTile SetRightLetter(this VTile t, char c)
         {
             if (t != null && t.RightTile != null)
             {
@@ -59,7 +60,7 @@ namespace DawgResolver
             }
             return null;
         }
-        public static Tile SetDownLetter(this Tile t, char c)
+        public static VTile SetDownLetter(this VTile t, char c)
         {
             if (t != null && t.DownTile != null)
             {
@@ -69,9 +70,9 @@ namespace DawgResolver
             return null;
         }
 
-        public static Tile[,] Transpose(this Tile[,] tiles)
+        public static VTile[,] Transpose(this VTile[,] tiles)
         {
-            var ret = new Tile[tiles.GetLength(0), tiles.GetLength(1)];
+            var ret = new VTile[tiles.GetLength(0), tiles.GetLength(1)];
             foreach (var t in tiles)
             {
                 ret[t.Col, t.Ligne] = t;

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-namespace DawgResolver
+namespace DawgResolver.Model
 {
-    public class Letter
-    {
+    public class Letter { 
+        private char @char;
+
         public Letter()
         {
         }
@@ -18,13 +21,16 @@ namespace DawgResolver
         {
             return this != null && this.Char != char.MinValue;
         }
-        public char Char { get; set; }
+        public char Char
+        {
+            get => @char; set { @char = value; }
+        }
         public int Value { get; set; }
         public int Count { get; set; }
 
         public override string ToString()
         {
-            return $"{(HasValue()?Char.ToString():"")}";
+            return $"{(HasValue() ? Char.ToString() : "")}";
         }
     }
 }

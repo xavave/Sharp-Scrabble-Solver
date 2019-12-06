@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DawgResolver
+namespace DawgResolver.Model
 {
     public enum MovementDirection
     {
@@ -18,10 +18,12 @@ namespace DawgResolver
         public Word(Game g)
         {
             Game = g;
-            StartTile = new Tile(7, 7);
-
+            StartTile = new Tile(Game, 7, 7);
         }
-
+        public void SetWord()
+        {
+            this.StartTile.SetWord(Game, Text, Direction);
+        }
         public Word Suivant { get; set; }
         public bool Scramble
         {
@@ -31,7 +33,7 @@ namespace DawgResolver
             }
         }
         public MovementDirection Direction { get; set; }
-        public Tile StartTile { get; set; }
+        public VTile StartTile { get; set; }
         public int Points
         {
             get; set;

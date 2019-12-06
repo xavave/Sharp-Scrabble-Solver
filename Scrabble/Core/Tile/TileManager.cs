@@ -32,7 +32,7 @@ namespace Scrabble.Core.Tile
             TileBag = new TileBag();
             //var specialTilePositions = ScrabbleForm.WordScorer.GetTileTypes();
 
-            foreach (var virtuTile in Game.Grid)
+            foreach (var virtuTile in ScrabbleForm.Game.Grid)
             {
                
                 var tile = new ScrabbleTile(ScrabbleForm)

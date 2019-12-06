@@ -80,7 +80,7 @@ namespace Scrabble.Core.Words
             {
                 for (int y = 0; y < Game.BoardSize; y++)
                 {
-                    var tile = Game.Grid[x, y];
+                    var tile = ScrabbleForm.Game.Grid[x, y];
 
                     var txt = tile.IsEmpty ? "#" : tile.Letter.ToString();
                     Debug.Write(txt);

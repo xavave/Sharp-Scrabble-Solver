@@ -23,7 +23,7 @@
         <ToolBar>
             <Button Content="New Game" Click="OnNewGame"/>
         </ToolBar>
-        <DataGrid Grid.Row="1"  dataGrid2D:ItemsSource.Array2D="{Binding Source={StaticResource game}, Path=Grid,UpdateSourceTrigger=PropertyChanged}" Width="400" Height="400" DisplayMemberPath="Letter"
+        <DataGrid x:Name="dgBoard" Grid.Row="1"  dataGrid2D:ItemsSource.Array2D="{Binding Data,UpdateSourceTrigger=PropertyChanged}" Width="400" Height="400" DisplayMemberPath="Letter"
                   dataGrid2D:ItemsSource.ColumnHeadersSource="{Binding ColumnHeaders}" 
                   dataGrid2D:ItemsSource.RowHeadersSource="{Binding RowHeaders}" 
                   />
