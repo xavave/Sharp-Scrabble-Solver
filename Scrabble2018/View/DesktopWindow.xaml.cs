@@ -6,23 +6,26 @@ using Scrabble2018.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Scrabble2018
 {
 
-    public partial class DesktopWindow : Window, IView
+    public partial class DesktopWindow : Window, IView, INotifyPropertyChanged
     {
         Controller.GameGUI game;
         public Game drGame { get; set; }
         List<TextBox> RackTileButtons;
         private int ThisPlayer;
         int PlayerNow;
-        ObservableCollection<VTile> BoardTiles = new ObservableCollection<VTile>();
-        //char[,] BoardCharView = new char[15, 15];
+
+        public ObservableCollection<TextBoxTile> BoardTiles { get => boardTiles; set { boardTiles = value; } }
         List<TextBox> ListSwapRackButton = new List<TextBox>();
         public DesktopWindow(int P, Controller.GameGUI g)
         {
@@ -32,25 +35,21 @@ namespace Scrabble2018
             game.Subs(this);
             drGame = new Game();
             foreach (var t in drGame.InitBoard())
-                BoardTiles.Add(t);
+            {
+                var b = new TextBoxTile(t);
+                b.TextChanged += B_TextChanged;
+                b.FontSize = 33;
+                b.CharacterCasing = CharacterCasing.Upper;
+                b.MaxLength = 1;
+                b.DataContext = t;
+                BoardTiles.Add(b);
+            }
+
             GameState.GSInstance.OnStateChanged += OnStateChanged;
             this.Title = "Player " + (P + 1) + " - ScrabbleDesktop";
             ListSwapRackButton = new List<TextBox>();
             RackTileButtons = new List<TextBox>();
-            // Adding board buttons
-            foreach (var tile in drGame.Grid)
-            {
-                //var b = new TextBoxTile(tile);
-                //b.TextChanged += B_TextChanged;
-                ////b.Click += Copier;
-                //b.FontSize = 33;
-                //BoardGrid.Children.Add(b);
-                //b.Text = "";
-                //b.CharacterCasing = CharacterCasing.Upper;
-                //b.DataContext = tile;
-                //b.Background = Scrabble2018.BoardTiles.DetermineColor(tile);
-                //BoardTiles[tile.Ligne, tile.Col] = b;
-            }
+
             // Adding rack buttons
             for (int i = 0; i < 7; ++i)
             {
@@ -59,7 +58,7 @@ namespace Scrabble2018
                 t.FontSize = 33;
                 HandGrid.Children.Add(t);
                 t.Background = Brushes.Chocolate;
-                t.Text = "";
+
                 RackTileButtons.Add(t);
             }
             LogBoardWriter(Welcome.WelcomeText);
@@ -72,6 +71,8 @@ namespace Scrabble2018
             //}
             LogBoardWriter("Player " + (GameState.GSInstance.PlayerNow + 1) + " first!");
             GetNewRackLetters();
+
+
             StorageLbl.Content = '\0';
         }
 
@@ -101,11 +102,14 @@ namespace Scrabble2018
 
         private void B_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //var tile = (sender as TextBox).DataContext as VTile;
-            //var ch = (sender as TextBox).Text[0];
-            //if (char.IsLetter(ch))
-            //    tile.Letter = Game.Alphabet.Find(c => c.Char == ch);
-            //e.Handled = true;
+            var tile = (sender as TextBoxTile);
+            if (!string.IsNullOrWhiteSpace(tile.Text) && char.IsLetter(tile.Text[0]))
+            {
+                tile.Letter = Game.Alphabet.Find(a => a.Char == tile.Text[0]);
+                drGame.Grid[tile.Ligne, tile.Col] = (VTile)tile;
+
+            }
+
         }
 
         Button LastButton;
@@ -217,30 +221,30 @@ namespace Scrabble2018
             game.ClearMovement();
         }
 
-        private void LoadRackView()
-        {
-            DisableAll();
-            for (int i = 0; i < game.gs.ListOfPlayers[ThisPlayer].PlayingTiles.Count; ++i)
-            {
-                char c = game.gs.ListOfPlayers[ThisPlayer].PlayingTiles[i].Letter.Char;
-                RackTileButtons[i].Text = c.ToString();
-            }
-            if (ThisPlayer == GameState.GSInstance.PlayerNow)
-            {
-                EnableAll(); LogBoardWriter("Your turn!");
-            }
-        }
+        //private void LoadRackView()
+        //{
+        //    DisableAll();
+        //    for (int i = 0; i < game.gs.ListOfPlayers[ThisPlayer].PlayingTiles.Count; ++i)
+        //    {
+        //        char c = game.gs.ListOfPlayers[ThisPlayer].PlayingTiles[i].Letter.Char;
+        //        RackTileButtons[i].Text = c.ToString();
+        //    }
+        //    if (ThisPlayer == GameState.GSInstance.PlayerNow)
+        //    {
+        //        EnableAll(); LogBoardWriter("Your turn!");
+        //    }
+        //}
 
 
-        private void ListingPrevWords()
-        {
-            string s = "Player " + (GameState.GSInstance.PrevPlayer + 1) + " made the words: ";
-            foreach (KeyValuePair<string, int> kvp in GameState.GSInstance.CorrectWords)
-            {
-                s += kvp.Key + "(" + kvp.Value + " scores) ";
-            }
-            LogBoardWriter(s);
-        }
+        //private void ListingPrevWords()
+        //{
+        //    string s = "Player " + (GameState.GSInstance.PrevPlayer + 1) + " made the words: ";
+        //    foreach (KeyValuePair<string, int> kvp in GameState.GSInstance.CorrectWords)
+        //    {
+        //        s += kvp.Key + "(" + kvp.Value + " scores) ";
+        //    }
+        //    LogBoardWriter(s);
+        //}
 
         private void ValidateButton_Click(object sender, RoutedEventArgs e)
         {
@@ -271,6 +275,13 @@ namespace Scrabble2018
 
 
         bool SwapMode = false;
+        private ObservableCollection<TextBoxTile> boardTiles = new ObservableCollection<TextBoxTile>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName]string propertyName = "")
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         private void SwapButton_Click(object sender, RoutedEventArgs e)
         {
             //LastButton = SwapButton;
@@ -428,25 +439,41 @@ namespace Scrabble2018
                 var word = addedItems[0] as Word;
                 if (word != null)
                 {
-                    word.SetWord();
+                    foreach (var tile in drGame.Grid.OfType<VTile>().Where(t => !t.IsValidated))
+                    {
+                        var bt = BoardTiles.First(t => t.Ligne == tile.Ligne && t.Col == tile.Col);
+                        bt.Text = "";
+                        tile.IsValidated = false;
+                    }
+                    drGame.ClearTilesInPlay(drGame.Player1);
+                    word.SetWord(drGame.Player1,false);
+                    txtBagContent.Text = drGame.Bag.GetBagContent();
                     foreach (var tile in drGame.Grid.OfType<VTile>().Where(t => !t.IsEmpty))
                     {
-                        var b = new TextBoxTile(tile);
-                        b.DataContext = tile;
-                        //BoardTiles[tile.Ligne, tile.Col] = b;
-                        b.TextChanged += B_TextChanged;
-                        //b.Click += Copier;
-                        b.FontSize = 33;
-                        //BoardGrid.Children.Add(b);
-                        b.Text = tile.Letter.Char.ToString();
-                        b.CharacterCasing = CharacterCasing.Upper;
-
-                        b.Background = Scrabble2018.BoardTiles.DetermineColor(tile);
-
+                        var bt = BoardTiles.First(t => t.Ligne == tile.Ligne && t.Col == tile.Col);
+                        bt.Text = tile.Letter.Char.ToString();
                     }
                 }
 
             }
+        }
+
+        private void myMatrix_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            //if ((e.Key >= Key.A) && (e.Key <= Key.Z) && ThisPlayer == GameState.GSInstance.PlayerNow)
+            //{
+            //    foreach (var b in RackTileButtons)
+            //    {
+            //        KeyConverter kc = new KeyConverter();
+            //        var str = kc.ConvertToString(e.Key);
+            //        if (b.Text.ToString() == str && b.IsEnabled == true)
+            //        {
+            //            //Poster(b, null);
+            //        }
+            //    }
+            //    //do some stuff here
+            //    return;
+            //}
         }
     }
 }

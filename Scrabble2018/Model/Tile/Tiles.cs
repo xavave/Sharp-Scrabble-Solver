@@ -28,7 +28,13 @@ namespace Scrabble2018.Model
         }
         public TextBoxTile(VTile t)
         {
-            this.Background = UpdateColor(t);
+            TileType = t.TileType;
+            Background = UpdateColor(t);
+            Col = t.Col;
+            Ligne = t.Ligne;
+            Letter = t.Letter;
+            WordMultiplier = t.WordMultiplier;
+            LetterMultiplier = t.LetterMultiplier;
         }
         public SolidColorBrush UpdateColor(VTile t)
         {
@@ -53,7 +59,14 @@ namespace Scrabble2018.Model
             get => ligne; set { ligne = value; OnPropertyChanged(); }
         }
         public int Col { get => col; set { col = value; OnPropertyChanged(); } }
-        public Letter Letter { get => letter; set { letter = value; OnPropertyChanged(); } }
+        public Letter Letter
+        {
+            get => letter; set
+            {
+                letter = value;
+                OnPropertyChanged();
+            }
+        }
         public TileType TileType { get; }
         public int LetterMultiplier { get; set; }
         public int WordMultiplier { get; set; }
@@ -63,6 +76,7 @@ namespace Scrabble2018.Model
         public Dictionary<int, int> Controlers { get; set; }
         public bool FromJoker { get; set; }
         public bool IsEmpty { get; }
+        public bool IsValidated { get; set; }
 
         public VTile LeftTile { get; }
 

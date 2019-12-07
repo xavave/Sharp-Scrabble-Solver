@@ -11,7 +11,7 @@ using System.Text;
 
 namespace DawgResolver.Model
 {
-    public class Game 
+    public class Game
     {
         public string GenerateHtml(VTile[,] Tiles)
         {
@@ -30,10 +30,11 @@ namespace DawgResolver.Model
             return sb.ToString();
         }
 
-        public string GenerateTextGrid(VTile[,] Tiles, bool printAnchor, bool printLetterValue = false)
+        public string GenerateTextGrid(VTile[,] Tiles, bool? printAnchor = false, bool printLetterValue = false)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("123456789012345");
+            sb.AppendLine("_______________");
             for (int ligne = 0; ligne <= Tiles.GetUpperBound(0); ligne++)
             {
                 for (int col = 0; col <= Tiles.GetUpperBound(1); col++)
@@ -41,21 +42,32 @@ namespace DawgResolver.Model
 
                     var tile = Tiles[ligne, col];
 
-                    if (printAnchor)
+                    if (printAnchor.HasValue && printAnchor.Value)
                     {
-                        var lm = tile.LetterMultiplier == 2 ? (char)0xB2 : tile.LetterMultiplier == 3 ? (char)0XB3 : '0';
-                        var wm = tile.WordMultiplier == 2 ? '2' : tile.WordMultiplier == 3 ? '3' : '0';
-                        sb.Append(tile.IsAnchor ? "@" : tile.IsEmpty ? tile.LetterMultiplier > 1 ? lm.ToString() : wm.ToString() : printLetterValue ? (tile.Letter.Value * tile.LetterMultiplier).ToString() : tile.Letter.ToString());
+                        if (!tile.IsEmpty)
+                        {
+
+                        }
+                        sb.Append(tile.IsAnchor ? "@" : tile.IsEmpty ? "0" : tile.Letter.Char.ToString());
+                        //var lm = tile.LetterMultiplier == 2 ? (char)0xB2 : tile.LetterMultiplier == 3 ? (char)0XB3 : '0';
+                        //var wm = tile.WordMultiplier == 2 ? '2' : tile.WordMultiplier == 3 ? '3' : '0';
+                        //sb.Append(tile.IsAnchor ? "@" : tile.IsEmpty ? tile.LetterMultiplier > 1 ? lm.ToString() : wm.ToString() : printLetterValue ? (tile.Letter.Value * tile.LetterMultiplier).ToString() : tile.Letter.ToString());
+                    }
+                    else if (printAnchor.HasValue)
+                    {
+                        sb.Append(tile.IsEmpty ? "0" : tile.Letter.ToString());
                     }
                     else
                     {
-                        sb.Append(tile.IsEmpty ? "0" : tile.Letter.ToString());
+                        var lm = tile.LetterMultiplier == 2 ? (char)0xB2 : tile.LetterMultiplier == 3 ? (char)0XB3 : '0';
+                        var wm = tile.WordMultiplier == 2 ? '2' : tile.WordMultiplier == 3 ? '3' : '0';
+                        sb.Append(tile.IsValidated ? "V" : "0");
                     }
 
                 }
                 sb.AppendLine($"|{Alphabet[ligne].Char}");
             }
-            sb.AppendLine("_____________________________________");
+            sb.AppendLine("_______________");
             return sb.ToString();
         }
         public Dictionnaire Dico { get; }
@@ -74,7 +86,6 @@ namespace DawgResolver.Model
             Resolver = new Resolver(this);
             Bag = new Bag();
 
-
         }
         private Dictionnaire LoadDico()
         {
@@ -87,6 +98,26 @@ namespace DawgResolver.Model
         {
             get { return AlphabetAvecJoker.Take(26).ToList(); }
         }
+
+        public void ClearTilesInPlay(Player p)
+        {
+            for (int i = 0; i < Grid.OfType<VTile>().Count(); i++)
+            {
+                var tile = Grid.OfType<VTile>().ElementAt(i);
+                if (!tile.IsValidated)
+                {
+                    if (tile.FromJoker)
+                        p.Rack.Remove(Game.AlphabetAvecJoker[26]);
+                    else
+                        p.Rack.Remove(tile.Letter);
+
+                    tile.IsValidated = true;
+                    Grid[tile.Ligne, tile.Col].Letter = new Letter();
+                }
+            }
+
+        }
+
         public static List<Letter> AlphabetAvecJoker { get; } = new List<Letter>()
         {
             new Letter('A',1,9),
@@ -127,66 +158,71 @@ namespace DawgResolver.Model
         public VTile[,] InitBoard()
         {
             // Définition des cases bonus
-            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Resources\initial_board.txt");
-
-            int row = 0;
-            int col = 0;
-            foreach (var w in File.ReadAllLines(path))
+            var assembly = Assembly.GetExecutingAssembly();
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("initial_board.txt"));
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream, true))
             {
-                foreach (var tp in w.Trim().Split(','))
+                string content = reader.ReadToEnd();
+
+                int row = 0;
+                int col = 0;
+                foreach (var w in content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
                 {
-                    Grid[row, col] = new Tile(this, row, col);
-
-                    if (string.IsNullOrEmpty(tp))
-                        continue;
-
-                    switch (tp.Trim())
+                    foreach (var tp in w.Trim().Split(','))
                     {
-                        case "RE":
+                        Grid[row, col] = new Tile(this, row, col);
 
-                            break;
-                        case "CE":
+                        if (string.IsNullOrEmpty(tp))
+                            continue;
 
-                            break;
-                        case "TW":
-                            Grid[row, col].WordMultiplier = 3;
-                            break;
-                        case "TL":
-                            Grid[row, col].LetterMultiplier = 3;
-                            break;
-                        case "DW":
-                            Grid[row, col].WordMultiplier = 2;
-                            break;
-                        case "DL":
-                            Grid[row, col].LetterMultiplier = 2;
-                            break;
-                        default:
-                            throw new Exception($"Unknown tile type in inital_board file: {tp}");
+                        switch (tp.Trim())
+                        {
+                            case "RE":
+
+                                break;
+                            case "CE":
+
+                                break;
+                            case "TW":
+                                Grid[row, col].WordMultiplier = 3;
+                                break;
+                            case "TL":
+                                Grid[row, col].LetterMultiplier = 3;
+                                break;
+                            case "DW":
+                                Grid[row, col].WordMultiplier = 2;
+                                break;
+                            case "DL":
+                                Grid[row, col].LetterMultiplier = 2;
+                                break;
+                            default:
+                                throw new Exception($"Unknown tile type in inital_board file: {tp}");
+                        }
+                        col += 1;
                     }
-                    col += 1;
+
+                    col = 0;
+                    row += 1;
                 }
 
-                col = 0;
-                row += 1;
+
+
+                ////'Initialisation du contenu du sac d'où sont tirées les lettres
+                //for (int nl = 0; nl < 27; nl++)
+                //{
+                //    BagContent[nl] = LettersCount[nl];
+                //    //LetterValue[nl] = LetterPoints[nl];
+                //}
+                //Afficher_Contenu_Sac
+                return Grid;
             }
-
-
-
-            ////'Initialisation du contenu du sac d'où sont tirées les lettres
-            //for (int nl = 0; nl < 27; nl++)
-            //{
-            //    BagContent[nl] = LettersCount[nl];
-            //    //LetterValue[nl] = LetterPoints[nl];
-            //}
-            //Afficher_Contenu_Sac
-            return Grid;
-
         }
         public VTile[,] Grid
         {
-            get => grid; set { grid = value;  }
+            get => grid; set { grid = value; }
         }
-
+        public static bool IsTransposed { get; set; } = false;
         public bool FirstMove
         {
             get

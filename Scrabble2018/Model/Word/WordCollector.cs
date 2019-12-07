@@ -44,148 +44,151 @@ namespace Scrabble2018.Model.Word
 
         public static int VCollect(int i, int j, char[,] b, GameState gs)
         {
-            gamestate = gs;
-            string s = "";
-            int Vsum = 0;
-            bool VFound = true;
-            // vertical
-            for( int current = i ; current < b.GetLength(0) ; current++ )
-            {
-                if( b[current, j] != '\0' )
-                {
+            return 0;
+            //gamestate = gs;
+            //string s = "";
+            //int Vsum = 0;
+            //bool VFound = true;
+            //// vertical
+            //for( int current = i ; current < b.GetLength(0) ; current++ )
+            //{
+            //    if( b[current, j] != '\0' )
+            //    {
 
-                    s += b[current, j];
-                    if( current + 1 == b.GetLength(0) )
-                    {
-                        if( s.Length > 1 )
-                        {
-                            if( Locate(s) == 1 )
-                            {
-                                Vsum += ScoreUtility.ScoreCalc(j, i, current, "v", b, gs.boardTiles);
-                                gs.CorrectWords[s] = Vsum;
-                            }
-                            else if( Locate(s) == 0 ) break;
-                            else VFound = false;
-                        }
-                    }
-                }
-                else
-                {
-                    if( s.Length > 1 )
-                    {
-                        if( Locate(s) == 1 )
-                        {
-                            Vsum += ScoreUtility.ScoreCalc(j, i, current, "v", b, gs.boardTiles);
-                            gs.CorrectWords[s] = Vsum;
-                        }
-                        else if( Locate(s) == 0 ) break;
-                        else VFound = false;
-                    }
-                    break;
+            //        s += b[current, j];
+            //        if( current + 1 == b.GetLength(0) )
+            //        {
+            //            if( s.Length > 1 )
+            //            {
+            //                if( Locate(s) == 1 )
+            //                {
+            //                    Vsum += ScoreUtility.ScoreCalc(j, i, current, "v", b, gs.boardTiles);
+            //                    gs.CorrectWords[s] = Vsum;
+            //                }
+            //                else if( Locate(s) == 0 ) break;
+            //                else VFound = false;
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if( s.Length > 1 )
+            //        {
+            //            if( Locate(s) == 1 )
+            //            {
+            //                Vsum += ScoreUtility.ScoreCalc(j, i, current, "v", b, gs.boardTiles);
+            //                gs.CorrectWords[s] = Vsum;
+            //            }
+            //            else if( Locate(s) == 0 ) break;
+            //            else VFound = false;
+            //        }
+            //        break;
 
-                }
-            }
-            if( VFound && Vsum != 0 )
-            {
-                return Vsum;
-            }
-            else if( !VFound )
-            {
-                return -1;
-            }
-            else return 0;
+            //    }
+            //}
+            //if( VFound && Vsum != 0 )
+            //{
+            //    return Vsum;
+            //}
+            //else if( !VFound )
+            //{
+            //    return -1;
+            //}
+            //else return 0;
         }
 
         public static int HCollect(int i, int j, char[,] b, GameState gs)
         {
-            gamestate = gs;
-            string s = "";
-            int Hsum = 0;
-            bool HFound = true;
-            // horizontal 
-            for( int current = j ; current < b.GetLength(1) ; current++ )
-            {
-                if( b[i, current] != '\0' )
-                {
-                    s += b[i, current];
-                    if( current + 1 == b.GetLength(1) )
-                    {
-                        if( s.Length > 1 )
-                        {
-                            if( Locate(s) == 1 )
-                            {
-                                Hsum += ScoreUtility.ScoreCalc(i, j, current, "h", b, gs.boardTiles);
-                                gs.CorrectWords[s] = Hsum;
-                            }
-                            else if( Locate(s) == 0 ) break;
-                            else HFound = false;
-                        }
-                    }
-                }
-                else
-                {
-                    if( s.Length > 1 )
-                    {
-                        if( Locate(s) == 1 )
-                        {
-                            Hsum += ScoreUtility.ScoreCalc(i, j, current, "h", b, gs.boardTiles);
-                            gs.CorrectWords[s] = Hsum;
-                        }
-                        else if( Locate(s) == 0 ) break;
-                        else HFound = false;
-                    }
-                    break;
-                }
-            }
+            return 0;
+            //gamestate = gs;
+            //string s = "";
+            //int Hsum = 0;
+            //bool HFound = true;
+            //// horizontal 
+            //for( int current = j ; current < b.GetLength(1) ; current++ )
+            //{
+            //    if( b[i, current] != '\0' )
+            //    {
+            //        s += b[i, current];
+            //        if( current + 1 == b.GetLength(1) )
+            //        {
+            //            if( s.Length > 1 )
+            //            {
+            //                if( Locate(s) == 1 )
+            //                {
+            //                    Hsum += ScoreUtility.ScoreCalc(i, j, current, "h", b, gs.boardTiles);
+            //                    gs.CorrectWords[s] = Hsum;
+            //                }
+            //                else if( Locate(s) == 0 ) break;
+            //                else HFound = false;
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if( s.Length > 1 )
+            //        {
+            //            if( Locate(s) == 1 )
+            //            {
+            //                Hsum += ScoreUtility.ScoreCalc(i, j, current, "h", b, gs.boardTiles);
+            //                gs.CorrectWords[s] = Hsum;
+            //            }
+            //            else if( Locate(s) == 0 ) break;
+            //            else HFound = false;
+            //        }
+            //        break;
+            //    }
+            //}
 
-            if( HFound && Hsum != 0 )
-            {
-                return Hsum;
-            }
-            else if( !HFound )
-            {
-                return -1;
-            }
-            else return 0;
+            //if( HFound && Hsum != 0 )
+            //{
+            //    return Hsum;
+            //}
+            //else if( !HFound )
+            //{
+            //    return -1;
+            //}
+            //else return 0;
         }
 
         public static int Collect(int i, int j, char[,] b, GameState gs)
         {
-            gamestate = gs;
-            string s = "";
-            int Hsum = 0;
-            bool HFound = true;
-            // horizontal 
-            for( int current = j ; current < b.GetLength(1) ; current++ )
-            {
-                if( b[i, current] != '\0' )
-                {
-                    s += b[i, current];
-                }
-                else
-                {
-                    if( s.Length > 1 )
-                    {
-                        if( Locate(s) == 1 ) Hsum += ScoreUtility.ScoreCalc(i, j, current, "h", b, gs.boardTiles);
-                        else if( Locate(s) == 0 ) break;
-                        else HFound = false;
-                    }
-                    break;
-                }
-            }
-            s = "";
-            int Vsum = 0;
-            bool VFound = true;
+            return 0;
+            //gamestate = gs;
+            //string s = "";
+            //int Hsum = 0;
+            //bool HFound = true;
+            //// horizontal 
+            //for( int current = j ; current < b.GetLength(1) ; current++ )
+            //{
+            //    if( b[i, current] != '\0' )
+            //    {
+            //        s += b[i, current];
+            //    }
+            //    else
+            //    {
+            //        if( s.Length > 1 )
+            //        {
+            //            if( Locate(s) == 1 ) Hsum += ScoreUtility.ScoreCalc(i, j, current, "h", b, gs.boardTiles);
+            //            else if( Locate(s) == 0 ) break;
+            //            else HFound = false;
+            //        }
+            //        break;
+            //    }
+            //}
+            //s = "";
+            //int Vsum = 0;
+            //bool VFound = true;
 
-            if( ( VFound || HFound ) && ( Vsum != 0 || Hsum != 0 ) )
-            {
-                return Vsum + Hsum;
-            }
-            else if( !VFound && !HFound )
-            {
-                return -1;
-            }
-            else return 0;
+            //if( ( VFound || HFound ) && ( Vsum != 0 || Hsum != 0 ) )
+            //{
+            //    return Vsum + Hsum;
+            //}
+            //else if( !VFound && !HFound )
+            //{
+            //    return -1;
+            //}
+            //else return 0;
         }
     }
 }

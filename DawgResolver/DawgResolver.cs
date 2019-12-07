@@ -38,14 +38,15 @@ namespace DawgResolver
         /// Cette procédure génère un nouveau tirage
         /// en choisissant au hasard parmi les lettres disponibles dans le sac
         /// </summary>
-        
+
 
         private VTile[,] DetectTiles(Player p, VTile[,] grid)
         {
             //On efface les informations précédentes en vue d'une nouvelle analyse
             foreach (var t in grid.OfType<Tile>())
             {
-                t.Clear();
+                t.AnchorLeftMaxLimit = t.AnchorLeftMinLimit = 0;
+                t.Controlers = new Dictionary<int, int>(27);
             }
 
             // Le premier est un cas particulier où aucune lettre n'est encore posée sur le plateau
@@ -56,7 +57,6 @@ namespace DawgResolver
 
             if (Game.FirstMove)
             {
-                grid[7, 7].IsAnchor = true;
                 grid[7, 7].AnchorLeftMinLimit = 0;
                 grid[7, 7].AnchorLeftMaxLimit = 6;
 
@@ -151,7 +151,7 @@ namespace DawgResolver
 
             foreach (var t in grid.OfType<VTile>().Where(ti => ti.IsEmpty))
             {
-                t.IsAnchor = (t.UpTile != null && !t.UpTile.IsEmpty) || (t.DownTile != null && !t.DownTile.IsEmpty) || (t.RightTile != null && !t.RightTile.IsEmpty) || (t.LeftTile != null && !t.LeftTile.IsEmpty);
+                //t.IsAnchor = (t.UpTile != null && !t.UpTile.IsEmpty) || (t.DownTile != null && !t.DownTile.IsEmpty) || (t.RightTile != null && !t.RightTile.IsEmpty) || (t.LeftTile != null && !t.LeftTile.IsEmpty);
                 // Cas où l'ancre est à l'extrème gauche du plateau, la taille du préfixe est exactement 0
                 // Cas où l'ancre est précédée d'une autre ancre, la taille du préfixe est exactement 0
                 if (t.IsAnchor)
@@ -214,7 +214,7 @@ namespace DawgResolver
         /// <param name="direction"></param>
         /// <param name="noeudActuel"></param>
         /// <returns></returns>
-        private VTile[,] FindMovesPerAnchor(Player p, VTile[,] grid, MovementDirection direction, int noeudActuel = 1)
+        private VTile[,] FindMovesPerAnchor(Player p, VTile[,] grid, int noeudActuel = 1)
         {
             var leftLetters = p.Rack;
             var nbLetters = leftLetters.Count;
@@ -229,7 +229,7 @@ namespace DawgResolver
                     // On ne peut que former un nouveau mot vers la droite
                     if (t.AnchorLeftMinLimit == 0)
                     {
-                        ExtendRight(grid, string.Empty, ref leftLetters, 1, 1, t.Ligne, t.Col, direction);
+                        ExtendRight(grid, string.Empty, ref leftLetters, 1, 1, t.Ligne, t.Col);
                     }
                     else
                     {
@@ -245,7 +245,7 @@ namespace DawgResolver
                                 Trouve(grid[t.Ligne, k].Letter.Char, ref noeudActuel);
                             }
                         }
-                        ExtendRight(grid, prefixe.ToUpper(), ref leftLetters, 1, noeudActuel, t.Ligne, t.Col, direction);
+                        ExtendRight(grid, prefixe.ToUpper(), ref leftLetters, 1, noeudActuel, t.Ligne, t.Col);
                     }
                 }
                 else
@@ -254,7 +254,7 @@ namespace DawgResolver
                     // On essaie les différents préfixes possibles allant de 0 à k lettres
                     for (int k = 0; k <= t.AnchorLeftMaxLimit; k++)
                     {
-                        ExtendRight(grid, string.Empty, ref leftLetters, k, 1, t.Ligne, t.Col - k, direction);
+                        ExtendRight(grid, string.Empty, ref leftLetters, k, 1, t.Ligne, t.Col - k);
                     }
                 }
 
@@ -290,14 +290,11 @@ namespace DawgResolver
         /// <param name="line"></param>
         /// <param name="column"></param>
         /// <param name="nbLetters"></param>
-        private void ExtendRight(VTile[,] grid, string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne, MovementDirection direction)
+        private void ExtendRight(VTile[,] grid, string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne)
         {
 
             bool jokerInDraught = leftLetters.Any(l => l.Char == Game.Joker);
-            if (partialWord.ToUpper() == "ADULENT")
-            {
 
-            }
             VTile t = null;
             if (ligne > 0 && colonne > 0 && colonne < 15 && ligne < 15) t = grid[ligne, colonne];
             if (t != null)
@@ -308,7 +305,8 @@ namespace DawgResolver
                     {   // Si le préfixe constitue déjà un mot valide
                         // alors on peut rajouter le préfixe dans la liste des coups admis
 
-                        Add(grid, partialWord, direction == MovementDirection.Across ? grid[t.Ligne, t.Col - partialWord.Length] : grid[t.Ligne - partialWord.Length, t.Col], direction);
+                        //Add(grid, partialWord, t, Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
+                       Add(grid, partialWord, Game.IsTransposed ? grid[t.Col - partialWord.Length, t.Ligne] : grid[t.Ligne, t.Col - partialWord.Length], Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
                     }
                     //if (nbLetters == 0) return;
                     for (int i = 1; i <= 26; i++)
@@ -332,7 +330,7 @@ namespace DawgResolver
                                         leftLetters.RemoveAt(l);
 
                                         // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-                                        ExtendRight(grid, partialWord + (char)(i + Dictionnaire.AscShift), ref leftLetters, minSize, Game.Dico.Legacy[i, noeud], ligne, colonne + 1, direction);
+                                        ExtendRight(grid, partialWord + (char)(i + Dictionnaire.AscShift), ref leftLetters, minSize, Game.Dico.Legacy[i, noeud], ligne, colonne + 1);
 
                                         // Au retour de l'appel recursif on restitue la lettre dans le tirage
 
@@ -355,7 +353,7 @@ namespace DawgResolver
                                         leftLetters.RemoveAt(l);
 
                                         // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
-                                        ExtendRight(grid, partialWord + char.ToLower((char)(i + Dictionnaire.AscShift)), ref leftLetters, minSize, Game.Dico.Legacy[i, noeud], ligne, colonne + 1, direction);
+                                        ExtendRight(grid, partialWord + char.ToLower((char)(i + Dictionnaire.AscShift)), ref leftLetters, minSize, Game.Dico.Legacy[i, noeud], ligne, colonne + 1);
 
 
                                         // Au retour de l'appel recursif on restitue le joker dans le tirage
@@ -370,7 +368,7 @@ namespace DawgResolver
                 {
                     if (Game.Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud] != 0)
                     {
-                        ExtendRight(grid, partialWord + t.Letter.Char, ref leftLetters, 1, Game.Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud], ligne, colonne + 1, direction);
+                        ExtendRight(grid, partialWord + t.Letter.Char, ref leftLetters, 1, Game.Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud], ligne, colonne + 1);
                     }
 
                 }
@@ -383,16 +381,14 @@ namespace DawgResolver
         public List<Word> FindMoves(Player p, int maxWordCount = 100)
         {
             var grid = DetectTiles(p, Game.Grid);
-
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            grid = FindMovesPerAnchor(p, grid, MovementDirection.Across);
-            Debug.WriteLine(Game.GenerateTextGrid(grid, true)); ;
+            grid = FindMovesPerAnchor(p, grid);
             // Recherche des coups verticaux
             // par transposition de la grille, on refait tout le processus
-            grid = Game.Grid.Transpose();
+            grid = grid.Transpose();
             grid = DetectTiles(p, grid);
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            grid = FindMovesPerAnchor(p, grid, MovementDirection.Down);
+            grid = FindMovesPerAnchor(p, grid);
 
             var ret = LegalWords.OrderByDescending(t => t.Points).Take(maxWordCount).ToList();
 
@@ -400,8 +396,10 @@ namespace DawgResolver
             {
                 // Les lettres non utilisées sont "reversées dans le sac"
                 foreach (var l in p.Rack)
-                    Bag.Letters.Add(l);
+                    Game.Bag.PutBackLetter(l);
             }
+            //on retranspose la grille pour la remettre a son état initial
+            grid = grid.Transpose();
             return ret;
         }
 
@@ -574,7 +572,7 @@ namespace DawgResolver
             int points = 0;
             int UsedDraughtLetters = 0;
             int letterIdx = 0;
-            VTile tile = t.Copy(Game,grid);
+            VTile tile = t.Copy(Game, grid);
             foreach (var L in word)
             {
                 letterIdx++;

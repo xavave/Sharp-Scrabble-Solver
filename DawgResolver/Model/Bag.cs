@@ -41,12 +41,17 @@ namespace DawgResolver.Model
             var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == c);
             var le = Letters.Find(l => l == letter);
             if (removeFromBag)
-                if (le.Count == 0) return null;
+                if (le.Count <= 0) return null;
                 else le.Count -= 1;
             return le;
         }
+        public void PutBackLetter(Letter l)
+        {
+            var letter = Game.AlphabetAvecJoker.Find(cc => cc == l);
+            letter.Count++;
+        }
 
-        public string GetBagContent()
+        public string GetBagContent(int split=5)
         {
             var sb = new StringBuilder();
             int idx = 0;
@@ -54,7 +59,7 @@ namespace DawgResolver.Model
             {
                 sb.Append($"{l.Char}:{l.Count}_______");
                 idx++;
-                if (idx % 5 == 0) sb.AppendLine();
+                if (idx % split == 0) sb.AppendLine();
             }
             return sb.ToString();
         }

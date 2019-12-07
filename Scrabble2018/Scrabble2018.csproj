@@ -63,6 +63,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controller\GameController.cs" />
+    <Compile Include="Converters\Converters.cs" />
     <Compile Include="Model\Game\GameEndVerify.cs" />
     <Compile Include="Model\Game\GameStartDraw.cs" />
     <Compile Include="Model\Game\GameState.cs" />
@@ -162,5 +163,6 @@
       <Name>Dawg</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

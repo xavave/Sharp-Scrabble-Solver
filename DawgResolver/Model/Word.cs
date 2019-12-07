@@ -11,7 +11,6 @@ namespace DawgResolver.Model
     {
         Across, Down, None
     };
-    [Serializable]
     public class Word
     {
         public Game Game { get; set; }
@@ -20,9 +19,9 @@ namespace DawgResolver.Model
             Game = g;
             StartTile = new Tile(Game, 7, 7);
         }
-        public void SetWord()
+        public void SetWord(Player p,bool validate)
         {
-            this.StartTile.SetWord(Game, Text, Direction);
+            this.StartTile.SetWord(p, Text, Direction, validate);
         }
         public Word Suivant { get; set; }
         public bool Scramble

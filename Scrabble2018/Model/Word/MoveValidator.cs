@@ -33,13 +33,13 @@ namespace Scrabble2018.Model.Word
                         tempIndex.Add(t.Item2);
                     }
                     movement.Index.Sort();
-                    for( int i = movement.Index[0] ; i < gs.BoardChar.GetLength(0) ; i++ )
-                    {
-                        if( gs.BoardChar[movement.Fixed, i] != '\0' )
-                        {
-                            tempIndex.Add(i);
-                        }
-                    }
+                    //for( int i = movement.Index[0] ; i < gs.BoardChar.GetLength(0) ; i++ )
+                    //{
+                    //    if( gs.BoardChar[movement.Fixed, i] != '\0' )
+                    //    {
+                    //        tempIndex.Add(i);
+                    //    }
+                    //}
                 }
                 else if( VNotChange )
                 {
@@ -51,13 +51,13 @@ namespace Scrabble2018.Model.Word
                         tempIndex.Add(t.Item1);
                     }
                     movement.Index.Sort();
-                    for( int i = movement.Index[0] ; i < gs.BoardChar.GetLength(1) ; i++ )
-                    {
-                        if( gs.BoardChar[i, movement.Fixed] != '\0' )
-                        {
-                            tempIndex.Add(i);
-                        }
-                    }
+                    //for( int i = movement.Index[0] ; i < gs.BoardChar.GetLength(1) ; i++ )
+                    //{
+                    //    if( gs.BoardChar[i, movement.Fixed] != '\0' )
+                    //    {
+                    //        tempIndex.Add(i);
+                    //    }
+                    //}
                 }
             }
             else if( movement.Moves.Count == 1 )

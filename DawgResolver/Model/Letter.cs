@@ -9,6 +9,10 @@ namespace DawgResolver.Model
 
         public Letter()
         {
+            Char = char.MinValue;
+            Value = 0;
+            Count = 0;
+            
         }
 
         public Letter(char @char, int value, int count)

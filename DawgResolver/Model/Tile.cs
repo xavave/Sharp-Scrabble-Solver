@@ -1,30 +1,26 @@
-﻿using DawgResolver;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
 namespace DawgResolver.Model
 {
 
-    public interface VTile : INotifyPropertyChanged
+    public interface VTile
     {
-        
+        bool IsValidated { get; set; }
         TileType TileType { get; }
         int Ligne { get; set; }
-        Brush Background { get; set; }
+        //System.Drawing.Color Background { get; set; }
         int Col { get; set; }
         Letter Letter { get; set; }
         int LetterMultiplier { get; set; }
         int WordMultiplier { get; set; }
         int AnchorLeftMinLimit { get; set; }
         int AnchorLeftMaxLimit { get; set; }
-        bool IsAnchor { get; set; }
+        bool IsAnchor { get; }
+       
         Dictionary<int, int> Controlers { get; set; }
         bool FromJoker { get; set; }
         bool IsEmpty { get; }
@@ -35,13 +31,16 @@ namespace DawgResolver.Model
     }
     public class Tile : VTile, INotifyPropertyChanged
     {
+        public System.Drawing.Color Background { get; set; }
+        public bool IsValidated { get; set; } = true;
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName]string propertyName = "")
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         public Game Game { get; }
-        bool isAnchor = false;
+       
         public Tile(Game g, int ligne, int col)
         {
             Game = g;
@@ -51,12 +50,12 @@ namespace DawgResolver.Model
             LetterMultiplier = 1;
             WordMultiplier = 1;
             AnchorLeftMinLimit = AnchorLeftMaxLimit = 0;
-            IsAnchor = (UpTile != null && !UpTile.IsEmpty) || (DownTile != null && !DownTile.IsEmpty) || (RightTile != null && !RightTile.IsEmpty) || (LeftTile != null && !LeftTile.IsEmpty);
+            //IsAnchor = (UpTile != null && !UpTile.IsEmpty) || (DownTile != null && !DownTile.IsEmpty) || (RightTile != null && !RightTile.IsEmpty) || (LeftTile != null && !LeftTile.IsEmpty);
         }
 
         internal void Clear()
         {
-            IsAnchor = false;
+            //IsAnchor = false;
             AnchorLeftMinLimit = 0;
             AnchorLeftMaxLimit = 0;
             Controlers = new Dictionary<int, int>(27);
@@ -71,8 +70,13 @@ namespace DawgResolver.Model
         public Letter Letter { get; set; }
         public int AnchorLeftMaxLimit { get; set; }
         public int AnchorLeftMinLimit { get; set; }
-        public bool IsAnchor { get => isAnchor; set => isAnchor = value; }
-
+        public bool IsAnchor
+        {
+            get
+            {
+                return (IsEmpty && TileType== TileType.Center) || (IsEmpty && ( (UpTile != null && !UpTile.IsEmpty) || (DownTile != null && !DownTile.IsEmpty) || (RightTile != null && !RightTile.IsEmpty) || (LeftTile != null && !LeftTile.IsEmpty)));
+            }
+        }
         public TileType TileType
         {
             get
@@ -130,8 +134,6 @@ namespace DawgResolver.Model
                 return null;
             }
         }
-
-        public Brush Background { get; set; }
 
         public override string ToString()
         {

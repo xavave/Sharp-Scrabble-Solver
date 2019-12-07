@@ -1,4 +1,4 @@
-﻿using DawgResolver;
+﻿using DawgResolver.Model;
 using Scrabble.Core;
 using Scrabble.Core.Log;
 using Scrabble.Core.Players;
@@ -6,15 +6,11 @@ using Scrabble.Core.Stats;
 using Scrabble.Core.Tile;
 using Scrabble.Core.Words;
 using Scrabble.Forms;
+
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Scrabble
