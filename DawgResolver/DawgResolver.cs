@@ -306,7 +306,7 @@ namespace DawgResolver
                         // alors on peut rajouter le préfixe dans la liste des coups admis
 
                         //Add(grid, partialWord, t, Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
-                       Add(grid, partialWord, Game.IsTransposed ? grid[t.Col - partialWord.Length, t.Ligne] : grid[t.Ligne, t.Col - partialWord.Length], Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
+                        Add(grid, partialWord, Game.IsTransposed ? grid[t.Col - partialWord.Length, t.Ligne] : grid[t.Ligne, t.Col - partialWord.Length], Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
                     }
                     //if (nbLetters == 0) return;
                     for (int i = 1; i <= 26; i++)
@@ -380,15 +380,17 @@ namespace DawgResolver
         /// </summary>
         public List<Word> FindMoves(Player p, int maxWordCount = 100)
         {
-            var grid = DetectTiles(p, Game.Grid);
+            var backupGrid = Game.Grid.Copy();
+            Game.Grid = DetectTiles(p, Game.Grid);
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            grid = FindMovesPerAnchor(p, grid);
+            Game.Grid = FindMovesPerAnchor(p, Game.Grid);
             // Recherche des coups verticaux
             // par transposition de la grille, on refait tout le processus
-            grid = grid.Transpose();
-            grid = DetectTiles(p, grid);
+            Game.Grid = backupGrid;
+            Game.Grid = Game.Grid.Transpose(Game);
+            Game.Grid = DetectTiles(p, Game.Grid);
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            grid = FindMovesPerAnchor(p, grid);
+            Game.Grid = FindMovesPerAnchor(p, Game.Grid);
 
             var ret = LegalWords.OrderByDescending(t => t.Points).Take(maxWordCount).ToList();
 
@@ -398,8 +400,8 @@ namespace DawgResolver
                 foreach (var l in p.Rack)
                     Game.Bag.PutBackLetter(l);
             }
-            //on retranspose la grille pour la remettre a son état initial
-            grid = grid.Transpose();
+            //on remet la grille à son état initial
+            Game.Grid = backupGrid;
             return ret;
         }
 

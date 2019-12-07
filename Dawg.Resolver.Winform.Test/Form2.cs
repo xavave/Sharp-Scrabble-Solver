@@ -23,8 +23,8 @@ namespace Dawg.Resolver.Winform.Test
 
             for (int i = 0; i < 15; i++)
             {
-                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i)) { Text = $"{i+1}",Name=$"col{i}" });
-                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, i, 0)) { Text = $"{i + 1}" , Name = $"ligne{i}" });
+                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i)) { Text = $"{i + 1}", Name = $"col{i}" });
+                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, i, 0)) { Text = $"{i + 1}", Name = $"ligne{i}" });
             }
 
             foreach (var tile in Game.Grid)
@@ -40,7 +40,7 @@ namespace Dawg.Resolver.Winform.Test
             Cursor.Current = Cursors.WaitCursor;
             Game.Bag.GetNewRack(Game.Player1, textBox1.Text);
             lsb.DisplayMember = "DisplayText";
-            var ret = Game.Resolver.FindMoves(Game.Player1,500);
+            var ret = Game.Resolver.FindMoves(Game.Player1, 500);
             lsb.Items.Clear();
             foreach (var r in ret)
                 lsb.Items.Add(r);
@@ -53,28 +53,34 @@ namespace Dawg.Resolver.Winform.Test
             if (word == null) return;
             Game.ClearTilesInPlay(Game.Player1);
             word.SetWord(Game.Player1, false);
-          
-            RefreshBoard();
+
+            RefreshBoard(Game.Grid);
             textBox1.Text = new string(Game.Player1.Rack.Select(r => r.Char).ToArray());
-           
+
             textBox3.Text = Game.Bag.GetBagContent();
         }
 
-        private void RefreshBoard()
+        private VTile[,] RefreshBoard(VTile[,] grid)
         {
-            foreach (var tile in Game.Grid.OfType<VTile>())
+            for (int ligne = 0; ligne <= grid.GetUpperBound(0); ligne++)
             {
-                var formTile = groupBox1.Controls.Find($"t{tile.Ligne}_{tile.Col}", false).First() as FormTile;
-                formTile.Text = tile.Letter.Char.ToString();
+                for (int col = 0; col <= grid.GetUpperBound(1); col++)
+                {
+                    var formTile = groupBox1.Controls.Find($"t{ligne}_{col}", false).First() as FormTile;
+                    formTile.Tile = grid[ligne, col];
+                    formTile.Text = formTile.Tile.Letter.Char.ToString();
+                }
             }
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
+            return grid;
         }
 
         private void btnTranspose_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            Game.Grid = Game.Grid.Transpose();
-            RefreshBoard();
+            var toto = new VTile[15, 15];
+            toto = Game.Grid.Transpose(Game);
+            Game.Grid = RefreshBoard(toto);
             Cursor.Current = Cursors.Default;
         }
 

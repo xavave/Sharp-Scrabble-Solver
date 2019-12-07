@@ -71,6 +71,7 @@ namespace DawgResolver.Model
             return sb.ToString();
         }
         public Dictionnaire Dico { get; }
+
         public const char Joker = '*';
 
         public Resolver Resolver { get; }
@@ -153,6 +154,7 @@ namespace DawgResolver.Model
 
 
         public const int BoardSize = 15;
+
         private VTile[,] grid = new VTile[Game.BoardSize, Game.BoardSize];
 
         public VTile[,] InitBoard()

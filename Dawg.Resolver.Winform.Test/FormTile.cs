@@ -13,7 +13,7 @@ namespace Dawg.Resolver.Winform.Test
 {
     public partial class FormTile : TextBox, VTile
     {
-        public VTile Tile { get; private set; }
+        public VTile Tile { get;  set; }
         public Game Game { get; set; }
         public FormTile(Game g, VTile t)
         {
@@ -43,12 +43,21 @@ namespace Dawg.Resolver.Winform.Test
             var t = txt.Tile;
             var frm = this.Parent.Parent as Form2;
             var txtProps = frm.txtTileProps;
-            txtProps.Text = $"[{t.Ligne},{t.Col}] => IsAnchor:{t.IsAnchor} IsEmpty :{t.IsEmpty} => {t.Letter.Char}";
+            txtProps.Text = $"[{t.Ligne},{t.Col}] => IsAnchor:{t.IsAnchor} IsEmpty :{t.IsEmpty} => {t}";
             txtProps.Text += Environment.NewLine;
             txtProps.Text += $"AnchorLeftMinLimit = {t.AnchorLeftMinLimit}";
             txtProps.Text += Environment.NewLine;
             txtProps.Text += $"AnchorLeftMaxLimit = {t.AnchorLeftMaxLimit}";
             txtProps.Text += Environment.NewLine;
+            txtProps.Text += $"UpTile = {t.UpTile}";
+            txtProps.Text += Environment.NewLine;
+            txtProps.Text += $"DownTile = {t.DownTile}";
+            txtProps.Text += Environment.NewLine;
+            txtProps.Text += $"RightTile = {t.RightTile}";
+            txtProps.Text += Environment.NewLine;
+            txtProps.Text += $"LeftTile = {t.LeftTile}";
+            txtProps.Text += Environment.NewLine;
+
             txtProps.Text += "Controlers:" + Environment.NewLine;
             foreach (var c in t.Controlers)
                 txtProps.Text += $"{c.Key}:{c.Value}{Environment.NewLine}";

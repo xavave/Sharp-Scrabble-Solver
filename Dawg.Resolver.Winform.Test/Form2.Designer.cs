@@ -124,14 +124,14 @@
             this.txtTileProps.Location = new System.Drawing.Point(1224, 13);
             this.txtTileProps.Multiline = true;
             this.txtTileProps.Name = "txtTileProps";
-            this.txtTileProps.Size = new System.Drawing.Size(301, 702);
+            this.txtTileProps.Size = new System.Drawing.Size(370, 702);
             this.txtTileProps.TabIndex = 14;
             // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1537, 748);
+            this.ClientSize = new System.Drawing.Size(1606, 748);
             this.Controls.Add(this.txtTileProps);
             this.Controls.Add(this.btnBackToRack);
             this.Controls.Add(this.btnTranspose);

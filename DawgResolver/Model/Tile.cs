@@ -12,15 +12,14 @@ namespace DawgResolver.Model
         bool IsValidated { get; set; }
         TileType TileType { get; }
         int Ligne { get; set; }
-        //System.Drawing.Color Background { get; set; }
         int Col { get; set; }
         Letter Letter { get; set; }
         int LetterMultiplier { get; set; }
         int WordMultiplier { get; set; }
         int AnchorLeftMinLimit { get; set; }
         int AnchorLeftMaxLimit { get; set; }
-        bool IsAnchor { get; }
-       
+        bool IsAnchor { get;  }
+
         Dictionary<int, int> Controlers { get; set; }
         bool FromJoker { get; set; }
         bool IsEmpty { get; }
@@ -29,18 +28,13 @@ namespace DawgResolver.Model
         VTile UpTile { get; }
         VTile DownTile { get; }
     }
-    public class Tile : VTile, INotifyPropertyChanged
+    public class Tile : VTile
     {
         public System.Drawing.Color Background { get; set; }
         public bool IsValidated { get; set; } = true;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string propertyName = "")
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
         public Game Game { get; }
-       
+
         public Tile(Game g, int ligne, int col)
         {
             Game = g;
@@ -74,7 +68,11 @@ namespace DawgResolver.Model
         {
             get
             {
-                return (IsEmpty && TileType== TileType.Center) || (IsEmpty && ( (UpTile != null && !UpTile.IsEmpty) || (DownTile != null && !DownTile.IsEmpty) || (RightTile != null && !RightTile.IsEmpty) || (LeftTile != null && !LeftTile.IsEmpty)));
+                return (IsEmpty && TileType == TileType.Center) ||
+                    (UpTile != null && !UpTile.IsEmpty) ||
+                    (DownTile != null && !DownTile.IsEmpty) ||
+                    (RightTile != null && !RightTile.IsEmpty) ||
+                    (LeftTile != null && !LeftTile.IsEmpty);
             }
         }
         public TileType TileType

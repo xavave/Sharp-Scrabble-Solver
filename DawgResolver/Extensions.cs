@@ -41,9 +41,11 @@ namespace DawgResolver
         }
         public static void SetWord(this VTile t, Player p, string word, MovementDirection direction, bool Validate = false)
         {
+
+            t = t.RightTile?.LeftTile;
             if (t != null)
             {
-                t.SetLetter(word[0], p, Validate);
+                t.Letter = t.SetLetter(word[0], p, Validate);
 
                 foreach (var c in word.Skip(1))
                 {
@@ -54,7 +56,7 @@ namespace DawgResolver
                 }
             }
         }
-        public static void SetLetter(this VTile t, char c, Player p, bool Validate)
+        public static Letter SetLetter(this VTile t, char c, Player p, bool Validate)
         {
             if (t != null && t.IsEmpty)
             {
@@ -67,7 +69,9 @@ namespace DawgResolver
                     p.Rack.Remove(Game.AlphabetAvecJoker[26]);
                 else
                     p.Rack.Remove(t.Letter);
+
             }
+            return t.Letter;
         }
         public static VTile SetRightLetter(this VTile t, char c, Player p, bool Validate)
         {
@@ -103,16 +107,29 @@ namespace DawgResolver
             }
             return null;
         }
-
-        public static VTile[,] Transpose(this VTile[,] tiles)
+        public static VTile[,] Copy(this VTile[,] tiles)
         {
             var ret = new VTile[tiles.GetLength(0), tiles.GetLength(1)];
             for (int ligne = 0; ligne < tiles.GetLength(0); ligne++)
                 for (int col = 0; col < tiles.GetLength(1); col++)
                 {
-                    ret[ligne, col] = tiles[col, ligne];
+                    ret[ligne, col] = tiles[ligne, col];
+
+                }
+            return ret;
+        }
+        public static VTile[,] Transpose(this VTile[,] tiles, Game g)
+        {
+            var ret = new VTile[tiles.GetLength(0), tiles.GetLength(1)];
+            for (int ligne = 0; ligne < tiles.GetLength(0); ligne++)
+                for (int col = 0; col < tiles.GetLength(1); col++)
+                {
+                    var source = tiles[col, ligne];
+                    ret[ligne, col] = new Tile(g, col, ligne);
                     ret[ligne, col].Ligne = ligne;
                     ret[ligne, col].Col = col;
+                    ret[ligne, col].Letter = tiles[col, ligne].Letter;
+
                 }
             Game.IsTransposed = !Game.IsTransposed;
             return ret;
