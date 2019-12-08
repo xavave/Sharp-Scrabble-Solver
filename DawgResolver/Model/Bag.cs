@@ -81,7 +81,7 @@ namespace DawgResolver.Model
 
             // S'il reste 7 lettres ou moins dans le sac, on n'a pas le choix, on les prend toutes
 
-            Random rnd = new Random();
+            Random rnd = new Random((int)DateTime.Now.Ticks);
             int cpt = 0;
             // Sinon on tire 7 lettres du sac à condition qu'il en reste suffisament
             for (int i = 0; i < Math.Min(FlatList.Length, lettersToTakeCount); i++)

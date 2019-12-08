@@ -117,7 +117,7 @@ namespace Dawg.Resolver.Winform.Test
 
             txtProps.Text += "Controlers:" + Environment.NewLine;
             foreach (var c in t.Controlers)
-                txtProps.Text += $"{c.Key}:{c.Value}{Environment.NewLine}";
+                txtProps.Text += $"{Game.AlphabetAvecJoker[c.Key].Char}:{c.Value}{Environment.NewLine}";
         }
 
         private Color GetBackColor(VTile t)

@@ -473,8 +473,6 @@ namespace DawgResolver
         /// <param name="t"></param>
         private void Add(VTile[,] grid, string word, VTile t, MovementDirection direction)
         {
-
-
             int multiplier = 1;
             int horizontalPoints = 0;
             int verticalPoints = 0;
@@ -482,6 +480,7 @@ namespace DawgResolver
             int debutCol = t.Col - word.Length;
             int UsedDraughtLetters = 0;
 
+            
             for (int j = 0; j < word.Length; j++)
             {
                 var tile = grid[t.Ligne, debutCol + j];
@@ -515,8 +514,12 @@ namespace DawgResolver
             }
             // L'utilisation des 7 lettres du tirage rapporte en plus 50 points de bonus
             points = horizontalPoints * multiplier + verticalPoints + (UsedDraughtLetters == 7 ? 50 : 0);
-
+            if (word == "KWa" && points == 40)
+            {
+               
+            }
             nbPossibleMoves++;
+            if (LegalWords.Any() && points < LegalWords.Min(l => l.Points)) return;
             // Tri et mise en forme des coups
             //if (points <= MinPoint) return;
             var startTile = direction == MovementDirection.Across ? grid[t.Ligne, debutCol] : grid[debutCol, t.Ligne];

@@ -72,7 +72,7 @@ namespace DawgResolver.Model
             return sb.ToString();
         }
         public Dictionnaire Dico { get; }
-        public const char Joker = '*';
+        public const char Joker = '?';
 
         public Resolver Resolver { get; }
         public Bag Bag { get; }

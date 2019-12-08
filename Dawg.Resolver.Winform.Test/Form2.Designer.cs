@@ -57,7 +57,7 @@
             this.txtRack.Name = "txtRack";
             this.txtRack.Size = new System.Drawing.Size(153, 26);
             this.txtRack.TabIndex = 5;
-            this.txtRack.Text = "EUDNAA*";
+            this.txtRack.Text = "EUDNAA?";
             // 
             // lsb
             // 

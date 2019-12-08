@@ -45,7 +45,7 @@ namespace Dawg.Resolver.Winform.Test
             word.SetWord(Game.Player1, false);
 
             RefreshBoard(Game.Grid);
-          
+
         }
 
         private VTile[,] RefreshBoard(VTile[,] grid)
@@ -73,7 +73,7 @@ namespace Dawg.Resolver.Winform.Test
             Cursor.Current = Cursors.WaitCursor;
 
             Game.Grid = Game.Grid.Transpose(Game);
-           
+
             Game.Grid = RefreshBoard(Game.Grid);
             Cursor.Current = Cursors.Default;
         }
@@ -100,14 +100,15 @@ namespace Dawg.Resolver.Winform.Test
             if (newRack.Any())
                 txtRack.Text = newRack.String();
 
-            Game.Grid= RefreshBoard(Game.Grid);
+            Game.Grid = RefreshBoard(Game.Grid);
 
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtRack.Text) || txtRack.Text.Any(c => !Game.AlphabetAvecJoker.Any(ch => c == ch.Char))) return;
             Cursor.Current = Cursors.WaitCursor;
-            Game.Bag.GetNewRack(Game.Player1, txtRack.Text);
+            Game.Bag.GetNewRack(Game.Player1, txtRack.Text.Trim());
             lsb.DisplayMember = "DisplayText";
             var ret = Game.Resolver.FindMoves(Game.Player1, 100);
             txtTileProps.Text = Game.IsTransposed ? "Transposed" : "Not Transposed";
