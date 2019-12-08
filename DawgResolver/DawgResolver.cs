@@ -456,105 +456,6 @@ namespace DawgResolver
             //return DicLoaded;
         }
 
-
-
-        //private bool LoadDraught(List<Letter> bag)
-        //{
-        //    // Cette fonction vérifie la régularité du tirage proposé, retourne Vrai le cas échéant et charge le tirage en mémoire
-
-        //    bool loadDraught = false;
-        //    int[] tempBag = new int[26];
-        //    List<string> tempDraught = new List<string>();
-
-        //    //Cas d'un tirage vide
-        //    if (!Player.Rack.Any())
-        //        throw new Exception("Le tirage est vide.");
-
-        //    //Cas d'un tirage contenant plus de 7 lettres
-        //    if (Player.Rack.Count > 7)
-        //        throw new Exception("Le tirage ne doit pas compter plus de sept lettres.");
-
-        //    // 'Comme le tirage est provisoire jusqu'à ce qu'il ait été validé
-        //    //        'on travaille sur une copie du contenu du sac
-        //    // ReDim Tirage_Provisoire(1)
-        //    tempBag = CopyBag(bag);
-
-        //    foreach (var l in Player.Rack)
-        //    {
-
-        //        // Contrôle de la régularité des lettres du tirage (lettres A à Z uniquement et joker noté '['
-        //        if (!Char.IsLetter(l.Char) || l.Char != Game.Joker)
-        //            throw new Exception($"Le tirage ne doit comporter que les lettres de A à Z ou les jokers notés '{Game.Joker}', " + l.Char + " n'est pas admis.");
-
-        //        // Contrôle de la disponibilité des lettres du tirage dans le sac
-        //        if (Bag.Letters.Where(le => le.Char == l.Char).Sum(s => s.Count) == 0)
-        //            throw new Exception($"Le tirage n'est pas possible, il n'y a pas assez de " + (l.Char == Game.Joker ? "joker" : l.Char.ToString()) + " dans le sac.");
-        //        else
-        //            tempBag[(int)l - Dictionnaire.AscShift - 1]--;
-
-        //        // Validation du tirage provisoire au fur et à mesure
-        //        // ReDim Preserve Tirage_Provisoire(1 To UBound(Tirage_Provisoire) + 1)
-
-        //        tempDraught.Add(l.ToString());
-        //    }
-
-        //    // Si l'on arrive ici c'est que tirage est validé
-        //    // Ainsi on passe de provisoire à définitif et on peut mettre à jour l'affichage du contenu du sac
-        //    Draught = CopyDraught(tempDraught);
-
-        //    bag = CopyBag(tempBag);
-
-        //    loadDraught = true;
-        //    //for (int i = 0; i < Draught.Length - 2; i++)
-        //    //{
-        //    //    Draught[i] = Draught[i + 1];
-        //    //}
-        //    // ReDim Preserve Tirage(1 To UBound(Tirage) - 1)
-        //    DisplayBagContent();
-        //    return loadDraught;
-        //}
-
-        ///// <summary>
-        ///// Cette procédure affiche le contenu du sac
-        ///// </summary>
-        //private List<string> DisplayBagContent()
-        //{
-        //    int total = 0;
-        //    string[] temp = new string[28];
-
-        //    for (int i = 0; i < 27; i++)
-        //    {
-        //        temp[i] = i == 26 ? "Joker" : (char)(i + Dictionnaire.AscShift) + " : " + BagContent[i + 1];
-        //        total += BagContent[i];
-        //    }
-        //    temp[27] = "Lettres : " + total;
-        //    return temp.ToList();
-        //}
-        ///// <summary>
-        ///// Cette procédure copie le contenu d'un sac vers un autre
-        ///// </summary>
-        ///// <param name="tempBag"></param>
-        ///// <param name="bag"></param>
-        //private int[] CopyBag(int[] source)
-        //{
-        //    var dest = new List<int>();
-        //    dest.AddRange(source);
-        //    return dest.ToArray();
-
-        //}
-        ///// <summary>
-        ///// Cette procédure copie un tirage vers un autre
-        ///// </summary>
-        ///// <param name="tempDraught"></param>
-        ///// <param name="draught"></param>
-        //private string[] CopyDraught(List<string> source)
-        //{
-
-        //    var dest = new List<string>();
-        //    dest.AddRange(source);
-        //    return dest.ToArray();
-        //}
-
         /// <summary>
         /// Cette procédure ajoute un coup à la liste des coups admis recensés
         /// en enregistrant la place où le coup est joué
@@ -616,7 +517,7 @@ namespace DawgResolver
             // Tri et mise en forme des coups
             //if (points <= MinPoint) return;
 
-            if (!LegalWords.Any(w => w.Direction == direction && w.Text.Equals(word) && w.StartTile.Ligne == t.Ligne && w.StartTile.Col == t.Col))
+            if (!LegalWords.Any(w => w.Direction == direction && w.Text==word && w.StartTile.Ligne == t.Ligne && w.StartTile.Col == t.Col))
             {
                 LegalWords.Add(new Word(Game)
                 {
@@ -631,23 +532,6 @@ namespace DawgResolver
 
         }
 
-
-
-
-
     }
-    //[Serializable]
-    //public class Move
-    //{
-    //    public Move()
-    //    {
-    //    }
-    //    public Move Next;
-    //    public int Direction { get; set; }
-    //    public int Line { get; set; }
-    //    public int Column { get; set; }
-    //    public string Word { get; set; }
-    //    public int Point { get; set; }
-    //    public bool Scramble { get; set; }
-    //}
+    
 }
