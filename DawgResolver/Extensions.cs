@@ -39,6 +39,11 @@ namespace DawgResolver
                 FromJoker = transpose ? false : t.FromJoker
             };
         }
+
+        public static string String(this List<Letter> lst)
+        {
+            return new string(lst.Select(c=>c.Char).ToArray());
+        }
         public static void SetWord(this VTile t, Player p, string word, MovementDirection direction, bool Validate = false)
         {
 

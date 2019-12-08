@@ -68,11 +68,11 @@ namespace DawgResolver.Model
         {
             get
             {
-                return (IsEmpty && TileType == TileType.Center) ||
+                return (IsEmpty && TileType == TileType.Center) ||( IsEmpty&&(
                     (UpTile != null && !UpTile.IsEmpty) ||
                     (DownTile != null && !DownTile.IsEmpty) ||
                     (RightTile != null && !RightTile.IsEmpty) ||
-                    (LeftTile != null && !LeftTile.IsEmpty);
+                    (LeftTile != null && !LeftTile.IsEmpty)));
             }
         }
         public TileType TileType

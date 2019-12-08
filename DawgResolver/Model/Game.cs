@@ -37,6 +37,7 @@ namespace DawgResolver.Model
             sb.AppendLine("_______________");
             for (int ligne = 0; ligne <= Tiles.GetUpperBound(0); ligne++)
             {
+                sb.Append($"{Alphabet[ligne].Char}|");
                 for (int col = 0; col <= Tiles.GetUpperBound(1); col++)
                 {
 
@@ -65,7 +66,7 @@ namespace DawgResolver.Model
                     }
 
                 }
-                sb.AppendLine($"|{Alphabet[ligne].Char}");
+                sb.AppendLine();
             }
             sb.AppendLine("_______________");
             return sb.ToString();
@@ -98,10 +99,20 @@ namespace DawgResolver.Model
         {
             get { return AlphabetAvecJoker.Take(26).ToList(); }
         }
-
-        public string ClearTilesInPlay(Player p)
+        public List<VTile> ValidateWords()
         {
-            var ret = "";
+            var ret = new List<VTile>();
+            foreach (var t in Grid)
+                if (!t.IsValidated)
+                {
+                    ret.Add(t);
+                    t.IsValidated = true;
+                }
+            return ret;
+        }
+        public List<Letter> ClearTilesInPlay(Player p)
+        {
+            
             for (int i = 0; i < Grid.OfType<VTile>().Count(); i++)
             {
                 var tile = Grid.OfType<VTile>().ElementAt(i);
@@ -109,20 +120,19 @@ namespace DawgResolver.Model
                 {
                     if (tile.FromJoker)
                     {
-                        ret += "*";
-                        //p.Rack.Remove(Game.AlphabetAvecJoker[26]);
+                       
+                        p.Rack.Add(Game.AlphabetAvecJoker[26]);
                     }
                     else
                     {
-                        ret += tile.Letter.Char; 
-                        //p.Rack.Remove(tile.Letter);
+                        p.Rack.Add(tile.Letter);
 
                     }
                     tile.IsValidated = true;
                     Grid[tile.Ligne, tile.Col].Letter = new Letter();
                 }
             }
-            return ret;
+            return p.Rack;
         }
 
         public static List<Letter> AlphabetAvecJoker { get; } = new List<Letter>()

@@ -1,6 +1,7 @@
 ﻿using DawgResolver;
 using DawgResolver.Model;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -20,7 +21,7 @@ namespace Dawg.Resolver.Winform.Test
             //t.SetWord(Game.Player1, "famille", MovementDirection.Down, true);
             //t.SetWord(Game.Player1, "foin", MovementDirection.Across, true);
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
-
+            groupBox1.SuspendLayout();
             for (int i = 0; i < 15; i++)
             {
                 groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i), $"header_col{i}") { Text = $"{i + 1}" });
@@ -31,21 +32,10 @@ namespace Dawg.Resolver.Winform.Test
             {
                 groupBox1.Controls.Add(new FormTile(Game, tile));
             }
+            groupBox1.ResumeLayout();
             Cursor.Current = Cursors.Default;
         }
 
-
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-            Cursor.Current = Cursors.WaitCursor;
-            Game.Bag.GetNewRack(Game.Player1, txtRack.Text);
-            lsb.DisplayMember = "DisplayText";
-            var ret = Game.Resolver.FindMoves(Game.Player1, 500);
-            lsb.Items.Clear();
-            foreach (var r in ret)
-                lsb.Items.Add(r);
-            Cursor.Current = Cursors.Default;
-        }
 
         private void lsb_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -55,7 +45,7 @@ namespace Dawg.Resolver.Winform.Test
             word.SetWord(Game.Player1, false);
 
             RefreshBoard(Game.Grid);
-            txtRack.Text = new string(Game.Player1.Rack.Select(r => r.Char).ToArray());
+            txtRack.Text = Game.Player1.Rack.String();
 
             textBox3.Text = Game.Bag.GetBagContent();
         }
@@ -78,17 +68,45 @@ namespace Dawg.Resolver.Winform.Test
         private void btnTranspose_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            var toto = new VTile[15, 15];
-            toto = Game.Grid.Transpose(Game);
-            Game.Grid = RefreshBoard(toto);
+
+            Game.Grid = Game.Grid.Transpose(Game);
+            Game.Grid = RefreshBoard(Game.Grid);
             Cursor.Current = Cursors.Default;
         }
 
         private void btnBackToRack_Click(object sender, EventArgs e)
         {
             var ret = Game.ClearTilesInPlay(Game.Player1);
-            if (!string.IsNullOrWhiteSpace(ret)) txtRack.Text = ret;
-            RefreshBoard(Game.Grid);
+            if (ret.Any()) txtRack.Text = ret.String();
+            Game.Grid = RefreshBoard(Game.Grid);
+        }
+
+        private void btnValidate_Click(object sender, EventArgs e)
+        {
+            foreach (var t in Game.ValidateWords())
+            {
+                var frmTile = groupBox1.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
+                frmTile.ReadOnly = true;
+                frmTile.BackColor = Color.LightYellow;
+            }
+
+
+            var newRack = Game.Bag.GetNewRack(Game.Player1, 7 - txtRack.Text.Count());
+            if (newRack.Any())
+                txtRack.Text = newRack.String();
+
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            Game.Bag.GetNewRack(Game.Player1, 7 - txtRack.Text.Count(), txtRack.Text);
+            lsb.DisplayMember = "DisplayText";
+            var ret = Game.Resolver.FindMoves(Game.Player1, 500);
+            lsb.Items.Clear();
+            foreach (var r in ret)
+                lsb.Items.Add(r);
+            Cursor.Current = Cursors.Default;
         }
     }
 }

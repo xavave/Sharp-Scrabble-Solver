@@ -51,7 +51,7 @@ namespace DawgResolver.Model
             letter.Count++;
         }
 
-        public string GetBagContent(int split=5)
+        public string GetBagContent(int split = 5)
         {
             var sb = new StringBuilder();
             int idx = 0;
@@ -64,9 +64,9 @@ namespace DawgResolver.Model
             return sb.ToString();
         }
 
-        public List<Letter> GetNewRack(Player p, string forcedLetters = null)
+        public List<Letter> GetNewRack(Player p, int lettersToTakeCount, string forcedLetters = null)
         {
-            if (p.Rack.Count >= 7) p.Rack.Clear();
+            //if (p.Rack.Count >= 7) p.Rack.Clear();
 
             if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
@@ -80,14 +80,17 @@ namespace DawgResolver.Model
             // S'il reste 7 lettres ou moins dans le sac, on n'a pas le choix, on les prend toutes
 
             Random rnd = new Random();
+            int cpt = 0;
             // Sinon on tire 7 lettres du sac à condition qu'il en reste suffisament
-            for (int i = 0; i < Math.Min(FlatList.Length, 7); i++)
+            for (int i = 0; i < Math.Min(FlatList.Length, lettersToTakeCount); i++)
             {
+                cpt++;
+               
                 int charIdx = rnd.Next(0, FlatList.Length - 1);
                 var letter = GetLetterInFlatList(charIdx);
                 while (letter == null && LeftLettersCount > 0) letter = GetLetterInFlatList(rnd.Next(0, FlatList.Length - 1));
+                if (cpt > lettersToTakeCount) break;
                 p.Rack.Add(letter);
-
             }
             Debug.WriteLine(p.DisplayRack());
             return p.Rack;

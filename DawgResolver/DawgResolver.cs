@@ -380,10 +380,9 @@ namespace DawgResolver
         /// </summary>
         public List<Word> FindMoves(Player p, int maxWordCount = 100)
         {
+            LegalWords.Clear();
             var backupGrid = Game.Grid.Copy();
             Game.Grid = DetectTiles(p, Game.Grid);
-
-
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
             Game.Grid = FindMovesPerAnchor(p, Game.Grid);

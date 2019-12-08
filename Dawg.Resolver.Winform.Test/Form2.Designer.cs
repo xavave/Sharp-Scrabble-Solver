@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.txtRack = new System.Windows.Forms.TextBox();
             this.lsb = new System.Windows.Forms.ListBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -37,17 +37,18 @@
             this.btnTranspose = new System.Windows.Forms.Button();
             this.btnBackToRack = new System.Windows.Forms.Button();
             this.txtTileProps = new System.Windows.Forms.TextBox();
+            this.btnValidate = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button1
+            // btnSearch
             // 
-            this.button1.Location = new System.Drawing.Point(416, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 26);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "Search";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            this.btnSearch.Location = new System.Drawing.Point(416, 3);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(75, 26);
+            this.btnSearch.TabIndex = 7;
+            this.btnSearch.Text = "Search";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // txtRack
             // 
@@ -121,17 +122,28 @@
             // 
             this.txtTileProps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTileProps.Location = new System.Drawing.Point(1310, 13);
+            this.txtTileProps.Location = new System.Drawing.Point(1294, 13);
             this.txtTileProps.Multiline = true;
             this.txtTileProps.Name = "txtTileProps";
-            this.txtTileProps.Size = new System.Drawing.Size(628, 760);
+            this.txtTileProps.Size = new System.Drawing.Size(365, 760);
             this.txtTileProps.TabIndex = 14;
+            // 
+            // btnValidate
+            // 
+            this.btnValidate.Location = new System.Drawing.Point(394, 626);
+            this.btnValidate.Name = "btnValidate";
+            this.btnValidate.Size = new System.Drawing.Size(97, 58);
+            this.btnValidate.TabIndex = 15;
+            this.btnValidate.Text = "Validate Word";
+            this.btnValidate.UseVisualStyleBackColor = true;
+            this.btnValidate.Click += new System.EventHandler(this.btnValidate_Click);
             // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1950, 785);
+            this.ClientSize = new System.Drawing.Size(1668, 790);
+            this.Controls.Add(this.btnValidate);
             this.Controls.Add(this.txtTileProps);
             this.Controls.Add(this.btnBackToRack);
             this.Controls.Add(this.btnTranspose);
@@ -139,7 +151,7 @@
             this.Controls.Add(this.txtGrid2);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.lsb);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtRack);
             this.Name = "Form2";
             this.Text = "Form2";
@@ -150,7 +162,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.TextBox txtRack;
         private System.Windows.Forms.ListBox lsb;
         private System.Windows.Forms.TextBox textBox3;
@@ -159,5 +171,6 @@
         private System.Windows.Forms.Button btnTranspose;
         private System.Windows.Forms.Button btnBackToRack;
         public System.Windows.Forms.TextBox txtTileProps;
+        private System.Windows.Forms.Button btnValidate;
     }
 }
