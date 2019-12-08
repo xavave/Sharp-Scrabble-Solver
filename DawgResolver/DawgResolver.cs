@@ -21,8 +21,8 @@ namespace DawgResolver
         public List<Word> LegalWords { get; set; } = new List<Word>();
         public int PlayedLetters { get; private set; }
         long[,] Dictionary { get; set; }
-        long nbPossibleMoves { get; set; }
-        long nbAcceptedMoves { get; set; }
+        public long NbPossibleMoves { get; set; }
+        public long NbAcceptedMoves { get; set; }
         Game Game { get; }
 
         public Resolver(Game g)
@@ -260,7 +260,6 @@ namespace DawgResolver
                         ExtendRight(grid, string.Empty, ref leftLetters, k, 1, t.Ligne, t.Col - k);
                     }
                 }
-
             }
             return grid;
 
@@ -323,7 +322,6 @@ namespace DawgResolver
                                 {
                                     if (((t.Controlers.ContainsKey(i - 1) && t.Controlers[i - 1] > 0)) || t.Controlers[26] == 26)
                                     // Pour chacune des lettres qui répondent au précédent critère dans le tirage
-                                    //if (Controlers[line, column, letterIdx] > 0 || Controlers[line, column, 26] == 26)
                                     {
                                         // Si la lettre permet également de former des mots verticalement
                                         // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
@@ -361,7 +359,6 @@ namespace DawgResolver
                                         // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
                                         ExtendRight(grid, partialWord + char.ToLower((char)(i + Dictionnaire.AscShift)), ref leftLetters, minSize, Game.Dico.Legacy[i, noeud], ligne, colonne + 1);
 
-
                                         // Au retour de l'appel recursif on restitue le joker dans le tirage
                                         leftLetters.Add(backupLetter);
                                     }
@@ -386,6 +383,8 @@ namespace DawgResolver
         /// </summary>
         public List<Word> FindMoves(Player p, int maxWordCount = 100)
         {
+            NbPossibleMoves = 0;
+            NbAcceptedMoves = 0;
             LegalWords.Clear();
             var backupGrid = Game.Grid.Copy();
             Game.Grid = DetectTiles(p, Game.Grid);
@@ -480,7 +479,7 @@ namespace DawgResolver
             int debutCol = t.Col - word.Length;
             int UsedDraughtLetters = 0;
 
-            
+
             for (int j = 0; j < word.Length; j++)
             {
                 var tile = grid[t.Ligne, debutCol + j];
@@ -514,12 +513,9 @@ namespace DawgResolver
             }
             // L'utilisation des 7 lettres du tirage rapporte en plus 50 points de bonus
             points = horizontalPoints * multiplier + verticalPoints + (UsedDraughtLetters == 7 ? 50 : 0);
-            if (word == "KWa" && points == 40)
-            {
-               
-            }
-            nbPossibleMoves++;
-            if (LegalWords.Any() && points < LegalWords.Min(l => l.Points)) return;
+
+            NbPossibleMoves++;
+            //if (LegalWords.Any() && points < LegalWords.Min(l => l.Points)) return;
             // Tri et mise en forme des coups
             //if (points <= MinPoint) return;
             var startTile = direction == MovementDirection.Across ? grid[t.Ligne, debutCol] : grid[debutCol, t.Ligne];
@@ -533,7 +529,7 @@ namespace DawgResolver
                     Points = points,
                     Scramble = UsedDraughtLetters == 7
                 }); ;
-                nbAcceptedMoves++;
+                NbAcceptedMoves++;
             }
 
         }

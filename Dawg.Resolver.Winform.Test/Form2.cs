@@ -112,6 +112,10 @@ namespace Dawg.Resolver.Winform.Test
             lsb.DisplayMember = "DisplayText";
             var ret = Game.Resolver.FindMoves(Game.Player1, 100);
             txtTileProps.Text = Game.IsTransposed ? "Transposed" : "Not Transposed";
+            txtTileProps.Text += Environment.NewLine;
+            txtTileProps.Text += $"NbPossibleMoves={Game.Resolver.NbPossibleMoves}";
+            txtTileProps.Text += Environment.NewLine;
+            txtTileProps.Text += $"NbAcceptedMoves={Game.Resolver.NbAcceptedMoves}";
             lsb.Items.Clear();
             foreach (var r in ret)
                 lsb.Items.Add(r);

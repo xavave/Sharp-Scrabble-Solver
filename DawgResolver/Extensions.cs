@@ -29,8 +29,8 @@ namespace DawgResolver
         {
             VTile newT = t;
             if (transpose) newT = grid[t.Col, t.Ligne];
-           
-            return new Tile(g, newT.Ligne,newT.Col)
+
+            return new Tile(g, newT.Ligne, newT.Col)
             {
                 Controlers = t.Controlers,
                 Letter = t.Letter,
@@ -49,8 +49,10 @@ namespace DawgResolver
         }
         public static void SetWord(this VTile t, Player p, string word, MovementDirection direction, bool Validate = false)
         {
-
-            t = t.RightTile?.LeftTile;
+            if (t.Col == Game.BoardSize - 1)
+                t = t.LeftTile?.RightTile;
+            else
+                t = t.RightTile?.LeftTile;
             if (t != null)
             {
                 t.Letter = t.SetLetter(word[0], p, Validate);
