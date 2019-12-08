@@ -96,33 +96,38 @@ namespace DawgResolver
                 var wordEnd = string.Empty;
                 var tileCpy = t.Copy(Game, grid);
                 int points = 0;
-                //On rassemble le début éventuel des mots (lettres situées au dessus de la case)
-                while (tileCpy.UpTile != null && !tileCpy.UpTile.IsEmpty)
+                if (!Game.IsTransposed)
                 {
-                    tileCpy = tileCpy.UpTile;
-                    wordStart += tileCpy.Letter.Char;
-                    points += tileCpy.Letter.Value;
+                    //On rassemble le début éventuel des mots (lettres situées au dessus de la case)
+                    while (tileCpy.UpTile != null && !tileCpy.UpTile.IsEmpty)
+                    {
+                        tileCpy = tileCpy.UpTile;
+                        wordStart += tileCpy.Letter.Char;
+                        points += tileCpy.Letter.Value;
 
-                }
-                wordStart = string.Join("", wordStart.Reverse());
-                wordEnd = "";
-                tileCpy = t.Copy(Game, grid);
-                //On rassemble la fin éventuelle des mots (lettres situées en dessous de la case)
-                while (tileCpy.DownTile != null && !tileCpy.DownTile.IsEmpty)
-                {
-                    tileCpy = tileCpy.DownTile;
-                    wordEnd += tileCpy.Letter.Char;
-                    points += tileCpy.Letter.Value;
+                    }
+                    wordStart = string.Join("", wordStart.Reverse());
+                    wordEnd = "";
+                    tileCpy = t.Copy(Game, grid);
 
+                    //On rassemble la fin éventuelle des mots (lettres situées en dessous de la case)
+                    while (tileCpy.DownTile != null && !tileCpy.DownTile.IsEmpty)
+                    {
+                        tileCpy = tileCpy.DownTile;
+                        wordEnd += tileCpy.Letter.Char;
+                        points += tileCpy.Letter.Value;
+
+                    }
                 }
+
                 //On vérifie pour chaque Lettre L de A à Z si Debut+L+Fin forme un mot valide
                 //Si tel est le cas, la lettre L est jouable pour la case considérée
                 //et on précalcule le point que le mot verticalement formé permettrait de gagner si L était jouée
                 L = 0;
-                
+
                 foreach (var c in Game.Alphabet.Where(c => (wordStart + c + wordEnd).Length > 1 && Game.Dico.MotAdmis((wordStart + c + wordEnd).ToUpper())))
                 {
-                    grid[t.Ligne,t.Col].Controlers[((int)c.Char) - Dictionnaire.AscShiftBase0] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
+                    grid[t.Ligne, t.Col].Controlers[((int)c.Char) - Dictionnaire.AscShiftBase0] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
                     L++;
 
                 }
@@ -134,7 +139,7 @@ namespace DawgResolver
                 else
                     t.Controlers[26] = L;
             }
-            
+
 
             return grid;
         }
@@ -294,7 +299,7 @@ namespace DawgResolver
             bool jokerInDraught = leftLetters.Any(l => l.Char == Game.Joker);
 
             VTile t = null;
-            if (ligne > 0 && colonne > 0 && colonne < 15 && ligne < 15) t = grid[ligne, colonne];
+            if (ligne >= 0 && colonne >= 0 && colonne < 15 && ligne < 15) t = grid[ligne, colonne];
             if (t != null)
                 if (t.IsEmpty)
                 {
