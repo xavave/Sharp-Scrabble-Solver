@@ -621,7 +621,10 @@ namespace DawgResolver
         /// <returns></returns>
         public bool MotAdmis(string mot)
         {
+            if (mot=="")
+            {
 
+            }
             Noeud enCours = DAWG;
             var arcs = new List<Arc>();
 
