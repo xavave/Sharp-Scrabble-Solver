@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrabble2018", "Scrabble201
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver.Winform.Test", "Dawg.Resolver.Winform.Test\Dawg.Resolver.Winform.Test.csproj", "{8DA2C29C-DD08-4CAF-92AF-84012420155A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaddag", "Gadag\Gaddag.csproj", "{774138AD-526B-4DB8-B62F-02248F5C0C1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaddag.Console.Test", "Gaddag.Console.Test\Gaddag.Console.Test.csproj", "{DB8786F0-3D05-4C75-9B32-A5ABC0B924AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +57,14 @@ Global
 		{8DA2C29C-DD08-4CAF-92AF-84012420155A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DA2C29C-DD08-4CAF-92AF-84012420155A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DA2C29C-DD08-4CAF-92AF-84012420155A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{774138AD-526B-4DB8-B62F-02248F5C0C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{774138AD-526B-4DB8-B62F-02248F5C0C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{774138AD-526B-4DB8-B62F-02248F5C0C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{774138AD-526B-4DB8-B62F-02248F5C0C1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB8786F0-3D05-4C75-9B32-A5ABC0B924AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB8786F0-3D05-4C75-9B32-A5ABC0B924AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB8786F0-3D05-4C75-9B32-A5ABC0B924AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB8786F0-3D05-4C75-9B32-A5ABC0B924AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
