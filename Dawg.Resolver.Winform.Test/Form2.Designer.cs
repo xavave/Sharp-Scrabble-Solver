@@ -56,7 +56,6 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(153, 26);
             this.textBox1.TabIndex = 5;
-            this.textBox1.Text = "EUDNA*A";
             // 
             // lsb
             // 

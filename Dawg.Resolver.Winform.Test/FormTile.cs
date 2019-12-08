@@ -13,7 +13,7 @@ namespace Dawg.Resolver.Winform.Test
 {
     public partial class FormTile : TextBox, VTile
     {
-        public VTile Tile { get;  set; }
+        public VTile Tile { get; set; }
         public Game Game { get; set; }
         public FormTile(Game g, VTile t)
         {
@@ -33,8 +33,49 @@ namespace Dawg.Resolver.Winform.Test
             Text = t.Letter.Char.ToString();
             Name = $"t{t.Ligne}_{t.Col}";
             Click += FormTile_Click;
+            KeyUp += FormTile_KeyUp;
+
 
             Location = new Point(10 + t.Col * this.Width + 1, 10 + t.Ligne * this.Height + 1);
+        }
+
+        private void FormTile_KeyUp(object sender, KeyEventArgs e)
+        {
+            var frmTile = sender as FormTile;
+            if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
+            {
+                this.Letter = Game.Alphabet.Find(a => a.Char == e.KeyData.ToString().First());
+                this.Text = this.Letter.Char.ToString();
+                Game.Grid[Ligne, Col].Letter = this.Letter;
+                GetNextTile(Keys.Right, frmTile);
+            }
+            else if (e.KeyCode== Keys.Back)
+            {
+                GetNextTile(Keys.Left, frmTile);
+                this.Letter = new Letter();
+                this.Text = char.MinValue.ToString();
+                Game.Grid[Ligne, Col].Letter = this.Letter;
+            }
+            else
+            {
+                GetNextTile(e.KeyCode, frmTile);
+            }
+        }
+
+        private void GetNextTile(Keys key, FormTile frmTile)
+        {
+            Control nextTile = null;
+            Control parent = frmTile.Parent;
+            if (key == Keys.Right)
+                nextTile = parent.Controls.Find($"t{Ligne}_{Col + 1}", false).FirstOrDefault();
+            else if (key == Keys.Left)
+                nextTile = parent.Controls.Find($"t{Ligne}_{Col - 1}", false).FirstOrDefault();
+            else if (key == Keys.Up)
+                nextTile = parent.Controls.Find($"t{Ligne - 1}_{Col}", false).FirstOrDefault();
+            else if (key == Keys.Down)
+                nextTile = parent.Controls.Find($"t{Ligne + 1}_{Col}", false).FirstOrDefault();
+
+            if (nextTile != null) nextTile.Focus();
         }
 
         private void FormTile_Click(object sender, EventArgs e)

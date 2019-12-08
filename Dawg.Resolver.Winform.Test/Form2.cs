@@ -17,15 +17,15 @@ namespace Dawg.Resolver.Winform.Test
             Game.InitBoard();
             textBox3.Text = Game.Bag.GetBagContent();
             var t = Game.Grid[4, 7];
-            t.SetWord(Game.Player1, "famille", MovementDirection.Down, true);
-            t.SetWord(Game.Player1, "foin", MovementDirection.Across, true);
+            //t.SetWord(Game.Player1, "famille", MovementDirection.Down, true);
+            //t.SetWord(Game.Player1, "foin", MovementDirection.Across, true);
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
 
-            for (int i = 0; i < 15; i++)
-            {
-                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i)) { Text = $"{i + 1}", Name = $"col{i}" });
-                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, i, 0)) { Text = $"{i + 1}", Name = $"ligne{i}" });
-            }
+            //for (int i = 0; i < 15; i++)
+            //{
+            //    groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i)) { Text = $"{i + 1}", Name = $"col{i}" });
+            //    groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, i, 0)) { Text = $"{i + 1}", Name = $"ligne{i}" });
+            //}
 
             foreach (var tile in Game.Grid)
             {
