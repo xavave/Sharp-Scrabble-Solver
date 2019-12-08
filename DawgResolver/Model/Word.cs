@@ -23,14 +23,8 @@ namespace DawgResolver.Model
         {
             this.StartTile.SetWord(p, Text, Direction, validate);
         }
-        public Word Suivant { get; set; }
-        public bool Scramble
-        {
-            get
-            {
-                return Text.Length >= 7;
-            }
-        }
+        public bool Scramble { get; set; }
+        
         public MovementDirection Direction { get; set; }
         public VTile StartTile { get; set; }
         public int Points

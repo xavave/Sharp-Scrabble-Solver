@@ -302,8 +302,8 @@ namespace DawgResolver
                     {   // Si le préfixe constitue déjà un mot valide
                         // alors on peut rajouter le préfixe dans la liste des coups admis
 
-                        //Add(grid, partialWord, t, Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
-                        Add(grid, partialWord, Game.IsTransposed ? grid[t.Col - partialWord.Length, t.Ligne] : grid[t.Ligne, t.Col - partialWord.Length], Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
+                        Add(grid, partialWord, t, Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
+                        //Add(grid, partialWord, Game.IsTransposed ? grid[t.Col - partialWord.Length, t.Ligne] : grid[t.Ligne, t.Col - partialWord.Length], Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
                     }
                     //if (nbLetters == 0) return;
                     for (int i = 1; i <= 26; i++)
@@ -323,11 +323,14 @@ namespace DawgResolver
                                         // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
                                         // alors on peut essayer de continuer le préfixe avec cette lettre
                                         // la lettre utilisée est alors retirée du tirage
+                                        var lettre = (char)(i + Dictionnaire.AscShift);
                                         var backupLetter = leftLetters[l];
                                         leftLetters.RemoveAt(l);
 
+                                        if (l < leftLetters.Count() && leftLetters[l].Char == Game.Joker)
+                                            lettre = char.ToLower(lettre);
                                         // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-                                        ExtendRight(grid, partialWord + (char)(i + Dictionnaire.AscShift), ref leftLetters, minSize, Game.Dico.Legacy[i, noeud], ligne, colonne + 1);
+                                        ExtendRight(grid, partialWord + lettre, ref leftLetters, minSize, Game.Dico.Legacy[i, noeud], ligne, colonne + 1);
 
                                         // Au retour de l'appel recursif on restitue la lettre dans le tirage
 
@@ -572,30 +575,29 @@ namespace DawgResolver
             int horizontalPoints = 0;
             int verticalPoints = 0;
             int points = 0;
+            int debutCol = t.Col - word.Length;
             int UsedDraughtLetters = 0;
-            int letterIdx = 0;
-            VTile tile = t.Copy(Game, grid);
-            foreach (var L in word)
-            {
-                letterIdx++;
 
-                if (tile != null && tile.IsEmpty)
+            for (int j = 0; j < word.Length; j++)
+            {
+                var tile = grid[t.Ligne, debutCol + j];
+                var L = word[j];
+                if (tile.IsEmpty)
                 {
                     // Le calcul des points prend en compte les cases bonus non encore utilisées
                     // Il faut noter que seules les lettres du tirage permettent de bénéficier des bonus
                     // Les points verticaux ont été précalculés au moment du recensement des contrôleurs
-                    if (char.IsLetter(L))
+                    if (char.IsUpper(L))
                     {
-                        if (char.IsUpper(L))
-                        {
-                            horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value * tile.LetterMultiplier;
-                            verticalPoints += tile.Controlers.ContainsKey(L) ? tile.Controlers[L] : 0;
-                        }
+                        horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value * tile.LetterMultiplier;
+                        verticalPoints += tile.Controlers.ContainsKey(L) ? tile.Controlers[L] : 0;
                     }
+
                     else
                     {
-                        verticalPoints += (tile.Controlers.ContainsKey(26) ? tile.Controlers[26] : 0) - Game.AlphabetAvecJoker.Find(c => c.Char == Game.Joker).Value
-                            * tile.LetterMultiplier * tile.WordMultiplier;
+                        if (tile.Controlers.ContainsKey(char.ToUpper(L)) && tile.Controlers[char.ToUpper(L)] > 0)
+                            verticalPoints += tile.Controlers[char.ToUpper(L)] - Game.AlphabetAvecJoker.Find(c => c.Char == char.ToUpper(L)).Value
+                                * tile.LetterMultiplier * tile.WordMultiplier;
 
                     }
                     multiplier *= tile.WordMultiplier;
@@ -603,13 +605,9 @@ namespace DawgResolver
                 }
                 else
                 {
-                    if (char.IsLetter(L)) horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value;
+                    if (char.IsUpper(L)) horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value;
                 }
-                //if (direction == MovementDirection.Across)
-                    if (tile.RightTile != null)
-                        tile = tile.RightTile;
-                    //else if (tile.DownTile != null)
-                    //    tile = tile.DownTile;
+
             }
             // L'utilisation des 7 lettres du tirage rapporte en plus 50 points de bonus
             points = horizontalPoints * multiplier + verticalPoints + (UsedDraughtLetters == 7 ? 50 : 0);
@@ -622,10 +620,11 @@ namespace DawgResolver
             {
                 LegalWords.Add(new Word(Game)
                 {
-                    StartTile = t,
+                    StartTile = grid[t.Ligne, debutCol],
                     Direction = direction,
                     Text = word,
                     Points = points,
+                    Scramble = UsedDraughtLetters == 7
                 }); ;
                 nbAcceptedMoves++;
             }
