@@ -37,7 +37,8 @@ namespace DawgResolver.Model
 
         public Letter GetLetterInFlatList(int charIdx, bool removeFromBag = true)
         {
-            var c = FlatList.ElementAt(charIdx);
+            var c = FlatList.FirstOrDefault(ch=>ch == (char)charIdx);
+            if (c == char.MinValue) return null;//TODO
             var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == c);
             var le = Letters.Find(l => l == letter);
             if (removeFromBag)

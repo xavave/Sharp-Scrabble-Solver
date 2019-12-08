@@ -50,7 +50,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private VTile[,] RefreshBoard(VTile[,] grid)
         {
-            CustomGroupBox.SuspendDrawing(groupBox1.Parent);
+            //CustomGroupBox.SuspendDrawing(groupBox1.Parent);
             for (int ligne = 0; ligne <= grid.GetUpperBound(0); ligne++)
             {
                 for (int col = 0; col <= grid.GetUpperBound(1); col++)
@@ -60,7 +60,7 @@ namespace Dawg.Resolver.Winform.Test
                     formTile.Text = formTile.Tile.Letter.Char.ToString();
                 }
             }
-            CustomGroupBox.ResumeDrawing(groupBox1.Parent);
+            //CustomGroupBox.ResumeDrawing(groupBox1.Parent);
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             txtRack.Text = Game.Player1.Rack.String();
             textBox3.Text = Game.Bag.GetBagContent();
@@ -107,7 +107,7 @@ namespace Dawg.Resolver.Winform.Test
             Cursor.Current = Cursors.WaitCursor;
             Game.Bag.GetNewRack(Game.Player1, 7 - txtRack.Text.Count(), txtRack.Text);
             lsb.DisplayMember = "DisplayText";
-            var ret = Game.Resolver.FindMoves(Game.Player1, 500);
+            var ret = Game.Resolver.FindMoves(Game.Player1, 100);
             lsb.Items.Clear();
             foreach (var r in ret)
                 lsb.Items.Add(r);
