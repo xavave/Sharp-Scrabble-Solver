@@ -61,6 +61,7 @@ namespace Dawg.Resolver.Winform.Test
                 }
             }
             //CustomGroupBox.ResumeDrawing(groupBox1.Parent);
+            txtTileProps.Text = Game.IsTransposed ? "Transposed" : "Not Transposed";
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             txtRack.Text = Game.Player1.Rack.String();
             textBox3.Text = Game.Bag.GetBagContent();
@@ -72,6 +73,7 @@ namespace Dawg.Resolver.Winform.Test
             Cursor.Current = Cursors.WaitCursor;
 
             Game.Grid = Game.Grid.Transpose(Game);
+           
             Game.Grid = RefreshBoard(Game.Grid);
             Cursor.Current = Cursors.Default;
         }
@@ -94,7 +96,7 @@ namespace Dawg.Resolver.Winform.Test
             }
 
 
-            var newRack = Game.Bag.GetNewRack(Game.Player1, 7 - txtRack.Text.Count());
+            var newRack = Game.Bag.GetNewRack(Game.Player1);
             if (newRack.Any())
                 txtRack.Text = newRack.String();
 
@@ -105,9 +107,10 @@ namespace Dawg.Resolver.Winform.Test
         private void btnSearch_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            Game.Bag.GetNewRack(Game.Player1, 7 - txtRack.Text.Count(), txtRack.Text);
+            Game.Bag.GetNewRack(Game.Player1, txtRack.Text);
             lsb.DisplayMember = "DisplayText";
             var ret = Game.Resolver.FindMoves(Game.Player1, 100);
+            txtTileProps.Text = Game.IsTransposed ? "Transposed" : "Not Transposed";
             lsb.Items.Clear();
             foreach (var r in ret)
                 lsb.Items.Add(r);

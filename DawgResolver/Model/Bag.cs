@@ -65,8 +65,9 @@ namespace DawgResolver.Model
             return sb.ToString();
         }
 
-        public List<Letter> GetNewRack(Player p, int lettersToTakeCount, string forcedLetters = null)
+        public List<Letter> GetNewRack(Player p, string forcedLetters = null)
         {
+            int lettersToTakeCount = 7 - p.Rack.Count();
             //if (p.Rack.Count >= 7) p.Rack.Clear();
 
             if (!string.IsNullOrWhiteSpace(forcedLetters))

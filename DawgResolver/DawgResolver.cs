@@ -400,6 +400,7 @@ namespace DawgResolver
             //        Game.Bag.PutBackLetter(l);
             //}
             ////on remet la grille à son état initial
+            Game.IsTransposed = false;
             Game.Grid = backupGrid;
             return ret;
         }
@@ -588,16 +589,14 @@ namespace DawgResolver
                         if (char.IsUpper(L))
                         {
                             horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value * tile.LetterMultiplier;
-                            verticalPoints += tile.Controlers.ContainsKey(char.ToUpper(L)) ? tile.Controlers[char.ToUpper(L)] : 0;
+                            verticalPoints += tile.Controlers.ContainsKey(L) ? tile.Controlers[L] : 0;
                         }
                     }
                     else
                     {
-                        if (char.IsLower(L))
-                        {
-                            verticalPoints += (tile.Controlers.ContainsKey(26) ? tile.Controlers[26] : 0) - Game.AlphabetAvecJoker.Find(c => c.Char == Game.Joker).Value
-                                * tile.LetterMultiplier * tile.WordMultiplier;
-                        }
+                        verticalPoints += (tile.Controlers.ContainsKey(26) ? tile.Controlers[26] : 0) - Game.AlphabetAvecJoker.Find(c => c.Char == Game.Joker).Value
+                            * tile.LetterMultiplier * tile.WordMultiplier;
+
                     }
                     multiplier *= tile.WordMultiplier;
                     UsedDraughtLetters++;
@@ -606,8 +605,11 @@ namespace DawgResolver
                 {
                     if (char.IsLetter(L)) horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value;
                 }
-                if (tile.RightTile != null)
-                    tile = tile.RightTile;
+                //if (direction == MovementDirection.Across)
+                    if (tile.RightTile != null)
+                        tile = tile.RightTile;
+                    //else if (tile.DownTile != null)
+                    //    tile = tile.DownTile;
             }
             // L'utilisation des 7 lettres du tirage rapporte en plus 50 points de bonus
             points = horizontalPoints * multiplier + verticalPoints + (UsedDraughtLetters == 7 ? 50 : 0);
@@ -624,7 +626,7 @@ namespace DawgResolver
                     Direction = direction,
                     Text = word,
                     Points = points,
-                });
+                }); ;
                 nbAcceptedMoves++;
             }
 

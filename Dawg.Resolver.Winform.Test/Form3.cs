@@ -24,12 +24,14 @@ namespace Dawg.Resolver.Winform.Test
        
         private void button1_Click_1(object sender, EventArgs e)
         {
-            Game.Bag.GetNewRack(Game.Player1,7- textBox1.Text.Count(), textBox1.Text);
+            Game.Bag.GetNewRack(Game.Player1, textBox1.Text);
             lsb.DisplayMember = "DisplayText";
             var ret = Game.Resolver.FindMoves(Game.Player1);
             lsb.Items.Clear();
             foreach (var r in ret)
                 lsb.Items.Add(r);
+
+           
         }
 
         private void lsb_SelectedIndexChanged(object sender, EventArgs e)

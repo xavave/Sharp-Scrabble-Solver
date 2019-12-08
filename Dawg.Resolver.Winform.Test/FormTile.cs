@@ -98,6 +98,10 @@ namespace Dawg.Resolver.Winform.Test
             var txtProps = frm.txtTileProps;
             txtProps.Text = $"[{t.Ligne},{t.Col}] => IsAnchor:{t.IsAnchor} IsEmpty :{t.IsEmpty} => {t}";
             txtProps.Text += Environment.NewLine;
+            txtProps.Text += $"LetterMultiplier={t.LetterMultiplier}";
+            txtProps.Text += Environment.NewLine;
+            txtProps.Text += $"WordMultiplier={t.WordMultiplier}";
+            txtProps.Text += Environment.NewLine;
             txtProps.Text += $"AnchorLeftMinLimit = {t.AnchorLeftMinLimit}";
             txtProps.Text += Environment.NewLine;
             txtProps.Text += $"AnchorLeftMaxLimit = {t.AnchorLeftMaxLimit}";

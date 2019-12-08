@@ -27,22 +27,25 @@ namespace DawgResolver
 
         public static VTile Copy(this VTile t, Game g, VTile[,] grid, bool transpose = false)
         {
-            return new Tile(g, transpose ? t.Col : t.Ligne, transpose ? t.Ligne : t.Col)
+            VTile newT = t;
+            if (transpose) newT = grid[t.Col, t.Ligne];
+           
+            return new Tile(g, newT.Ligne,newT.Col)
             {
-                Controlers = transpose ? new Dictionary<int, int>(27) : t.Controlers,
+                Controlers = t.Controlers,
                 Letter = t.Letter,
                 //IsAnchor = transpose ? false : t.IsAnchor,
                 LetterMultiplier = t.LetterMultiplier,
                 WordMultiplier = t.WordMultiplier,
-                AnchorLeftMinLimit = transpose ? 0 : t.AnchorLeftMinLimit,
-                AnchorLeftMaxLimit = transpose ? 0 : t.AnchorLeftMaxLimit,
+                AnchorLeftMinLimit = t.AnchorLeftMinLimit,
+                AnchorLeftMaxLimit = t.AnchorLeftMaxLimit,
                 FromJoker = transpose ? false : t.FromJoker
             };
         }
 
         public static string String(this List<Letter> lst)
         {
-            return new string(lst.Select(c=>c.Char).ToArray());
+            return new string(lst.Select(c => c.Char).ToArray());
         }
         public static void SetWord(this VTile t, Player p, string word, MovementDirection direction, bool Validate = false)
         {
@@ -137,6 +140,7 @@ namespace DawgResolver
 
                 }
             Game.IsTransposed = !Game.IsTransposed;
+
             return ret;
         }
     }
