@@ -136,6 +136,8 @@ namespace DawgResolver
                     ret[ligne, col] = new Tile(g, col, ligne);
                     ret[ligne, col].Ligne = ligne;
                     ret[ligne, col].Col = col;
+                    ret[ligne, col].WordMultiplier = source.WordMultiplier;
+                    ret[ligne, col].LetterMultiplier = source.LetterMultiplier;
                     ret[ligne, col].Letter = tiles[col, ligne].Letter;
 
                 }

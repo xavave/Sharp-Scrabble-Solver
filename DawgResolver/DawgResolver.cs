@@ -87,6 +87,8 @@ namespace DawgResolver
         private VTile[,] FindControlers(VTile[,] grid)
         {
             int L = 0;
+            foreach (var t in grid.OfType<VTile>().Where(t => t.IsEmpty))
+                t.Controlers[26] = 26;
 
             foreach (var t in grid.OfType<VTile>().Where(t => t.IsAnchor))
             {
@@ -117,10 +119,10 @@ namespace DawgResolver
                 //Si tel est le cas, la lettre L est jouable pour la case considérée
                 //et on précalcule le point que le mot verticalement formé permettrait de gagner si L était jouée
                 L = 0;
+                
                 foreach (var c in Game.Alphabet.Where(c => (wordStart + c + wordEnd).Length > 1 && Game.Dico.MotAdmis((wordStart + c + wordEnd).ToUpper())))
                 {
-
-                    t.Controlers[((int)c.Char) - Dictionnaire.AscShiftBase0] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
+                    grid[t.Ligne,t.Col].Controlers[((int)c.Char) - Dictionnaire.AscShiftBase0] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
                     L++;
 
                 }
@@ -132,8 +134,7 @@ namespace DawgResolver
                 else
                     t.Controlers[26] = L;
             }
-            foreach (var t in grid.OfType<VTile>().Where(t => t.IsEmpty))
-                t.Controlers[26] = 26;
+            
 
             return grid;
         }
@@ -467,10 +468,7 @@ namespace DawgResolver
         /// <param name="t"></param>
         private void Add(VTile[,] grid, string word, VTile t, MovementDirection direction)
         {
-            if (word == "bANDEAU")
-            {
 
-            }
 
             int multiplier = 1;
             int horizontalPoints = 0;
@@ -516,12 +514,12 @@ namespace DawgResolver
             nbPossibleMoves++;
             // Tri et mise en forme des coups
             //if (points <= MinPoint) return;
-
-            if (!LegalWords.Any(w => w.Direction == direction && w.Text==word && w.StartTile.Ligne == t.Ligne && w.StartTile.Col == t.Col))
+            var startTile = direction == MovementDirection.Across ? grid[t.Ligne, debutCol] : grid[debutCol, t.Ligne];
+            if (!LegalWords.Any(w => w.Direction == direction && w.Text == word && w.StartTile.Ligne == startTile.Ligne && w.StartTile.Col == startTile.Col))
             {
                 LegalWords.Add(new Word(Game)
                 {
-                    StartTile = grid[t.Ligne, debutCol],
+                    StartTile = startTile,
                     Direction = direction,
                     Text = word,
                     Points = points,
@@ -533,5 +531,5 @@ namespace DawgResolver
         }
 
     }
-    
+
 }

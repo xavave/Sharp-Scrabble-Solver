@@ -33,8 +33,8 @@ namespace Scrabble2018.Model
             Col = t.Col;
             Ligne = t.Ligne;
             Letter = t.Letter;
-            WordMultiplier = t.WordMultiplier;
-            LetterMultiplier = t.LetterMultiplier;
+            WordMultiplier = t.IsEmpty ? t.WordMultiplier : 1;
+            LetterMultiplier = t.IsEmpty ? t.LetterMultiplier : 1;
         }
         public SolidColorBrush UpdateColor(VTile t)
         {

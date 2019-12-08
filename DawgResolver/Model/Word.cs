@@ -39,7 +39,7 @@ namespace DawgResolver.Model
             {
                 var pos = $"{Game.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
                 if (Direction == MovementDirection.Down)
-                    pos = $"{StartTile.Ligne+1}{Game.Alphabet[StartTile.Col]}";
+                    pos = $"{StartTile.Col + 1}{Game.Alphabet[StartTile.Ligne]}";
                 return $"[{pos}] {Text} ({Points}){(Scramble ? "*" : "")}";
             }
         }
