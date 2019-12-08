@@ -21,11 +21,11 @@ namespace Dawg.Resolver.Winform.Test
             //t.SetWord(Game.Player1, "foin", MovementDirection.Across, true);
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
 
-            //for (int i = 0; i < 15; i++)
-            //{
-            //    groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i)) { Text = $"{i + 1}", Name = $"col{i}" });
-            //    groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, i, 0)) { Text = $"{i + 1}", Name = $"ligne{i}" });
-            //}
+            for (int i = 0; i < 15; i++)
+            {
+                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i), $"header_col{i}") { Text = $"{i + 1}" });
+                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, i, 0), $"header_ligne{i}") { Text = $"{Game.Alphabet[i].Char}" });
+            }
 
             foreach (var tile in Game.Grid)
             {
@@ -38,7 +38,7 @@ namespace Dawg.Resolver.Winform.Test
         private void button1_Click_1(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            Game.Bag.GetNewRack(Game.Player1, textBox1.Text);
+            Game.Bag.GetNewRack(Game.Player1, txtRack.Text);
             lsb.DisplayMember = "DisplayText";
             var ret = Game.Resolver.FindMoves(Game.Player1, 500);
             lsb.Items.Clear();
@@ -55,7 +55,7 @@ namespace Dawg.Resolver.Winform.Test
             word.SetWord(Game.Player1, false);
 
             RefreshBoard(Game.Grid);
-            textBox1.Text = new string(Game.Player1.Rack.Select(r => r.Char).ToArray());
+            txtRack.Text = new string(Game.Player1.Rack.Select(r => r.Char).ToArray());
 
             textBox3.Text = Game.Bag.GetBagContent();
         }
@@ -86,7 +86,9 @@ namespace Dawg.Resolver.Winform.Test
 
         private void btnBackToRack_Click(object sender, EventArgs e)
         {
-            Game.ClearTilesInPlay(Game.Player1);
+            var ret = Game.ClearTilesInPlay(Game.Player1);
+            if (!string.IsNullOrWhiteSpace(ret)) txtRack.Text = ret;
+            RefreshBoard(Game.Grid);
         }
     }
 }

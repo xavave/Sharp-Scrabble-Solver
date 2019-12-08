@@ -382,26 +382,29 @@ namespace DawgResolver
         {
             var backupGrid = Game.Grid.Copy();
             Game.Grid = DetectTiles(p, Game.Grid);
+
+
+
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
             Game.Grid = FindMovesPerAnchor(p, Game.Grid);
-            // Recherche des coups verticaux
-            // par transposition de la grille, on refait tout le processus
-            Game.Grid = backupGrid;
-            Game.Grid = Game.Grid.Transpose(Game);
-            Game.Grid = DetectTiles(p, Game.Grid);
-            // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            Game.Grid = FindMovesPerAnchor(p, Game.Grid);
+            //// Recherche des coups verticaux
+            //// par transposition de la grille, on refait tout le processus
+           Game.Grid = backupGrid;
+            //Game.Grid = Game.Grid.Transpose(Game);
+            //Game.Grid = DetectTiles(p, Game.Grid);
+            //// Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
+            //Game.Grid = FindMovesPerAnchor(p, Game.Grid);
 
             var ret = LegalWords.OrderByDescending(t => t.Points).Take(maxWordCount).ToList();
 
-            if (p.Rack.Any())
-            {
-                // Les lettres non utilisées sont "reversées dans le sac"
-                foreach (var l in p.Rack)
-                    Game.Bag.PutBackLetter(l);
-            }
-            //on remet la grille à son état initial
-            Game.Grid = backupGrid;
+            //if (p.Rack.Any())
+            //{
+            //    // Les lettres non utilisées sont "reversées dans le sac"
+            //    foreach (var l in p.Rack)
+            //        Game.Bag.PutBackLetter(l);
+            //}
+            ////on remet la grille à son état initial
+            //Game.Grid = backupGrid;
             return ret;
         }
 

@@ -63,6 +63,10 @@
       <Project>{95af0c36-e8cb-422a-9060-aca73ccd0c36}</Project>
       <Name>Dawg</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Gadag\Gaddag.csproj">
+      <Project>{774138AD-526B-4DB8-B62F-02248F5C0C1E}</Project>
+      <Name>Gaddag</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

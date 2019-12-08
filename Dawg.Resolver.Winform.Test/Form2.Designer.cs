@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtRack = new System.Windows.Forms.TextBox();
             this.lsb = new System.Windows.Forms.ListBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.txtGrid2 = new System.Windows.Forms.TextBox();
@@ -49,13 +49,14 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // textBox1
+            // txtRack
             // 
-            this.textBox1.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.textBox1.Location = new System.Drawing.Point(257, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(153, 26);
-            this.textBox1.TabIndex = 5;
+            this.txtRack.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
+            this.txtRack.Location = new System.Drawing.Point(257, 3);
+            this.txtRack.Name = "txtRack";
+            this.txtRack.Size = new System.Drawing.Size(153, 26);
+            this.txtRack.TabIndex = 5;
+            this.txtRack.Text = "EUDNAA*";
             // 
             // lsb
             // 
@@ -91,7 +92,7 @@
             // 
             this.groupBox1.Location = new System.Drawing.Point(516, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(701, 712);
+            this.groupBox1.Size = new System.Drawing.Size(772, 770);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Board";
@@ -120,17 +121,17 @@
             // 
             this.txtTileProps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTileProps.Location = new System.Drawing.Point(1224, 13);
+            this.txtTileProps.Location = new System.Drawing.Point(1310, 13);
             this.txtTileProps.Multiline = true;
             this.txtTileProps.Name = "txtTileProps";
-            this.txtTileProps.Size = new System.Drawing.Size(370, 702);
+            this.txtTileProps.Size = new System.Drawing.Size(628, 760);
             this.txtTileProps.TabIndex = 14;
             // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1606, 748);
+            this.ClientSize = new System.Drawing.Size(1950, 785);
             this.Controls.Add(this.txtTileProps);
             this.Controls.Add(this.btnBackToRack);
             this.Controls.Add(this.btnTranspose);
@@ -139,7 +140,7 @@
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.lsb);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtRack);
             this.Name = "Form2";
             this.Text = "Form2";
             this.ResumeLayout(false);
@@ -150,7 +151,7 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtRack;
         private System.Windows.Forms.ListBox lsb;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox txtGrid2;

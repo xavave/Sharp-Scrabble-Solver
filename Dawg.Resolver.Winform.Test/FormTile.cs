@@ -15,7 +15,7 @@ namespace Dawg.Resolver.Winform.Test
     {
         public VTile Tile { get; set; }
         public Game Game { get; set; }
-        public FormTile(Game g, VTile t)
+        public FormTile(Game g, VTile t, string tileName = "")
         {
             Game = g;
             Tile = t;
@@ -25,18 +25,25 @@ namespace Dawg.Resolver.Winform.Test
             this.AnchorLeftMaxLimit = t.AnchorLeftMaxLimit;
             this.Controlers = t.Controlers;
             this.Width = 30;
-            this.Height = 25;
+            this.Height = 28;
             this.MaxLength = 1;
             this.Font = new Font("Verdana", 14);
             this.CharacterCasing = CharacterCasing.Upper;
             this.BackColor = GetBackColor(t);
             Text = t.Letter.Char.ToString();
-            Name = $"t{t.Ligne}_{t.Col}";
+            if (tileName == "")
+                Name = $"t{t.Ligne}_{t.Col}";
+            else
+                Name = tileName;
             Click += FormTile_Click;
             KeyUp += FormTile_KeyUp;
 
-
-            Location = new Point(10 + t.Col * this.Width + 1, 10 + t.Ligne * this.Height + 1);
+            if (Name.StartsWith($"header_col"))
+                Location = new Point(15 + this.Width + t.Col * this.Width, 15 + t.Ligne * this.Height);
+            else if (Name.StartsWith($"header_ligne"))
+                Location = new Point(15 + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
+            else
+                Location = new Point(15 + this.Width + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
         }
 
         private void FormTile_KeyUp(object sender, KeyEventArgs e)
@@ -49,7 +56,7 @@ namespace Dawg.Resolver.Winform.Test
                 Game.Grid[Ligne, Col].Letter = this.Letter;
                 GetNextTile(Keys.Right, frmTile);
             }
-            else if (e.KeyCode== Keys.Back)
+            else if (e.KeyCode == Keys.Back)
             {
                 GetNextTile(Keys.Left, frmTile);
                 this.Letter = new Letter();

@@ -71,7 +71,6 @@ namespace DawgResolver.Model
             return sb.ToString();
         }
         public Dictionnaire Dico { get; }
-
         public const char Joker = '*';
 
         public Resolver Resolver { get; }
@@ -100,23 +99,30 @@ namespace DawgResolver.Model
             get { return AlphabetAvecJoker.Take(26).ToList(); }
         }
 
-        public void ClearTilesInPlay(Player p)
+        public string ClearTilesInPlay(Player p)
         {
+            var ret = "";
             for (int i = 0; i < Grid.OfType<VTile>().Count(); i++)
             {
                 var tile = Grid.OfType<VTile>().ElementAt(i);
                 if (!tile.IsValidated)
                 {
                     if (tile.FromJoker)
-                        p.Rack.Remove(Game.AlphabetAvecJoker[26]);
+                    {
+                        ret += "*";
+                        //p.Rack.Remove(Game.AlphabetAvecJoker[26]);
+                    }
                     else
-                        p.Rack.Remove(tile.Letter);
+                    {
+                        ret += tile.Letter.Char; 
+                        //p.Rack.Remove(tile.Letter);
 
+                    }
                     tile.IsValidated = true;
                     Grid[tile.Ligne, tile.Col].Letter = new Letter();
                 }
             }
-
+            return ret;
         }
 
         public static List<Letter> AlphabetAvecJoker { get; } = new List<Letter>()
@@ -154,7 +160,6 @@ namespace DawgResolver.Model
 
 
         public const int BoardSize = 15;
-
         private VTile[,] grid = new VTile[Game.BoardSize, Game.BoardSize];
 
         public VTile[,] InitBoard()
