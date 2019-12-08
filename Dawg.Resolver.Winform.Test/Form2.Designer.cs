@@ -33,18 +33,18 @@
             this.lsb = new System.Windows.Forms.ListBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.txtGrid2 = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnTranspose = new System.Windows.Forms.Button();
             this.btnBackToRack = new System.Windows.Forms.Button();
             this.txtTileProps = new System.Windows.Forms.TextBox();
             this.btnValidate = new System.Windows.Forms.Button();
+            this.groupBox1 = new Dawg.Resolver.Winform.Test.CustomGroupBox();
             this.SuspendLayout();
             // 
             // btnSearch
             // 
             this.btnSearch.Location = new System.Drawing.Point(416, 3);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(75, 26);
+            this.btnSearch.Size = new System.Drawing.Size(75, 36);
             this.btnSearch.TabIndex = 7;
             this.btnSearch.Text = "Search";
             this.btnSearch.UseVisualStyleBackColor = true;
@@ -83,26 +83,17 @@
             // 
             this.txtGrid2.BackColor = System.Drawing.SystemColors.InfoText;
             this.txtGrid2.ForeColor = System.Drawing.SystemColors.InactiveBorder;
-            this.txtGrid2.Location = new System.Drawing.Point(257, 77);
+            this.txtGrid2.Location = new System.Drawing.Point(257, 90);
             this.txtGrid2.Multiline = true;
             this.txtGrid2.Name = "txtGrid2";
-            this.txtGrid2.Size = new System.Drawing.Size(234, 370);
+            this.txtGrid2.Size = new System.Drawing.Size(234, 357);
             this.txtGrid2.TabIndex = 10;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Location = new System.Drawing.Point(516, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(772, 770);
-            this.groupBox1.TabIndex = 11;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Board";
             // 
             // btnTranspose
             // 
             this.btnTranspose.Location = new System.Drawing.Point(257, 45);
             this.btnTranspose.Name = "btnTranspose";
-            this.btnTranspose.Size = new System.Drawing.Size(97, 26);
+            this.btnTranspose.Size = new System.Drawing.Size(97, 39);
             this.btnTranspose.TabIndex = 12;
             this.btnTranspose.Text = "Transpose";
             this.btnTranspose.UseVisualStyleBackColor = true;
@@ -112,7 +103,7 @@
             // 
             this.btnBackToRack.Location = new System.Drawing.Point(373, 45);
             this.btnBackToRack.Name = "btnBackToRack";
-            this.btnBackToRack.Size = new System.Drawing.Size(118, 26);
+            this.btnBackToRack.Size = new System.Drawing.Size(118, 39);
             this.btnBackToRack.TabIndex = 13;
             this.btnBackToRack.Text = "BackToRack";
             this.btnBackToRack.UseVisualStyleBackColor = true;
@@ -137,6 +128,15 @@
             this.btnValidate.Text = "Validate Word";
             this.btnValidate.UseVisualStyleBackColor = true;
             this.btnValidate.Click += new System.EventHandler(this.btnValidate_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Location = new System.Drawing.Point(516, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(772, 770);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Board";
             // 
             // Form2
             // 
@@ -167,7 +167,7 @@
         private System.Windows.Forms.ListBox lsb;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox txtGrid2;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private CustomGroupBox groupBox1;
         private System.Windows.Forms.Button btnTranspose;
         private System.Windows.Forms.Button btnBackToRack;
         public System.Windows.Forms.TextBox txtTileProps;

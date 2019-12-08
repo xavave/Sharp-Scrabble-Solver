@@ -8,15 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DawgResolver.Model;
+using System.Runtime.InteropServices;
 
 namespace Dawg.Resolver.Winform.Test
 {
+    
     public partial class FormTile : TextBox, VTile
     {
+       
         public VTile Tile { get; set; }
         public Game Game { get; set; }
         public FormTile(Game g, VTile t, string tileName = "")
         {
+           
             Game = g;
             Tile = t;
             this.Ligne = t.Ligne;
@@ -44,6 +48,7 @@ namespace Dawg.Resolver.Winform.Test
                 Location = new Point(15 + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
             else
                 Location = new Point(15 + this.Width + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
+           
         }
 
         private void FormTile_KeyUp(object sender, KeyEventArgs e)

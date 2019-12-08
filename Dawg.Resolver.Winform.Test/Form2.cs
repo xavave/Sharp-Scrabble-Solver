@@ -21,7 +21,7 @@ namespace Dawg.Resolver.Winform.Test
             //t.SetWord(Game.Player1, "famille", MovementDirection.Down, true);
             //t.SetWord(Game.Player1, "foin", MovementDirection.Across, true);
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
-            groupBox1.SuspendLayout();
+            CustomGroupBox.SuspendDrawing(groupBox1.Parent);
             for (int i = 0; i < 15; i++)
             {
                 groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i), $"header_col{i}") { Text = $"{i + 1}" });
@@ -32,7 +32,7 @@ namespace Dawg.Resolver.Winform.Test
             {
                 groupBox1.Controls.Add(new FormTile(Game, tile));
             }
-            groupBox1.ResumeLayout();
+            CustomGroupBox.ResumeDrawing(groupBox1.Parent);
             Cursor.Current = Cursors.Default;
         }
 
@@ -45,13 +45,12 @@ namespace Dawg.Resolver.Winform.Test
             word.SetWord(Game.Player1, false);
 
             RefreshBoard(Game.Grid);
-            txtRack.Text = Game.Player1.Rack.String();
-
-            textBox3.Text = Game.Bag.GetBagContent();
+          
         }
 
         private VTile[,] RefreshBoard(VTile[,] grid)
         {
+            CustomGroupBox.SuspendDrawing(groupBox1.Parent);
             for (int ligne = 0; ligne <= grid.GetUpperBound(0); ligne++)
             {
                 for (int col = 0; col <= grid.GetUpperBound(1); col++)
@@ -61,7 +60,10 @@ namespace Dawg.Resolver.Winform.Test
                     formTile.Text = formTile.Tile.Letter.Char.ToString();
                 }
             }
+            CustomGroupBox.ResumeDrawing(groupBox1.Parent);
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
+            txtRack.Text = Game.Player1.Rack.String();
+            textBox3.Text = Game.Bag.GetBagContent();
             return grid;
         }
 
@@ -88,12 +90,15 @@ namespace Dawg.Resolver.Winform.Test
                 var frmTile = groupBox1.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
                 frmTile.ReadOnly = true;
                 frmTile.BackColor = Color.LightYellow;
+                Game.Bag.GetLetterInFlatList(t.Letter.Char);
             }
 
 
             var newRack = Game.Bag.GetNewRack(Game.Player1, 7 - txtRack.Text.Count());
             if (newRack.Any())
                 txtRack.Text = newRack.String();
+
+            Game.Grid= RefreshBoard(Game.Grid);
 
         }
 
