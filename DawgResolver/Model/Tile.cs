@@ -19,7 +19,6 @@ namespace DawgResolver.Model
         int AnchorLeftMinLimit { get; set; }
         int AnchorLeftMaxLimit { get; set; }
         bool IsAnchor { get;  }
-
         Dictionary<int, int> Controlers { get; set; }
         bool FromJoker { get; set; }
         bool IsEmpty { get; }
@@ -46,7 +45,7 @@ namespace DawgResolver.Model
             AnchorLeftMinLimit = AnchorLeftMaxLimit = 0;
           
         }
-
+        
         internal void Clear()
         {
             //IsAnchor = false;

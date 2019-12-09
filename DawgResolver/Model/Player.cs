@@ -17,7 +17,7 @@ namespace DawgResolver.Model
 
         public List<Letter> Rack { get; set; } = new List<Letter>(7);
         public int Points { get; set; }
-        public List<Word> Words { get; set; } = new List<Word>();
+        public List<Word> Moves { get; set; } = new List<Word>();
 
         public string DisplayRack()
         {

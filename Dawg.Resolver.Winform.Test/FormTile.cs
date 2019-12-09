@@ -103,6 +103,10 @@ namespace Dawg.Resolver.Winform.Test
             txtProps.Text += Environment.NewLine;
             txtProps.Text += $"WordMultiplier={t.WordMultiplier}";
             txtProps.Text += Environment.NewLine;
+            txtProps.Text += $"IsValidated={t.IsValidated}";
+            txtProps.Text += Environment.NewLine;
+            txtProps.Text += $"FromJoker={t.FromJoker}";
+            txtProps.Text += Environment.NewLine;
             txtProps.Text += $"AnchorLeftMinLimit = {t.AnchorLeftMinLimit}";
             txtProps.Text += Environment.NewLine;
             txtProps.Text += $"AnchorLeftMaxLimit = {t.AnchorLeftMaxLimit}";

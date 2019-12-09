@@ -12,7 +12,7 @@ namespace DawgResolver.Model
     {
         public Bag()
         {
-            Letters = Game.AlphabetAvecJoker;
+            Letters = new List<Letter>(Game.AlphabetAvecJoker);
         }
 
         public static List<Letter> Letters { get; set; }
@@ -34,9 +34,9 @@ namespace DawgResolver.Model
             get => Letters.Sum(t => t.Count);
 
         }
-        public void RemoveLetterFromBag(Letter l )
+        public void RemoveLetterFromBag(char c)
         {
-            var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == l.Char);
+            var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == c);
             if (letter.Count > 0) letter.Count = --letter.Count;
         }
         Random rnd = new Random();
@@ -46,12 +46,12 @@ namespace DawgResolver.Model
             {
                 throw new ArgumentException("No more letters in bag!");
             }
-          
+
             int charIdx = rnd.Next(0, FlatList.Length - 1);
             var c = FlatList[charIdx];
             var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == c);
             var le = Letters.Find(l => l == letter);
-           
+
             return le;
 
         }
@@ -76,7 +76,7 @@ namespace DawgResolver.Model
 
         public List<Letter> GetLetters(Player p, string forcedLetters = null)
         {
-          
+
 
             if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
@@ -89,7 +89,7 @@ namespace DawgResolver.Model
             // S'il reste 7 lettres ou moins dans le sac, on n'a pas le choix, on les prend toutes
 
             int lettersToTakeCount = 7 - p.Rack.Count();
-           
+
             // Sinon on tire 7 lettres du sac à condition qu'il en reste suffisament
             for (int i = 0; i < Math.Min(FlatList.Length, lettersToTakeCount); i++)
             {

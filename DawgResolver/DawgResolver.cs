@@ -163,6 +163,7 @@ namespace DawgResolver
                 // Cas où l'ancre est précédée d'une autre ancre, la taille du préfixe est exactement 0
                 if (t.IsAnchor)
                 {
+                    t.IsValidated = false;
                     var tileCpy = t.Copy(Game, grid);
 
                     int cptPrefix = 0;

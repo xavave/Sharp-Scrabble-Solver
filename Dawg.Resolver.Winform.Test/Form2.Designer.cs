@@ -41,10 +41,12 @@
             this.lblPlayer1Score = new System.Windows.Forms.Label();
             this.lblPlayer2Score = new System.Windows.Forms.Label();
             this.btnDemoAll = new System.Windows.Forms.Button();
-            this.groupBox1 = new Dawg.Resolver.Winform.Test.CustomGroupBox();
             this.txtRackP2 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.lblCurrentRack = new System.Windows.Forms.Label();
+            this.groupBox1 = new Dawg.Resolver.Winform.Test.CustomGroupBox();
+            this.ckKeepExistingBoard = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnSearch
@@ -69,9 +71,9 @@
             // 
             this.lsb.FormattingEnabled = true;
             this.lsb.ItemHeight = 20;
-            this.lsb.Location = new System.Drawing.Point(3, 3);
+            this.lsb.Location = new System.Drawing.Point(3, 43);
             this.lsb.Name = "lsb";
-            this.lsb.Size = new System.Drawing.Size(232, 544);
+            this.lsb.Size = new System.Drawing.Size(232, 504);
             this.lsb.TabIndex = 8;
             this.lsb.Click += new System.EventHandler(this.lsb_Click);
             // 
@@ -172,15 +174,6 @@
             this.btnDemoAll.UseVisualStyleBackColor = true;
             this.btnDemoAll.Click += new System.EventHandler(this.btnDemoAll_Click);
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Location = new System.Drawing.Point(516, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(772, 770);
-            this.groupBox1.TabIndex = 11;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Board";
-            // 
             // txtRackP2
             // 
             this.txtRackP2.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
@@ -207,11 +200,43 @@
             this.label2.TabIndex = 22;
             this.label2.Text = "P2";
             // 
+            // lblCurrentRack
+            // 
+            this.lblCurrentRack.AutoSize = true;
+            this.lblCurrentRack.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCurrentRack.Location = new System.Drawing.Point(70, 9);
+            this.lblCurrentRack.Name = "lblCurrentRack";
+            this.lblCurrentRack.Size = new System.Drawing.Size(0, 29);
+            this.lblCurrentRack.TabIndex = 23;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Location = new System.Drawing.Point(516, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(772, 770);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Board";
+            // 
+            // ckKeepExistingBoard
+            // 
+            this.ckKeepExistingBoard.AutoSize = true;
+            this.ckKeepExistingBoard.Checked = true;
+            this.ckKeepExistingBoard.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ckKeepExistingBoard.Location = new System.Drawing.Point(229, 720);
+            this.ckKeepExistingBoard.Name = "ckKeepExistingBoard";
+            this.ckKeepExistingBoard.Size = new System.Drawing.Size(108, 24);
+            this.ckKeepExistingBoard.TabIndex = 24;
+            this.ckKeepExistingBoard.Text = "Keep Tiles";
+            this.ckKeepExistingBoard.UseVisualStyleBackColor = true;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1668, 790);
+            this.Controls.Add(this.ckKeepExistingBoard);
+            this.Controls.Add(this.lblCurrentRack);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtRackP2);
@@ -255,5 +280,7 @@
         private System.Windows.Forms.TextBox txtRackP2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblCurrentRack;
+        private System.Windows.Forms.CheckBox ckKeepExistingBoard;
     }
 }
