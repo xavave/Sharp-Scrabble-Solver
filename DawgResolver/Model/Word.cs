@@ -85,5 +85,9 @@ namespace DawgResolver.Model
         {
             return DisplayText;
         }
+        public bool Equals(Word w)
+        {
+            return Text == w.Text && StartTile.Ligne == w.StartTile.Ligne && StartTile.Col == w.StartTile.Col;
+        }
     }
 }

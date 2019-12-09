@@ -73,7 +73,7 @@ namespace DawgResolver
         }
         public static Letter SetLetter(this VTile t, char c, Player p, bool Validate)
         {
-            if (t != null && t.IsEmpty)
+            if (t != null)
             {
                 if (t.IsEmpty)
                     t.IsValidated = Validate;

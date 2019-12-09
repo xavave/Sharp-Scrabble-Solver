@@ -110,7 +110,6 @@ namespace DawgResolver.Model
                 {
                     if (tile.FromJoker)
                     {
-                       
                         p.Rack.Add(Game.AlphabetAvecJoker[26]);
                     }
                     else

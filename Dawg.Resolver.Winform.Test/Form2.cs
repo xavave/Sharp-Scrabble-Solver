@@ -16,13 +16,16 @@ namespace Dawg.Resolver.Winform.Test
         public Form2()
         {
             InitializeComponent();
+            NewGame();
+        }
+
+        private void NewGame()
+        {
+            EndGame = false;
             Cursor.Current = Cursors.WaitCursor;
             Game = new Game();
             Game.InitBoard();
             textBox3.Text = Game.Bag.GetBagContent();
-            var t = Game.Grid[4, 7];
-            //t.SetWord(Game.Player1, "famille", MovementDirection.Down, true);
-            //t.SetWord(Game.Player1, "foin", MovementDirection.Across, true);
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             CustomGroupBox.SuspendDrawing(groupBox1.Parent);
             for (int i = 0; i < 15; i++)
@@ -37,6 +40,7 @@ namespace Dawg.Resolver.Winform.Test
             }
             CustomGroupBox.ResumeDrawing(groupBox1.Parent);
             Cursor.Current = Cursors.Default;
+
         }
 
         int player1Score = 0;
@@ -53,6 +57,8 @@ namespace Dawg.Resolver.Winform.Test
                 foreach (var t in word.GetTiles())
                 {
                     var frmTile = groupBox1.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
+                    if (frmTile.ReadOnly)
+                        continue;
                     frmTile.ReadOnly = true;
                     frmTile.BackColor = p == Game.Player1 ? Color.LightYellow : Color.LightGreen;
                     Game.Bag.RemoveLetterFromBag(t.Letter);
@@ -157,11 +163,12 @@ namespace Dawg.Resolver.Winform.Test
             PlayDemo();
         }
         bool isPlayer1 = true;
-
-        private void PlayDemo()
+        bool EndGame { get; set; } = false;
+        private void PlayDemo(int wait = 0)
         {
 
             System.Windows.Forms.Application.DoEvents();
+            Thread.Sleep(wait);
             this.BeginInvoke((Action)(() =>
             {
 
@@ -176,6 +183,12 @@ namespace Dawg.Resolver.Winform.Test
                 if (ret.Any())
                 {
                     var word = ret.OrderByDescending(r => r.Points).First() as Word;
+                    if (CurrentWord != null && CurrentWord.Equals(word))
+                    {
+                        EndGame = true;
+                        return;
+                    }
+                    CurrentWord = word;
                     txtTileProps.Text += $"{(isPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {word.Text} ({word.Points})" + Environment.NewLine;
                     int points = PreviewWord(isPlayer1 ? Game.Player1 : Game.Player2, word, true);
                     if (isPlayer1) Game.Player1.Points += points;
@@ -201,11 +214,15 @@ namespace Dawg.Resolver.Winform.Test
             lblPlayer2Score.Text = $"Player 2 Score :{Game.Player2.Points}";
         }
 
+        Word CurrentWord { get; set; }
         private void btnDemoAll_Click(object sender, EventArgs e)
         {
+           
 
-            while (Game.Bag.LeftLettersCount > 0)
-                PlayDemo();
+            NewGame();
+
+            while (Game.Bag.LeftLettersCount > 0 && !EndGame)
+                PlayDemo(500);
         }
 
         private void lsb_Click(object sender, EventArgs e)
