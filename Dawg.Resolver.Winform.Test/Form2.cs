@@ -3,6 +3,8 @@ using DawgResolver.Model;
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Dawg.Resolver.Winform.Test
@@ -36,16 +38,27 @@ namespace Dawg.Resolver.Winform.Test
             Cursor.Current = Cursors.Default;
         }
 
-
+        int player1Score = 0;
+        int player2Score = 0;
         private void lsb_SelectedIndexChanged(object sender, EventArgs e)
         {
             var word = lsb.SelectedItem as Word;
             if (word == null) return;
-            Game.ClearTilesInPlay(Game.Player1);
-            word.SetWord(Game.Player1, false);
+            if (isPlayer1)
+                player1Score = PlayWord(isPlayer1 ? Game.Player1 : Game.Player2, word);
+            else
+                player2Score = PlayWord(isPlayer1 ? Game.Player1 : Game.Player2, word);
+
+
+        }
+
+        private int PlayWord(Player p, Word word)
+        {
+            Game.ClearTilesInPlay(p);
+            int points = word.SetWord(p, false);
 
             RefreshBoard(Game.Grid);
-
+            return points;
         }
 
         private VTile[,] RefreshBoard(VTile[,] grid)
@@ -61,8 +74,8 @@ namespace Dawg.Resolver.Winform.Test
                 }
             }
             //CustomGroupBox.ResumeDrawing(groupBox1.Parent);
-            txtTileProps.Text = Game.IsTransposed ? "Transposed" : "Not Transposed";
-            txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
+            //txtTileProps.Text += Game.IsTransposed ? "Transposed" : "Not Transposed";
+            //txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             txtRack.Text = Game.Player1.Rack.String();
             textBox3.Text = Game.Bag.GetBagContent();
             return grid;
@@ -87,11 +100,22 @@ namespace Dawg.Resolver.Winform.Test
 
         private void btnValidate_Click(object sender, EventArgs e)
         {
-            foreach (var t in Game.ValidateWords())
+            if (ValidateWord(isPlayer1 ? Game.Player1 : Game.Player2))
+                DisplayScores();
+
+        }
+
+        private bool ValidateWord(Player p)
+        {
+            var validate = Game.ValidateWords();
+
+            if (!validate.Any())
+                return false;
+            foreach (var t in validate)
             {
                 var frmTile = groupBox1.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
                 frmTile.ReadOnly = true;
-                frmTile.BackColor = Color.LightYellow;
+                frmTile.BackColor = p == Game.Player1 ? Color.LightYellow : Color.LightGreen;
                 Game.Bag.GetLetterInFlatList(t.Letter.Char);
             }
 
@@ -100,8 +124,10 @@ namespace Dawg.Resolver.Winform.Test
             if (newRack.Any())
                 txtRack.Text = newRack.String();
 
+            p.Points += isPlayer1 ? player1Score : player2Score;
+            isPlayer1 = !isPlayer1;
             Game.Grid = RefreshBoard(Game.Grid);
-
+            return true;
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
@@ -116,10 +142,57 @@ namespace Dawg.Resolver.Winform.Test
             txtTileProps.Text += $"NbPossibleMoves={Game.Resolver.NbPossibleMoves}";
             txtTileProps.Text += Environment.NewLine;
             txtTileProps.Text += $"NbAcceptedMoves={Game.Resolver.NbAcceptedMoves}";
-            lsb.Items.Clear();
-            foreach (var r in ret)
-                lsb.Items.Add(r);
+            txtTileProps.Text += Environment.NewLine;
+            lsb.DataSource = ret;
             Cursor.Current = Cursors.Default;
+        }
+
+        private void btnDemo_Click(object sender, EventArgs e)
+        {
+
+            PlayDemo();
+        }
+        bool isPlayer1 = true;
+
+        private void PlayDemo()
+        {
+
+            Cursor.Current = Cursors.WaitCursor;
+
+            this.BeginInvoke((Action)(() =>
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                var rack = Game.Bag.GetNewRack(isPlayer1 ? Game.Player1 : Game.Player2);
+                txtRack.Text = rack.String();
+                var ret = Game.Resolver.FindMoves(isPlayer1 ? Game.Player1 : Game.Player2, 50);
+                lsb.DataSource = ret;
+                if (ret.Any())
+                {
+
+                    var word = ret.OrderByDescending(r => r.Points).First() as Word;
+
+                    int score = PlayWord(isPlayer1 ? Game.Player1 : Game.Player2, word);
+
+                    txtTileProps.Text += $"{word.Text} ({word.Points})" + Environment.NewLine;
+                    if (ValidateWord(isPlayer1 ? Game.Player1 : Game.Player2))
+                        if (isPlayer1)
+                            Game.Player1.Points += score;
+                        else
+                            Game.Player2.Points += score;
+
+                    DisplayScores();
+
+                    Cursor.Current = Cursors.Default;
+                }
+                else return;
+            }));
+
+        }
+
+        private void DisplayScores()
+        {
+            lblPlayer1Score.Text = $"Player 1 Score :{Game.Player1.Points}";
+            lblPlayer2Score.Text = $"Player 2 Score :{Game.Player2.Points}";
         }
     }
 }

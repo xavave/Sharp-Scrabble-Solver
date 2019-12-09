@@ -37,14 +37,18 @@ namespace DawgResolver.Model
 
         public Letter GetLetterInFlatList(int charIdx, bool removeFromBag = true)
         {
-            var c = FlatList.FirstOrDefault(ch=>ch == (char)charIdx);
-            if (c == char.MinValue) return null;//TODO
-            var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == c);
-            var le = Letters.Find(l => l == letter);
-            if (removeFromBag)
-                if (le.Count <= 0) return null;
-                else le.Count -= 1;
-            return le;
+            if (charIdx < FlatList.Length)
+            {
+                var c = FlatList[charIdx];
+                if (c == char.MinValue) return null;//TODO
+                var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == c);
+                var le = Letters.Find(l => l == letter);
+                if (removeFromBag)
+                    if (le.Count <= 0) return null;
+                    else le.Count -= 1;
+                return le;
+            }
+            return null;
         }
         public void PutBackLetter(Letter l)
         {
@@ -81,20 +85,20 @@ namespace DawgResolver.Model
 
             // S'il reste 7 lettres ou moins dans le sac, on n'a pas le choix, on les prend toutes
 
-            Random rnd = new Random((int)DateTime.Now.Ticks);
+          
             int cpt = 0;
             // Sinon on tire 7 lettres du sac à condition qu'il en reste suffisament
             for (int i = 0; i < Math.Min(FlatList.Length, lettersToTakeCount); i++)
             {
                 cpt++;
-               
+                Random rnd = new Random((int)DateTime.Now.Ticks);
                 int charIdx = rnd.Next(0, FlatList.Length - 1);
                 var letter = GetLetterInFlatList(charIdx);
                 while (letter == null && LeftLettersCount > 0) letter = GetLetterInFlatList(rnd.Next(0, FlatList.Length - 1));
                 if (cpt > lettersToTakeCount) break;
                 p.Rack.Add(letter);
             }
-            Debug.WriteLine(p.DisplayRack());
+            //Debug.WriteLine(p.DisplayRack());
             return p.Rack;
 
         }

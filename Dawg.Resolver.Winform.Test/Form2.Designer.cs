@@ -37,7 +37,10 @@
             this.btnBackToRack = new System.Windows.Forms.Button();
             this.txtTileProps = new System.Windows.Forms.TextBox();
             this.btnValidate = new System.Windows.Forms.Button();
+            this.btnDemo = new System.Windows.Forms.Button();
             this.groupBox1 = new Dawg.Resolver.Winform.Test.CustomGroupBox();
+            this.lblPlayer1Score = new System.Windows.Forms.Label();
+            this.lblPlayer2Score = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnSearch
@@ -68,6 +71,7 @@
             this.lsb.Size = new System.Drawing.Size(229, 444);
             this.lsb.TabIndex = 8;
             this.lsb.SelectedIndexChanged += new System.EventHandler(this.lsb_SelectedIndexChanged);
+            
             // 
             // textBox3
             // 
@@ -113,10 +117,10 @@
             // 
             this.txtTileProps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTileProps.Location = new System.Drawing.Point(1294, 13);
+            this.txtTileProps.Location = new System.Drawing.Point(1294, 90);
             this.txtTileProps.Multiline = true;
             this.txtTileProps.Name = "txtTileProps";
-            this.txtTileProps.Size = new System.Drawing.Size(365, 760);
+            this.txtTileProps.Size = new System.Drawing.Size(365, 683);
             this.txtTileProps.TabIndex = 14;
             // 
             // btnValidate
@@ -129,6 +133,16 @@
             this.btnValidate.UseVisualStyleBackColor = true;
             this.btnValidate.Click += new System.EventHandler(this.btnValidate_Click);
             // 
+            // btnDemo
+            // 
+            this.btnDemo.Location = new System.Drawing.Point(22, 626);
+            this.btnDemo.Name = "btnDemo";
+            this.btnDemo.Size = new System.Drawing.Size(97, 58);
+            this.btnDemo.TabIndex = 16;
+            this.btnDemo.Text = "Demo";
+            this.btnDemo.UseVisualStyleBackColor = true;
+            this.btnDemo.Click += new System.EventHandler(this.btnDemo_Click);
+            // 
             // groupBox1
             // 
             this.groupBox1.Location = new System.Drawing.Point(516, 3);
@@ -138,11 +152,30 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Board";
             // 
+            // lblPlayer1Score
+            // 
+            this.lblPlayer1Score.AutoSize = true;
+            this.lblPlayer1Score.Location = new System.Drawing.Point(1295, 13);
+            this.lblPlayer1Score.Name = "lblPlayer1Score";
+            this.lblPlayer1Score.Size = new System.Drawing.Size(0, 20);
+            this.lblPlayer1Score.TabIndex = 17;
+            // 
+            // lblPlayer2Score
+            // 
+            this.lblPlayer2Score.AutoSize = true;
+            this.lblPlayer2Score.Location = new System.Drawing.Point(1295, 54);
+            this.lblPlayer2Score.Name = "lblPlayer2Score";
+            this.lblPlayer2Score.Size = new System.Drawing.Size(0, 20);
+            this.lblPlayer2Score.TabIndex = 18;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1668, 790);
+            this.Controls.Add(this.lblPlayer2Score);
+            this.Controls.Add(this.lblPlayer1Score);
+            this.Controls.Add(this.btnDemo);
             this.Controls.Add(this.btnValidate);
             this.Controls.Add(this.txtTileProps);
             this.Controls.Add(this.btnBackToRack);
@@ -154,7 +187,7 @@
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtRack);
             this.Name = "Form2";
-            this.Text = "Form2";
+            this.Text = "Scrabble";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -172,5 +205,8 @@
         private System.Windows.Forms.Button btnBackToRack;
         public System.Windows.Forms.TextBox txtTileProps;
         private System.Windows.Forms.Button btnValidate;
+        private System.Windows.Forms.Button btnDemo;
+        private System.Windows.Forms.Label lblPlayer1Score;
+        private System.Windows.Forms.Label lblPlayer2Score;
     }
 }

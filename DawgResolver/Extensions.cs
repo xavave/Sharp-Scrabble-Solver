@@ -45,7 +45,12 @@ namespace DawgResolver
 
         public static string String(this List<Letter> lst)
         {
-            return new string(lst.Select(c => c.Char).ToArray());
+            var ret = "";
+            for (int i = 0; i < lst.Count(); i++)
+            {
+                ret += lst[i].Char;
+            }
+            return ret;
         }
         public static void SetWord(this VTile t, Player p, string word, MovementDirection direction, bool Validate = false)
         {

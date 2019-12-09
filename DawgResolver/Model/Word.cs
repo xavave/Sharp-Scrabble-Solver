@@ -19,9 +19,10 @@ namespace DawgResolver.Model
             Game = g;
             StartTile = new Tile(Game, 7, 7);
         }
-        public void SetWord(Player p,bool validate)
+        public int SetWord(Player p,bool validate)
         {
             this.StartTile.SetWord(p, Text, Direction, validate);
+            return this.Points;
         }
         public bool Scramble { get; set; }
         
