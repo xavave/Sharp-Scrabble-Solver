@@ -86,6 +86,8 @@ namespace DawgResolver.Model
             Player2 = new Player(this);
             Resolver = new Resolver(this);
             Bag = new Bag();
+            Bag.Letters = new List<Letter>(Game.AlphabetAvecJoker);
+            Bag.Letters.ResetCount();
 
         }
         private Dictionnaire LoadDico()
@@ -99,25 +101,27 @@ namespace DawgResolver.Model
         {
             get { return AlphabetAvecJoker.Take(26).ToList(); }
         }
-        
+
         public List<Letter> ClearTilesInPlay(Player p)
         {
-            
+
             for (int i = 0; i < Grid.OfType<VTile>().Count(); i++)
             {
                 var tile = Grid.OfType<VTile>().ElementAt(i);
                 if (!tile.IsValidated)
                 {
-                    if (tile.FromJoker)
+                    if (!tile.IsEmpty)
                     {
-                        p.Rack.Add(Game.AlphabetAvecJoker[26]);
+                        if (tile.FromJoker)
+                        {
+                            p.Rack.Add(Game.AlphabetAvecJoker[26]);
+                        }
+                        else
+                        {
+                            p.Rack.Add(tile.Letter);
+                        }
+                        tile.IsValidated = true;
                     }
-                    else
-                    {
-                        p.Rack.Add(tile.Letter);
-
-                    }
-                    tile.IsValidated = true;
                     Grid[tile.Ligne, tile.Col].Letter = new Letter();
                 }
             }

@@ -75,11 +75,11 @@ namespace DawgResolver.Model
             }
             return ret;
         }
-        public void Validate()
-        {
-            foreach (var t in GetTiles())
-                t.IsValidated = true;
-        }
+        //public void Validate()
+        //{
+        //    foreach (var t in GetTiles())
+        //        t.IsValidated = true;
+        //}
 
         public override string ToString()
         {
@@ -87,7 +87,7 @@ namespace DawgResolver.Model
         }
         public bool Equals(Word w)
         {
-            return Text == w.Text && StartTile.Ligne == w.StartTile.Ligne && StartTile.Col == w.StartTile.Col;
+            return Text.ToUpper() == w.Text.ToUpper() && StartTile.Ligne == w.StartTile.Ligne && StartTile.Col == w.StartTile.Col && Direction==w.Direction;
         }
     }
 }

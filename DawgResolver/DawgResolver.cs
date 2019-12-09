@@ -19,6 +19,8 @@ namespace DawgResolver
         public int WordCount { get; set; }
         public int NodeCount { get; private set; }
         public List<Word> LegalWords { get; set; } = new List<Word>();
+
+        public List<Word> PlayedWords { get; set; } = new List<Word>();
         public int PlayedLetters { get; private set; }
         long[,] Dictionary { get; set; }
         public long NbPossibleMoves { get; set; }
@@ -351,7 +353,7 @@ namespace DawgResolver
                                 if (!jokerInDraught)
                                     break;
                             }
-                            else if (l< leftLetters.Count() && leftLetters[l].Char == Game.Joker)
+                            else if (l < leftLetters.Count() && leftLetters[l].Char == Game.Joker)
                             {
                                 // Cas d'un joker
                                 if (((t.Controlers.ContainsKey(i - 1) && t.Controlers[i - 1] > 0)) || t.Controlers[26] == 26)
@@ -526,16 +528,17 @@ namespace DawgResolver
             // Tri et mise en forme des coups
             //if (points <= MinPoint) return;
             var startTile = direction == MovementDirection.Across ? grid[ligne, debutCol] : grid[debutCol, ligne];
-            if (!LegalWords.Any(w => w.Direction == direction && w.Text == word && w.StartTile.Ligne == startTile.Ligne && w.StartTile.Col == startTile.Col))
+            var newWord = new Word(Game)
             {
-                LegalWords.Add(new Word(Game)
-                {
-                    StartTile = startTile,
-                    Direction = direction,
-                    Text = word,
-                    Points = points,
-                    Scramble = UsedDraughtLetters == 7
-                }); ;
+                StartTile = startTile,
+                Direction = direction,
+                Text = word,
+                Points = points,
+                Scramble = UsedDraughtLetters == 7
+            };
+            if (!LegalWords.Any(w => w.Equals(newWord)) && !PlayedWords.Any(pw => pw.Equals(newWord)))
+            {
+                LegalWords.Add(newWord);
                 NbAcceptedMoves++;
             }
 

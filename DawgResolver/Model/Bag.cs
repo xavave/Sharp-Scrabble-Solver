@@ -15,7 +15,7 @@ namespace DawgResolver.Model
             Letters = new List<Letter>(Game.AlphabetAvecJoker);
         }
 
-        public static List<Letter> Letters { get; set; }
+        public  List<Letter> Letters { get; set; }
         public string FlatList
         {
             get
@@ -39,20 +39,22 @@ namespace DawgResolver.Model
             var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == c);
             if (letter.Count > 0) letter.Count = --letter.Count;
         }
-        Random rnd = new Random();
-        public Letter GetLetterInFlatList()
+        
+        public Letter GetLetterInFlatList(Random r)
         {
             if (!FlatList.Any())
             {
                 throw new ArgumentException("No more letters in bag!");
             }
 
-            int charIdx = rnd.Next(0, FlatList.Length - 1);
+            int charIdx = r.Next(0, FlatList.Length - 1);
             var c = FlatList[charIdx];
-            var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == c);
-            var le = Letters.Find(l => l == letter);
+            if (c == char.MinValue) throw new ArgumentException(nameof(c));
+            var letter = Game.AlphabetAvecJoker.First(cc => cc.Char == c);
 
-            return le;
+            var le = Letters.Find(l => l == letter);
+           
+                return le;
 
         }
         public void PutBackLetter(Letter l)
@@ -76,7 +78,7 @@ namespace DawgResolver.Model
 
         public List<Letter> GetLetters(Player p, string forcedLetters = null)
         {
-
+            if (p.Rack.Count() > 7) throw new ArgumentException("Rack must have 7 letters max");
 
             if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
@@ -89,11 +91,13 @@ namespace DawgResolver.Model
             // S'il reste 7 lettres ou moins dans le sac, on n'a pas le choix, on les prend toutes
 
             int lettersToTakeCount = 7 - p.Rack.Count();
-
+            if (Math.Abs(lettersToTakeCount )> 7) lettersToTakeCount = 0;
+            Random rnd = new Random();
             // Sinon on tire 7 lettres du sac à condition qu'il en reste suffisament
             for (int i = 0; i < Math.Min(FlatList.Length, lettersToTakeCount); i++)
             {
-                var letter = GetLetterInFlatList();
+                var letter = GetLetterInFlatList(rnd);
+             
                 p.Rack.Add(letter);
             }
             return p.Rack;

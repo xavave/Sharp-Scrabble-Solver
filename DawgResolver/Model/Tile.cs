@@ -30,7 +30,7 @@ namespace DawgResolver.Model
     public class Tile : VTile
     {
         public System.Drawing.Color Background { get; set; }
-        public bool IsValidated { get; set; } = true;
+        public bool IsValidated { get; set; } = false;
 
         public Game Game { get; }
 

@@ -12,6 +12,21 @@ namespace DawgResolver
 {
     public static class Extensions
     {
+        public static IList<T> Clone<T>(this IList<T> listToClone) where T : ICloneable
+        {
+            return listToClone.Select(item => (T)item.Clone()).ToList();
+        }
+        public static T DeepClone<T>(this T obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                ms.Position = 0;
+
+                return (T)formatter.Deserialize(ms);
+            }
+        }
 
         public static Letter GetRandomLetter(this List<Letter> letters)
         {
@@ -23,6 +38,12 @@ namespace DawgResolver
         public static string GetLetterByIndex(this List<Letter> l, int index)
         {
             return Game.AlphabetAvecJoker.Find(t => t.Char == (char)(index + Dictionnaire.AscShift)).Char.ToString();
+        }
+        public static void ResetCount(this List<Letter> lst)
+        {
+            foreach (var l in lst)
+                l.Count = l.DefaultCount;
+           
         }
 
         public static VTile Copy(this VTile t, Game g, VTile[,] grid, bool transpose = false)

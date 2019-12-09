@@ -15,10 +15,11 @@ namespace Dawg.Resolver.Winform.Test
 
     public partial class FormTile : TextBox, VTile
     {
-
+        private bool isValidated;
+        public string TxtInfos { get; set; }
         public VTile Tile { get; set; }
         public Game Game { get; set; }
-        public FormTile(Game g, VTile t, string tileName = "")
+        public FormTile(Game g, VTile t, string tileName = "", Color? color = null)
         {
 
             Game = g;
@@ -34,7 +35,10 @@ namespace Dawg.Resolver.Winform.Test
             this.MaxLength = 1;
             this.Font = new Font("Verdana", 14);
             this.CharacterCasing = CharacterCasing.Upper;
-            this.BackColor = GetBackColor(t);
+            if (!color.HasValue)
+                this.BackColor = GetBackColor(t);
+            else
+                this.BackColor = color.Value;
             Text = t.Letter.Char.ToString();
             if (tileName == "")
                 Name = $"t{t.Ligne}_{t.Col}";
@@ -60,12 +64,14 @@ namespace Dawg.Resolver.Winform.Test
                 this.Letter = Game.Alphabet.Find(a => a.Char == e.KeyData.ToString().First());
                 this.Text = this.Letter.Char.ToString();
                 Game.Grid[Ligne, Col].Letter = this.Letter;
+                Game.Grid[Ligne, Col].IsValidated = true;
                 GetNextTile(Keys.Right, frmTile);
             }
             else if (e.KeyCode == Keys.Back)
             {
                 GetNextTile(Keys.Left, frmTile);
-                this.Letter = new Letter();
+                Game.Grid[Ligne, Col].Letter = new Letter();
+                Game.Grid[Ligne, Col].IsValidated = false;
                 this.Text = char.MinValue.ToString();
                 Game.Grid[Ligne, Col].Letter = this.Letter;
             }
@@ -96,33 +102,39 @@ namespace Dawg.Resolver.Winform.Test
             var txt = sender as FormTile;
             var t = txt.Tile;
             var frm = this.Parent.Parent as Form2;
-            var txtProps = frm.txtTileProps;
-            txtProps.Text = $"[{t.Ligne},{t.Col}] => IsAnchor:{t.IsAnchor} IsEmpty :{t.IsEmpty} => {t}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"LetterMultiplier={t.LetterMultiplier}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"WordMultiplier={t.WordMultiplier}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"IsValidated={t.IsValidated}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"FromJoker={t.FromJoker}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"AnchorLeftMinLimit = {t.AnchorLeftMinLimit}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"AnchorLeftMaxLimit = {t.AnchorLeftMaxLimit}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"UpTile = {t.UpTile}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"DownTile = {t.DownTile}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"RightTile = {t.RightTile}";
-            txtProps.Text += Environment.NewLine;
-            txtProps.Text += $"LeftTile = {t.LeftTile}";
-            txtProps.Text += Environment.NewLine;
+            TxtInfos = string.Empty;
+            TxtInfos = $"[{t.Ligne},{t.Col}] => IsAnchor:{t.IsAnchor} IsEmpty :{t.IsEmpty} => {t}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"LetterMultiplier={t.LetterMultiplier}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"WordMultiplier={t.WordMultiplier}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"IsValidated={t.IsValidated}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"FromJoker={t.FromJoker}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"AnchorLeftMinLimit = {t.AnchorLeftMinLimit}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"AnchorLeftMaxLimit = {t.AnchorLeftMaxLimit}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"UpTile = {t.UpTile}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"DownTile = {t.DownTile}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"RightTile = {t.RightTile}";
+            TxtInfos += Environment.NewLine;
+            TxtInfos += $"LeftTile = {t.LeftTile}";
+            TxtInfos += Environment.NewLine;
 
-            txtProps.Text += "Controlers:" + Environment.NewLine;
+            TxtInfos += "Controlers:" + Environment.NewLine;
             foreach (var c in t.Controlers)
-                txtProps.Text += $"{Game.AlphabetAvecJoker[c.Key].Char}:{c.Value}{Environment.NewLine}";
+                TxtInfos += $"{Game.AlphabetAvecJoker[c.Key].Char}:{c.Value}{Environment.NewLine}";
+
+            frm.lsbInfos.Items.Clear();
+            foreach (var l in TxtInfos.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            {
+                frm.lsbInfos.Items.Add(l);
+            }
         }
 
         private Color GetBackColor(VTile t)
@@ -145,7 +157,11 @@ namespace Dawg.Resolver.Winform.Test
         }
 
         public Color Background { get; set; }
-        public bool IsValidated { get; set; } = true;
+        public bool IsValidated
+        {
+            get => isValidated; set => isValidated = Tile.IsValidated;
+        }
+
         public bool FromJoker { get; set; } = false;
         public Dictionary<int, int> Controlers { get; set; } = new Dictionary<int, int>(27);
         public int Ligne { get; set; }

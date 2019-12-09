@@ -35,7 +35,6 @@
             this.txtGrid2 = new System.Windows.Forms.TextBox();
             this.btnTranspose = new System.Windows.Forms.Button();
             this.btnBackToRack = new System.Windows.Forms.Button();
-            this.txtTileProps = new System.Windows.Forms.TextBox();
             this.btnValidate = new System.Windows.Forms.Button();
             this.btnDemo = new System.Windows.Forms.Button();
             this.lblPlayer1Score = new System.Windows.Forms.Label();
@@ -45,8 +44,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblCurrentRack = new System.Windows.Forms.Label();
-            this.groupBox1 = new Dawg.Resolver.Winform.Test.CustomGroupBox();
             this.ckKeepExistingBoard = new System.Windows.Forms.CheckBox();
+            this.lsbInfos = new System.Windows.Forms.ListBox();
+            this.groupBox1 = new Dawg.Resolver.Winform.Test.CustomGroupBox();
+            this.btnLoadGame = new System.Windows.Forms.Button();
+            this.btnSaveGame = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSearch
@@ -116,17 +118,6 @@
             this.btnBackToRack.Text = "BackToRack";
             this.btnBackToRack.UseVisualStyleBackColor = true;
             this.btnBackToRack.Click += new System.EventHandler(this.btnBackToRack_Click);
-            // 
-            // txtTileProps
-            // 
-            this.txtTileProps.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTileProps.Location = new System.Drawing.Point(1294, 90);
-            this.txtTileProps.Multiline = true;
-            this.txtTileProps.Name = "txtTileProps";
-            this.txtTileProps.Size = new System.Drawing.Size(365, 683);
-            this.txtTileProps.TabIndex = 14;
             // 
             // btnValidate
             // 
@@ -209,15 +200,6 @@
             this.lblCurrentRack.Size = new System.Drawing.Size(0, 29);
             this.lblCurrentRack.TabIndex = 23;
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Location = new System.Drawing.Point(516, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(772, 770);
-            this.groupBox1.TabIndex = 11;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Board";
-            // 
             // ckKeepExistingBoard
             // 
             this.ckKeepExistingBoard.AutoSize = true;
@@ -230,11 +212,51 @@
             this.ckKeepExistingBoard.Text = "Keep Tiles";
             this.ckKeepExistingBoard.UseVisualStyleBackColor = true;
             // 
+            // lsbInfos
+            // 
+            this.lsbInfos.FormattingEnabled = true;
+            this.lsbInfos.ItemHeight = 20;
+            this.lsbInfos.Location = new System.Drawing.Point(1299, 79);
+            this.lsbInfos.Name = "lsbInfos";
+            this.lsbInfos.Size = new System.Drawing.Size(357, 704);
+            this.lsbInfos.TabIndex = 25;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Location = new System.Drawing.Point(516, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(772, 780);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Board";
+            // 
+            // btnLoadGame
+            // 
+            this.btnLoadGame.Location = new System.Drawing.Point(241, 86);
+            this.btnLoadGame.Name = "btnLoadGame";
+            this.btnLoadGame.Size = new System.Drawing.Size(113, 46);
+            this.btnLoadGame.TabIndex = 26;
+            this.btnLoadGame.Text = "Load Game";
+            this.btnLoadGame.UseVisualStyleBackColor = true;
+            // 
+            // btnSaveGame
+            // 
+            this.btnSaveGame.Location = new System.Drawing.Point(373, 86);
+            this.btnSaveGame.Name = "btnSaveGame";
+            this.btnSaveGame.Size = new System.Drawing.Size(118, 46);
+            this.btnSaveGame.TabIndex = 27;
+            this.btnSaveGame.Text = "Save Game";
+            this.btnSaveGame.UseVisualStyleBackColor = true;
+            this.btnSaveGame.Click += new System.EventHandler(this.btnSaveGame_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1668, 790);
+            this.Controls.Add(this.btnSaveGame);
+            this.Controls.Add(this.btnLoadGame);
+            this.Controls.Add(this.lsbInfos);
             this.Controls.Add(this.ckKeepExistingBoard);
             this.Controls.Add(this.lblCurrentRack);
             this.Controls.Add(this.label2);
@@ -245,7 +267,6 @@
             this.Controls.Add(this.lblPlayer1Score);
             this.Controls.Add(this.btnDemo);
             this.Controls.Add(this.btnValidate);
-            this.Controls.Add(this.txtTileProps);
             this.Controls.Add(this.btnBackToRack);
             this.Controls.Add(this.btnTranspose);
             this.Controls.Add(this.groupBox1);
@@ -271,7 +292,6 @@
         private CustomGroupBox groupBox1;
         private System.Windows.Forms.Button btnTranspose;
         private System.Windows.Forms.Button btnBackToRack;
-        public System.Windows.Forms.TextBox txtTileProps;
         private System.Windows.Forms.Button btnValidate;
         private System.Windows.Forms.Button btnDemo;
         private System.Windows.Forms.Label lblPlayer1Score;
@@ -282,5 +302,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblCurrentRack;
         private System.Windows.Forms.CheckBox ckKeepExistingBoard;
+        public System.Windows.Forms.ListBox lsbInfos;
+        private System.Windows.Forms.Button btnLoadGame;
+        private System.Windows.Forms.Button btnSaveGame;
     }
 }

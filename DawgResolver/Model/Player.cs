@@ -19,10 +19,6 @@ namespace DawgResolver.Model
         public int Points { get; set; }
         public List<Word> Moves { get; set; } = new List<Word>();
 
-        public string DisplayRack()
-        {
-            return new string(Rack.Select(r => r.Char).ToArray());
-        }
 
 
     }
