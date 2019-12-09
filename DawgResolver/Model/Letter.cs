@@ -19,6 +19,13 @@ namespace DawgResolver.Model
         }
         public int DefaultCount { get; set; } = -1;
 
+        public string Serialize
+        {
+            get
+            {
+                return $"{Char};{Value};{Count}";
+            }
+        }
 
         public Letter(char @char, int value, int count)
         {

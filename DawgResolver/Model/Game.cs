@@ -240,5 +240,31 @@ namespace DawgResolver.Model
                 return Grid[7, 7].IsEmpty;
             }
         }
+
+        public string SaveToString()
+        {
+            var ret = "letters" + Environment.NewLine;
+            foreach (var l in AlphabetAvecJoker)
+                ret += l.Serialize + Environment.NewLine;
+
+            ret += "tiles" + Environment.NewLine;
+            foreach (var t in Grid)
+            {
+                ret += t.Serialize + Environment.NewLine;
+            }
+
+            ret += "P1moves" + Environment.NewLine;
+
+            foreach (var w in Player1.Moves)
+            {
+                ret += w.Serialize;
+            }
+            ret = "P2moves" + Environment.NewLine;
+            foreach (var w in Player2.Moves)
+            {
+                ret += w.Serialize;
+            }
+            return ret;
+        }
     }
 }

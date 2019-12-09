@@ -3,6 +3,7 @@ using DawgResolver.Model;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -237,7 +238,7 @@ namespace Dawg.Resolver.Winform.Test
                 {
                     MessageBox.Show(ex.Message);
 
-                    ShowWinner(true) ;
+                    ShowWinner(true);
                 }
             }));
 
@@ -285,7 +286,13 @@ namespace Dawg.Resolver.Winform.Test
 
         private void btnSaveGame_Click(object sender, EventArgs e)
         {
-
+            var sfd = saveFileDialog1.ShowDialog();
+            if (sfd == DialogResult.OK)
+            {
+                var ret = Game.SaveToString();
+                File.WriteAllText(saveFileDialog1.FileName, ret);
+                MessageBox.Show($"Game saved as {saveFileDialog1.FileName}");
+            }
         }
     }
 }

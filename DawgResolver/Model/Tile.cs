@@ -18,7 +18,7 @@ namespace DawgResolver.Model
         int WordMultiplier { get; set; }
         int AnchorLeftMinLimit { get; set; }
         int AnchorLeftMaxLimit { get; set; }
-        bool IsAnchor { get;  }
+        bool IsAnchor { get; }
         Dictionary<int, int> Controlers { get; set; }
         bool FromJoker { get; set; }
         bool IsEmpty { get; }
@@ -26,6 +26,7 @@ namespace DawgResolver.Model
         VTile RightTile { get; }
         VTile UpTile { get; }
         VTile DownTile { get; }
+        string Serialize { get; }
     }
     public class Tile : VTile
     {
@@ -43,9 +44,9 @@ namespace DawgResolver.Model
             LetterMultiplier = 1;
             WordMultiplier = 1;
             AnchorLeftMinLimit = AnchorLeftMaxLimit = 0;
-          
+
         }
-        
+
         internal void Clear()
         {
             //IsAnchor = false;
@@ -67,7 +68,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return (IsEmpty && TileType == TileType.Center) ||( IsEmpty&&(
+                return (IsEmpty && TileType == TileType.Center) || (IsEmpty && (
                     (UpTile != null && !UpTile.IsEmpty) ||
                     (DownTile != null && !DownTile.IsEmpty) ||
                     (RightTile != null && !RightTile.IsEmpty) ||
@@ -129,6 +130,14 @@ namespace DawgResolver.Model
                 if (Ligne > 0)
                     return Game.Grid[this.Ligne - 1, this.Col];
                 return null;
+            }
+        }
+
+        public string Serialize
+        {
+            get
+            {
+                return $"{Ligne};{Col};{LetterMultiplier};{WordMultiplier};{(FromJoker ? 1 : 0)},{(IsValidated ? 1 : 0)}";
             }
         }
 

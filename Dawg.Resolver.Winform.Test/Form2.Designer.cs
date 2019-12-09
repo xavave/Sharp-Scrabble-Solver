@@ -49,6 +49,8 @@
             this.groupBox1 = new Dawg.Resolver.Winform.Test.CustomGroupBox();
             this.btnLoadGame = new System.Windows.Forms.Button();
             this.btnSaveGame = new System.Windows.Forms.Button();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // btnSearch
@@ -249,6 +251,18 @@
             this.btnSaveGame.UseVisualStyleBackColor = true;
             this.btnSaveGame.Click += new System.EventHandler(this.btnSaveGame_Click);
             // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.CheckFileExists = true;
+            this.saveFileDialog1.CreatePrompt = true;
+            this.saveFileDialog1.FileName = "Game";
+            this.saveFileDialog1.Filter = "Scrabble Game|*.gam";
+            this.saveFileDialog1.RestoreDirectory = true;
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -305,5 +319,7 @@
         public System.Windows.Forms.ListBox lsbInfos;
         private System.Windows.Forms.Button btnLoadGame;
         private System.Windows.Forms.Button btnSaveGame;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
