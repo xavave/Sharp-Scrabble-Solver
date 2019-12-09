@@ -15,7 +15,7 @@ namespace DawgResolverTest
             t.SetWord(g.Player1, "famille", MovementDirection.Across);
             t.SetWord(g.Player1, "foin", MovementDirection.Down);
 
-            g.Bag.GetNewRack(g.Player1, "EUDNA*A");
+            g.Bag.GetLetters(g.Player1, "EUDNA*A");
             
             var sw = Stopwatch.StartNew();
             var ret = g.Resolver.FindMoves(g.Player1);

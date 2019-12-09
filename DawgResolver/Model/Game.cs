@@ -99,17 +99,7 @@ namespace DawgResolver.Model
         {
             get { return AlphabetAvecJoker.Take(26).ToList(); }
         }
-        public List<VTile> ValidateWords()
-        {
-            var ret = new List<VTile>();
-            foreach (var t in Grid)
-                if (!t.IsValidated)
-                {
-                    ret.Add(t);
-                    t.IsValidated = true;
-                }
-            return ret;
-        }
+        
         public List<Letter> ClearTilesInPlay(Player p)
         {
             

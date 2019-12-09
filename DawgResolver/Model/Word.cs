@@ -19,13 +19,13 @@ namespace DawgResolver.Model
             Game = g;
             StartTile = new Tile(Game, 7, 7);
         }
-        public int SetWord(Player p,bool validate)
+        public int SetWord(Player p, bool validate)
         {
             this.StartTile.SetWord(p, Text, Direction, validate);
             return this.Points;
         }
         public bool Scramble { get; set; }
-        
+
         public MovementDirection Direction { get; set; }
         public VTile StartTile { get; set; }
         public int Points
@@ -50,8 +50,37 @@ namespace DawgResolver.Model
             {
                 return Game.Dico.MotAdmis(Text);
             }
-
         }
+        public List<VTile> GetTiles()
+        {
+            var ret = new List<VTile>();
+            VTile t = StartTile;
+            if (StartTile.Col == 14)
+                t = t.LeftTile.RightTile;
+            else t = t.RightTile.LeftTile;
+            ret.Add(t);
+            for (int i = 1; i < Text.Length; i++)
+            {
+                if (t != null)
+                    if (Direction == MovementDirection.Across)
+                    {
+                        t = t.RightTile;
+                    }
+                    else
+                    {
+                        t = t.DownTile;
+                    }
+                if (t != null)
+                    ret.Add(t);
+            }
+            return ret;
+        }
+        public void Validate()
+        {
+            foreach (var t in GetTiles())
+                t.IsValidated = true;
+        }
+
         public override string ToString()
         {
             return DisplayText;

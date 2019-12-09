@@ -96,7 +96,7 @@ namespace DawgResolver
                     t.RightTile.IsValidated = Validate;
                 t.RightTile.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(c));
                 if (char.IsLower(c))
-                    t.FromJoker = true;
+                    t.RightTile.FromJoker = true;
                 if (t.RightTile.FromJoker)
                     p.Rack.Remove(Game.AlphabetAvecJoker[26]);
                 else
@@ -113,7 +113,7 @@ namespace DawgResolver
                     t.DownTile.IsValidated = Validate;
                 t.DownTile.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(c));
                 if (char.IsLower(c))
-                    t.FromJoker = true;
+                    t.DownTile.FromJoker = true;
                 if (t.DownTile.FromJoker)
                     p.Rack.Remove(Game.AlphabetAvecJoker[26]);
                 else

@@ -80,7 +80,7 @@ namespace Scrabble2018
         {
             try
             {
-                var rack = drGame.Bag.GetNewRack(drGame.Player1);
+                var rack = drGame.Bag.GetLetters(drGame.Player1);
                 for (int i = 0; i < RackTileButtons.Count; ++i)
                 {
                     if (i < drGame.Bag.LeftLettersCount)

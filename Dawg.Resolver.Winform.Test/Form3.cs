@@ -24,7 +24,7 @@ namespace Dawg.Resolver.Winform.Test
        
         private void button1_Click_1(object sender, EventArgs e)
         {
-            Game.Bag.GetNewRack(Game.Player1, textBox1.Text);
+            Game.Bag.GetLetters(Game.Player1, textBox1.Text);
             lsb.DisplayMember = "DisplayText";
             var ret = Game.Resolver.FindMoves(Game.Player1);
             lsb.Items.Clear();
