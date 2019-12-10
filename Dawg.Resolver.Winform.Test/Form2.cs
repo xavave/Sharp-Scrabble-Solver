@@ -67,7 +67,11 @@ namespace Dawg.Resolver.Winform.Test
                     frmTile.BackColor = p == Game.Player1 ? Player1MoveColor : Player2MoveColor;
 
                     if (t.FromJoker)
+                    {
+                        frmTile.BorderColor = Color.Gold;
                         Game.Bag.RemoveLetterFromBag(Game.Joker);
+                    }
+
                     else
                         Game.Bag.RemoveLetterFromBag(t.Letter.Char);
                 }
@@ -253,7 +257,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private void DisplayPlayerWords(Word word)
         {
-            lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {word.DisplayText}");
+            lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {word}");
         }
 
         private void DisplayScores()
@@ -334,6 +338,11 @@ namespace Dawg.Resolver.Winform.Test
         private void btnNewGame_Click(object sender, EventArgs e)
         {
             NewGame();
+        }
+
+        private void lsbInfos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
