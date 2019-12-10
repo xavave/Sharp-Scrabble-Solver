@@ -85,6 +85,8 @@ namespace Scrabble2018.Model
         public VTile UpTile { get; }
 
         public VTile DownTile { get; }
+
+        public string Serialize => throw new NotImplementedException();
     }
     //public class Tile : IComparable
     //{

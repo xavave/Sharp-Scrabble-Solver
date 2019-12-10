@@ -26,7 +26,7 @@ namespace Dawg.Resolver.Winform.Test
             lsbInfos.Items.Clear();
             lblPlayer1Score.Text = lblPlayer2Score.Text = "";
             txtRackP1.Text = txtRackP2.Text = "";
-            EndGame = false;
+           
             Cursor.Current = Cursors.WaitCursor;
             Game = new Game();
             Game.InitBoard();
@@ -70,7 +70,7 @@ namespace Dawg.Resolver.Winform.Test
                 }
                 p.Moves.Add(word);
                 Game.Resolver.PlayedWords.Add(word);
-                IsPlayer1 = !IsPlayer1;
+                Game.IsPlayer1 = !Game.IsPlayer1;
 
             }
             else return 0;
@@ -120,7 +120,7 @@ namespace Dawg.Resolver.Winform.Test
         {
             var word = lsb.SelectedItem as Word;
             if (word == null) return;
-            if (IsPlayer1)
+            if (Game.IsPlayer1)
                 PreviewWord(Game.Player1, word, true);
             else
                 PreviewWord(Game.Player2, word, true);
@@ -172,16 +172,14 @@ namespace Dawg.Resolver.Winform.Test
         {
             PlayDemo();
         }
-        bool IsPlayer1 { get; set; } = true;
-        bool EndGame { get; set; } = false;
-
+      
         int NoMoreMovesCount { get; set; } = 0;
         private void PlayDemo(int wait = 0)
         {
 
             if (NoMoreMovesCount >= 2)
             {
-                EndGame = true;
+                Game.EndGame = true;
                 return;
             }
             System.Windows.Forms.Application.DoEvents();
@@ -191,9 +189,9 @@ namespace Dawg.Resolver.Winform.Test
                 try
                 {
                     Cursor.Current = Cursors.WaitCursor;
-                    var rack = Game.Bag.GetLetters(IsPlayer1 ? Game.Player1 : Game.Player2);
+                    var rack = Game.Bag.GetLetters(Game.IsPlayer1 ? Game.Player1 : Game.Player2);
 
-                    if (IsPlayer1)
+                    if (Game.IsPlayer1)
                     {
                         txtRackP1.Text = rack.String();
                     }
@@ -203,7 +201,7 @@ namespace Dawg.Resolver.Winform.Test
                     }
                     lblCurrentRack.Text = rack.String();
 
-                    var ret = Game.Resolver.FindMoves(IsPlayer1 ? Game.Player1 : Game.Player2, 50);
+                    var ret = Game.Resolver.FindMoves(Game.IsPlayer1 ? Game.Player1 : Game.Player2, 50);
                     lsb.DataSource = ret;
                     if (ret.Any())
                     {
@@ -211,13 +209,13 @@ namespace Dawg.Resolver.Winform.Test
                         var word = ret.Where(w => !Game.Resolver.PlayedWords.Any(pw => pw.Equals(w))).OrderByDescending(r => r.Points).First() as Word;
                         if (CurrentWord != null && CurrentWord.Equals(word))
                         {
-                            EndGame = true;
+                            Game.EndGame = true;
                             return;
                         }
                         CurrentWord = word;
-                        lsbInfos.Items.Add($"{(IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {word.DisplayText}");
-                        int points = PreviewWord(IsPlayer1 ? Game.Player1 : Game.Player2, word, true);
-                        if (IsPlayer1)
+                        lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {word.DisplayText}");
+                        int points = PreviewWord(Game.IsPlayer1 ? Game.Player1 : Game.Player2, word, true);
+                        if (Game.IsPlayer1)
                             Game.Player1.Points += points;
                         else
                             Game.Player2.Points += points;
@@ -229,8 +227,8 @@ namespace Dawg.Resolver.Winform.Test
                     else
                     {
                         NoMoreMovesCount++;
-                        lsbInfos.Items.Add($"{(IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> No words found !");
-                        IsPlayer1 = !IsPlayer1;
+                        lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> No words found !");
+                        Game.IsPlayer1 = !Game.IsPlayer1;
                         return;
                     }
                 }
@@ -257,11 +255,11 @@ namespace Dawg.Resolver.Winform.Test
             if (!ckKeepExistingBoard.Checked)
                 NewGame();
 
-            while (Game.Bag.LeftLettersCount > 0 && !EndGame)
+            while (Game.Bag.LeftLettersCount > 0 && !Game.EndGame)
             {
                 PlayDemo(500);
             }
-            ShowWinner(EndGame);
+            ShowWinner(Game.EndGame);
         }
 
         private void ShowWinner(bool endGame = false)
@@ -278,7 +276,7 @@ namespace Dawg.Resolver.Winform.Test
         {
             var word = lsb.SelectedItem as Word;
             if (word == null) return;
-            if (IsPlayer1)
+            if (Game.IsPlayer1)
                 PreviewWord(Game.Player1, word);
             else
                 PreviewWord(Game.Player2, word);
@@ -289,9 +287,20 @@ namespace Dawg.Resolver.Winform.Test
             var sfd = saveFileDialog1.ShowDialog();
             if (sfd == DialogResult.OK)
             {
-                var ret = Game.SaveToString();
+                var ret = Game.Serialise();
                 File.WriteAllText(saveFileDialog1.FileName, ret);
                 MessageBox.Show($"Game saved as {saveFileDialog1.FileName}");
+            }
+        }
+
+        private void btnLoadGame_Click(object sender, EventArgs e)
+        {
+            var ofd = openFileDialog1.ShowDialog();
+            if (ofd == DialogResult.OK)
+            {
+                var txt = File.ReadAllText(openFileDialog1.FileName);
+                Game.Deserialize(txt);
+                
             }
         }
     }

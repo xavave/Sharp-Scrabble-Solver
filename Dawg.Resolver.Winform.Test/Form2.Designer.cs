@@ -240,6 +240,7 @@
             this.btnLoadGame.TabIndex = 26;
             this.btnLoadGame.Text = "Load Game";
             this.btnLoadGame.UseVisualStyleBackColor = true;
+            this.btnLoadGame.Click += new System.EventHandler(this.btnLoadGame_Click);
             // 
             // btnSaveGame
             // 
@@ -261,7 +262,10 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.DefaultExt = "gam";
+            this.openFileDialog1.FileName = "Game";
+            this.openFileDialog1.Filter = "Scrabble Game|*.gam";
+            this.openFileDialog1.RestoreDirectory = true;
             // 
             // Form2
             // 

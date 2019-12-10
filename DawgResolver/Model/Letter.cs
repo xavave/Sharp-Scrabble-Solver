@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace DawgResolver.Model
@@ -23,9 +24,11 @@ namespace DawgResolver.Model
         {
             get
             {
-                return $"{Char};{Value};{Count}";
+                return $"A{Char};{Value};{Count}";
             }
         }
+       
+
 
         public Letter(char @char, int value, int count)
         {

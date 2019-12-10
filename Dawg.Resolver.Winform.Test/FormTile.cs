@@ -65,10 +65,12 @@ namespace Dawg.Resolver.Winform.Test
                 this.Text = this.Letter.Char.ToString();
                 Game.Grid[Ligne, Col].Letter = this.Letter;
                 Game.Grid[Ligne, Col].IsValidated = true;
+                frmTile.BackColor = Game.IsPlayer1 ? Color.LightYellow : Color.LightGreen;
                 GetNextTile(Keys.Right, frmTile);
             }
             else if (e.KeyCode == Keys.Back)
             {
+                frmTile.BackColor = GetBackColor(frmTile.Tile);
                 GetNextTile(Keys.Left, frmTile);
                 Game.Grid[Ligne, Col].Letter = new Letter();
                 Game.Grid[Ligne, Col].IsValidated = false;
@@ -225,5 +227,6 @@ namespace Dawg.Resolver.Winform.Test
             }
         }
 
+        public string Serialize => throw new NotImplementedException();
     }
 }

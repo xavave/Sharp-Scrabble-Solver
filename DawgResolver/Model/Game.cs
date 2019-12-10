@@ -73,6 +73,8 @@ namespace DawgResolver.Model
         }
         public Dictionnaire Dico { get; }
         public const char Joker = '?';
+        public bool IsPlayer1 { get; set; } = true;
+        public bool EndGame { get; set; } = false;
 
         public Resolver Resolver { get; }
         public Bag Bag { get; }
@@ -88,6 +90,8 @@ namespace DawgResolver.Model
             Bag = new Bag();
             Bag.Letters = new List<Letter>(Game.AlphabetAvecJoker);
             Bag.Letters.ResetCount();
+            EndGame = false;
+            IsPlayer1 = true;
 
         }
         private Dictionnaire LoadDico()
@@ -241,7 +245,7 @@ namespace DawgResolver.Model
             }
         }
 
-        public string SaveToString()
+        public string Serialise()
         {
             var ret = "letters" + Environment.NewLine;
             foreach (var l in AlphabetAvecJoker)
@@ -265,6 +269,20 @@ namespace DawgResolver.Model
                 ret += w.Serialize;
             }
             return ret;
+        }
+
+        public void Deserialize(string txt)
+
+        {
+            var alphabet = new List<Letter>();
+            var lines = txt.Split(Environment.NewLine.ToCharArray());
+            foreach (var l in lines)
+            {
+                if (l.StartsWith("L"))
+                {
+                    alphabet.Add(l.DeserializeLetter());
+                }
+            }
         }
     }
 }

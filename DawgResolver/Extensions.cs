@@ -64,6 +64,13 @@ namespace DawgResolver
             };
         }
 
+        public static Letter DeserializeLetter(this string s)
+        {
+
+            var l = s.Split(';');
+            return new Letter(l[0].Skip(1).First(), int.Parse(l[1]), int.Parse(l[2]));
+        }
+
         public static string String(this List<Letter> lst)
         {
             var ret = "";
