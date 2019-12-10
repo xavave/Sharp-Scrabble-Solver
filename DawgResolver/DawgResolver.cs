@@ -303,11 +303,8 @@ namespace DawgResolver
             bool jokerInDraught = leftLetters.Any(l => l.Char == Game.Joker);
 
             VTile t = null;
-            if (ligne >= 0 && colonne >= 0 && colonne < 15 && ligne < 15) t = grid[ligne, colonne];
-            if (noeud == 25369)
-            {
-
-            }
+            if (ligne >= 0 && colonne >= 0 && colonne < Game.BoardSize && ligne < Game.BoardSize) t = grid[ligne, colonne];
+           
             if (t == null || t.IsEmpty)
             {
                 // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions

@@ -36,7 +36,7 @@ namespace Dawg.Resolver.Winform.Test
             txtBag.Text = Game.Bag.GetBagContent();
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             CustomGroupBox.SuspendDrawing(gbBoard.Parent);
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < Game.BoardSize; i++)
             {
                 gbBoard.Controls.Add(new FormTile(Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesColor) { Text = $"{i + 1}" });
                 gbBoard.Controls.Add(new FormTile(Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesColor) { Text = $"{Game.Alphabet[i].Char}" });
