@@ -46,6 +46,10 @@ namespace DawgResolver.Model
             AnchorLeftMinLimit = AnchorLeftMaxLimit = 0;
 
         }
+        public Tile(Game g, char c, int col) : this(g, Game.Alphabet.IndexOf(Game.Alphabet.Find(l => l.Char == c)), col)
+        {
+
+        }
 
         internal void Clear()
         {
@@ -137,7 +141,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return $"{Ligne};{Col};{LetterMultiplier};{WordMultiplier};{(FromJoker ? 1 : 0)},{(IsValidated ? 1 : 0)}";
+                return $"T{Ligne};{Col};{LetterMultiplier};{WordMultiplier};{FromJoker};{IsValidated}";
             }
         }
 

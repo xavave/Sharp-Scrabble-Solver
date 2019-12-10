@@ -38,10 +38,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                var pos = $"{Game.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
-                if (Direction == MovementDirection.Down)
-                    pos = $"{StartTile.Col + 1}{Game.Alphabet[StartTile.Ligne]}";
-                return $"{pos};{Text};{Points};{(Scramble ? "*" : "")}" + Environment.NewLine;
+                return $"{StartTile.Ligne};{StartTile.Col};{Text};{Points};{Direction};{(Scramble ? "*" : "-")}" + Environment.NewLine;
             }
         }
         public string DisplayText

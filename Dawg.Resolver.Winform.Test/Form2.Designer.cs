@@ -31,7 +31,7 @@
             this.btnSearch = new System.Windows.Forms.Button();
             this.txtRackP1 = new System.Windows.Forms.TextBox();
             this.lsb = new System.Windows.Forms.ListBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.txtBag = new System.Windows.Forms.TextBox();
             this.txtGrid2 = new System.Windows.Forms.TextBox();
             this.btnTranspose = new System.Windows.Forms.Button();
             this.btnBackToRack = new System.Windows.Forms.Button();
@@ -84,16 +84,16 @@
             this.lsb.TabIndex = 8;
             this.lsb.Click += new System.EventHandler(this.lsb_Click);
             // 
-            // textBox3
+            // txtBag
             // 
-            this.textBox3.BackColor = System.Drawing.SystemColors.InfoText;
-            this.textBox3.ForeColor = System.Drawing.SystemColors.InactiveBorder;
-            this.textBox3.Location = new System.Drawing.Point(2, 361);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.textBox3.Multiline = true;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(327, 101);
-            this.textBox3.TabIndex = 9;
+            this.txtBag.BackColor = System.Drawing.SystemColors.InfoText;
+            this.txtBag.ForeColor = System.Drawing.SystemColors.InactiveBorder;
+            this.txtBag.Location = new System.Drawing.Point(2, 361);
+            this.txtBag.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtBag.Multiline = true;
+            this.txtBag.Name = "txtBag";
+            this.txtBag.Size = new System.Drawing.Size(327, 101);
+            this.txtBag.TabIndex = 9;
             // 
             // txtGrid2
             // 
@@ -266,7 +266,6 @@
             // 
             // saveFileDialog1
             // 
-            this.saveFileDialog1.CheckFileExists = true;
             this.saveFileDialog1.CreatePrompt = true;
             this.saveFileDialog1.FileName = "Game";
             this.saveFileDialog1.Filter = "Scrabble Game|*.gam";
@@ -324,7 +323,7 @@
             this.Controls.Add(this.btnTranspose);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.txtGrid2);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.txtBag);
             this.Controls.Add(this.lsb);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtRackP1);
@@ -341,7 +340,7 @@
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.TextBox txtRackP1;
         private System.Windows.Forms.ListBox lsb;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox txtBag;
         private System.Windows.Forms.TextBox txtGrid2;
         private CustomGroupBox groupBox1;
         private System.Windows.Forms.Button btnTranspose;

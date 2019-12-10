@@ -66,6 +66,7 @@ namespace DawgResolver.Model
         public string GetBagContent(int split = 5)
         {
             var sb = new StringBuilder();
+            sb.AppendLine($"{LeftLettersCount} lettres restantes");
             int idx = 0;
             foreach (var l in Letters)
             {
@@ -85,8 +86,8 @@ namespace DawgResolver.Model
                 p.Rack = forcedLetters.Select(c => Game.AlphabetAvecJoker.Find(a => a.Char == c)).ToList();
             }
             // Si le sac est vide
-            if (LeftLettersCount == 0)
-                throw new ArgumentException("Il n'y a plus de lettres dans le sac");
+            if (LeftLettersCount == 0) return new List<Letter>();
+                //throw new ArgumentException("Il n'y a plus de lettres dans le sac");
 
             // S'il reste 7 lettres ou moins dans le sac, on n'a pas le choix, on les prend toutes
 

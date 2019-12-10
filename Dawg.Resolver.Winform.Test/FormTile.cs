@@ -44,7 +44,7 @@ namespace Dawg.Resolver.Winform.Test
                 Name = $"t{t.Ligne}_{t.Col}";
             else
                 Name = tileName;
-            Click += FormTile_Click;
+            //Click += FormTile_Click;
             KeyUp += FormTile_KeyUp;
 
             if (Name.StartsWith($"header_col"))

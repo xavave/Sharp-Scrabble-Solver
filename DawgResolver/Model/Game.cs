@@ -250,7 +250,8 @@ namespace DawgResolver.Model
 
         public string Serialise()
         {
-            var ret = "letters" + Environment.NewLine;
+            var ret = $"P1?{IsPlayer1}" + Environment.NewLine;
+            ret += "letters" + Environment.NewLine;
             foreach (var l in AlphabetAvecJoker)
                 ret += l.Serialize + Environment.NewLine;
 
@@ -264,28 +265,59 @@ namespace DawgResolver.Model
 
             foreach (var w in Player1.Moves)
             {
-                ret += w.Serialize;
+                ret += $"M1{w.Serialize}";
             }
-            ret = "P2moves" + Environment.NewLine;
+            ret += "P2moves" + Environment.NewLine;
             foreach (var w in Player2.Moves)
             {
-                ret += w.Serialize;
+                ret += $"M2{w.Serialize}";
             }
             return ret;
         }
 
         public void Deserialize(string txt)
-
         {
+            InitBoard();
             var alphabet = new List<Letter>();
+            var tiles = new List<VTile>();
             var lines = txt.Split(Environment.NewLine.ToCharArray());
             foreach (var l in lines)
             {
+                if (l.StartsWith("P1?"))
+                {
+                    IsPlayer1 = bool.Parse(l.Substring(3));
+                }
                 if (l.StartsWith("L"))
                 {
                     alphabet.Add(l.DeserializeLetter());
                 }
+                else
+                if (l.StartsWith("T"))
+                {
+                    tiles.Add(l.DeserializeTile(this));
+                }
+                else
+                if (l.StartsWith("M1"))
+                {
+                    Player1.Moves.Add(l.DeserializeMove(this));
+                }
+                else
+                     if (l.StartsWith("M2"))
+                {
+                    Player2.Moves.Add(l.DeserializeMove(this));
+                }
             }
+            for (int idx = 0; idx < Bag.Letters.Count; idx++)
+            {
+                Bag.Letters[idx].Count = alphabet[idx].Count;
+            }
+            foreach (var t in tiles)
+            {
+                Grid[t.Ligne, t.Col] = t;
+            }
+            Player1.Points = Player1.Moves.Sum(m => m.Points);
+            Player2.Points = Player2.Moves.Sum(m => m.Points);
+
         }
     }
 }

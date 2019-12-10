@@ -43,7 +43,7 @@ namespace DawgResolver
         {
             foreach (var l in lst)
                 l.Count = l.DefaultCount;
-           
+
         }
 
         public static VTile Copy(this VTile t, Game g, VTile[,] grid, bool transpose = false)
@@ -66,9 +66,32 @@ namespace DawgResolver
 
         public static Letter DeserializeLetter(this string s)
         {
-
             var l = s.Split(';');
             return new Letter(l[0].Skip(1).First(), int.Parse(l[1]), int.Parse(l[2]));
+        }
+        public static VTile DeserializeTile(this string s, Game g)
+        {
+            var l = s.Split(';');
+            return new Tile(g, int.Parse(l[0].Substring(1)), int.Parse(l[1]))
+            {
+                LetterMultiplier = int.Parse(l[2]),
+                WordMultiplier = int.Parse(l[3]),
+                FromJoker = bool.Parse(l[4]),
+                IsValidated = bool.Parse(l[5])
+            };
+
+        }
+        public static Word DeserializeMove(this string s, Game g)
+        {
+            var l = s.Split(';');
+            return new Word(g)
+            {
+                StartTile = new Tile(g, int.Parse(l[0].Substring(2)), int.Parse(l[1])),
+                Text = l[2],
+                Points = int.Parse(l[3]),
+                Direction = (MovementDirection)Enum.Parse(typeof(MovementDirection), l[4]),
+                Scramble = l[5].First() == '*'
+            };
         }
 
         public static string String(this List<Letter> lst)

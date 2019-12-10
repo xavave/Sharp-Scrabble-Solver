@@ -29,11 +29,11 @@ namespace Dawg.Resolver.Winform.Test
             lsbInfos.Items.Clear();
             lblPlayer1Score.Text = lblPlayer2Score.Text = "";
             txtRackP1.Text = txtRackP2.Text = "";
-           
+
             Cursor.Current = Cursors.WaitCursor;
             Game = new Game();
-        
-            textBox3.Text = Game.Bag.GetBagContent();
+
+            txtBag.Text = Game.Bag.GetBagContent();
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             CustomGroupBox.SuspendDrawing(groupBox1.Parent);
             for (int i = 0; i < 15; i++)
@@ -51,7 +51,7 @@ namespace Dawg.Resolver.Winform.Test
 
         }
 
-        private int PreviewWord(Player p, Word word, bool validateWord = false)
+        private int PreviewWord(Player p, Word word, bool validateWord = false, bool addMove = true)
         {
             Game.ClearTilesInPlay(p);
             int points = word.SetWord(p, validateWord);
@@ -64,14 +64,15 @@ namespace Dawg.Resolver.Winform.Test
                     if (frmTile.ReadOnly)
                         continue;
                     frmTile.ReadOnly = true;
-                    frmTile.BackColor = p == Game.Player1 ? Color.LightYellow : Color.LightGreen;
+                    frmTile.BackColor = p == Game.Player1 ? Player1MoveColor : Player2MoveColor;
 
                     if (t.FromJoker)
                         Game.Bag.RemoveLetterFromBag(Game.Joker);
                     else
                         Game.Bag.RemoveLetterFromBag(t.Letter.Char);
                 }
-                p.Moves.Add(word);
+                if (addMove)
+                    p.Moves.Add(word);
                 Game.Resolver.PlayedWords.Add(word);
                 Game.IsPlayer1 = !Game.IsPlayer1;
 
@@ -98,7 +99,8 @@ namespace Dawg.Resolver.Winform.Test
             //txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             txtRackP1.Text = Game.Player1.Rack.String();
             txtRackP2.Text = Game.Player2.Rack.String();
-            textBox3.Text = Game.Bag.GetBagContent();
+            txtBag.Text = Game.Bag.GetBagContent();
+            DisplayScores();
             return grid;
         }
 
@@ -175,12 +177,12 @@ namespace Dawg.Resolver.Winform.Test
         {
             PlayDemo();
         }
-      
-       
+
+
         private void PlayDemo(int wait = 0)
         {
 
-            if (Game.NoMoreMovesCount >= 2)
+            if (Game.NoMoreMovesCount == 2)
             {
                 Game.EndGame = true;
                 return;
@@ -193,14 +195,15 @@ namespace Dawg.Resolver.Winform.Test
                 {
                     Cursor.Current = Cursors.WaitCursor;
                     var rack = Game.Bag.GetLetters(Game.IsPlayer1 ? Game.Player1 : Game.Player2);
-
+                    if (!rack.Any())
+                        lsbInfos.Items.Add("Le sac est vide !");
                     if (Game.IsPlayer1)
                     {
-                        txtRackP1.Text = rack.String();
+                        txtRackP1.Text = Game.Player1.Rack.String();
                     }
                     else
                     {
-                        txtRackP2.Text = rack.String();
+                        txtRackP2.Text = Game.Player2.Rack.String();
                     }
                     lblCurrentRack.Text = rack.String();
 
@@ -216,34 +219,41 @@ namespace Dawg.Resolver.Winform.Test
                             return;
                         }
                         CurrentWord = word;
-                        lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {word.DisplayText}");
+                        DisplayPlayerWords(word);
                         int points = PreviewWord(Game.IsPlayer1 ? Game.Player1 : Game.Player2, word, true);
                         if (Game.IsPlayer1)
                             Game.Player1.Points += points;
                         else
                             Game.Player2.Points += points;
 
-                        DisplayScores();
 
-                        Cursor.Current = Cursors.Default;
                     }
                     else
                     {
                         Game.NoMoreMovesCount++;
-                        lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> No words found !");
+                        if (Game.NoMoreMovesCount < 2)
+                            lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> No words found !");
                         Game.IsPlayer1 = !Game.IsPlayer1;
                         return;
                     }
+                    DisplayScores();
                 }
                 catch (ArgumentException ex)
                 {
-                    MessageBox.Show(ex.Message);
-
-                    ShowWinner(true);
+                    lsbInfos.Items.Add(ex.Message);
+                }
+                finally
+                {
+                    Cursor.Current = Cursors.Default;
                 }
             }));
 
 
+        }
+
+        private void DisplayPlayerWords(Word word)
+        {
+            lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {word.DisplayText}");
         }
 
         private void DisplayScores()
@@ -258,11 +268,11 @@ namespace Dawg.Resolver.Winform.Test
             if (!ckKeepExistingBoard.Checked)
                 NewGame();
 
-            while (Game.Bag.LeftLettersCount > 0 && !Game.EndGame)
+            while (!Game.EndGame)
             {
                 PlayDemo(500);
             }
-            ShowWinner(Game.EndGame);
+            ShowWinner(true);
         }
 
         private void ShowWinner(bool endGame = false)
@@ -303,7 +313,21 @@ namespace Dawg.Resolver.Winform.Test
             {
                 var txt = File.ReadAllText(openFileDialog1.FileName);
                 Game.Deserialize(txt);
-                
+                var wordsCount = Math.Max(Game.Player1.Moves.Count, Game.Player2.Moves.Count);
+                for (int i = 0; i < wordsCount; i++)
+                {
+                    if (i < Game.Player1.Moves.Count)
+                    {
+                        PreviewWord(Game.Player1, Game.Player1.Moves[i], true, false);
+                        DisplayPlayerWords(Game.Player1.Moves[i]);
+                    }
+                    if (i < Game.Player2.Moves.Count)
+                    {
+                        PreviewWord(Game.Player2, Game.Player2.Moves[i], true, false);
+                        DisplayPlayerWords(Game.Player2.Moves[i]);
+                    }
+                }
+                RefreshBoard(Game.Grid);
             }
         }
 

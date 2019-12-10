@@ -24,7 +24,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return $"A{Char};{Value};{Count}";
+                return $"L{Char};{Value};{Count}";
             }
         }
        
