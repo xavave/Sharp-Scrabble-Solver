@@ -34,6 +34,13 @@ namespace DawgResolver.Model
         }
         public string Text { get; set; }
 
+        public string DisplayInList
+        {
+            get
+            {
+                return $"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {this}";
+            }
+        }
         public string Serialize
         {
             get

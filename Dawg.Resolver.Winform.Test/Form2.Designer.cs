@@ -51,7 +51,10 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btnNewGame = new System.Windows.Forms.Button();
-            this.groupBox1 = new Dawg.Resolver.Winform.Test.CustomGroupBox();
+            this.lblP1BestPlay = new System.Windows.Forms.Label();
+            this.lblP2BestPlay = new System.Windows.Forms.Label();
+            this.lsbWords = new System.Windows.Forms.ListBox();
+            this.gbBoard = new Dawg.Resolver.Winform.Test.CustomGroupBox();
             this.SuspendLayout();
             // 
             // btnSearch
@@ -146,19 +149,21 @@
             // 
             this.lblPlayer1Score.AutoSize = true;
             this.lblPlayer1Score.BackColor = System.Drawing.Color.LightYellow;
-            this.lblPlayer1Score.Location = new System.Drawing.Point(1294, 12);
+            this.lblPlayer1Score.Location = new System.Drawing.Point(1333, 12);
             this.lblPlayer1Score.Name = "lblPlayer1Score";
-            this.lblPlayer1Score.Size = new System.Drawing.Size(0, 20);
+            this.lblPlayer1Score.Size = new System.Drawing.Size(74, 20);
             this.lblPlayer1Score.TabIndex = 17;
+            this.lblPlayer1Score.Text = "P1 Score";
             // 
             // lblPlayer2Score
             // 
             this.lblPlayer2Score.AutoSize = true;
             this.lblPlayer2Score.BackColor = System.Drawing.Color.LightGreen;
-            this.lblPlayer2Score.Location = new System.Drawing.Point(1294, 54);
+            this.lblPlayer2Score.Location = new System.Drawing.Point(1333, 43);
             this.lblPlayer2Score.Name = "lblPlayer2Score";
-            this.lblPlayer2Score.Size = new System.Drawing.Size(0, 20);
+            this.lblPlayer2Score.Size = new System.Drawing.Size(74, 20);
             this.lblPlayer2Score.TabIndex = 18;
+            this.lblPlayer2Score.Text = "P2 Score";
             // 
             // btnDemoAll
             // 
@@ -226,9 +231,8 @@
             this.lsbInfos.ItemHeight = 20;
             this.lsbInfos.Location = new System.Drawing.Point(1325, 78);
             this.lsbInfos.Name = "lsbInfos";
-            this.lsbInfos.Size = new System.Drawing.Size(330, 704);
+            this.lsbInfos.Size = new System.Drawing.Size(330, 124);
             this.lsbInfos.TabIndex = 25;
-            this.lsbInfos.SelectedIndexChanged += new System.EventHandler(this.lsbInfos_SelectedIndexChanged);
             // 
             // btnLoadGame
             // 
@@ -274,20 +278,56 @@
             this.btnNewGame.UseVisualStyleBackColor = true;
             this.btnNewGame.Click += new System.EventHandler(this.btnNewGame_Click);
             // 
-            // groupBox1
+            // lblP1BestPlay
             // 
-            this.groupBox1.Location = new System.Drawing.Point(547, 4);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(772, 780);
-            this.groupBox1.TabIndex = 11;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Board";
+            this.lblP1BestPlay.AutoSize = true;
+            this.lblP1BestPlay.BackColor = System.Drawing.Color.LightYellow;
+            this.lblP1BestPlay.Location = new System.Drawing.Point(1504, 12);
+            this.lblP1BestPlay.Name = "lblP1BestPlay";
+            this.lblP1BestPlay.Size = new System.Drawing.Size(72, 20);
+            this.lblP1BestPlay.TabIndex = 29;
+            this.lblP1BestPlay.Text = "best play";
+            // 
+            // lblP2BestPlay
+            // 
+            this.lblP2BestPlay.AutoSize = true;
+            this.lblP2BestPlay.BackColor = System.Drawing.Color.LightGreen;
+            this.lblP2BestPlay.Location = new System.Drawing.Point(1502, 43);
+            this.lblP2BestPlay.Name = "lblP2BestPlay";
+            this.lblP2BestPlay.Size = new System.Drawing.Size(72, 20);
+            this.lblP2BestPlay.TabIndex = 30;
+            this.lblP2BestPlay.Text = "best play";
+            // 
+            // lsbWords
+            // 
+            this.lsbWords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lsbWords.FormattingEnabled = true;
+            this.lsbWords.ItemHeight = 20;
+            this.lsbWords.Location = new System.Drawing.Point(1325, 208);
+            this.lsbWords.Name = "lsbWords";
+            this.lsbWords.Size = new System.Drawing.Size(330, 564);
+            this.lsbWords.TabIndex = 31;
+            this.lsbWords.SelectedIndexChanged += new System.EventHandler(this.lsbWords_SelectedIndexChanged);
+            // 
+            // gbBoard
+            // 
+            this.gbBoard.Location = new System.Drawing.Point(547, 4);
+            this.gbBoard.Name = "gbBoard";
+            this.gbBoard.Size = new System.Drawing.Size(772, 780);
+            this.gbBoard.TabIndex = 11;
+            this.gbBoard.TabStop = false;
+            this.gbBoard.Text = "Board";
             // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1668, 789);
+            this.Controls.Add(this.lsbWords);
+            this.Controls.Add(this.lblP2BestPlay);
+            this.Controls.Add(this.lblP1BestPlay);
             this.Controls.Add(this.btnNewGame);
             this.Controls.Add(this.btnSaveGame);
             this.Controls.Add(this.btnLoadGame);
@@ -304,7 +344,7 @@
             this.Controls.Add(this.btnValidate);
             this.Controls.Add(this.btnBackToRack);
             this.Controls.Add(this.btnTranspose);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.gbBoard);
             this.Controls.Add(this.txtGrid2);
             this.Controls.Add(this.txtBag);
             this.Controls.Add(this.lsb);
@@ -324,7 +364,7 @@
         private System.Windows.Forms.ListBox lsb;
         private System.Windows.Forms.TextBox txtBag;
         private System.Windows.Forms.TextBox txtGrid2;
-        private CustomGroupBox groupBox1;
+        private CustomGroupBox gbBoard;
         private System.Windows.Forms.Button btnTranspose;
         private System.Windows.Forms.Button btnBackToRack;
         private System.Windows.Forms.Button btnValidate;
@@ -343,5 +383,8 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button btnNewGame;
+        private System.Windows.Forms.Label lblP1BestPlay;
+        private System.Windows.Forms.Label lblP2BestPlay;
+        public System.Windows.Forms.ListBox lsbWords;
     }
 }

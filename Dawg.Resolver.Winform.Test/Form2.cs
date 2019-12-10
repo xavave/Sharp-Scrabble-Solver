@@ -25,28 +25,28 @@ namespace Dawg.Resolver.Winform.Test
 
         private void NewGame()
         {
-            groupBox1.Controls.Clear();
+            gbBoard.Controls.Clear();
             lsbInfos.Items.Clear();
             lblPlayer1Score.Text = lblPlayer2Score.Text = "";
             txtRackP1.Text = txtRackP2.Text = "";
-
+            lsbWords.DisplayMember = "DisplayInList";
             Cursor.Current = Cursors.WaitCursor;
             Game = new Game();
-
+            lsbWords.Items.Clear();
             txtBag.Text = Game.Bag.GetBagContent();
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
-            CustomGroupBox.SuspendDrawing(groupBox1.Parent);
+            CustomGroupBox.SuspendDrawing(gbBoard.Parent);
             for (int i = 0; i < 15; i++)
             {
-                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesColor) { Text = $"{i + 1}" });
-                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesColor) { Text = $"{Game.Alphabet[i].Char}" });
+                gbBoard.Controls.Add(new FormTile(Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesColor) { Text = $"{i + 1}" });
+                gbBoard.Controls.Add(new FormTile(Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesColor) { Text = $"{Game.Alphabet[i].Char}" });
             }
 
             foreach (var tile in Game.Grid)
             {
-                groupBox1.Controls.Add(new FormTile(Game, tile));
+                gbBoard.Controls.Add(new FormTile(Game, tile));
             }
-            CustomGroupBox.ResumeDrawing(groupBox1.Parent);
+            CustomGroupBox.ResumeDrawing(gbBoard.Parent);
             Cursor.Current = Cursors.Default;
 
         }
@@ -60,7 +60,7 @@ namespace Dawg.Resolver.Winform.Test
                 //word.Validate();
                 foreach (var t in word.GetTiles())
                 {
-                    var frmTile = groupBox1.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
+                    var frmTile = gbBoard.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
                     if (frmTile.ReadOnly)
                         continue;
                     frmTile.ReadOnly = true;
@@ -69,11 +69,13 @@ namespace Dawg.Resolver.Winform.Test
                     if (t.FromJoker)
                     {
                         frmTile.BorderColor = Color.Gold;
-                        Game.Bag.RemoveLetterFromBag(Game.Joker);
+                        //Game.Bag.RemoveLetterFromBag(Game.Joker);
                     }
 
                     else
-                        Game.Bag.RemoveLetterFromBag(t.Letter.Char);
+                    {
+                        //Game.Bag.RemoveLetterFromBag(t.Letter.Char);
+                    }
                 }
                 if (addMove)
                     p.Moves.Add(word);
@@ -93,7 +95,7 @@ namespace Dawg.Resolver.Winform.Test
             {
                 for (int col = 0; col <= grid.GetUpperBound(1); col++)
                 {
-                    var formTile = groupBox1.Controls.Find($"t{ligne}_{col}", false).First() as FormTile;
+                    var formTile = gbBoard.Controls.Find($"t{ligne}_{col}", false).First() as FormTile;
                     formTile.Tile = grid[ligne, col];
                     formTile.Text = formTile.Tile.Letter.Char.ToString();
                 }
@@ -211,7 +213,7 @@ namespace Dawg.Resolver.Winform.Test
                     }
                     lblCurrentRack.Text = rack.String();
 
-                    var ret = Game.Resolver.FindMoves(Game.IsPlayer1 ? Game.Player1 : Game.Player2, 50);
+                    var ret = Game.Resolver.FindMoves(Game.IsPlayer1 ? Game.Player1 : Game.Player2, 30);
                     lsb.DataSource = ret;
                     if (ret.Any())
                     {
@@ -257,13 +259,17 @@ namespace Dawg.Resolver.Winform.Test
 
         private void DisplayPlayerWords(Word word)
         {
-            lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {word}");
+            lsbWords.Items.Add(word);
         }
 
         private void DisplayScores()
         {
             lblPlayer1Score.Text = $"Player 1 Score :{Game.Player1.Points}";
             lblPlayer2Score.Text = $"Player 2 Score :{Game.Player2.Points}";
+            var bestP1Move = Game.Player1.Moves.OrderByDescending(m => m.Points).FirstOrDefault();
+            if (bestP1Move != null) lblP1BestPlay.Text = $"{bestP1Move}";
+            var bestP2Move = Game.Player2.Moves.OrderByDescending(m => m.Points).FirstOrDefault();
+            if (bestP2Move != null) lblP2BestPlay.Text = $"{bestP2Move}";
         }
 
         Word CurrentWord { get; set; }
@@ -340,9 +346,24 @@ namespace Dawg.Resolver.Winform.Test
             NewGame();
         }
 
-        private void lsbInfos_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
+        private void lsbWords_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (var c in gbBoard.Controls.OfType<FormTile>().Where(ft => ft.BackColor == Color.LightBlue))
+                c.BackColor = Player1MoveColor;
+            foreach (var c in gbBoard.Controls.OfType<FormTile>().Where(ft => ft.BackColor == Color.LightCoral))
+                c.BackColor = Player2MoveColor;
+            var word = lsbWords.SelectedItem as Word;
+            if (word == null) return;
+
+
+            bool isPlayer1word = Game.Player1.Moves.Contains(word);
+            foreach (var t in word.GetTiles())
+            {
+                var frmTile = gbBoard.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
+
+                frmTile.BackColor = isPlayer1word ? Color.LightBlue : Color.LightCoral;
+            }
         }
     }
 }

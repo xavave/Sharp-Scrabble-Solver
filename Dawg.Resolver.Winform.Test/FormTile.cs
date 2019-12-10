@@ -181,7 +181,7 @@ namespace Dawg.Resolver.Winform.Test
             }
         }
 
-        private Color GetBackColor(VTile t)
+        public Color GetBackColor(VTile t)
         {
             switch (t.TileType)
             {
