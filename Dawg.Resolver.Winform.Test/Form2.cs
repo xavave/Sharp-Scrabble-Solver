@@ -13,6 +13,9 @@ namespace Dawg.Resolver.Winform.Test
 {
     public partial class Form2 : Form
     {
+        public Color Player1MoveColor { get; } = Color.LightYellow;
+        public Color Player2MoveColor { get; } = Color.LightGreen;
+        public Color HeaderTilesColor { get; } = Color.Gold;
         public Game Game { get; set; }
         public Form2()
         {
@@ -29,14 +32,14 @@ namespace Dawg.Resolver.Winform.Test
            
             Cursor.Current = Cursors.WaitCursor;
             Game = new Game();
-            Game.InitBoard();
+        
             textBox3.Text = Game.Bag.GetBagContent();
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             CustomGroupBox.SuspendDrawing(groupBox1.Parent);
             for (int i = 0; i < 15; i++)
             {
-                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i), $"header_col{i}", Color.Gold) { Text = $"{i + 1}" });
-                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, i, 0), $"header_ligne{i}", Color.Gold) { Text = $"{Game.Alphabet[i].Char}" });
+                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesColor) { Text = $"{i + 1}" });
+                groupBox1.Controls.Add(new FormTile(Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesColor) { Text = $"{Game.Alphabet[i].Char}" });
             }
 
             foreach (var tile in Game.Grid)
@@ -173,11 +176,11 @@ namespace Dawg.Resolver.Winform.Test
             PlayDemo();
         }
       
-        int NoMoreMovesCount { get; set; } = 0;
+       
         private void PlayDemo(int wait = 0)
         {
 
-            if (NoMoreMovesCount >= 2)
+            if (Game.NoMoreMovesCount >= 2)
             {
                 Game.EndGame = true;
                 return;
@@ -205,7 +208,7 @@ namespace Dawg.Resolver.Winform.Test
                     lsb.DataSource = ret;
                     if (ret.Any())
                     {
-                        NoMoreMovesCount = 0;
+                        Game.NoMoreMovesCount = 0;
                         var word = ret.Where(w => !Game.Resolver.PlayedWords.Any(pw => pw.Equals(w))).OrderByDescending(r => r.Points).First() as Word;
                         if (CurrentWord != null && CurrentWord.Equals(word))
                         {
@@ -226,7 +229,7 @@ namespace Dawg.Resolver.Winform.Test
                     }
                     else
                     {
-                        NoMoreMovesCount++;
+                        Game.NoMoreMovesCount++;
                         lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> No words found !");
                         Game.IsPlayer1 = !Game.IsPlayer1;
                         return;
@@ -302,6 +305,11 @@ namespace Dawg.Resolver.Winform.Test
                 Game.Deserialize(txt);
                 
             }
+        }
+
+        private void btnNewGame_Click(object sender, EventArgs e)
+        {
+            NewGame();
         }
     }
 }

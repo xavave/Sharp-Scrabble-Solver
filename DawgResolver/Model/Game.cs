@@ -88,8 +88,9 @@ namespace DawgResolver.Model
             Player2 = new Player(this);
             Resolver = new Resolver(this);
             Bag = new Bag();
-            Bag.Letters = new List<Letter>(Game.AlphabetAvecJoker);
+            //Bag.Letters = new List<Letter>(Game.AlphabetAvecJoker);
             Bag.Letters.ResetCount();
+            NoMoreMovesCount = 0;
             EndGame = false;
             IsPlayer1 = true;
 
@@ -244,6 +245,8 @@ namespace DawgResolver.Model
                 return Grid[7, 7].IsEmpty;
             }
         }
+
+        public int NoMoreMovesCount { get; set; } = 0;
 
         public string Serialise()
         {

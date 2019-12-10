@@ -59,13 +59,14 @@ namespace Dawg.Resolver.Winform.Test
         private void FormTile_KeyUp(object sender, KeyEventArgs e)
         {
             var frmTile = sender as FormTile;
+            var frm = frmTile.Parent.Parent as Form2;
             if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
             {
                 this.Letter = Game.Alphabet.Find(a => a.Char == e.KeyData.ToString().First());
                 this.Text = this.Letter.Char.ToString();
                 Game.Grid[Ligne, Col].Letter = this.Letter;
                 Game.Grid[Ligne, Col].IsValidated = true;
-                frmTile.BackColor = Game.IsPlayer1 ? Color.LightYellow : Color.LightGreen;
+                frmTile.BackColor = Game.IsPlayer1 ? frm.Player1MoveColor : frm.Player2MoveColor;
                 GetNextTile(Keys.Right, frmTile);
             }
             else if (e.KeyCode == Keys.Back)
