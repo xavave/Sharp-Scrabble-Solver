@@ -231,7 +231,7 @@
             this.lsbInfos.ItemHeight = 20;
             this.lsbInfos.Location = new System.Drawing.Point(1325, 78);
             this.lsbInfos.Name = "lsbInfos";
-            this.lsbInfos.Size = new System.Drawing.Size(330, 124);
+            this.lsbInfos.Size = new System.Drawing.Size(330, 244);
             this.lsbInfos.TabIndex = 25;
             // 
             // btnLoadGame
@@ -305,9 +305,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lsbWords.FormattingEnabled = true;
             this.lsbWords.ItemHeight = 20;
-            this.lsbWords.Location = new System.Drawing.Point(1325, 208);
+            this.lsbWords.Location = new System.Drawing.Point(1325, 328);
             this.lsbWords.Name = "lsbWords";
-            this.lsbWords.Size = new System.Drawing.Size(330, 564);
+            this.lsbWords.Size = new System.Drawing.Size(330, 444);
             this.lsbWords.TabIndex = 31;
             this.lsbWords.SelectedIndexChanged += new System.EventHandler(this.lsbWords_SelectedIndexChanged);
             // 

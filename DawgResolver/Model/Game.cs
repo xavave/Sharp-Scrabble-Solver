@@ -13,14 +13,16 @@ namespace DawgResolver.Model
 {
     public class Game
     {
+        public const int BoardSize = 11;
+        private VTile[,] grid = new VTile[Game.BoardSize, Game.BoardSize];
         public string GenerateHtml(VTile[,] Tiles)
         {
             StringBuilder sb = new StringBuilder("<html><div>");
-            for (int ligne = 0; ligne <= Tiles.GetUpperBound(0); ligne++)
+            for (int ligne = 0; ligne < Tiles.GetLength(0); ligne++)
             {
 
                 sb.Append("|");
-                for (int col = 0; col <= Tiles.GetUpperBound(1); col++)
+                for (int col = 0; col < Tiles.GetLength(1); col++)
                 {
                     //TODO 
                 }
@@ -35,10 +37,10 @@ namespace DawgResolver.Model
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("123456789012345");
             sb.AppendLine("_______________");
-            for (int ligne = 0; ligne <= Tiles.GetUpperBound(0); ligne++)
+            for (int ligne = 0; ligne < Tiles.GetLength(0); ligne++)
             {
                 sb.Append($"{Alphabet[ligne].Char}|");
-                for (int col = 0; col <= Tiles.GetUpperBound(1); col++)
+                for (int col = 0; col < Tiles.GetLength(1); col++)
                 {
 
                     var tile = Tiles[ligne, col];
@@ -167,14 +169,14 @@ namespace DawgResolver.Model
 
 
 
-        public const int BoardSize = 15;
-        private VTile[,] grid = new VTile[Game.BoardSize, Game.BoardSize];
+
 
         public VTile[,] InitBoard()
         {
             // Définition des cases bonus
             var assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("initial_board.txt"));
+
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith($"initial_board{(BoardSize < 15 ? "11" : "")}.txt"));
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream, true))
             {
@@ -184,7 +186,7 @@ namespace DawgResolver.Model
                 int col = 0;
                 foreach (var w in content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
                 {
-                    foreach (var tp in w.Trim().Split(','))
+                    foreach (var tp in w.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                     {
                         Grid[row, col] = new Tile(this, row, col);
 
@@ -194,6 +196,7 @@ namespace DawgResolver.Model
                         switch (tp.Trim())
                         {
                             case "RE":
+                            case "__":
 
                                 break;
                             case "CE":
@@ -242,7 +245,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return Grid[7, 7].IsEmpty;
+                return Grid[Math.Abs(BoardSize/2), Math.Abs(BoardSize / 2)].IsEmpty;
             }
         }
 

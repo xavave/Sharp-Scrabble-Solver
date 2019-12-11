@@ -79,11 +79,8 @@ namespace DawgResolver.Model
 
         public List<Letter> GetLetters(Player p, string forcedLetters = null)
         {
-            if (p.Rack.Count() > 7) throw new ArgumentException("Rack must have 7 letters max");
-            if (p.Rack.Count(t => t.Char == 'Q') > 1)
-            {
+            if (p.Rack.Count() > 7) return new List<Letter>();
 
-            }
             if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
                 p.Rack = forcedLetters.Select(c => Game.AlphabetAvecJoker.Find(a => a.Char == c)).ToList();

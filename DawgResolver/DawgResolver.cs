@@ -12,9 +12,7 @@ namespace DawgResolver
 {
     public class Resolver
     {
-        //const definition 
-
-        const int BoardSize = 15;
+      
         //variables definition
         public int WordCount { get; set; }
         public int NodeCount { get; private set; }

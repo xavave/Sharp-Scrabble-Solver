@@ -96,7 +96,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return this == null || !Letter.HasValue();
+                return this == null || Letter==null || !Letter.HasValue();
             }
         }
 
