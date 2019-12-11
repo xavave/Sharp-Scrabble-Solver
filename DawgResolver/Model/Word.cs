@@ -69,7 +69,7 @@ namespace DawgResolver.Model
         {
             var ret = new List<VTile>();
             VTile t = StartTile;
-            if (StartTile.Col == 14)
+            if (StartTile.Col == Game.BoardSize-1)
                 t = t.LeftTile.RightTile;
             else t = t.RightTile.LeftTile;
             ret.Add(t);

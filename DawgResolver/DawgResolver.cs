@@ -387,6 +387,7 @@ namespace DawgResolver
         /// </summary>
         public List<Word> FindMoves(Player p, int maxWordCount = 100)
         {
+            Game.IsTransposed = false;
             NbPossibleMoves = 0;
             NbAcceptedMoves = 0;
             LegalWords.Clear();
@@ -412,8 +413,8 @@ namespace DawgResolver
             //        Game.Bag.PutBackLetter(l);
             //}
             ////on remet la grille à son état initial
-            Game.IsTransposed = false;
             Game.Grid = backupGrid;
+            Game.IsTransposed = false;
             return ret;
         }
 

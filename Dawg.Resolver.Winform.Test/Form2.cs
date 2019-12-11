@@ -101,8 +101,8 @@ namespace Dawg.Resolver.Winform.Test
                 }
             }
             //CustomGroupBox.ResumeDrawing(groupBox1.Parent);
-            //txtTileProps.Text += Game.IsTransposed ? "Transposed" : "Not Transposed";
-            //txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
+            //lsbInfos.Items.Add(Game.IsTransposed ? "Transposed" : "Not Transposed");
+            txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             txtRackP1.Text = Game.Player1.Rack.String();
             txtRackP2.Text = Game.Player2.Rack.String();
             txtBag.Text = Game.Bag.GetBagContent();
@@ -171,9 +171,9 @@ namespace Dawg.Resolver.Winform.Test
             Game.Bag.GetLetters(Game.Player1, txtRackP1.Text.Trim());
             lsb.DisplayMember = "DisplayText";
             var ret = Game.Resolver.FindMoves(Game.Player1, 100);
-            lsbInfos.Items.Add(Game.IsTransposed ? "Transposed" : "Not Transposed");
-            lsbInfos.Items.Add($"NbPossibleMoves={Game.Resolver.NbPossibleMoves}");
-            lsbInfos.Items.Add($"NbAcceptedMoves={Game.Resolver.NbAcceptedMoves}");
+            lsbInfos.Items.Insert(0,Game.IsTransposed ? "Transposed" : "Not Transposed");
+            lsbInfos.Items.Insert(0,$"NbPossibleMoves={Game.Resolver.NbPossibleMoves}");
+            lsbInfos.Items.Insert(0,$"NbAcceptedMoves={Game.Resolver.NbAcceptedMoves}");
 
             lsb.DataSource = ret;
             Cursor.Current = Cursors.Default;
@@ -194,7 +194,7 @@ namespace Dawg.Resolver.Winform.Test
                 return;
             }
             System.Windows.Forms.Application.DoEvents();
-            Thread.Sleep(wait);
+            
             this.BeginInvoke((Action)(() =>
             {
                 try
@@ -202,7 +202,7 @@ namespace Dawg.Resolver.Winform.Test
                     Cursor.Current = Cursors.WaitCursor;
                     var rack = Game.Bag.GetLetters(Game.IsPlayer1 ? Game.Player1 : Game.Player2);
                     if (!rack.Any())
-                        lsbInfos.Items.Add("Le sac est vide !");
+                        lsbInfos.Items.Insert(0, "Le sac est vide !");
                     if (Game.IsPlayer1)
                     {
                         txtRackP1.Text = Game.Player1.Rack.String();
@@ -238,7 +238,7 @@ namespace Dawg.Resolver.Winform.Test
                     {
                         Game.NoMoreMovesCount++;
                         if (Game.NoMoreMovesCount < 2)
-                            lsbInfos.Items.Add($"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> No words found !");
+                            lsbInfos.Items.Insert(0, $"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> No words found !");
                         Game.IsPlayer1 = !Game.IsPlayer1;
                         return;
                     }
@@ -246,10 +246,11 @@ namespace Dawg.Resolver.Winform.Test
                 }
                 catch (ArgumentException ex)
                 {
-                    lsbInfos.Items.Add(ex.Message);
+                    lsbInfos.Items.Insert(0, ex.Message);
                 }
                 finally
                 {
+                    Thread.Sleep(wait);
                     Cursor.Current = Cursors.Default;
                 }
             }));
@@ -289,9 +290,9 @@ namespace Dawg.Resolver.Winform.Test
         {
             if (endGame)
             {
-                lsbInfos.Items.Add("Game Ended");
+                lsbInfos.Items.Insert(0, "Game Ended");
                 bool player1Wins = Game.Player1.Points > Game.Player2.Points;
-                lsbInfos.Items.Add($"{(player1Wins ? "Player 1" : "Player 2")} wins with a score of {(player1Wins ? Game.Player1.Points : Game.Player2.Points)}");
+                lsbInfos.Items.Insert(0, $"{(player1Wins ? "Player 1" : "Player 2")} wins with a score of {(player1Wins ? Game.Player1.Points : Game.Player2.Points)}");
             }
         }
 

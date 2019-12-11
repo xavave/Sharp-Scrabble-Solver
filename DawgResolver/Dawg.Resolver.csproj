@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\dico_dawg.txt" />
-    <EmbeddedResource Include="Resources\initial_board.txt" />
+    <EmbeddedResource Include="Resources\initial_board15.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dawg\Dawg.csproj">

@@ -176,7 +176,7 @@ namespace DawgResolver.Model
             // Définition des cases bonus
             var assembly = Assembly.GetExecutingAssembly();
 
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith($"initial_board{(BoardSize < 15 ? "11" : "")}.txt"));
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith($"initial_board{BoardSize}.txt"));
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream, true))
             {
@@ -197,7 +197,8 @@ namespace DawgResolver.Model
                         {
                             case "RE":
                             case "__":
-
+                                Grid[row, col].WordMultiplier = 1;
+                                Grid[row, col].LetterMultiplier = 1;
                                 break;
                             case "CE":
 
@@ -245,7 +246,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return Grid[Math.Abs(BoardSize/2), Math.Abs(BoardSize / 2)].IsEmpty;
+                return Grid.OfType<VTile>().First(t=>t.TileType== TileType.Center).IsEmpty;
             }
         }
 

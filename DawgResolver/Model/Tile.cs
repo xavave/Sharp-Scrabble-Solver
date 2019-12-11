@@ -83,7 +83,8 @@ namespace DawgResolver.Model
         {
             get
             {
-                if (Ligne == 7 && Col == 7) return TileType.Center;
+                if (Ligne == (int)(Game.BoardSize/2) && Col == (int)(Game.BoardSize / 2))
+                    return TileType.Center;
                 else if (WordMultiplier == 2) return TileType.DoubleWord;
                 else if (LetterMultiplier == 2) return TileType.DoubleLetter;
                 else if (LetterMultiplier == 3) return TileType.TripleLetter;
