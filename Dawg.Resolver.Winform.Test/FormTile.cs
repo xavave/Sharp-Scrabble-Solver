@@ -54,13 +54,14 @@ namespace Dawg.Resolver.Winform.Test
             RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero,
                    RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
         }
-
+        private Form2 Form { get; }
         private bool isValidated;
         public string TxtInfos { get; set; }
         public VTile Tile { get; set; }
         public Game Game { get; set; }
-        public FormTile(Game g, VTile t, string tileName = "", Color? color = null)
+        public FormTile(Form2 frm, Game g, VTile t, string tileName = "", Color? color = null)
         {
+
             BorderStyle = BorderStyle.Fixed3D;
             Game = g;
             Tile = t;
@@ -73,12 +74,16 @@ namespace Dawg.Resolver.Winform.Test
             ReadOnly = false;
             this.Height = 28;
             this.MaxLength = 1;
+            Form =frm;
             this.Font = new Font("Verdana", 14);
             this.CharacterCasing = CharacterCasing.Upper;
             if (!color.HasValue)
                 this.BackColor = GetBackColor(t);
             else
+            {
                 this.BackColor = color.Value;
+                this.ForeColor = frm.HeaderTilesForeColor;
+            }
             Text = t.Letter.Char.ToString();
             if (tileName == "")
                 Name = $"t{t.Ligne}_{t.Col}";
@@ -100,14 +105,14 @@ namespace Dawg.Resolver.Winform.Test
         private void FormTile_KeyUp(object sender, KeyEventArgs e)
         {
             var frmTile = sender as FormTile;
-            var frm = frmTile.Parent.Parent as Form2;
+           
             if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
             {
                 this.Letter = Game.Alphabet.Find(a => a.Char == e.KeyData.ToString().First());
                 this.Text = this.Letter.Char.ToString();
                 Game.Grid[Ligne, Col].Letter = this.Letter;
                 Game.Grid[Ligne, Col].IsValidated = true;
-                frmTile.BackColor = Game.IsPlayer1 ? frm.Player1MoveColor : frm.Player2MoveColor;
+                frmTile.BackColor = Game.IsPlayer1 ? Form.Player1MoveColor : Form.Player2MoveColor;
                 GetNextTile(Keys.Right, frmTile);
             }
             else if (e.KeyCode == Keys.Back)
@@ -145,7 +150,7 @@ namespace Dawg.Resolver.Winform.Test
         {
             var txt = sender as FormTile;
             var t = txt.Tile;
-            var frm = this.Parent.Parent as Form2;
+           
             TxtInfos = string.Empty;
             TxtInfos = $"[{t.Ligne},{t.Col}] => IsAnchor:{t.IsAnchor} IsEmpty :{t.IsEmpty} => {t}";
             TxtInfos += Environment.NewLine;
@@ -174,10 +179,10 @@ namespace Dawg.Resolver.Winform.Test
             foreach (var c in t.Controlers)
                 TxtInfos += $"{Game.AlphabetAvecJoker[c.Key].Char}:{c.Value}{Environment.NewLine}";
 
-            frm.lsbInfos.Items.Clear();
+            Form.lsbInfos.Items.Clear();
             foreach (var l in TxtInfos.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
             {
-                frm.lsbInfos.Items.Add(l);
+                Form.lsbInfos.Items.Add(l);
             }
         }
 

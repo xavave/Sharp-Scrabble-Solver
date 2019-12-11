@@ -15,7 +15,8 @@ namespace Dawg.Resolver.Winform.Test
     {
         public Color Player1MoveColor { get; } = Color.LightYellow;
         public Color Player2MoveColor { get; } = Color.LightGreen;
-        public Color HeaderTilesColor { get; } = Color.Gold;
+        public Color HeaderTilesBackColor { get; } = Color.Black;
+        public Color HeaderTilesForeColor { get; } = Color.WhiteSmoke;
         public Game Game { get; set; }
         public Form2()
         {
@@ -38,13 +39,13 @@ namespace Dawg.Resolver.Winform.Test
             CustomGroupBox.SuspendDrawing(gbBoard.Parent);
             for (int i = 0; i < Game.BoardSize; i++)
             {
-                gbBoard.Controls.Add(new FormTile(Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesColor) { Text = $"{i + 1}" });
-                gbBoard.Controls.Add(new FormTile(Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesColor) { Text = $"{Game.Alphabet[i].Char}" });
+                gbBoard.Controls.Add(new FormTile(this,Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesBackColor) { Text = $"{i + 1}" });
+                gbBoard.Controls.Add(new FormTile(this, Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesBackColor) { Text = $"{Game.Alphabet[i].Char}" });
             }
 
             foreach (var tile in Game.Grid)
             {
-                gbBoard.Controls.Add(new FormTile(Game, tile));
+                gbBoard.Controls.Add(new FormTile(this, Game, tile));
             }
             CustomGroupBox.ResumeDrawing(gbBoard.Parent);
             Cursor.Current = Cursors.Default;
@@ -171,9 +172,9 @@ namespace Dawg.Resolver.Winform.Test
             Game.Bag.GetLetters(Game.Player1, txtRackP1.Text.Trim());
             lsb.DisplayMember = "DisplayText";
             var ret = Game.Resolver.FindMoves(Game.Player1, 100);
-            lsbInfos.Items.Insert(0,Game.IsTransposed ? "Transposed" : "Not Transposed");
-            lsbInfos.Items.Insert(0,$"NbPossibleMoves={Game.Resolver.NbPossibleMoves}");
-            lsbInfos.Items.Insert(0,$"NbAcceptedMoves={Game.Resolver.NbAcceptedMoves}");
+            lsbInfos.Items.Insert(0, Game.IsTransposed ? "Transposed" : "Not Transposed");
+            lsbInfos.Items.Insert(0, $"NbPossibleMoves={Game.Resolver.NbPossibleMoves}");
+            lsbInfos.Items.Insert(0, $"NbAcceptedMoves={Game.Resolver.NbAcceptedMoves}");
 
             lsb.DataSource = ret;
             Cursor.Current = Cursors.Default;
@@ -194,7 +195,7 @@ namespace Dawg.Resolver.Winform.Test
                 return;
             }
             System.Windows.Forms.Application.DoEvents();
-            
+
             this.BeginInvoke((Action)(() =>
             {
                 try
@@ -365,6 +366,15 @@ namespace Dawg.Resolver.Winform.Test
 
                 frmTile.BackColor = isPlayer1word ? Color.LightBlue : Color.LightCoral;
             }
+        }
+
+        private void rbSize15_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbSize15.Checked)
+                Game.BoardSize = 15;
+            else
+                Game.BoardSize = 11;
+            NewGame();
         }
     }
 }

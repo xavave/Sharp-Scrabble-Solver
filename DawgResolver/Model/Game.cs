@@ -13,7 +13,8 @@ namespace DawgResolver.Model
 {
     public class Game
     {
-        public const int BoardSize = 11;
+        public static int BoardSize { get; set; } = 11;
+
         private VTile[,] grid = new VTile[Game.BoardSize, Game.BoardSize];
         public string GenerateHtml(VTile[,] Tiles)
         {
@@ -171,8 +172,10 @@ namespace DawgResolver.Model
 
 
 
-        public VTile[,] InitBoard()
+        public VTile[,] InitBoard(int newBoardSize = 0)
         {
+            if (newBoardSize > 0)
+                Grid = new VTile[Game.BoardSize, Game.BoardSize];
             // Définition des cases bonus
             var assembly = Assembly.GetExecutingAssembly();
 
@@ -246,7 +249,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return Grid.OfType<VTile>().First(t=>t.TileType== TileType.Center).IsEmpty;
+                return Grid.OfType<VTile>().First(t => t.TileType == TileType.Center).IsEmpty;
             }
         }
 

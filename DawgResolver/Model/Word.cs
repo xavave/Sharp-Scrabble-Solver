@@ -38,7 +38,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return $"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {this}";
+                return $"{DateTime.Now:H:mm:ss} - {(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> {this}";
             }
         }
         public string Serialize
