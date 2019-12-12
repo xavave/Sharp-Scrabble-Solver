@@ -26,6 +26,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private void NewGame()
         {
+            txtGrid2.Visible = false;
             gbBoard.Controls.Clear();
             lsbInfos.Items.Clear();
             lblPlayer1Score.Text = lblPlayer2Score.Text = "";
@@ -39,7 +40,7 @@ namespace Dawg.Resolver.Winform.Test
             CustomGroupBox.SuspendDrawing(gbBoard.Parent);
             for (int i = 0; i < Game.BoardSize; i++)
             {
-                gbBoard.Controls.Add(new FormTile(this,Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesBackColor) { Text = $"{i + 1}" });
+                gbBoard.Controls.Add(new FormTile(this, Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesBackColor) { Text = $"{i + 1}" });
                 gbBoard.Controls.Add(new FormTile(this, Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesBackColor) { Text = $"{Game.Alphabet[i].Char}" });
             }
 
@@ -375,6 +376,11 @@ namespace Dawg.Resolver.Winform.Test
             else
                 Game.BoardSize = 11;
             NewGame();
+        }
+
+        private void ckShowGrid_CheckedChanged(object sender, EventArgs e)
+        {
+            txtGrid2.Visible = ckShowGrid.Checked;
         }
     }
 }
