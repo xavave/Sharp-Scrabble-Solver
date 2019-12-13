@@ -111,6 +111,7 @@ namespace DawgResolver
         }
         public static void SetWord(this VTile t, Player p, string word, MovementDirection direction, bool Validate = false)
         {
+            if (word == "") return;
             if (t.Col == Game.BoardSize - 1)
                 t = t.LeftTile?.RightTile;
             else

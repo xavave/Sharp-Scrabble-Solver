@@ -154,23 +154,36 @@ namespace DawgResolver.Model
             if (direction == MovementDirection.Across)
             {
                 tile = LeftTile;
-                while (tile != null && !tile.IsEmpty)
+                while (tile != null && tile.LeftTile != null && !tile.IsEmpty)
                 {
                     text += Game.Grid[tile.Ligne, tile.Col].Letter.Char;
                     tile = tile.LeftTile;
                 }
-                word.StartTile = tile.RightTile;
+                if (tile.Col == 0)
+                {
+                    text += tile.Letter.Char;
+                    word.StartTile = tile;
+                }
+                else
+                    word.StartTile = tile.RightTile;
             }
             else
             {
                 tile = UpTile;
-                while (tile != null && !tile.IsEmpty)
+                while (tile != null && tile.UpTile != null && !tile.IsEmpty)
                 {
                     text += Game.Grid[tile.Ligne, tile.Col].Letter.Char;
                     tile = tile.UpTile;
                 }
-                word.StartTile = tile.DownTile;
-              
+                if (tile.Ligne == 0)
+                {
+                    text+= tile.Letter.Char;
+                    word.StartTile = tile;
+
+                }
+                else
+                    word.StartTile = tile.DownTile;
+
             }
 
             word.Text = text.ReverseString();

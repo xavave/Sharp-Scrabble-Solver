@@ -139,14 +139,15 @@ namespace Dawg.Resolver.Winform.Test
             {
                 frmTile.BackColor = GetBackColor(frmTile.Tile);
                 if (Game.CurrentWordDirection == MovementDirection.Across)
-                    GetNextTile(Keys.Left, frmTile);
+                    GetNextTile(Keys.Left, frmTile, false);
                 else
-                    GetNextTile(Keys.Up, frmTile);
+                    GetNextTile(Keys.Up, frmTile, false);
 
                 Game.Grid[Ligne, Col].Letter = new Letter();
                 Game.Grid[Ligne, Col].IsValidated = false;
                 this.Text = char.MinValue.ToString();
-                Game.Grid[Ligne, Col].Letter = this.Letter;
+                frmTile.Tile = Game.Grid[Ligne, Col];
+
             }
             else if (e.KeyCode == Keys.Enter)
             {
@@ -165,7 +166,7 @@ namespace Dawg.Resolver.Winform.Test
             }
         }
 
-        private FormTile GetNextTile(Keys key, FormTile frmTile)
+        private FormTile GetNextTile(Keys key, FormTile frmTile, bool skipNotEmpty = true)
         {
             FormTile nextTile = frmTile;
 
@@ -178,9 +179,9 @@ namespace Dawg.Resolver.Winform.Test
                 nextTile = parent.Controls.Find($"t{nextTile.Ligne - 1}_{nextTile.Col}", false).FirstOrDefault() as FormTile;
             else if (key == Keys.Down)
                 nextTile = parent.Controls.Find($"t{nextTile.Ligne + 1}_{nextTile.Col}", false).FirstOrDefault() as FormTile;
-
-            while (nextTile != null && !nextTile.IsEmpty)
-                nextTile = GetNextTile(key, nextTile);
+            if (skipNotEmpty)
+                while (nextTile != null && !nextTile.IsEmpty && nextTile.Col < (Game.BoardSize - 1) && nextTile.Ligne < (Game.BoardSize - 1))
+                    nextTile = GetNextTile(key, nextTile);
             if (nextTile != null) nextTile.Focus();
             return nextTile;
         }
