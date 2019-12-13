@@ -2,6 +2,7 @@
 using DawgResolver.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,14 +12,14 @@ using System.Windows.Forms;
 
 namespace Dawg.Resolver.Winform.Test
 {
-    public partial class Form2 : Form
+    public partial class MainForm : Form
     {
         public Color Player1MoveColor { get; } = Color.LightYellow;
         public Color Player2MoveColor { get; } = Color.LightGreen;
         public Color HeaderTilesBackColor { get; } = Color.Black;
         public Color HeaderTilesForeColor { get; } = Color.WhiteSmoke;
         public Game Game { get; set; }
-        public Form2()
+        public MainForm()
         {
             InitializeComponent();
             NewGame();
@@ -53,7 +54,7 @@ namespace Dawg.Resolver.Winform.Test
 
         }
 
-        private int PreviewWord(Player p, Word word, bool validateWord = false, bool addMove = true)
+        public int PreviewWord(Player p, Word word, bool validateWord = false, bool addMove = true)
         {
             Game.ClearTilesInPlay(p);
             int points = word.SetWord(p, validateWord);
@@ -82,6 +83,7 @@ namespace Dawg.Resolver.Winform.Test
                 if (addMove)
                     p.Moves.Add(word);
                 Game.Resolver.PlayedWords.Add(word);
+                DisplayPlayerWord(word);
                 Game.IsPlayer1 = !Game.IsPlayer1;
 
             }
@@ -227,7 +229,7 @@ namespace Dawg.Resolver.Winform.Test
                             return;
                         }
                         CurrentWord = word;
-                        DisplayPlayerWords(word);
+                        DisplayPlayerWord(word);
                         int points = PreviewWord(Game.IsPlayer1 ? Game.Player1 : Game.Player2, word, true);
                         if (Game.IsPlayer1)
                             Game.Player1.Points += points;
@@ -260,7 +262,7 @@ namespace Dawg.Resolver.Winform.Test
 
         }
 
-        private void DisplayPlayerWords(Word word)
+        private void DisplayPlayerWord(Word word)
         {
             lsbWords.Items.Add(word);
         }
@@ -332,12 +334,12 @@ namespace Dawg.Resolver.Winform.Test
                     if (i < Game.Player1.Moves.Count)
                     {
                         PreviewWord(Game.Player1, Game.Player1.Moves[i], true, false);
-                        DisplayPlayerWords(Game.Player1.Moves[i]);
+                        DisplayPlayerWord(Game.Player1.Moves[i]);
                     }
                     if (i < Game.Player2.Moves.Count)
                     {
                         PreviewWord(Game.Player2, Game.Player2.Moves[i], true, false);
-                        DisplayPlayerWords(Game.Player2.Moves[i]);
+                        DisplayPlayerWord(Game.Player2.Moves[i]);
                     }
                 }
                 RefreshBoard(Game.Grid);
@@ -381,6 +383,27 @@ namespace Dawg.Resolver.Winform.Test
         private void ckShowGrid_CheckedChanged(object sender, EventArgs e)
         {
             txtGrid2.Visible = ckShowGrid.Checked;
+        }
+
+        private void rbWordDirDown_CheckedChanged(object sender, EventArgs e)
+        {
+            Game.CurrentWordDirection = rbWordDirDown.Checked ? MovementDirection.Down : MovementDirection.Across;
+        }
+
+        private void rbGameStyleScrabble_CheckedChanged(object sender, EventArgs e)
+        {
+            Game.GameStyle = rbGameStyleScrabble.Checked ? 'S' : 'W';
+        }
+
+        private void lsbWords_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = this.lsbWords.IndexFromPoint(e.Location);
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                var word = lsbWords.Items[index] as Word;
+                if (word != null)
+                    Process.Start($"https://1mot.net/{word.Text.ToLower()}");
+            }
         }
     }
 }

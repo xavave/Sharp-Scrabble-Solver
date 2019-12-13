@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "legacyVBAscramble", "legacy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrabble2018", "Scrabble2018\Scrabble2018.csproj", "{4162BFAA-E305-40C9-923C-3FD3FD42566F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver.Winform.Test", "Dawg.Resolver.Winform.Test\Dawg.Resolver.Winform.Test.csproj", "{8DA2C29C-DD08-4CAF-92AF-84012420155A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver.Winform", "Dawg.Resolver.Winform.Test\Dawg.Resolver.Winform.csproj", "{8DA2C29C-DD08-4CAF-92AF-84012420155A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

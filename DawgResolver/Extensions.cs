@@ -12,6 +12,12 @@ namespace DawgResolver
 {
     public static class Extensions
     {
+        public static string ReverseString(this string s)
+        {
+            char[] array = s.ToCharArray();
+            Array.Reverse(array);
+            return new string(array);
+        }
         public static IList<T> Clone<T>(this IList<T> listToClone) where T : ICloneable
         {
             return listToClone.Select(item => (T)item.Clone()).ToList();

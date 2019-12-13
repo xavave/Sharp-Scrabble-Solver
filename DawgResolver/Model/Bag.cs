@@ -70,7 +70,7 @@ namespace DawgResolver.Model
             int idx = 0;
             foreach (var l in Letters)
             {
-                sb.Append($"{l.Char}:{l.Count}_______");
+                sb.Append($"{l.Char}({l.Value}):{l.Count}\t");
                 idx++;
                 if (idx % split == 0) sb.AppendLine();
             }

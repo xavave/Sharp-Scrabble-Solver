@@ -54,6 +54,12 @@ namespace Scrabble2018.Model
                     return Brushes.Bisque;
             }
         }
+
+        public DawgResolver.Model.Word GetWordFromTile(MovementDirection direction)
+        {
+            throw new NotImplementedException();
+        }
+
         public int Ligne
         {
             get => ligne; set { ligne = value; OnPropertyChanged(); }

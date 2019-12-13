@@ -27,6 +27,7 @@ namespace DawgResolver.Model
         VTile UpTile { get; }
         VTile DownTile { get; }
         string Serialize { get; }
+        Word GetWordFromTile(MovementDirection direction);
     }
     public class Tile : VTile
     {
@@ -83,7 +84,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                if (Ligne == (int)(Game.BoardSize/2) && Col == (int)(Game.BoardSize / 2))
+                if (Ligne == (int)(Game.BoardSize / 2) && Col == (int)(Game.BoardSize / 2))
                     return TileType.Center;
                 else if (WordMultiplier == 2) return TileType.DoubleWord;
                 else if (LetterMultiplier == 2) return TileType.DoubleLetter;
@@ -97,7 +98,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return this == null || Letter==null || !Letter.HasValue();
+                return this == null || Letter == null || !Letter.HasValue();
             }
         }
 
@@ -145,7 +146,38 @@ namespace DawgResolver.Model
                 return $"T{Ligne};{Col};{LetterMultiplier};{WordMultiplier};{FromJoker};{IsValidated}";
             }
         }
+        public Word GetWordFromTile(MovementDirection direction)
+        {
+            var word = new Word(Game);
+            VTile tile = this;
+            string text = "";
+            if (direction == MovementDirection.Across)
+            {
+                tile = LeftTile;
+                while (tile != null && !tile.IsEmpty)
+                {
+                    text += Game.Grid[tile.Ligne, tile.Col].Letter.Char;
+                    tile = tile.LeftTile;
+                }
+                word.StartTile = tile.RightTile;
+            }
+            else
+            {
+                tile = UpTile;
+                while (tile != null && !tile.IsEmpty)
+                {
+                    text += Game.Grid[tile.Ligne, tile.Col].Letter.Char;
+                    tile = tile.UpTile;
+                }
+                word.StartTile = tile.DownTile;
+              
+            }
 
+            word.Text = text.ReverseString();
+            word.Direction = direction;
+
+            return word;
+        }
         public override string ToString()
         {
             //var c = $"{Letter} min / max:{AnchorLeftMinLimit};{AnchorLeftMaxLimit}";
@@ -153,7 +185,7 @@ namespace DawgResolver.Model
             //foreach (var co in Controlers)
             //    cont += $"{Game.AlphabetAvecJoker[co.Key + Dictionnaire.AscShiftBase0]}{co.Value};";
             //return $"{ c} [{Game.AlphabetAvecJoker[Ligne]}{ Col + 1}] {(isAnchor ? "*" : "")} {cont}";
-            return $"{Letter.Char}";
+            return $"{this?.Letter?.Char}";
         }
     }
 

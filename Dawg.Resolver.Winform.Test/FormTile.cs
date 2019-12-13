@@ -54,12 +54,12 @@ namespace Dawg.Resolver.Winform.Test
             RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero,
                    RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
         }
-        private Form2 Form { get; }
+        private MainForm Form { get; }
         private bool isValidated;
         public string TxtInfos { get; set; }
         public VTile Tile { get; set; }
         public Game Game { get; set; }
-        public FormTile(Form2 frm, Game g, VTile t, string tileName = "", Color? color = null)
+        public FormTile(MainForm frm, Game g, VTile t, string tileName = "", Color? color = null)
         {
 
             BorderStyle = BorderStyle.Fixed3D;
@@ -74,7 +74,7 @@ namespace Dawg.Resolver.Winform.Test
             ReadOnly = false;
             this.Height = 28;
             this.MaxLength = 1;
-            Form =frm;
+            Form = frm;
             this.Font = new Font("Verdana", 14);
             this.CharacterCasing = CharacterCasing.Upper;
             if (!color.HasValue)
@@ -102,27 +102,62 @@ namespace Dawg.Resolver.Winform.Test
             if (Tile.FromJoker) this.BorderStyle = BorderStyle.Fixed3D;
         }
 
+        Keys PreviousKey { get; set; }
+        Keys CurrentKey { get; set; }
         private void FormTile_KeyUp(object sender, KeyEventArgs e)
         {
             var frmTile = sender as FormTile;
-           
+            if (CurrentKey != e.KeyCode)
+            {
+                PreviousKey = CurrentKey;
+                CurrentKey = e.KeyCode;
+            }
+
             if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
             {
                 this.Letter = Game.Alphabet.Find(a => a.Char == e.KeyData.ToString().First());
                 this.Text = this.Letter.Char.ToString();
-                Game.Grid[Ligne, Col].Letter = this.Letter;
-                Game.Grid[Ligne, Col].IsValidated = true;
+                if (!Game.Grid[Ligne, Col].IsValidated)
+                {
+                    Game.Grid[Ligne, Col].Letter = this.Letter;
+                    Game.Bag.RemoveLetterFromBag(this.Letter.Char);
+                    Form.txtBag.Text = Game.Bag.GetBagContent();
+                    Game.Grid[Ligne, Col].IsValidated = true;
+
+                }
+
                 frmTile.BackColor = Game.IsPlayer1 ? Form.Player1MoveColor : Form.Player2MoveColor;
-                GetNextTile(Keys.Right, frmTile);
+                if (Col < Game.BoardSize - 1 && Game.CurrentWordDirection == MovementDirection.Across)
+                {
+                    GetNextTile(Keys.Right, frmTile);
+
+                }
+                else
+                    GetNextTile(Keys.Down, frmTile);
             }
             else if (e.KeyCode == Keys.Back)
             {
                 frmTile.BackColor = GetBackColor(frmTile.Tile);
-                GetNextTile(Keys.Left, frmTile);
+                if (Game.CurrentWordDirection == MovementDirection.Across)
+                    GetNextTile(Keys.Left, frmTile);
+                else
+                    GetNextTile(Keys.Up, frmTile);
+
                 Game.Grid[Ligne, Col].Letter = new Letter();
                 Game.Grid[Ligne, Col].IsValidated = false;
                 this.Text = char.MinValue.ToString();
                 Game.Grid[Ligne, Col].Letter = this.Letter;
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                //PreviewWord(Game.Player1, word, true);
+
+                var word = Tile.GetWordFromTile(Game.CurrentWordDirection);
+                if (Game.IsPlayer1)
+                    Form.PreviewWord(Game.Player1, word, true);
+                else
+                    Form.PreviewWord(Game.Player2, word, true);
+
             }
             else
             {
@@ -130,27 +165,31 @@ namespace Dawg.Resolver.Winform.Test
             }
         }
 
-        private void GetNextTile(Keys key, FormTile frmTile)
+        private FormTile GetNextTile(Keys key, FormTile frmTile)
         {
-            Control nextTile = null;
+            FormTile nextTile = frmTile;
+
             Control parent = frmTile.Parent;
             if (key == Keys.Right)
-                nextTile = parent.Controls.Find($"t{Ligne}_{Col + 1}", false).FirstOrDefault();
+                nextTile = parent.Controls.Find($"t{nextTile.Ligne}_{nextTile.Col + 1}", false).FirstOrDefault() as FormTile;
             else if (key == Keys.Left)
-                nextTile = parent.Controls.Find($"t{Ligne}_{Col - 1}", false).FirstOrDefault();
+                nextTile = parent.Controls.Find($"t{nextTile.Ligne}_{nextTile.Col - 1}", false).FirstOrDefault() as FormTile;
             else if (key == Keys.Up)
-                nextTile = parent.Controls.Find($"t{Ligne - 1}_{Col}", false).FirstOrDefault();
+                nextTile = parent.Controls.Find($"t{nextTile.Ligne - 1}_{nextTile.Col}", false).FirstOrDefault() as FormTile;
             else if (key == Keys.Down)
-                nextTile = parent.Controls.Find($"t{Ligne + 1}_{Col}", false).FirstOrDefault();
+                nextTile = parent.Controls.Find($"t{nextTile.Ligne + 1}_{nextTile.Col}", false).FirstOrDefault() as FormTile;
 
+            while (nextTile != null && !nextTile.IsEmpty)
+                nextTile = GetNextTile(key, nextTile);
             if (nextTile != null) nextTile.Focus();
+            return nextTile;
         }
 
         private void FormTile_Click(object sender, EventArgs e)
         {
             var txt = sender as FormTile;
             var t = txt.Tile;
-           
+
             TxtInfos = string.Empty;
             TxtInfos = $"[{t.Ligne},{t.Col}] => IsAnchor:{t.IsAnchor} IsEmpty :{t.IsEmpty} => {t}";
             TxtInfos += Environment.NewLine;
@@ -203,6 +242,11 @@ namespace Dawg.Resolver.Winform.Test
                 default:
                     return Color.Bisque;
             }
+        }
+
+        public Word GetWordFromTile(MovementDirection direction)
+        {
+            throw new NotImplementedException();
         }
 
         public Color Background { get; set; }

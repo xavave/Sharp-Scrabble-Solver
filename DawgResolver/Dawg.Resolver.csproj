@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\dico_dawg.txt" />
-    <EmbeddedResource Include="Resources\initial_board15.txt" />
+    <EmbeddedResource Include="Resources\initial_board15W.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dawg\Dawg.csproj">
@@ -69,7 +69,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\initial_board11.txt" />
+    <EmbeddedResource Include="Resources\initial_board11W.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\initial_board15S.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

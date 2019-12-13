@@ -13,7 +13,10 @@ namespace DawgResolver.Model
 {
     public class Game
     {
-        public static int BoardSize { get; set; } = 11;
+        public static MovementDirection CurrentWordDirection { get; set; } = MovementDirection.Across;
+        public static int BoardSize { get; set; } = 15;
+
+        public static char GameStyle { get; set; } = 'S';
 
         private VTile[,] grid = new VTile[Game.BoardSize, Game.BoardSize];
         public string GenerateHtml(VTile[,] Tiles)
@@ -179,7 +182,7 @@ namespace DawgResolver.Model
             // Définition des cases bonus
             var assembly = Assembly.GetExecutingAssembly();
 
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith($"initial_board{BoardSize}.txt"));
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith($"initial_board{BoardSize}{GameStyle}.txt"));
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream, true))
             {
@@ -207,15 +210,19 @@ namespace DawgResolver.Model
 
                                 break;
                             case "TW":
+                            case "3W":
                                 Grid[row, col].WordMultiplier = 3;
                                 break;
                             case "TL":
+                            case "3L":
                                 Grid[row, col].LetterMultiplier = 3;
                                 break;
                             case "DW":
+                            case "2W":
                                 Grid[row, col].WordMultiplier = 2;
                                 break;
                             case "DL":
+                            case "2L":
                                 Grid[row, col].LetterMultiplier = 2;
                                 break;
                             default:
