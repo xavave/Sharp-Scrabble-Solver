@@ -16,6 +16,8 @@ namespace DawgResolver.Model
         public static MovementDirection CurrentWordDirection { get; set; } = MovementDirection.Across;
         public static int BoardSize { get; set; } = 15;
 
+        public static bool HintSortByBestScore { get; set; } = true;
+
         public static char GameStyle { get; set; } = 'S';
 
         private VTile[,] grid = new VTile[Game.BoardSize, Game.BoardSize];
@@ -86,10 +88,11 @@ namespace DawgResolver.Model
         public Bag Bag { get; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
-        public Game()
+        public Game(bool initBoard = true)
         {
-            Dico = LoadDico();
-            InitBoard();
+            if (Dico == null)
+                Dico = LoadDico();
+            if (initBoard) InitBoard();
             Player1 = new Player(this);
             Player2 = new Player(this);
             Resolver = new Resolver(this);
@@ -110,13 +113,13 @@ namespace DawgResolver.Model
         }
         public static List<Letter> Alphabet
         {
-            get { return AlphabetAvecJoker.Take(26).ToList(); }
+            get { return GameStyle == 'S' ? AlphabetScrabbleAvecJoker.Take(26).ToList() : AlphabetWWFAvecJoker.Take(26).ToList(); }
         }
 
         public List<Letter> ClearTilesInPlay(Player p)
         {
 
-            for (int i = 0; i < Grid.OfType<VTile>().Count(); i++)
+            for (int i = 0; i < Grid.LongLength; i++)
             {
                 var tile = Grid.OfType<VTile>().ElementAt(i);
                 if (!tile.IsValidated)
@@ -125,7 +128,7 @@ namespace DawgResolver.Model
                     {
                         if (tile.FromJoker)
                         {
-                            p.Rack.Add(Game.AlphabetAvecJoker[26]);
+                            p.Rack.Add(GameStyle == 'S' ? AlphabetScrabbleAvecJoker[26]: Game.AlphabetWWFAvecJoker[26]);
                         }
                         else
                         {
@@ -133,13 +136,15 @@ namespace DawgResolver.Model
                         }
                         tile.IsValidated = true;
                     }
-                    Grid[tile.Ligne, tile.Col].Letter = new Letter();
+                    else
+                        Grid[tile.Ligne, tile.Col].Letter = new Letter();
+
                 }
             }
             return p.Rack;
         }
 
-        public static List<Letter> AlphabetAvecJoker { get; } = new List<Letter>()
+        public static List<Letter> AlphabetWWFAvecJoker { get; } = new List<Letter>()
         {
             new Letter('A',1,9),
             new Letter('B',5,2),
@@ -170,10 +175,37 @@ namespace DawgResolver.Model
             new Letter(Joker,0,2),
 
         };
+        public static List<Letter> AlphabetScrabbleAvecJoker { get; } = new List<Letter>()
+        {
+            new Letter('A',1,9),
+            new Letter('B',3,2),
+            new Letter('C',3,2),
+            new Letter('D',2,3),
+            new Letter('E',1,15),
+            new Letter('F',4,2),
+            new Letter('G',2,2),
+            new Letter('H',4,2),
+            new Letter('I',1,8),
+            new Letter('J',8,1),
+            new Letter('K',10,1),
+            new Letter('L',1,5),
+            new Letter('M',2,3),
+            new Letter('N',1,6),
+            new Letter('O',1,6),
+            new Letter('P',3,2),
+            new Letter('Q',8,1),
+            new Letter('R',1,6),
+            new Letter('S',1,6),
+            new Letter('T',1,6),
+            new Letter('U',1,6),
+            new Letter('V',4,2),
+            new Letter('W',10,1),
+            new Letter('X',10,1),
+            new Letter('Y',10,1),
+            new Letter('Z',10,1),
+            new Letter(Joker,0,2),
 
-
-
-
+        };
 
         public VTile[,] InitBoard(int newBoardSize = 0)
         {
@@ -194,40 +226,47 @@ namespace DawgResolver.Model
                 {
                     foreach (var tp in w.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                     {
-                        Grid[row, col] = new Tile(this, row, col);
+                        if (Grid[row, col] == null)
+                            Grid[row, col] = new Tile(this, row, col);
+                        else
+                        {
+
+                        }
 
                         if (string.IsNullOrEmpty(tp))
                             continue;
+                        else
 
-                        switch (tp.Trim())
-                        {
-                            case "RE":
-                            case "__":
-                                Grid[row, col].WordMultiplier = 1;
-                                Grid[row, col].LetterMultiplier = 1;
-                                break;
-                            case "CE":
 
-                                break;
-                            case "TW":
-                            case "3W":
-                                Grid[row, col].WordMultiplier = 3;
-                                break;
-                            case "TL":
-                            case "3L":
-                                Grid[row, col].LetterMultiplier = 3;
-                                break;
-                            case "DW":
-                            case "2W":
-                                Grid[row, col].WordMultiplier = 2;
-                                break;
-                            case "DL":
-                            case "2L":
-                                Grid[row, col].LetterMultiplier = 2;
-                                break;
-                            default:
-                                throw new Exception($"Unknown tile type in inital_board file: {tp}");
-                        }
+                            switch (tp.Trim())
+                            {
+                                case "RE":
+                                case "__":
+                                    Grid[row, col].WordMultiplier = 1;
+                                    Grid[row, col].LetterMultiplier = 1;
+                                    break;
+                                case "CE":
+
+                                    break;
+                                case "TW":
+                                case "3W":
+                                    Grid[row, col].WordMultiplier = 3;
+                                    break;
+                                case "TL":
+                                case "3L":
+                                    Grid[row, col].LetterMultiplier = 3;
+                                    break;
+                                case "DW":
+                                case "2W":
+                                    Grid[row, col].WordMultiplier = 2;
+                                    break;
+                                case "DL":
+                                case "2L":
+                                    Grid[row, col].LetterMultiplier = 2;
+                                    break;
+                                default:
+                                    throw new Exception($"Unknown tile type in inital_board file: {tp}");
+                            }
                         col += 1;
                     }
 
@@ -266,7 +305,7 @@ namespace DawgResolver.Model
         {
             var ret = $"P1?{IsPlayer1}" + Environment.NewLine;
             ret += "letters" + Environment.NewLine;
-            foreach (var l in AlphabetAvecJoker)
+            foreach (var l in AlphabetWWFAvecJoker)
                 ret += l.Serialize + Environment.NewLine;
 
             ret += "tiles" + Environment.NewLine;
@@ -275,17 +314,17 @@ namespace DawgResolver.Model
                 ret += t.Serialize + Environment.NewLine;
             }
 
-            ret += "P1moves" + Environment.NewLine;
+            //ret += "P1moves" + Environment.NewLine;
 
-            foreach (var w in Player1.Moves)
-            {
-                ret += $"M1{w.Serialize}";
-            }
-            ret += "P2moves" + Environment.NewLine;
-            foreach (var w in Player2.Moves)
-            {
-                ret += $"M2{w.Serialize}";
-            }
+            //foreach (var w in Player1.Moves)
+            //{
+            //    ret += $"M1{w.Serialize}";
+            //}
+            //ret += "P2moves" + Environment.NewLine;
+            //foreach (var w in Player2.Moves)
+            //{
+            //    ret += $"M2{w.Serialize}";
+            //}
             return ret;
         }
 
@@ -310,16 +349,16 @@ namespace DawgResolver.Model
                 {
                     tiles.Add(l.DeserializeTile(this));
                 }
-                else
-                if (l.StartsWith("M1"))
-                {
-                    Player1.Moves.Add(l.DeserializeMove(this));
-                }
-                else
-                     if (l.StartsWith("M2"))
-                {
-                    Player2.Moves.Add(l.DeserializeMove(this));
-                }
+                //else
+                //if (l.StartsWith("M1"))
+                //{
+                //    Player1.Moves.Add(l.DeserializeMove(this));
+                //}
+                //else
+                //     if (l.StartsWith("M2"))
+                //{
+                //    Player2.Moves.Add(l.DeserializeMove(this));
+                //}
             }
             for (int idx = 0; idx < Bag.Letters.Count; idx++)
             {
@@ -328,6 +367,7 @@ namespace DawgResolver.Model
             foreach (var t in tiles)
             {
                 Grid[t.Ligne, t.Col] = t;
+                if (!t.IsEmpty) Grid[t.Ligne, t.Col].IsValidated = true;
             }
             Player1.Points = Player1.Moves.Sum(m => m.Points);
             Player2.Points = Player2.Moves.Sum(m => m.Points);

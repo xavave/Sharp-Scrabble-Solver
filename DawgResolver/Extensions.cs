@@ -43,7 +43,7 @@ namespace DawgResolver
         }
         public static string GetLetterByIndex(this List<Letter> l, int index)
         {
-            return Game.AlphabetAvecJoker.Find(t => t.Char == (char)(index + Dictionnaire.AscShift)).Char.ToString();
+            return Game.AlphabetWWFAvecJoker.Find(t => t.Char == (char)(index + Dictionnaire.AscShift)).Char.ToString();
         }
         public static void ResetCount(this List<Letter> lst)
         {
@@ -78,14 +78,19 @@ namespace DawgResolver
         public static VTile DeserializeTile(this string s, Game g)
         {
             var l = s.Split(';');
-            return new Tile(g, int.Parse(l[0].Substring(1)), int.Parse(l[1]))
+            var t = new Tile(g, int.Parse(l[0].Substring(1)), int.Parse(l[1]))
             {
                 LetterMultiplier = int.Parse(l[2]),
                 WordMultiplier = int.Parse(l[3]),
                 FromJoker = bool.Parse(l[4]),
-                IsValidated = bool.Parse(l[5])
-            };
+                IsValidated = bool.Parse(l[5]),
 
+            };
+            if (l.Count() > 6 && l[6] != "")
+                t.Letter = t.FromJoker ? Game.AlphabetWWFAvecJoker.Find(c => c.Char == Game.Joker) : Game.AlphabetWWFAvecJoker.Find(c => c.Char == l[6][0]);
+            if (l.Count() > 7 && l[7] != "")
+                t.IsPlayedByPlayer1 = bool.Parse(l[7]);
+            return t;
         }
         public static Word DeserializeMove(this string s, Game g)
         {
@@ -139,7 +144,7 @@ namespace DawgResolver
                 if (char.IsLower(c))
                     t.FromJoker = true;
                 if (t.FromJoker)
-                    p.Rack.Remove(Game.AlphabetAvecJoker[26]);
+                    p.Rack.Remove(Game.AlphabetWWFAvecJoker[26]);
                 else
                     p.Rack.Remove(t.Letter);
 
@@ -156,7 +161,7 @@ namespace DawgResolver
                 if (char.IsLower(c))
                     t.RightTile.FromJoker = true;
                 if (t.RightTile.FromJoker)
-                    p.Rack.Remove(Game.AlphabetAvecJoker[26]);
+                    p.Rack.Remove(Game.AlphabetWWFAvecJoker[26]);
                 else
                     p.Rack.Remove(Game.Alphabet.Find(a => a.Char == char.ToUpper(c)));
                 return t.RightTile;
@@ -173,7 +178,7 @@ namespace DawgResolver
                 if (char.IsLower(c))
                     t.DownTile.FromJoker = true;
                 if (t.DownTile.FromJoker)
-                    p.Rack.Remove(Game.AlphabetAvecJoker[26]);
+                    p.Rack.Remove(Game.AlphabetWWFAvecJoker[26]);
                 else
                     p.Rack.Remove(Game.Alphabet.Find(a => a.Char == char.ToUpper(c)));
                 return t.DownTile;

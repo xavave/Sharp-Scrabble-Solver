@@ -27,6 +27,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private void NewGame()
         {
+            DawgResolver.Model.Game.IsTransposed = false;
             txtGrid2.Visible = false;
             gbBoard.Controls.Clear();
             lsbInfos.Items.Clear();
@@ -35,23 +36,57 @@ namespace Dawg.Resolver.Winform.Test
             lsbWords.DisplayMember = "DisplayInList";
             Cursor.Current = Cursors.WaitCursor;
             Game = new Game();
+
             lsbWords.Items.Clear();
             txtBag.Text = Game.Bag.GetBagContent();
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
+            RefreshGridTiles(false);
+            Cursor.Current = Cursors.Default;
+
+        }
+
+        private void RefreshGridTiles(bool initBoard = true)
+        {
+            if (initBoard) Game.InitBoard();
             CustomGroupBox.SuspendDrawing(gbBoard.Parent);
+            bool hasHeaderTile = gbBoard.Controls.Count > 0;
+            FormTile frmTile = null;
             for (int i = 0; i < Game.BoardSize; i++)
             {
-                gbBoard.Controls.Add(new FormTile(this, Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesBackColor) { Text = $"{i + 1}" });
-                gbBoard.Controls.Add(new FormTile(this, Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesBackColor) { Text = $"{Game.Alphabet[i].Char}" });
+                if (hasHeaderTile)
+                {
+                    frmTile = gbBoard.Controls.Find($"header_col{i}", false).First() as FormTile;
+                }
+                if (frmTile == null)
+                    gbBoard.Controls.Add(new FormTile(this, Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesBackColor) { Text = $"{i + 1}" });
+                else
+                    frmTile = new FormTile(this, Game, new Tile(Game, 0, i), $"header_col{i}", HeaderTilesBackColor) { Text = $"{i + 1}" };
+
+                if (hasHeaderTile)
+                {
+                    frmTile = gbBoard.Controls.Find($"header_ligne{i}", false).First() as FormTile;
+                }
+                if (frmTile == null)
+                    gbBoard.Controls.Add(new FormTile(this, Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesBackColor) { Text = $"{Game.Alphabet[i].Char}" });
+                else
+                    frmTile = new FormTile(this, Game, new Tile(Game, i, 0), $"header_ligne{i}", HeaderTilesBackColor) { Text = $"{Game.Alphabet[i].Char}" };
             }
 
             foreach (var tile in Game.Grid)
             {
-                gbBoard.Controls.Add(new FormTile(this, Game, tile));
+                frmTile = new FormTile(this, Game, tile);
+                frmTile.Text = tile.Letter?.Char.ToString();
+                var existingTile = hasHeaderTile ? gbBoard.Controls.Find($"t{frmTile.Ligne}_{frmTile.Col}", false).First() as FormTile : null;
+                if (existingTile == null)
+                    gbBoard.Controls.Add(frmTile);
+                else
+                {
+                    gbBoard.Controls.RemoveByKey(frmTile.Name);
+                    gbBoard.Controls.Add(frmTile);
+
+                }
             }
             CustomGroupBox.ResumeDrawing(gbBoard.Parent);
-            Cursor.Current = Cursors.Default;
-
         }
 
         public int PreviewWord(Player p, Word word, bool validateWord = false, bool addMove = true)
@@ -64,11 +99,15 @@ namespace Dawg.Resolver.Winform.Test
                 foreach (var t in word.GetTiles())
                 {
                     var frmTile = gbBoard.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
-                    if (frmTile.ReadOnly)
-                        continue;
-                    frmTile.ReadOnly = true;
-                    frmTile.BackColor = p == Game.Player1 ? Player1MoveColor : Player2MoveColor;
+                    if (frmTile.IsEmpty)
+                        frmTile.BackColor = frmTile.GetBackColor(t);
 
+                    if (!frmTile.Enabled)
+                        continue;
+
+                    frmTile.Tile.IsPlayedByPlayer1 = p == Game.Player1;
+                    frmTile.BackColor = p == Game.Player1 ? Player1MoveColor : Player2MoveColor;
+                    frmTile.Text = Game.Grid[t.Ligne, t.Col].Letter?.Char.ToString();
                     if (t.FromJoker)
                     {
                         frmTile.BorderColor = Color.Gold;
@@ -79,6 +118,7 @@ namespace Dawg.Resolver.Winform.Test
                     {
                         //Game.Bag.RemoveLetterFromBag(t.Letter.Char);
                     }
+                    frmTile.Enabled = false;
                 }
                 if (addMove)
                     p.Moves.Add(word);
@@ -94,6 +134,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private VTile[,] RefreshBoard(VTile[,] grid)
         {
+
             //CustomGroupBox.SuspendDrawing(groupBox1.Parent);
             for (int ligne = 0; ligne <= grid.GetUpperBound(0); ligne++)
             {
@@ -101,16 +142,18 @@ namespace Dawg.Resolver.Winform.Test
                 {
                     var formTile = gbBoard.Controls.Find($"t{ligne}_{col}", false).First() as FormTile;
                     formTile.Tile = grid[ligne, col];
-                    formTile.Text = formTile.Tile.Letter.Char.ToString();
+                    formTile.Text = formTile.Tile?.Letter?.Char.ToString();
+                    formTile.Enabled = !formTile.Tile.IsValidated;
                 }
             }
             //CustomGroupBox.ResumeDrawing(groupBox1.Parent);
             //lsbInfos.Items.Add(Game.IsTransposed ? "Transposed" : "Not Transposed");
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
-            txtRackP1.Text = Game.Player1.Rack.String();
-            txtRackP2.Text = Game.Player2.Rack.String();
+            //txtRackP1.Text = Game.Player1.Rack.String();
+            //txtRackP2.Text = Game.Player2.Rack.String();
             txtBag.Text = Game.Bag.GetBagContent();
             DisplayScores();
+
             return grid;
         }
 
@@ -133,7 +176,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private void btnValidate_Click(object sender, EventArgs e)
         {
-            var word = lsb.SelectedItem as Word;
+            var word = lsbHintWords.SelectedItem as Word;
             if (word == null) return;
             if (Game.IsPlayer1)
                 PreviewWord(Game.Player1, word, true);
@@ -170,16 +213,16 @@ namespace Dawg.Resolver.Winform.Test
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtRackP1.Text) || txtRackP1.Text.Any(c => !Game.AlphabetAvecJoker.Any(ch => c == ch.Char))) return;
+            if (string.IsNullOrWhiteSpace(txtRackP1.Text)) return;// || txtRackP1.Text.Any(c => !Game.AlphabetAvecJoker.Any(ch => c == ch.Char))) return;
             Cursor.Current = Cursors.WaitCursor;
             Game.Bag.GetLetters(Game.Player1, txtRackP1.Text.Trim());
-            lsb.DisplayMember = "DisplayText";
-            var ret = Game.Resolver.FindMoves(Game.Player1, 100);
+            lsbHintWords.DisplayMember = "DisplayText";
+            var ret = Game.Resolver.FindMoves(Game.Player1, 100, Game.HintSortByBestScore);
             lsbInfos.Items.Insert(0, Game.IsTransposed ? "Transposed" : "Not Transposed");
             lsbInfos.Items.Insert(0, $"NbPossibleMoves={Game.Resolver.NbPossibleMoves}");
             lsbInfos.Items.Insert(0, $"NbAcceptedMoves={Game.Resolver.NbAcceptedMoves}");
 
-            lsb.DataSource = ret;
+            lsbHintWords.DataSource = ret;
             Cursor.Current = Cursors.Default;
         }
 
@@ -218,7 +261,7 @@ namespace Dawg.Resolver.Winform.Test
                     lblCurrentRack.Text = rack.String();
 
                     var ret = Game.Resolver.FindMoves(Game.IsPlayer1 ? Game.Player1 : Game.Player2, 30);
-                    lsb.DataSource = ret;
+                    lsbHintWords.DataSource = ret;
                     if (ret.Any())
                     {
                         Game.NoMoreMovesCount = 0;
@@ -302,15 +345,20 @@ namespace Dawg.Resolver.Winform.Test
 
         private void lsb_Click(object sender, EventArgs e)
         {
-            var word = lsb.SelectedItem as Word;
+            var word = lsbHintWords.SelectedItem as Word;
             if (word == null) return;
             if (Game.IsPlayer1)
-                PreviewWord(Game.Player1, word);
+                PreviewWord(Game.Player1, word, false, false);
             else
-                PreviewWord(Game.Player2, word);
+                PreviewWord(Game.Player2, word, false, false);
         }
 
         private void btnSaveGame_Click(object sender, EventArgs e)
+        {
+            SaveGame();
+        }
+
+        public void SaveGame()
         {
             var sfd = saveFileDialog1.ShowDialog();
             if (sfd == DialogResult.OK)
@@ -323,25 +371,50 @@ namespace Dawg.Resolver.Winform.Test
 
         private void btnLoadGame_Click(object sender, EventArgs e)
         {
+            LoadGame();
+        }
+
+        public void LoadGame()
+        {
+            DawgResolver.Model.Game.IsTransposed = false;
             var ofd = openFileDialog1.ShowDialog();
             if (ofd == DialogResult.OK)
             {
+                saveFileDialog1.FileName = openFileDialog1.FileName;
+                this.Text = $"Scrabble ({openFileDialog1.FileName})";
                 var txt = File.ReadAllText(openFileDialog1.FileName);
                 Game.Deserialize(txt);
-                var wordsCount = Math.Max(Game.Player1.Moves.Count, Game.Player2.Moves.Count);
-                for (int i = 0; i < wordsCount; i++)
+                Game.IsPlayer1 = true;
+                foreach (var t in Game.Grid)
                 {
-                    if (i < Game.Player1.Moves.Count)
+                    var frmTile = gbBoard.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
+                    if (t.IsValidated)
                     {
-                        PreviewWord(Game.Player1, Game.Player1.Moves[i], true, false);
-                        DisplayPlayerWord(Game.Player1.Moves[i]);
+
+                        frmTile.IsValidated = t.IsValidated;
+                        frmTile.BackColor = t.IsPlayedByPlayer1.HasValue && t.IsPlayedByPlayer1.Value ? Player1MoveColor : Player2MoveColor;
+                        frmTile.Enabled = false;
                     }
-                    if (i < Game.Player2.Moves.Count)
+                    else
                     {
-                        PreviewWord(Game.Player2, Game.Player2.Moves[i], true, false);
-                        DisplayPlayerWord(Game.Player2.Moves[i]);
+                        frmTile.BackColor = frmTile.GetBackColor(t);
+                        frmTile.Enabled = true;
                     }
                 }
+                //var wordsCount = Math.Max(Game.Player1.Moves.Count, Game.Player2.Moves.Count);
+                //for (int i = 0; i < wordsCount; i++)
+                //{
+                //    if (i < Game.Player1.Moves.Count)
+                //    {
+                //        PreviewWord(Game.Player1, Game.Player1.Moves[i], true, false);
+                //        DisplayPlayerWord(Game.Player1.Moves[i]);
+                //    }
+                //    if (i < Game.Player2.Moves.Count)
+                //    {
+                //        PreviewWord(Game.Player2, Game.Player2.Moves[i], true, false);
+                //        DisplayPlayerWord(Game.Player2.Moves[i]);
+                //    }
+                //}
                 RefreshBoard(Game.Grid);
             }
         }
@@ -390,10 +463,7 @@ namespace Dawg.Resolver.Winform.Test
             Game.CurrentWordDirection = rbWordDirDown.Checked ? MovementDirection.Down : MovementDirection.Across;
         }
 
-        private void rbGameStyleScrabble_CheckedChanged(object sender, EventArgs e)
-        {
-            Game.GameStyle = rbGameStyleScrabble.Checked ? 'S' : 'W';
-        }
+
 
         private void lsbWords_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -404,6 +474,49 @@ namespace Dawg.Resolver.Winform.Test
                 if (word != null)
                     Process.Start($"https://1mot.net/{word.Text.ToLower()}");
             }
+        }
+
+        private void rbMaxLength_CheckedChanged(object sender, EventArgs e)
+        {
+            Game.HintSortByBestScore = !rbMaxLength.Checked;
+        }
+
+        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.S)
+            {
+                SaveGame();
+
+            }
+            else if (e.Control && e.KeyCode == Keys.L)
+            {
+                LoadGame();
+
+            }
+        }
+        private void rbGameStyleScrabble_CheckedChanged(object sender, EventArgs e)
+        {
+            //Game.GameStyle = rbGameStyleScrabble.Checked ? 'S' : 'W';
+            //RefreshGridTiles();
+        }
+        private void rbWordsWithFriends_CheckedChanged(object sender, EventArgs e)
+        {
+            Game.GameStyle = rbGameStyleScrabble.Checked ? 'S' : 'W';
+            Game.Bag.Letters = new List<Letter>(Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker : Game.AlphabetWWFAvecJoker);
+            txtBag.Text = Game.Bag.GetBagContent();
+            RefreshGridTiles();
+        }
+
+        private void txtMotExiste_TextChanged(object sender, EventArgs e)
+        {
+            lblMotExiste.ForeColor = Game.Dico.MotAdmis(txtMotExiste.Text.Trim()) ? Color.Green : Color.Red;
+        }
+
+        private void txtMotExiste_DoubleClick(object sender, EventArgs e)
+        {
+            if (Game.Dico.MotAdmis(txtMotExiste.Text.Trim()))
+                Process.Start($"https://1mot.net/{txtMotExiste.Text.ToLower()}");
+
         }
     }
 }

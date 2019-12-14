@@ -12,7 +12,7 @@ namespace DawgResolver.Model
     {
         public Bag()
         {
-            Letters = new List<Letter>(Game.AlphabetAvecJoker);
+            Letters = new List<Letter>(Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker : Game.AlphabetWWFAvecJoker);
         }
 
         public List<Letter> Letters { get; set; }
@@ -36,7 +36,7 @@ namespace DawgResolver.Model
         }
         public void RemoveLetterFromBag(char c)
         {
-            var letter = Game.AlphabetAvecJoker.Find(cc => cc.Char == c);
+            var letter = Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.Find(cc => cc.Char == c) : Game.AlphabetWWFAvecJoker.Find(cc => cc.Char == c);
             if (letter.Count > 0) letter.Count = --letter.Count;
         }
 
@@ -50,7 +50,7 @@ namespace DawgResolver.Model
             int charIdx = r.Next(0, FlatList.Length - 1);
             var c = FlatList[charIdx];
             if (c == char.MinValue) throw new ArgumentException(nameof(c));
-            var letter = Game.AlphabetAvecJoker.First(cc => cc.Char == c);
+            var letter = Game.AlphabetWWFAvecJoker.First(cc => cc.Char == c);
 
             var le = Letters.Find(l => l == letter);
             if (letter.Count > 0) letter.Count = --letter.Count;
@@ -59,7 +59,7 @@ namespace DawgResolver.Model
         }
         public void PutBackLetter(Letter l)
         {
-            var letter = Game.AlphabetAvecJoker.Find(cc => cc == l);
+            var letter = Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.Find(cc => cc == l) : Game.AlphabetWWFAvecJoker.Find(cc => cc == l);
             letter.Count++;
         }
 
@@ -83,7 +83,8 @@ namespace DawgResolver.Model
 
             if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
-                p.Rack = forcedLetters.Select(c => Game.AlphabetAvecJoker.Find(a => a.Char == c)).ToList();
+                p.Rack = forcedLetters.Select(c => Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.Find(cc => cc.Char == c) : Game.AlphabetWWFAvecJoker.Find(cc => cc.Char == c)).ToList();
+                return p.Rack;
             }
             // Si le sac est vide
             if (LeftLettersCount == 0) return new List<Letter>();

@@ -74,5 +74,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\initial_board15S.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\initial_board11S.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

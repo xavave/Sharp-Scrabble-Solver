@@ -93,6 +93,8 @@ namespace Scrabble2018.Model
         public VTile DownTile { get; }
 
         public string Serialize => throw new NotImplementedException();
+
+        public bool? IsPlayedByPlayer1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
     //public class Tile : IComparable
     //{

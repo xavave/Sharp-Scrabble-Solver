@@ -622,7 +622,7 @@ namespace DawgResolver
         public bool MotAdmis(string mot)
         {
             if (mot=="")
-            {
+           {
 
             }
             Noeud enCours = DAWG;

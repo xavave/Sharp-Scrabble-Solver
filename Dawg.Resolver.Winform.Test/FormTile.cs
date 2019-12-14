@@ -71,20 +71,29 @@ namespace Dawg.Resolver.Winform.Test
             this.AnchorLeftMaxLimit = t.AnchorLeftMaxLimit;
             this.Controlers = t.Controlers;
             this.Width = 30;
-            ReadOnly = false;
+            Enabled = true;
             this.Height = 28;
             this.MaxLength = 1;
             Form = frm;
             this.Font = new Font("Verdana", 14);
             this.CharacterCasing = CharacterCasing.Upper;
             if (!color.HasValue)
-                this.BackColor = GetBackColor(t);
+            {
+                if (!Tile.IsPlayedByPlayer1.HasValue)
+                    this.BackColor = GetBackColor(t);
+                else
+                    if (Tile.IsPlayedByPlayer1.Value)
+                    this.BackColor = Form.Player1MoveColor;
+                else
+                    this.BackColor = Form.Player2MoveColor;
+
+            }
             else
             {
                 this.BackColor = color.Value;
                 this.ForeColor = frm.HeaderTilesForeColor;
             }
-            Text = t.Letter.Char.ToString();
+            Text = t.Letter?.Char.ToString();
             if (tileName == "")
                 Name = $"t{t.Ligne}_{t.Col}";
             else
@@ -93,9 +102,15 @@ namespace Dawg.Resolver.Winform.Test
             KeyUp += FormTile_KeyUp;
 
             if (Name.StartsWith($"header_col"))
+            {
                 Location = new Point(15 + this.Width + t.Col * this.Width, 15 + t.Ligne * this.Height);
+                Enabled = false;
+            }
             else if (Name.StartsWith($"header_ligne"))
+            {
                 Location = new Point(15 + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
+                Enabled = false;
+            }
             else
                 Location = new Point(15 + this.Width + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
 
@@ -106,6 +121,16 @@ namespace Dawg.Resolver.Winform.Test
         Keys CurrentKey { get; set; }
         private void FormTile_KeyUp(object sender, KeyEventArgs e)
         {
+            if (e.Control && e.KeyCode == Keys.S)
+            {
+                Form.SaveGame();
+                return;
+            }
+            else if (e.Control && e.KeyCode == Keys.L)
+            {
+                Form.LoadGame();
+                return;
+            }
             var frmTile = sender as FormTile;
             if (CurrentKey != e.KeyCode)
             {
@@ -217,7 +242,7 @@ namespace Dawg.Resolver.Winform.Test
 
             TxtInfos += "Controlers:" + Environment.NewLine;
             foreach (var c in t.Controlers)
-                TxtInfos += $"{Game.AlphabetAvecJoker[c.Key].Char}:{c.Value}{Environment.NewLine}";
+                TxtInfos += $"{Game.AlphabetWWFAvecJoker[c.Key].Char}:{c.Value}{Environment.NewLine}";
 
             Form.lsbInfos.Items.Clear();
             foreach (var l in TxtInfos.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
@@ -320,5 +345,7 @@ namespace Dawg.Resolver.Winform.Test
         }
 
         public string Serialize => throw new NotImplementedException();
+
+        public bool? IsPlayedByPlayer1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

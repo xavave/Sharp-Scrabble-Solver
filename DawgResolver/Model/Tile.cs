@@ -22,6 +22,8 @@ namespace DawgResolver.Model
         Dictionary<int, int> Controlers { get; set; }
         bool FromJoker { get; set; }
         bool IsEmpty { get; }
+
+        bool? IsPlayedByPlayer1 { get; set; }
         VTile LeftTile { get; }
         VTile RightTile { get; }
         VTile UpTile { get; }
@@ -59,7 +61,7 @@ namespace DawgResolver.Model
             AnchorLeftMaxLimit = 0;
             Controlers = new Dictionary<int, int>(27);
         }
-
+        public bool? IsPlayedByPlayer1 { get; set; }
         public bool FromJoker { get; set; } = false;
         public Dictionary<int, int> Controlers { get; set; } = new Dictionary<int, int>(27);
         public int Ligne { get; set; }
@@ -143,7 +145,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return $"T{Ligne};{Col};{LetterMultiplier};{WordMultiplier};{FromJoker};{IsValidated}";
+                return $"T{Ligne};{Col};{LetterMultiplier};{WordMultiplier};{FromJoker};{IsValidated};{Letter?.Char};{IsPlayedByPlayer1}";
             }
         }
         public Word GetWordFromTile(MovementDirection direction)
@@ -161,7 +163,7 @@ namespace DawgResolver.Model
                 }
                 if (tile.Col == 0)
                 {
-                    text += tile.Letter.Char;
+                    text += tile.Letter?.Char;
                     word.StartTile = tile;
                 }
                 else

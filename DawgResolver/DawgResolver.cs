@@ -12,7 +12,7 @@ namespace DawgResolver
 {
     public class Resolver
     {
-      
+
         //variables definition
         public int WordCount { get; set; }
         public int NodeCount { get; private set; }
@@ -301,8 +301,8 @@ namespace DawgResolver
             bool jokerInDraught = leftLetters.Any(l => l.Char == Game.Joker);
 
             VTile t = null;
-            if (ligne >= 0 && colonne >= 0 && colonne < Game.BoardSize && ligne < Game.BoardSize) t = grid[ligne, colonne];
-           
+            if (ligne >= 0 && colonne >= 0 && colonne < Game.BoardSize && ligne < Game.BoardSize && leftLetters.Count()<=7)  t = grid[ligne, colonne];
+
             if (t == null || t.IsEmpty)
             {
                 // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions
@@ -385,7 +385,7 @@ namespace DawgResolver
         /// <summary>
         /// Recherche des différents coups admis
         /// </summary>
-        public List<Word> FindMoves(Player p, int maxWordCount = 100)
+        public List<Word> FindMoves(Player p, int maxWordCount = 100, bool sortByBestScore = true)
         {
             Game.IsTransposed = false;
             NbPossibleMoves = 0;
@@ -404,7 +404,15 @@ namespace DawgResolver
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
             Game.Grid = FindMovesPerAnchor(p, Game.Grid);
 
-            var ret = LegalWords.OrderByDescending(t => t.Points).Take(maxWordCount).ToList();
+            var ret = LegalWords;
+
+            Game.Grid = backupGrid;
+            Game.IsTransposed = false;
+
+            if (sortByBestScore)
+                return ret.OrderByDescending(t => t.Points).Take(maxWordCount).ToList();
+            else
+                return ret.OrderByDescending(t => t.Text.Length).Take(maxWordCount).ToList();
 
             //if (p.Rack.Any())
             //{
@@ -413,8 +421,7 @@ namespace DawgResolver
             //        Game.Bag.PutBackLetter(l);
             //}
             ////on remet la grille à son état initial
-            Game.Grid = backupGrid;
-            Game.IsTransposed = false;
+           
             return ret;
         }
 
@@ -503,7 +510,7 @@ namespace DawgResolver
                     else
                     {
                         if (tile.Controlers.ContainsKey(((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0) && tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0] > 0)
-                            verticalPoints += tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0] - Game.AlphabetAvecJoker.Find(c => c.Char == char.ToUpper(L)).Value
+                            verticalPoints += tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0] - Game.AlphabetWWFAvecJoker.Find(c => c.Char == char.ToUpper(L)).Value
                                 * tile.LetterMultiplier * tile.WordMultiplier;
 
                     }

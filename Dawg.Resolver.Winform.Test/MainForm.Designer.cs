@@ -30,7 +30,7 @@
         {
             this.btnSearch = new System.Windows.Forms.Button();
             this.txtRackP1 = new System.Windows.Forms.TextBox();
-            this.lsb = new System.Windows.Forms.ListBox();
+            this.lsbHintWords = new System.Windows.Forms.ListBox();
             this.txtBag = new System.Windows.Forms.TextBox();
             this.txtGrid2 = new System.Windows.Forms.TextBox();
             this.btnTranspose = new System.Windows.Forms.Button();
@@ -64,18 +64,23 @@
             this.gbGameStyle = new System.Windows.Forms.GroupBox();
             this.rbGameStyleScrabble = new System.Windows.Forms.RadioButton();
             this.rbWordsWithFriends = new System.Windows.Forms.RadioButton();
+            this.gbSortBy = new System.Windows.Forms.GroupBox();
+            this.rbMaxLength = new System.Windows.Forms.RadioButton();
+            this.rbBestScore = new System.Windows.Forms.RadioButton();
+            this.txtMotExiste = new System.Windows.Forms.TextBox();
+            this.lblMotExiste = new System.Windows.Forms.Label();
             this.gbBoard = new Dawg.Resolver.Winform.Test.CustomGroupBox();
             this.groupBox1.SuspendLayout();
             this.gbWordDirection.SuspendLayout();
             this.gbGameStyle.SuspendLayout();
+            this.gbSortBy.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(309, 2);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSearch.Location = new System.Drawing.Point(464, 3);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(50, 23);
+            this.btnSearch.Size = new System.Drawing.Size(75, 35);
             this.btnSearch.TabIndex = 7;
             this.btnSearch.Text = "Search";
             this.btnSearch.UseVisualStyleBackColor = true;
@@ -84,50 +89,46 @@
             // txtRackP1
             // 
             this.txtRackP1.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.txtRackP1.Location = new System.Drawing.Point(214, 2);
-            this.txtRackP1.Margin = new System.Windows.Forms.Padding(2);
+            this.txtRackP1.Location = new System.Drawing.Point(321, 3);
             this.txtRackP1.Name = "txtRackP1";
-            this.txtRackP1.Size = new System.Drawing.Size(91, 20);
+            this.txtRackP1.Size = new System.Drawing.Size(134, 26);
             this.txtRackP1.TabIndex = 5;
             // 
-            // lsb
+            // lsbHintWords
             // 
-            this.lsb.FormattingEnabled = true;
-            this.lsb.Location = new System.Drawing.Point(8, 28);
-            this.lsb.Margin = new System.Windows.Forms.Padding(2);
-            this.lsb.Name = "lsb";
-            this.lsb.Size = new System.Drawing.Size(181, 329);
-            this.lsb.TabIndex = 8;
-            this.lsb.Click += new System.EventHandler(this.lsb_Click);
+            this.lsbHintWords.FormattingEnabled = true;
+            this.lsbHintWords.ItemHeight = 20;
+            this.lsbHintWords.Location = new System.Drawing.Point(12, 63);
+            this.lsbHintWords.Name = "lsbHintWords";
+            this.lsbHintWords.Size = new System.Drawing.Size(259, 484);
+            this.lsbHintWords.TabIndex = 8;
+            this.lsbHintWords.Click += new System.EventHandler(this.lsb_Click);
             // 
             // txtBag
             // 
             this.txtBag.BackColor = System.Drawing.SystemColors.InfoText;
             this.txtBag.ForeColor = System.Drawing.SystemColors.InactiveBorder;
-            this.txtBag.Location = new System.Drawing.Point(8, 365);
-            this.txtBag.Margin = new System.Windows.Forms.Padding(2);
+            this.txtBag.Location = new System.Drawing.Point(12, 562);
             this.txtBag.Multiline = true;
             this.txtBag.Name = "txtBag";
-            this.txtBag.Size = new System.Drawing.Size(252, 97);
+            this.txtBag.Size = new System.Drawing.Size(376, 147);
             this.txtBag.TabIndex = 9;
             // 
             // txtGrid2
             // 
             this.txtGrid2.BackColor = System.Drawing.SystemColors.InfoText;
             this.txtGrid2.ForeColor = System.Drawing.SystemColors.InactiveBorder;
-            this.txtGrid2.Location = new System.Drawing.Point(193, 123);
-            this.txtGrid2.Margin = new System.Windows.Forms.Padding(2);
+            this.txtGrid2.Location = new System.Drawing.Point(277, 189);
             this.txtGrid2.Multiline = true;
             this.txtGrid2.Name = "txtGrid2";
-            this.txtGrid2.Size = new System.Drawing.Size(168, 239);
+            this.txtGrid2.Size = new System.Drawing.Size(263, 366);
             this.txtGrid2.TabIndex = 10;
             // 
             // btnTranspose
             // 
-            this.btnTranspose.Location = new System.Drawing.Point(193, 79);
-            this.btnTranspose.Margin = new System.Windows.Forms.Padding(2);
+            this.btnTranspose.Location = new System.Drawing.Point(290, 122);
             this.btnTranspose.Name = "btnTranspose";
-            this.btnTranspose.Size = new System.Drawing.Size(75, 25);
+            this.btnTranspose.Size = new System.Drawing.Size(112, 38);
             this.btnTranspose.TabIndex = 12;
             this.btnTranspose.Text = "Transpose";
             this.btnTranspose.UseVisualStyleBackColor = true;
@@ -135,10 +136,9 @@
             // 
             // btnBackToRack
             // 
-            this.btnBackToRack.Location = new System.Drawing.Point(280, 79);
-            this.btnBackToRack.Margin = new System.Windows.Forms.Padding(2);
+            this.btnBackToRack.Location = new System.Drawing.Point(420, 122);
             this.btnBackToRack.Name = "btnBackToRack";
-            this.btnBackToRack.Size = new System.Drawing.Size(79, 25);
+            this.btnBackToRack.Size = new System.Drawing.Size(118, 38);
             this.btnBackToRack.TabIndex = 13;
             this.btnBackToRack.Text = "BackToRack";
             this.btnBackToRack.UseVisualStyleBackColor = true;
@@ -146,10 +146,9 @@
             // 
             // btnValidate
             // 
-            this.btnValidate.Location = new System.Drawing.Point(265, 365);
-            this.btnValidate.Margin = new System.Windows.Forms.Padding(2);
+            this.btnValidate.Location = new System.Drawing.Point(398, 562);
             this.btnValidate.Name = "btnValidate";
-            this.btnValidate.Size = new System.Drawing.Size(94, 33);
+            this.btnValidate.Size = new System.Drawing.Size(141, 51);
             this.btnValidate.TabIndex = 15;
             this.btnValidate.Text = "Validate Word";
             this.btnValidate.UseVisualStyleBackColor = true;
@@ -157,10 +156,9 @@
             // 
             // btnDemo
             // 
-            this.btnDemo.Location = new System.Drawing.Point(11, 466);
-            this.btnDemo.Margin = new System.Windows.Forms.Padding(2);
+            this.btnDemo.Location = new System.Drawing.Point(16, 717);
             this.btnDemo.Name = "btnDemo";
-            this.btnDemo.Size = new System.Drawing.Size(77, 21);
+            this.btnDemo.Size = new System.Drawing.Size(116, 32);
             this.btnDemo.TabIndex = 16;
             this.btnDemo.Text = "AutoPlay 1";
             this.btnDemo.UseVisualStyleBackColor = true;
@@ -170,10 +168,9 @@
             // 
             this.lblPlayer1Score.AutoSize = true;
             this.lblPlayer1Score.BackColor = System.Drawing.Color.LightYellow;
-            this.lblPlayer1Score.Location = new System.Drawing.Point(889, 8);
-            this.lblPlayer1Score.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPlayer1Score.Location = new System.Drawing.Point(1334, 12);
             this.lblPlayer1Score.Name = "lblPlayer1Score";
-            this.lblPlayer1Score.Size = new System.Drawing.Size(51, 13);
+            this.lblPlayer1Score.Size = new System.Drawing.Size(74, 20);
             this.lblPlayer1Score.TabIndex = 17;
             this.lblPlayer1Score.Text = "P1 Score";
             // 
@@ -181,19 +178,17 @@
             // 
             this.lblPlayer2Score.AutoSize = true;
             this.lblPlayer2Score.BackColor = System.Drawing.Color.LightGreen;
-            this.lblPlayer2Score.Location = new System.Drawing.Point(889, 28);
-            this.lblPlayer2Score.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPlayer2Score.Location = new System.Drawing.Point(1334, 43);
             this.lblPlayer2Score.Name = "lblPlayer2Score";
-            this.lblPlayer2Score.Size = new System.Drawing.Size(51, 13);
+            this.lblPlayer2Score.Size = new System.Drawing.Size(74, 20);
             this.lblPlayer2Score.TabIndex = 18;
             this.lblPlayer2Score.Text = "P2 Score";
             // 
             // btnDemoAll
             // 
-            this.btnDemoAll.Location = new System.Drawing.Point(92, 466);
-            this.btnDemoAll.Margin = new System.Windows.Forms.Padding(2);
+            this.btnDemoAll.Location = new System.Drawing.Point(138, 717);
             this.btnDemoAll.Name = "btnDemoAll";
-            this.btnDemoAll.Size = new System.Drawing.Size(77, 21);
+            this.btnDemoAll.Size = new System.Drawing.Size(116, 32);
             this.btnDemoAll.TabIndex = 19;
             this.btnDemoAll.Text = "AutoPlay All";
             this.btnDemoAll.UseVisualStyleBackColor = true;
@@ -202,40 +197,36 @@
             // txtRackP2
             // 
             this.txtRackP2.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.txtRackP2.Location = new System.Drawing.Point(214, 24);
-            this.txtRackP2.Margin = new System.Windows.Forms.Padding(2);
+            this.txtRackP2.Location = new System.Drawing.Point(321, 37);
             this.txtRackP2.Name = "txtRackP2";
-            this.txtRackP2.Size = new System.Drawing.Size(91, 20);
+            this.txtRackP2.Size = new System.Drawing.Size(134, 26);
             this.txtRackP2.TabIndex = 20;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(193, 4);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(290, 6);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(20, 13);
+            this.label1.Size = new System.Drawing.Size(28, 20);
             this.label1.TabIndex = 21;
             this.label1.Text = "P1";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(193, 26);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(290, 40);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(20, 13);
+            this.label2.Size = new System.Drawing.Size(28, 20);
             this.label2.TabIndex = 22;
             this.label2.Text = "P2";
             // 
             // lblCurrentRack
             // 
             this.lblCurrentRack.AutoSize = true;
-            this.lblCurrentRack.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCurrentRack.Location = new System.Drawing.Point(50, 5);
-            this.lblCurrentRack.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblCurrentRack.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCurrentRack.Location = new System.Drawing.Point(741, 825);
             this.lblCurrentRack.Name = "lblCurrentRack";
-            this.lblCurrentRack.Size = new System.Drawing.Size(0, 20);
+            this.lblCurrentRack.Size = new System.Drawing.Size(0, 37);
             this.lblCurrentRack.TabIndex = 23;
             // 
             // ckKeepExistingBoard
@@ -243,10 +234,9 @@
             this.ckKeepExistingBoard.AutoSize = true;
             this.ckKeepExistingBoard.Checked = true;
             this.ckKeepExistingBoard.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckKeepExistingBoard.Location = new System.Drawing.Point(173, 469);
-            this.ckKeepExistingBoard.Margin = new System.Windows.Forms.Padding(2);
+            this.ckKeepExistingBoard.Location = new System.Drawing.Point(260, 722);
             this.ckKeepExistingBoard.Name = "ckKeepExistingBoard";
-            this.ckKeepExistingBoard.Size = new System.Drawing.Size(76, 17);
+            this.ckKeepExistingBoard.Size = new System.Drawing.Size(108, 24);
             this.ckKeepExistingBoard.TabIndex = 24;
             this.ckKeepExistingBoard.Text = "Keep Tiles";
             this.ckKeepExistingBoard.UseVisualStyleBackColor = true;
@@ -257,18 +247,17 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lsbInfos.FormattingEnabled = true;
-            this.lsbInfos.Location = new System.Drawing.Point(883, 51);
-            this.lsbInfos.Margin = new System.Windows.Forms.Padding(2);
+            this.lsbInfos.ItemHeight = 20;
+            this.lsbInfos.Location = new System.Drawing.Point(1324, 78);
             this.lsbInfos.Name = "lsbInfos";
-            this.lsbInfos.Size = new System.Drawing.Size(221, 186);
+            this.lsbInfos.Size = new System.Drawing.Size(330, 284);
             this.lsbInfos.TabIndex = 25;
             // 
             // btnLoadGame
             // 
-            this.btnLoadGame.Location = new System.Drawing.Point(193, 45);
-            this.btnLoadGame.Margin = new System.Windows.Forms.Padding(2);
+            this.btnLoadGame.Location = new System.Drawing.Point(290, 69);
             this.btnLoadGame.Name = "btnLoadGame";
-            this.btnLoadGame.Size = new System.Drawing.Size(75, 30);
+            this.btnLoadGame.Size = new System.Drawing.Size(112, 46);
             this.btnLoadGame.TabIndex = 26;
             this.btnLoadGame.Text = "Load Game";
             this.btnLoadGame.UseVisualStyleBackColor = true;
@@ -276,10 +265,9 @@
             // 
             // btnSaveGame
             // 
-            this.btnSaveGame.Location = new System.Drawing.Point(280, 45);
-            this.btnSaveGame.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSaveGame.Location = new System.Drawing.Point(420, 69);
             this.btnSaveGame.Name = "btnSaveGame";
-            this.btnSaveGame.Size = new System.Drawing.Size(79, 30);
+            this.btnSaveGame.Size = new System.Drawing.Size(118, 46);
             this.btnSaveGame.TabIndex = 27;
             this.btnSaveGame.Text = "Save Game";
             this.btnSaveGame.UseVisualStyleBackColor = true;
@@ -287,9 +275,8 @@
             // 
             // saveFileDialog1
             // 
-            this.saveFileDialog1.CreatePrompt = true;
-            this.saveFileDialog1.FileName = "Game";
             this.saveFileDialog1.Filter = "Scrabble Game|*.gam";
+            this.saveFileDialog1.OverwritePrompt = false;
             this.saveFileDialog1.RestoreDirectory = true;
             // 
             // openFileDialog1
@@ -301,10 +288,9 @@
             // 
             // btnNewGame
             // 
-            this.btnNewGame.Location = new System.Drawing.Point(11, 491);
-            this.btnNewGame.Margin = new System.Windows.Forms.Padding(2);
+            this.btnNewGame.Location = new System.Drawing.Point(16, 755);
             this.btnNewGame.Name = "btnNewGame";
-            this.btnNewGame.Size = new System.Drawing.Size(77, 21);
+            this.btnNewGame.Size = new System.Drawing.Size(116, 32);
             this.btnNewGame.TabIndex = 28;
             this.btnNewGame.Text = "New game";
             this.btnNewGame.UseVisualStyleBackColor = true;
@@ -314,10 +300,9 @@
             // 
             this.lblP1BestPlay.AutoSize = true;
             this.lblP1BestPlay.BackColor = System.Drawing.Color.LightYellow;
-            this.lblP1BestPlay.Location = new System.Drawing.Point(1003, 8);
-            this.lblP1BestPlay.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblP1BestPlay.Location = new System.Drawing.Point(1504, 12);
             this.lblP1BestPlay.Name = "lblP1BestPlay";
-            this.lblP1BestPlay.Size = new System.Drawing.Size(49, 13);
+            this.lblP1BestPlay.Size = new System.Drawing.Size(72, 20);
             this.lblP1BestPlay.TabIndex = 29;
             this.lblP1BestPlay.Text = "best play";
             // 
@@ -325,10 +310,9 @@
             // 
             this.lblP2BestPlay.AutoSize = true;
             this.lblP2BestPlay.BackColor = System.Drawing.Color.LightGreen;
-            this.lblP2BestPlay.Location = new System.Drawing.Point(1001, 28);
-            this.lblP2BestPlay.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblP2BestPlay.Location = new System.Drawing.Point(1502, 43);
             this.lblP2BestPlay.Name = "lblP2BestPlay";
-            this.lblP2BestPlay.Size = new System.Drawing.Size(49, 13);
+            this.lblP2BestPlay.Size = new System.Drawing.Size(72, 20);
             this.lblP2BestPlay.TabIndex = 30;
             this.lblP2BestPlay.Text = "best play";
             // 
@@ -338,10 +322,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lsbWords.FormattingEnabled = true;
-            this.lsbWords.Location = new System.Drawing.Point(883, 239);
-            this.lsbWords.Margin = new System.Windows.Forms.Padding(2);
+            this.lsbWords.ItemHeight = 20;
+            this.lsbWords.Location = new System.Drawing.Point(1324, 368);
             this.lsbWords.Name = "lsbWords";
-            this.lsbWords.Size = new System.Drawing.Size(221, 329);
+            this.lsbWords.Size = new System.Drawing.Size(330, 504);
             this.lsbWords.TabIndex = 31;
             this.lsbWords.SelectedIndexChanged += new System.EventHandler(this.lsbWords_SelectedIndexChanged);
             this.lsbWords.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lsbWords_MouseDoubleClick);
@@ -350,9 +334,11 @@
             // 
             this.groupBox1.Controls.Add(this.rbSize15);
             this.groupBox1.Controls.Add(this.rbSize11);
-            this.groupBox1.Location = new System.Drawing.Point(12, 517);
+            this.groupBox1.Location = new System.Drawing.Point(18, 795);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(86, 68);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.groupBox1.Size = new System.Drawing.Size(128, 105);
             this.groupBox1.TabIndex = 32;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Board Size";
@@ -360,10 +346,13 @@
             // rbSize15
             // 
             this.rbSize15.AutoSize = true;
-            this.rbSize15.Location = new System.Drawing.Point(15, 40);
+            this.rbSize15.Checked = true;
+            this.rbSize15.Location = new System.Drawing.Point(22, 62);
+            this.rbSize15.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbSize15.Name = "rbSize15";
-            this.rbSize15.Size = new System.Drawing.Size(37, 17);
+            this.rbSize15.Size = new System.Drawing.Size(52, 24);
             this.rbSize15.TabIndex = 1;
+            this.rbSize15.TabStop = true;
             this.rbSize15.Text = "15";
             this.rbSize15.UseVisualStyleBackColor = true;
             this.rbSize15.CheckedChanged += new System.EventHandler(this.rbSize15_CheckedChanged);
@@ -371,22 +360,20 @@
             // rbSize11
             // 
             this.rbSize11.AutoSize = true;
-            this.rbSize11.Checked = true;
-            this.rbSize11.Location = new System.Drawing.Point(15, 19);
+            this.rbSize11.Location = new System.Drawing.Point(22, 29);
+            this.rbSize11.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbSize11.Name = "rbSize11";
-            this.rbSize11.Size = new System.Drawing.Size(37, 17);
+            this.rbSize11.Size = new System.Drawing.Size(52, 24);
             this.rbSize11.TabIndex = 0;
-            this.rbSize11.TabStop = true;
             this.rbSize11.Text = "11";
             this.rbSize11.UseVisualStyleBackColor = true;
             // 
             // ckShowGrid
             // 
             this.ckShowGrid.AutoSize = true;
-            this.ckShowGrid.Location = new System.Drawing.Point(193, 108);
-            this.ckShowGrid.Margin = new System.Windows.Forms.Padding(2);
+            this.ckShowGrid.Location = new System.Drawing.Point(290, 166);
             this.ckShowGrid.Name = "ckShowGrid";
-            this.ckShowGrid.Size = new System.Drawing.Size(94, 17);
+            this.ckShowGrid.Size = new System.Drawing.Size(134, 24);
             this.ckShowGrid.TabIndex = 33;
             this.ckShowGrid.Text = "Show dev grid";
             this.ckShowGrid.UseVisualStyleBackColor = true;
@@ -396,9 +383,11 @@
             // 
             this.gbWordDirection.Controls.Add(this.rbWordDirDown);
             this.gbWordDirection.Controls.Add(this.rbWordDirRight);
-            this.gbWordDirection.Location = new System.Drawing.Point(265, 403);
+            this.gbWordDirection.Location = new System.Drawing.Point(398, 620);
+            this.gbWordDirection.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gbWordDirection.Name = "gbWordDirection";
-            this.gbWordDirection.Size = new System.Drawing.Size(94, 57);
+            this.gbWordDirection.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbWordDirection.Size = new System.Drawing.Size(141, 88);
             this.gbWordDirection.TabIndex = 33;
             this.gbWordDirection.TabStop = false;
             this.gbWordDirection.Text = "word direction";
@@ -406,9 +395,10 @@
             // rbWordDirDown
             // 
             this.rbWordDirDown.AutoSize = true;
-            this.rbWordDirDown.Location = new System.Drawing.Point(8, 34);
+            this.rbWordDirDown.Location = new System.Drawing.Point(12, 52);
+            this.rbWordDirDown.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbWordDirDown.Name = "rbWordDirDown";
-            this.rbWordDirDown.Size = new System.Drawing.Size(53, 17);
+            this.rbWordDirDown.Size = new System.Drawing.Size(75, 24);
             this.rbWordDirDown.TabIndex = 1;
             this.rbWordDirDown.Text = "Down";
             this.rbWordDirDown.UseVisualStyleBackColor = true;
@@ -418,9 +408,10 @@
             // 
             this.rbWordDirRight.AutoSize = true;
             this.rbWordDirRight.Checked = true;
-            this.rbWordDirRight.Location = new System.Drawing.Point(8, 19);
+            this.rbWordDirRight.Location = new System.Drawing.Point(12, 29);
+            this.rbWordDirRight.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbWordDirRight.Name = "rbWordDirRight";
-            this.rbWordDirRight.Size = new System.Drawing.Size(57, 17);
+            this.rbWordDirRight.Size = new System.Drawing.Size(83, 24);
             this.rbWordDirRight.TabIndex = 0;
             this.rbWordDirRight.TabStop = true;
             this.rbWordDirRight.Text = "Across";
@@ -430,9 +421,11 @@
             // 
             this.gbGameStyle.Controls.Add(this.rbGameStyleScrabble);
             this.gbGameStyle.Controls.Add(this.rbWordsWithFriends);
-            this.gbGameStyle.Location = new System.Drawing.Point(103, 517);
+            this.gbGameStyle.Location = new System.Drawing.Point(154, 795);
+            this.gbGameStyle.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gbGameStyle.Name = "gbGameStyle";
-            this.gbGameStyle.Size = new System.Drawing.Size(131, 68);
+            this.gbGameStyle.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbGameStyle.Size = new System.Drawing.Size(196, 105);
             this.gbGameStyle.TabIndex = 33;
             this.gbGameStyle.TabStop = false;
             this.gbGameStyle.Text = "Game Style";
@@ -440,10 +433,13 @@
             // rbGameStyleScrabble
             // 
             this.rbGameStyleScrabble.AutoSize = true;
-            this.rbGameStyleScrabble.Location = new System.Drawing.Point(15, 40);
+            this.rbGameStyleScrabble.Checked = true;
+            this.rbGameStyleScrabble.Location = new System.Drawing.Point(22, 62);
+            this.rbGameStyleScrabble.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbGameStyleScrabble.Name = "rbGameStyleScrabble";
-            this.rbGameStyleScrabble.Size = new System.Drawing.Size(67, 17);
+            this.rbGameStyleScrabble.Size = new System.Drawing.Size(97, 24);
             this.rbGameStyleScrabble.TabIndex = 1;
+            this.rbGameStyleScrabble.TabStop = true;
             this.rbGameStyleScrabble.Text = "Scrabble";
             this.rbGameStyleScrabble.UseVisualStyleBackColor = true;
             this.rbGameStyleScrabble.CheckedChanged += new System.EventHandler(this.rbGameStyleScrabble_CheckedChanged);
@@ -451,31 +447,88 @@
             // rbWordsWithFriends
             // 
             this.rbWordsWithFriends.AutoSize = true;
-            this.rbWordsWithFriends.Checked = true;
-            this.rbWordsWithFriends.Location = new System.Drawing.Point(15, 19);
+            this.rbWordsWithFriends.Location = new System.Drawing.Point(22, 29);
+            this.rbWordsWithFriends.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbWordsWithFriends.Name = "rbWordsWithFriends";
-            this.rbWordsWithFriends.Size = new System.Drawing.Size(112, 17);
+            this.rbWordsWithFriends.Size = new System.Drawing.Size(164, 24);
             this.rbWordsWithFriends.TabIndex = 0;
-            this.rbWordsWithFriends.TabStop = true;
             this.rbWordsWithFriends.Text = "Words with friends";
             this.rbWordsWithFriends.UseVisualStyleBackColor = true;
+            this.rbWordsWithFriends.CheckedChanged += new System.EventHandler(this.rbWordsWithFriends_CheckedChanged);
+            // 
+            // gbSortBy
+            // 
+            this.gbSortBy.Controls.Add(this.rbMaxLength);
+            this.gbSortBy.Controls.Add(this.rbBestScore);
+            this.gbSortBy.Location = new System.Drawing.Point(12, 5);
+            this.gbSortBy.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbSortBy.Name = "gbSortBy";
+            this.gbSortBy.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbSortBy.Size = new System.Drawing.Size(266, 58);
+            this.gbSortBy.TabIndex = 33;
+            this.gbSortBy.TabStop = false;
+            this.gbSortBy.Text = "Sort by";
+            // 
+            // rbMaxLength
+            // 
+            this.rbMaxLength.AutoSize = true;
+            this.rbMaxLength.Location = new System.Drawing.Point(136, 22);
+            this.rbMaxLength.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.rbMaxLength.Name = "rbMaxLength";
+            this.rbMaxLength.Size = new System.Drawing.Size(111, 24);
+            this.rbMaxLength.TabIndex = 1;
+            this.rbMaxLength.Text = "Max length";
+            this.rbMaxLength.UseVisualStyleBackColor = true;
+            this.rbMaxLength.CheckedChanged += new System.EventHandler(this.rbMaxLength_CheckedChanged);
+            // 
+            // rbBestScore
+            // 
+            this.rbBestScore.AutoSize = true;
+            this.rbBestScore.Checked = true;
+            this.rbBestScore.Location = new System.Drawing.Point(15, 22);
+            this.rbBestScore.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.rbBestScore.Name = "rbBestScore";
+            this.rbBestScore.Size = new System.Drawing.Size(110, 24);
+            this.rbBestScore.TabIndex = 0;
+            this.rbBestScore.TabStop = true;
+            this.rbBestScore.Text = "Best score";
+            this.rbBestScore.UseVisualStyleBackColor = true;
+            // 
+            // txtMotExiste
+            // 
+            this.txtMotExiste.Location = new System.Drawing.Point(358, 821);
+            this.txtMotExiste.Name = "txtMotExiste";
+            this.txtMotExiste.Size = new System.Drawing.Size(159, 26);
+            this.txtMotExiste.TabIndex = 34;
+            this.txtMotExiste.TextChanged += new System.EventHandler(this.txtMotExiste_TextChanged);
+            this.txtMotExiste.DoubleClick += new System.EventHandler(this.txtMotExiste_DoubleClick);
+            // 
+            // lblMotExiste
+            // 
+            this.lblMotExiste.AutoSize = true;
+            this.lblMotExiste.Location = new System.Drawing.Point(399, 798);
+            this.lblMotExiste.Name = "lblMotExiste";
+            this.lblMotExiste.Size = new System.Drawing.Size(94, 20);
+            this.lblMotExiste.TabIndex = 35;
+            this.lblMotExiste.Text = "Mot existe ?";
             // 
             // gbBoard
             // 
-            this.gbBoard.Location = new System.Drawing.Point(365, 3);
-            this.gbBoard.Margin = new System.Windows.Forms.Padding(2);
+            this.gbBoard.Location = new System.Drawing.Point(548, 5);
             this.gbBoard.Name = "gbBoard";
-            this.gbBoard.Padding = new System.Windows.Forms.Padding(2);
-            this.gbBoard.Size = new System.Drawing.Size(515, 507);
+            this.gbBoard.Size = new System.Drawing.Size(772, 780);
             this.gbBoard.TabIndex = 11;
             this.gbBoard.TabStop = false;
             this.gbBoard.Text = "Board";
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1112, 586);
+            this.ClientSize = new System.Drawing.Size(1668, 902);
+            this.Controls.Add(this.lblMotExiste);
+            this.Controls.Add(this.txtMotExiste);
+            this.Controls.Add(this.gbSortBy);
             this.Controls.Add(this.gbGameStyle);
             this.Controls.Add(this.gbWordDirection);
             this.Controls.Add(this.ckShowGrid);
@@ -502,18 +555,20 @@
             this.Controls.Add(this.gbBoard);
             this.Controls.Add(this.txtGrid2);
             this.Controls.Add(this.txtBag);
-            this.Controls.Add(this.lsb);
+            this.Controls.Add(this.lsbHintWords);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtRackP1);
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "Scrabble";
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.gbWordDirection.ResumeLayout(false);
             this.gbWordDirection.PerformLayout();
             this.gbGameStyle.ResumeLayout(false);
             this.gbGameStyle.PerformLayout();
+            this.gbSortBy.ResumeLayout(false);
+            this.gbSortBy.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -523,7 +578,7 @@
 
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.TextBox txtRackP1;
-        private System.Windows.Forms.ListBox lsb;
+        private System.Windows.Forms.ListBox lsbHintWords;
         private System.Windows.Forms.TextBox txtGrid2;
         private CustomGroupBox gbBoard;
         private System.Windows.Forms.Button btnTranspose;
@@ -558,5 +613,10 @@
         private System.Windows.Forms.RadioButton rbGameStyleScrabble;
         private System.Windows.Forms.RadioButton rbWordsWithFriends;
         public System.Windows.Forms.TextBox txtBag;
+        private System.Windows.Forms.GroupBox gbSortBy;
+        private System.Windows.Forms.RadioButton rbMaxLength;
+        private System.Windows.Forms.RadioButton rbBestScore;
+        private System.Windows.Forms.TextBox txtMotExiste;
+        private System.Windows.Forms.Label lblMotExiste;
     }
 }
