@@ -52,7 +52,7 @@ namespace DawgResolver.Model
             if (c == char.MinValue) throw new ArgumentException(nameof(c));
             var letter = Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.First(cc => cc.Char == c) : Game.AlphabetWWFAvecJoker.First(cc => cc.Char == c);
 
-            var le = Letters.Find(l => l == letter);
+            var le = Letters.Find(l => l.Char == letter.Char);
             if (letter.Count > 0) letter.Count = --letter.Count;
             return le;
 

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Scrabbler.ScrabblerPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Scrabbler;assembly=Scrabbler"
+    Title="Scrabbler">
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="iOS" Value="0, 20, 0, 0" />
+            <On Platform="Android, UWP" Value="0, 0, 0, 0" />
+        </OnPlatform>
+    </ContentPage.Padding>
+    <ContentView SizeChanged="OnMainContentViewSizeChanged">
+        <Grid
+            x:Name="mainGrid"
+            ColumnSpacing="0"
+            RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="7*" />
+                <RowDefinition Height="4*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackLayout
+                x:Name="textStack"
+                Grid.Row="0"
+                Grid.Column="1"
+                Spacing="0">
+                <StackLayout HorizontalOptions="Center" Spacing="0">
+                    <Label
+                        Font="Bold, Large"
+                        Text="Scrabbler"
+                        TextColor="Accent" />
+                    <BoxView HeightRequest="3" Color="Accent" />
+                </StackLayout>
+                <Label
+                    BindingContext="{x:Reference board}"
+                    Text="{Binding BagContent, StringFormat='{0}'}"
+                    VerticalOptions="CenterAndExpand" />
+                <Label
+                    x:Name="lblInfos"
+                    HorizontalTextAlignment="Center"
+                    Text=""
+                    VerticalOptions="CenterAndExpand" />
+                <Label
+                    x:Name="txtRackP2"
+                    HorizontalTextAlignment="Center"
+                    Text="RackP2"
+                    VerticalOptions="CenterAndExpand" />
+                <Label
+                    x:Name="txtRackP1"
+                    HorizontalTextAlignment="Center"
+                    Text="RackP1"
+                    VerticalOptions="CenterAndExpand" />
+                <Button
+                    x:Name="btnAutoplay1"
+                    Clicked="btnAutoplay1_Clicked"
+                    Text="autoPlay once" />
+                <Button
+                    x:Name="btnAutoplay"
+                    Clicked="btnAutoplay_Clicked"
+                    Text="autoPlay" />
+                <Label
+                    x:Name="lblCurrentRack"
+                    HorizontalTextAlignment="Center"
+                    Text=""
+                    VerticalOptions="CenterAndExpand" />
+                <StackLayout
+                    HorizontalOptions="Center"
+                    Orientation="Vertical"
+                    Spacing="0"
+                    VerticalOptions="CenterAndExpand">
+                    <Label BindingContext="{x:Reference board}" Text="{Binding Player1Points, StringFormat='Player 1 : {0} '}" />
+                    <Label BindingContext="{x:Reference board}" Text="{Binding Player2Points, StringFormat='Player 2 : {0} '}" />
+                </StackLayout>
+                <!--  Make this a binding???  -->
+                <Label
+                    x:Name="timeLabel"
+                    HorizontalTextAlignment="Center"
+                    Text="0:00"
+                    VerticalOptions="CenterAndExpand" />
+            </StackLayout>
+            <ContentView
+                Grid.Row="1"
+                Grid.Column="1"
+                SizeChanged="OnBoardContentViewSizeChanged">
+                <!--  Single-cell Grid for Board and overlays.  -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <local:Board x:Name="board" />
+                    <StackLayout
+                        x:Name="congratulationsText"
+                        HorizontalOptions="Center"
+                        Orientation="Horizontal"
+                        Spacing="0"
+                        VerticalOptions="Center">
+                        <Label Text="C" TextColor="Red" />
+                        <Label Text="O" TextColor="Red" />
+                        <Label Text="N" TextColor="Red" />
+                        <Label Text="G" TextColor="Red" />
+                        <Label Text="R" TextColor="Red" />
+                        <Label Text="A" TextColor="Red" />
+                        <Label Text="T" TextColor="Red" />
+                        <Label Text="U" TextColor="Red" />
+                        <Label Text="L" TextColor="Red" />
+                        <Label Text="A" TextColor="Red" />
+                        <Label Text="T" TextColor="Red" />
+                        <Label Text="I" TextColor="Red" />
+                        <Label Text="O" TextColor="Red" />
+                        <Label Text="N" TextColor="Red" />
+                        <Label Text="S" TextColor="Red" />
+                        <Label Text="!" TextColor="Red" />
+                    </StackLayout>
+                    <StackLayout
+                        x:Name="consolationText"
+                        HorizontalOptions="Center"
+                        Orientation="Horizontal"
+                        Spacing="0"
+                        VerticalOptions="Center">
+                        <Label Text="T" TextColor="Red" />
+                        <Label Text="O" TextColor="Red" />
+                        <Label Text="O" TextColor="Red" />
+                        <Label Text=" " TextColor="Red" />
+                        <Label Text="B" TextColor="Red" />
+                        <Label Text="A" TextColor="Red" />
+                        <Label Text="D" TextColor="Red" />
+                        <Label Text="!" TextColor="Red" />
+                    </StackLayout>
+                    <Button
+                        x:Name="playAgainButton"
+                        BackgroundColor="White"
+                        BorderColor="Black"
+                        BorderWidth="2"
+                        Clicked="OnplayAgainButtonClicked"
+                        HorizontalOptions="Center"
+                        Text=" Play Another Game? "
+                        TextColor="Black"
+                        VerticalOptions="Center" />
+                </Grid>
+            </ContentView>
+        </Grid>
+    </ContentView>
+</ContentPage>

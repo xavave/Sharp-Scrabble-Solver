@@ -429,7 +429,7 @@ namespace DawgResolver
         {
             Dictionnaire = new Dictionnaire();
 
-            Noeud = Dictionnaire.ChargerFichierDAWG();
+            Noeud = Dictionnaire.DAWG;
 
             var assembly = Assembly.GetExecutingAssembly();
             string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("dico_dawg.txt"));
@@ -437,7 +437,7 @@ namespace DawgResolver
             using (StreamReader reader = new StreamReader(stream, true))
             {
                 string content = reader.ReadToEnd();
-                List<string> dic = content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
+                List<string> dic = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
                 WordCount = int.Parse(dic[0].Replace("NBMOTS : ", ""));
                 NodeCount = dic.Count - 2;// int.Parse(dic[1].Replace("NBNOEUDS : ", ""));

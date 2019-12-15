@@ -278,6 +278,11 @@ namespace Dawg.Resolver.Winform.Test
             throw new NotImplementedException();
         }
 
+        public void Initialize()
+        {
+            throw new NotImplementedException();
+        }
+
         public Color Background { get; set; }
         public bool IsValidated
         {

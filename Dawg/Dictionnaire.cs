@@ -17,7 +17,7 @@ namespace DawgResolver
     public class Dictionnaire
     {
         public const int AscShift = 64;
-        public const int AscShiftBase0 = AscShift+1;
+        public const int AscShiftBase0 = AscShift + 1;
         /// <summary>
         /// Chronomètre utilisé uniquement pour comparer les performances des 2 méthodes de construtions
         /// </summary>
@@ -30,6 +30,11 @@ namespace DawgResolver
         /// Elle est nécessaire à l'écriture du fichier après construction ou modification
         /// </summary>
         public List<Noeud> dawg;
+
+        public Dictionnaire()
+        {
+          ChargerFichierDAWG();
+        }
 
         #region Propriétés
 
@@ -438,7 +443,7 @@ namespace DawgResolver
         /// </summary>
         /// <param name="FileName">Adresse du fichier compressé</param>
         /// <returns>DAWG</returns>
-        public Noeud ChargerFichierDAWG()
+        public void ChargerFichierDAWG()
         {
             TravailEnCours = DawgResolver.TravailEnCours.ChargementFichierDAWG;
 
@@ -450,7 +455,7 @@ namespace DawgResolver
             using (StreamReader reader = new StreamReader(stream, true))
             {
                 string content = reader.ReadToEnd();
-                string[] lignes = content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                string[] lignes = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
                 //string[] lignes = File.ReadAllLines(FileName);
                 //le nombre de mots est présent dans le fichier par soucis de compatibilité avec le tutoriel de CArlVB, mais il n'est pas utile 
                 NombreNoeuds = lignes.Count() - 2; // Convert.ToInt32(lignes[1].Split(':')[1]);
@@ -477,7 +482,7 @@ namespace DawgResolver
                     if (ligne != "#")//on exclu le cas particulier du noeud terminal sans enfant
                     {
                         //on désérialize les arcs sortants
-                        string[] arcs = ligne.Replace("#", "").Split('-');
+                        string[] arcs = ligne.Replace("#", "").Split("-".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
                         n.Sortants = (from a in arcs
                                       select new Arc(n, a, noeuds)
@@ -506,7 +511,7 @@ namespace DawgResolver
 
                 TravailEnCours = DawgResolver.TravailEnCours.Aucun;
 
-                return dawg[0];
+                //return dawg[0];
             }
         }
         /// <summary>
@@ -621,8 +626,8 @@ namespace DawgResolver
         /// <returns></returns>
         public bool MotAdmis(string mot)
         {
-            if (mot=="")
-           {
+            if (mot == "")
+            {
 
             }
             Noeud enCours = DAWG;

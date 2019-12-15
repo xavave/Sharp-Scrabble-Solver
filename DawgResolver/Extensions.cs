@@ -215,5 +215,13 @@ namespace DawgResolver
 
             return ret;
         }
+
+        public static List<Letter> RemoveFromRack(this List<Letter> rack, Letter l)
+        {
+            var ret = rack;
+            var idxLetter = rack.Select(ra=>ra.Char).ToList().IndexOf(l.Char);
+            ret.RemoveAt(idxLetter);
+            return ret;
+        }
     }
 }

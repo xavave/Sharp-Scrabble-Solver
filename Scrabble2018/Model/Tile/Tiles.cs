@@ -60,6 +60,11 @@ namespace Scrabble2018.Model
             throw new NotImplementedException();
         }
 
+        public void Initialize()
+        {
+            throw new NotImplementedException();
+        }
+
         public int Ligne
         {
             get => ligne; set { ligne = value; OnPropertyChanged(); }

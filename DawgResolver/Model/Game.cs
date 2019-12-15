@@ -107,7 +107,8 @@ namespace DawgResolver.Model
         private Dictionnaire LoadDico()
         {
             var dic = new Dictionnaire();
-            dic.ChargerFichierDAWG();
+            //dic.DAWG = dic.ChargerFichierDAWG();
+            //dic.ChargerFichierDAWG();
 
             return dic;
         }
@@ -138,7 +139,7 @@ namespace DawgResolver.Model
         //            }
         //            else
         //                Grid[tile.Ligne, tile.Col].Letter = new Letter();
-                    
+
         //        }
         //    }
         //    return p.Rack;

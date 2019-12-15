@@ -445,7 +445,7 @@ namespace Scrabble2018
                         bt.Text = "";
                         tile.IsValidated = false;
                     }
-                    drGame.ClearTilesInPlay(drGame.Player1);
+                    //drGame.ClearTilesInPlay(drGame.Player1);
                     word.SetWord(drGame.Player1,false);
                     txtBagContent.Text = drGame.Bag.GetBagContent();
                     foreach (var tile in drGame.Grid.OfType<VTile>().Where(t => !t.IsEmpty))

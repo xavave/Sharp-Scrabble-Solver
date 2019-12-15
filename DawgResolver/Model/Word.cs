@@ -69,7 +69,7 @@ namespace DawgResolver.Model
         {
             var ret = new List<VTile>();
             VTile t = StartTile;
-            if (StartTile.Col == Game.BoardSize-1)
+            if (StartTile.Col == Game.BoardSize - 1)
                 t = t.LeftTile.RightTile;
             else t = t.RightTile.LeftTile;
             ret.Add(t);
@@ -101,7 +101,7 @@ namespace DawgResolver.Model
         }
         public bool Equals(Word w)
         {
-            return Text.ToUpper() == w.Text.ToUpper() && StartTile.Ligne == w.StartTile.Ligne && StartTile.Col == w.StartTile.Col && Direction == w.Direction;
+            return Serialize == w.Serialize;
         }
     }
 }

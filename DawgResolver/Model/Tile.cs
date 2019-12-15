@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Runtime.CompilerServices;
-using System.Windows.Media;
 
 namespace DawgResolver.Model
 {
 
     public interface VTile
     {
+        void Initialize();
         bool IsValidated { get; set; }
         TileType TileType { get; }
         int Ligne { get; set; }
@@ -22,7 +19,6 @@ namespace DawgResolver.Model
         Dictionary<int, int> Controlers { get; set; }
         bool FromJoker { get; set; }
         bool IsEmpty { get; }
-
         bool? IsPlayedByPlayer1 { get; set; }
         VTile LeftTile { get; }
         VTile RightTile { get; }
@@ -33,7 +29,7 @@ namespace DawgResolver.Model
     }
     public class Tile : VTile
     {
-        public System.Drawing.Color Background { get; set; }
+        //public Color Background { get; set; }
         public bool IsValidated { get; set; } = false;
 
         public Game Game { get; }
@@ -203,6 +199,11 @@ namespace DawgResolver.Model
             //    cont += $"{Game.AlphabetAvecJoker[co.Key + Dictionnaire.AscShiftBase0]}{co.Value};";
             //return $"{ c} [{Game.AlphabetAvecJoker[Ligne]}{ Col + 1}] {(isAnchor ? "*" : "")} {cont}";
             return $"{this?.Letter?.Char}";
+        }
+
+        public void Initialize()
+        {
+            throw new System.NotImplementedException();
         }
     }
 
