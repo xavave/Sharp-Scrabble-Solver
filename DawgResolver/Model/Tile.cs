@@ -177,7 +177,7 @@ namespace DawgResolver.Model
                 }
                 if (tile.Ligne == 0)
                 {
-                    text+= tile.Letter.Char;
+                    text+= tile.Letter?.Char;
                     word.StartTile = tile;
 
                 }
