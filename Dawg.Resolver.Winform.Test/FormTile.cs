@@ -119,6 +119,8 @@ namespace Dawg.Resolver.Winform.Test
 
         Keys PreviousKey { get; set; }
         Keys CurrentKey { get; set; }
+
+       
         private void FormTile_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.S)
@@ -148,6 +150,7 @@ namespace Dawg.Resolver.Winform.Test
                     Game.Bag.RemoveLetterFromBag(this.Letter.Char);
                     Form.txtBag.Text = Game.Bag.GetBagContent();
                     Game.Grid[Ligne, Col].IsValidated = true;
+                    Form.LastPlayedTile = this;
 
                 }
 

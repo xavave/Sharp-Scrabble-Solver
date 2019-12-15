@@ -40,10 +40,10 @@ namespace DawgResolver
         /// </summary>
 
 
-        private VTile[,] DetectTiles(Player p, VTile[,] grid)
+        private VTile[,] DetectTiles(VTile[,] grid)
         {
             //On efface les informations précédentes en vue d'une nouvelle analyse
-            foreach (var t in grid.OfType<Tile>())
+            foreach (var t in grid.OfType<VTile>())
             {
                 t.AnchorLeftMaxLimit = t.AnchorLeftMinLimit = 0;
                 t.Controlers = new Dictionary<int, int>(27);
@@ -60,7 +60,7 @@ namespace DawgResolver
                 grid[7, 7].AnchorLeftMinLimit = 0;
                 grid[7, 7].AnchorLeftMaxLimit = 6;
 
-                foreach (var t in grid.OfType<Tile>())
+                foreach (var t in grid.OfType<VTile>())
                 {
                     t.Controlers[26] = 26;
                 }
@@ -301,7 +301,7 @@ namespace DawgResolver
             bool jokerInDraught = leftLetters.Any(l => l.Char == Game.Joker);
 
             VTile t = null;
-            if (ligne >= 0 && colonne >= 0 && colonne < Game.BoardSize && ligne < Game.BoardSize && leftLetters.Count()<=7)  t = grid[ligne, colonne];
+            if (ligne >= 0 && colonne >= 0 && colonne < Game.BoardSize && ligne < Game.BoardSize && leftLetters.Count() <= 7 && leftLetters.Count() > 0) t = grid[ligne, colonne];
 
             if (t == null || t.IsEmpty)
             {
@@ -392,7 +392,7 @@ namespace DawgResolver
             NbAcceptedMoves = 0;
             LegalWords.Clear();
             var backupGrid = Game.Grid.Copy();
-            Game.Grid = DetectTiles(p, Game.Grid);
+            Game.Grid = DetectTiles(Game.Grid);
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
             Game.Grid = FindMovesPerAnchor(p, Game.Grid);
@@ -400,12 +400,12 @@ namespace DawgResolver
             // par transposition de la grille, on refait tout le processus
             Game.Grid = backupGrid;
             Game.Grid = Game.Grid.Transpose(Game);
-            Game.Grid = DetectTiles(p, Game.Grid);
+            Game.Grid = DetectTiles(Game.Grid);
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
             Game.Grid = FindMovesPerAnchor(p, Game.Grid);
 
             var ret = LegalWords;
-
+            //on remet la grille à son état initial
             Game.Grid = backupGrid;
             Game.IsTransposed = false;
 
@@ -420,9 +420,8 @@ namespace DawgResolver
             //    foreach (var l in p.Rack)
             //        Game.Bag.PutBackLetter(l);
             //}
-            ////on remet la grille à son état initial
+
            
-            return ret;
         }
 
 

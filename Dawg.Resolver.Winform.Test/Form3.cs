@@ -38,7 +38,7 @@ namespace Dawg.Resolver.Winform.Test
         {
             var word = lsb.SelectedItem as Word;
             if (word == null) return;
-            Game.ClearTilesInPlay(Game.Player1);
+            //ClearTilesInPlay(Game.Player1);
             word.SetWord(Game.Player1,false);
             textBox1.Text = new string(Game.Player1.Rack.Select(r => r.Char).ToArray());
             textBox2.Text = Game.GenerateTextGrid(Game.Grid, false);

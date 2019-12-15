@@ -116,33 +116,33 @@ namespace DawgResolver.Model
             get { return GameStyle == 'S' ? AlphabetScrabbleAvecJoker.Take(26).ToList() : AlphabetWWFAvecJoker.Take(26).ToList(); }
         }
 
-        public List<Letter> ClearTilesInPlay(Player p)
-        {
+        //public List<Letter> ClearTilesInPlay(Player p)
+        //{
 
-            for (int i = 0; i < Grid.LongLength; i++)
-            {
-                var tile = Grid.OfType<VTile>().ElementAt(i);
-                if (!tile.IsValidated)
-                {
-                    if (!tile.IsEmpty)
-                    {
-                        if (tile.FromJoker)
-                        {
-                            p.Rack.Add(GameStyle == 'S' ? AlphabetScrabbleAvecJoker[26]: Game.AlphabetWWFAvecJoker[26]);
-                        }
-                        else
-                        {
-                            p.Rack.Add(tile.Letter);
-                        }
-                        tile.IsValidated = true;
-                    }
-                    else
-                        Grid[tile.Ligne, tile.Col].Letter = new Letter();
-
-                }
-            }
-            return p.Rack;
-        }
+        //    for (int i = 0; i < Grid.LongLength; i++)
+        //    {
+        //        var tile = Grid.OfType<VTile>().ElementAt(i);
+        //        if (!tile.IsValidated)
+        //        {
+        //            if (!tile.IsEmpty)
+        //            {
+        //                if (tile.FromJoker)
+        //                {
+        //                    p.Rack.Add(GameStyle == 'S' ? AlphabetScrabbleAvecJoker[26]: Game.AlphabetWWFAvecJoker[26]);
+        //                }
+        //                else
+        //                {
+        //                    p.Rack.Add(tile.Letter);
+        //                }
+        //                tile.IsValidated = true;
+        //            }
+        //            else
+        //                Grid[tile.Ligne, tile.Col].Letter = new Letter();
+                    
+        //        }
+        //    }
+        //    return p.Rack;
+        //}
 
         public static List<Letter> AlphabetWWFAvecJoker { get; } = new List<Letter>()
         {

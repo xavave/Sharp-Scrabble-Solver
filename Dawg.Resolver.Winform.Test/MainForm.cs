@@ -19,6 +19,8 @@ namespace Dawg.Resolver.Winform.Test
         public Color HeaderTilesBackColor { get; } = Color.Black;
         public Color HeaderTilesForeColor { get; } = Color.WhiteSmoke;
         public Game Game { get; set; }
+        public FormTile LastPlayedTile { get; set; }
+
         public MainForm()
         {
             InitializeComponent();
@@ -91,7 +93,7 @@ namespace Dawg.Resolver.Winform.Test
 
         public int PreviewWord(Player p, Word word, bool validateWord = false, bool addMove = true)
         {
-            Game.ClearTilesInPlay(p);
+            ClearTilesInPlay(p);
             int points = word.SetWord(p, validateWord);
             if (validateWord || points > 0)
             {
@@ -101,30 +103,46 @@ namespace Dawg.Resolver.Winform.Test
                     var frmTile = gbBoard.Controls.Find($"t{t.Ligne}_{t.Col}", false).First() as FormTile;
                     if (frmTile.IsEmpty)
                         frmTile.BackColor = frmTile.GetBackColor(t);
+                    else
+                    {
+                        frmTile.Tile.IsPlayedByPlayer1 = p == Game.Player1;
+                        frmTile.BackColor = p == Game.Player1 ? Player1MoveColor : Player2MoveColor;
+                    }
 
                     if (!frmTile.Enabled)
                         continue;
 
-                    frmTile.Tile.IsPlayedByPlayer1 = p == Game.Player1;
-                    frmTile.BackColor = p == Game.Player1 ? Player1MoveColor : Player2MoveColor;
+
                     frmTile.Text = Game.Grid[t.Ligne, t.Col].Letter?.Char.ToString();
                     if (t.FromJoker)
                     {
                         frmTile.BorderColor = Color.Gold;
-                        //Game.Bag.RemoveLetterFromBag(Game.Joker);
+                        if (Game.IsPlayer1)
+                            Game.Player1.Rack.Remove(Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker[26] : Game.AlphabetWWFAvecJoker[26]);
+                        else
+                            Game.Player2.Rack.Remove(Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker[26] : Game.AlphabetWWFAvecJoker[26]);
+
                     }
 
                     else
                     {
-                        //Game.Bag.RemoveLetterFromBag(t.Letter.Char);
+                        if (Game.IsPlayer1)
+                            Game.Player1.Rack.Remove(Game.Grid[t.Ligne, t.Col].Letter);
+                        else
+                            Game.Player2.Rack.Remove(Game.Grid[t.Ligne, t.Col].Letter);
                     }
+
+
                     frmTile.Enabled = false;
                 }
                 if (addMove)
+                {
                     p.Moves.Add(word);
-                Game.Resolver.PlayedWords.Add(word);
-                DisplayPlayerWord(word);
-                Game.IsPlayer1 = !Game.IsPlayer1;
+                    Game.Resolver.PlayedWords.Add(word);
+                    DisplayPlayerWord(word);
+                }
+                if (validateWord)
+                    Game.IsPlayer1 = !Game.IsPlayer1;
 
             }
             else return 0;
@@ -135,7 +153,7 @@ namespace Dawg.Resolver.Winform.Test
         private VTile[,] RefreshBoard(VTile[,] grid)
         {
 
-            //CustomGroupBox.SuspendDrawing(groupBox1.Parent);
+            CustomGroupBox.SuspendDrawing(groupBox1.Parent);
             for (int ligne = 0; ligne <= grid.GetUpperBound(0); ligne++)
             {
                 for (int col = 0; col <= grid.GetUpperBound(1); col++)
@@ -146,7 +164,7 @@ namespace Dawg.Resolver.Winform.Test
                     formTile.Enabled = !formTile.Tile.IsValidated;
                 }
             }
-            //CustomGroupBox.ResumeDrawing(groupBox1.Parent);
+            CustomGroupBox.ResumeDrawing(groupBox1.Parent);
             //lsbInfos.Items.Add(Game.IsTransposed ? "Transposed" : "Not Transposed");
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             //txtRackP1.Text = Game.Player1.Rack.String();
@@ -166,17 +184,52 @@ namespace Dawg.Resolver.Winform.Test
             Game.Grid = RefreshBoard(Game.Grid);
             Cursor.Current = Cursors.Default;
         }
+        private List<VTile> ClearTilesInPlay(Player p)
+        {
+            var ret = Game.Grid.OfType<VTile>().Where(t => !t.IsValidated && !t.IsEmpty).ToList();
+            foreach (var tile in ret)
+            {
+                var frmTile = gbBoard.Controls.Find($"t{tile.Ligne}_{tile.Col}", false).First() as FormTile;
+                frmTile.Text = "";
+                frmTile.Tile.Letter = new Letter();
+                frmTile.BackColor = frmTile.GetBackColor(tile);
+            }
+            //for (int i = 0; i < Grid.LongLength; i++)
+            //{
+            //    var tile = Game.Grid.OfType<VTile>().ElementAt(i);
+            //    if (!tile.IsValidated)
+            //    {
+            //        if (!tile.IsEmpty)
+            //        {
+            //            if (tile.FromJoker)
+            //            {
+            //                p.Rack.Add(GameStyle == 'S' ? AlphabetScrabbleAvecJoker[26] : Game.AlphabetWWFAvecJoker[26]);
+            //            }
+            //            else
+            //            {
+            //                p.Rack.Add(tile.Letter);
+            //            }
+            //            tile.IsValidated = true;
+            //        }
+            //        else
+            //            Grid[tile.Ligne, tile.Col].Letter = new Letter();
 
+            //    }
+            //}
+            return ret;
+        }
         private void btnBackToRack_Click(object sender, EventArgs e)
         {
-            var ret = Game.ClearTilesInPlay(Game.Player1);
-            if (ret.Any()) txtRackP1.Text = ret.String();
-            Game.Grid = RefreshBoard(Game.Grid);
+            //var ret = ClearTilesInPlay(Game.Player1);
+            //if (ret.Any()) txtRackP1.Text = ret.String();
+            //Game.Grid = RefreshBoard(Game.Grid);
         }
 
         private void btnValidate_Click(object sender, EventArgs e)
         {
-            var word = lsbHintWords.SelectedItem as Word;
+
+            if (LastPlayedTile == null) return;
+            var word = LastPlayedTile.Tile.GetWordFromTile(Game.CurrentWordDirection);
             if (word == null) return;
             if (Game.IsPlayer1)
                 PreviewWord(Game.Player1, word, true);
@@ -235,7 +288,7 @@ namespace Dawg.Resolver.Winform.Test
         private void PlayDemo(int wait = 0)
         {
 
-            if (Game.NoMoreMovesCount == 2)
+            if (Game.NoMoreMovesCount >= 2)
             {
                 Game.EndGame = true;
                 return;
@@ -258,15 +311,19 @@ namespace Dawg.Resolver.Winform.Test
                     {
                         txtRackP2.Text = Game.Player2.Rack.String();
                     }
-                    lblCurrentRack.Text = rack.String();
-
+                    lblCurrentRack.Text = $"{(Game.IsPlayer1 ? "Player 1 :" : "Player 2 :")} " + rack.String();
+                    if (!rack.Any())
+                    {
+                        Game.EndGame = true;
+                        return;
+                    }
                     var ret = Game.Resolver.FindMoves(Game.IsPlayer1 ? Game.Player1 : Game.Player2, 30);
                     lsbHintWords.DataSource = ret;
                     if (ret.Any())
                     {
                         Game.NoMoreMovesCount = 0;
-                        var word = ret.Where(w => !Game.Resolver.PlayedWords.Any(pw => pw.Equals(w))).OrderByDescending(r => r.Points).First() as Word;
-                        if (CurrentWord != null && CurrentWord.Equals(word))
+                        var word = ret.Where(w => !Game.Resolver.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).First() as Word;
+                        if (CurrentWord != null && CurrentWord.Serialize == word.Serialize)
                         {
                             Game.EndGame = true;
                             return;

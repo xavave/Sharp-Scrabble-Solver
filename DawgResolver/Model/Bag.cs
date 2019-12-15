@@ -50,14 +50,14 @@ namespace DawgResolver.Model
             int charIdx = r.Next(0, FlatList.Length - 1);
             var c = FlatList[charIdx];
             if (c == char.MinValue) throw new ArgumentException(nameof(c));
-            var letter = Game.AlphabetWWFAvecJoker.First(cc => cc.Char == c);
+            var letter = Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.First(cc => cc.Char == c) : Game.AlphabetWWFAvecJoker.First(cc => cc.Char == c);
 
             var le = Letters.Find(l => l == letter);
             if (letter.Count > 0) letter.Count = --letter.Count;
             return le;
 
         }
-        public void PutBackLetter(Letter l)
+        public void PutBackLetterInBag(Letter l)
         {
             var letter = Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.Find(cc => cc == l) : Game.AlphabetWWFAvecJoker.Find(cc => cc == l);
             letter.Count++;

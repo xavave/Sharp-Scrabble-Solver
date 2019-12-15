@@ -155,6 +155,7 @@ namespace DawgResolver.Model
             string text = "";
             if (direction == MovementDirection.Across)
             {
+                text += tile.Letter?.Char;
                 tile = LeftTile;
                 while (tile != null && tile.LeftTile != null && !tile.IsEmpty)
                 {
@@ -171,6 +172,7 @@ namespace DawgResolver.Model
             }
             else
             {
+                text += tile.Letter?.Char;
                 tile = UpTile;
                 while (tile != null && tile.UpTile != null && !tile.IsEmpty)
                 {
