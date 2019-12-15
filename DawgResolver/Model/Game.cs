@@ -367,8 +367,11 @@ namespace DawgResolver.Model
             }
             foreach (var t in tiles)
             {
-                Grid[t.Ligne, t.Col] = t;
-                if (!t.IsEmpty) Grid[t.Ligne, t.Col].IsValidated = true;
+                if (t.Ligne < Game.BoardSize && t.Col < Game.BoardSize)
+                {
+                    Grid[t.Ligne, t.Col] = t;
+                    if (!t.IsEmpty) Grid[t.Ligne, t.Col].IsValidated = true;
+                }
             }
             Player1.Points = Player1.Moves.Sum(m => m.Points);
             Player2.Points = Player2.Moves.Sum(m => m.Points);
