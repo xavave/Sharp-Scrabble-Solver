@@ -220,6 +220,14 @@ namespace Scrabbler
             }
         }
 
+        public VTile WordMostRightTile => InnerTile.WordMostRightTile;
+
+        public VTile WordMostLeftTile => InnerTile.WordMostLeftTile;
+
+        public VTile WordLowerTile => InnerTile.WordLowerTile;
+
+        public VTile WordUpperTile => InnerTile.WordUpperTile;
+
         // Does not fire TileStatusChanged events.
         public void Initialize()
         {
