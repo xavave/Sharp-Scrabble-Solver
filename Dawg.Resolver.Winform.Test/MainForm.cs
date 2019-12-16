@@ -202,9 +202,12 @@ namespace Dawg.Resolver.Winform.Test
             foreach (var tile in ret)
             {
                 var frmTile = gbBoard.Controls.Find($"t{tile.Ligne}_{tile.Col}", false).First() as FormTile;
-                frmTile.Text = "";
-                frmTile.Tile.Letter = new Letter();
-                frmTile.BackColor = frmTile.GetBackColor(tile);
+                this.BeginInvoke((Action)(() =>
+                {
+                    frmTile.Text = "";
+                    frmTile.Tile.Letter = new Letter();
+                    frmTile.BackColor = frmTile.GetBackColor(tile);
+                }));
             }
             //for (int i = 0; i < Grid.LongLength; i++)
             //{
