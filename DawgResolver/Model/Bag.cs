@@ -49,7 +49,7 @@ namespace DawgResolver.Model
 
             int charIdx = r.Next(0, FlatList.Length - 1);
             var c = FlatList[charIdx];
-            if (c == char.MinValue) throw new ArgumentException(nameof(c));
+            if (c == Game.EmptyChar) throw new ArgumentException(nameof(c));
             var letter = Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.First(cc => cc.Char == c) : Game.AlphabetWWFAvecJoker.First(cc => cc.Char == c);
 
             var le = Letters.Find(l => l.Char == letter.Char);

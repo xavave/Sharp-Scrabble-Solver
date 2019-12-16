@@ -13,6 +13,7 @@ namespace DawgResolver.Model
 {
     public class Game
     {
+        public static char EmptyChar { get; }
         public static MovementDirection CurrentWordDirection { get; set; } = MovementDirection.Across;
         public static int BoardSize { get; set; } = 15;
 

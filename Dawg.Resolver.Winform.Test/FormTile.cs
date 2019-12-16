@@ -55,7 +55,6 @@ namespace Dawg.Resolver.Winform.Test
                    RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
         }
         private MainForm Form { get; }
-        private bool isValidated;
         public string TxtInfos { get; set; }
         public VTile Tile { get; set; }
         public Game Game { get; set; }
@@ -65,11 +64,6 @@ namespace Dawg.Resolver.Winform.Test
             BorderStyle = BorderStyle.Fixed3D;
             Game = g;
             Tile = t;
-            this.Ligne = t.Ligne;
-            this.Col = t.Col;
-            this.AnchorLeftMinLimit = t.AnchorLeftMinLimit;
-            this.AnchorLeftMaxLimit = t.AnchorLeftMaxLimit;
-            this.Controlers = t.Controlers;
             this.Width = 30;
             Enabled = true;
             this.Height = 28;
@@ -100,6 +94,7 @@ namespace Dawg.Resolver.Winform.Test
                 Name = tileName;
             Click += FormTile_Click;
             KeyUp += FormTile_KeyUp;
+            DoubleClick += FormTile_DoubleClick;
 
             if (Name.StartsWith($"header_col"))
             {
@@ -117,10 +112,18 @@ namespace Dawg.Resolver.Winform.Test
             if (Tile.FromJoker) this.BorderStyle = BorderStyle.Fixed3D;
         }
 
+        private void FormTile_DoubleClick(object sender, EventArgs e)
+        {
+            var frmTile = sender as FormTile;
+            var word = frmTile.GetWordFromTile(MovementDirection.Across);
+            if (word.Text.Trim().Length <= 1)
+                word = frmTile.GetWordFromTile(MovementDirection.Down);
+            Form.ShowDefinition(word);
+        }
+
         Keys PreviousKey { get; set; }
         Keys CurrentKey { get; set; }
 
-       
         private void FormTile_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.S)
@@ -173,7 +176,7 @@ namespace Dawg.Resolver.Winform.Test
 
                 Game.Grid[Ligne, Col].Letter = new Letter();
                 Game.Grid[Ligne, Col].IsValidated = false;
-                this.Text = char.MinValue.ToString();
+                this.Text = Game.EmptyChar.ToString();
                 frmTile.Tile = Game.Grid[Ligne, Col];
 
             }
@@ -275,85 +278,42 @@ namespace Dawg.Resolver.Winform.Test
 
         public Word GetWordFromTile(MovementDirection direction)
         {
-            throw new NotImplementedException();
+            return Tile.GetWordFromTile(direction);
         }
 
         public void Initialize()
         {
-            throw new NotImplementedException();
+            Tile.Initialize();
         }
 
         public Color Background { get; set; }
-        public bool IsValidated
-        {
-            get => isValidated; set => isValidated = Tile.IsValidated;
-        }
+        public bool IsValidated { get => Tile.IsValidated; set => Tile.IsValidated = value; }
+        public bool FromJoker { get => Tile.FromJoker; set => Tile.FromJoker = value; }
+        public Dictionary<int, int> Controlers { get => Tile.Controlers; set => Tile.Controlers = value; }
+        public int Ligne { get => Tile.Ligne; set => Tile.Ligne = value; }
+        public int Col { get => Tile.Col; set => Tile.Col = value; }
+        public int LetterMultiplier { get => Tile.LetterMultiplier; set => Tile.LetterMultiplier = value; }
+        public int WordMultiplier { get => Tile.WordMultiplier; set => Tile.WordMultiplier = value; }
+        public Letter Letter { get => Tile.Letter; set => Tile.Letter = value; }
+        public int AnchorLeftMaxLimit { get => Tile.AnchorLeftMaxLimit; set => Tile.AnchorLeftMaxLimit = value; }
+        public int AnchorLeftMinLimit { get => Tile.AnchorLeftMinLimit; set => Tile.AnchorLeftMinLimit = value; }
+        public bool IsAnchor { get => Tile.IsAnchor; }
+        public TileType TileType { get => Tile.TileType; }
+        public bool IsEmpty { get => Tile.IsEmpty; }
+        public VTile LeftTile { get => Tile.LeftTile; }
+        public VTile RightTile { get => Tile.RightTile; }
+        public VTile DownTile { get => Tile.DownTile; }
+        public VTile UpTile { get => Tile.UpTile; }
+        public string Serialize => Tile.Serialize;
 
-        public bool FromJoker { get; set; } = false;
-        public Dictionary<int, int> Controlers { get; set; } = new Dictionary<int, int>(27);
-        public int Ligne { get; set; }
-        public int Col { get; set; }
-        public int LetterMultiplier { get; set; }
-        public int WordMultiplier { get; set; }
-        public Letter Letter { get; set; }
-        public int AnchorLeftMaxLimit { get; set; }
-        public int AnchorLeftMinLimit { get; set; }
-        public bool IsAnchor
-        {
-            get
-            {
-                return Tile.IsAnchor;
-            }
-        }
+        public bool? IsPlayedByPlayer1 { get => Tile.IsPlayedByPlayer1; set => Tile.IsPlayedByPlayer1 = value; }
 
-        public TileType TileType
-        {
-            get
-            {
-                return Tile.TileType;
+        public VTile WordMostRightTile => Tile.WordMostRightTile;
 
-            }
-        }
+        public VTile WordMostLeftTile => Tile.WordMostLeftTile;
 
-        public bool IsEmpty
-        {
-            get
-            {
-                return Tile.IsEmpty;
-            }
-        }
+        public VTile WordLowerTile => Tile.WordLowerTile;
 
-        public VTile LeftTile
-        {
-            get
-            {
-                return Tile.LeftTile;
-            }
-        }
-        public VTile RightTile
-        {
-            get
-            {
-                return Tile.RightTile;
-            }
-        }
-        public VTile DownTile
-        {
-            get
-            {
-                return Tile.DownTile;
-            }
-        }
-        public VTile UpTile
-        {
-            get
-            {
-                return Tile.UpTile;
-            }
-        }
-
-        public string Serialize => throw new NotImplementedException();
-
-        public bool? IsPlayedByPlayer1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public VTile WordUpperTile => Tile.WordUpperTile;
     }
 }

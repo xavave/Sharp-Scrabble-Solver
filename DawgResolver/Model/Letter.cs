@@ -13,7 +13,7 @@ namespace DawgResolver.Model
 
         public Letter()
         {
-            Char = char.MinValue;
+            Char = Game.EmptyChar;
             Value = 0;
             Count = 0;
 
@@ -39,7 +39,7 @@ namespace DawgResolver.Model
         }
         public bool HasValue()
         {
-            return this != null && this.Char != char.MinValue;
+            return this != null && this.Char != Game.EmptyChar;
         }
         public char Char
         {

@@ -5,6 +5,7 @@ namespace DawgResolver.Model
 
     public interface VTile
     {
+
         void Initialize();
         bool IsValidated { get; set; }
         TileType TileType { get; }
@@ -24,6 +25,11 @@ namespace DawgResolver.Model
         VTile RightTile { get; }
         VTile UpTile { get; }
         VTile DownTile { get; }
+
+        VTile WordMostRightTile { get; }
+        VTile WordMostLeftTile { get; }
+        VTile WordLowerTile { get; }
+        VTile WordUpperTile { get; }
         string Serialize { get; }
         Word GetWordFromTile(MovementDirection direction);
     }
@@ -39,7 +45,7 @@ namespace DawgResolver.Model
             Game = g;
             Ligne = ligne;
             Col = col;
-            Letter = new Letter() { Char = char.MinValue };
+            Letter = new Letter() { Char = EmptyChar };
             LetterMultiplier = 1;
             WordMultiplier = 1;
             AnchorLeftMinLimit = AnchorLeftMaxLimit = 0;
@@ -96,7 +102,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return this == null || Letter == null || !Letter.HasValue();
+                return this == null || Letter == null || !Letter.HasValue() || Letter.Char == Game.EmptyChar;
             }
         }
 
@@ -144,6 +150,70 @@ namespace DawgResolver.Model
                 return $"T{Ligne};{Col};{LetterMultiplier};{WordMultiplier};{FromJoker};{IsValidated};{Letter?.Char};{IsPlayedByPlayer1}";
             }
         }
+
+        public char EmptyChar { get => ' '; }
+
+        public VTile WordMostRightTile
+        {
+            get
+            {
+                VTile t = this;
+                if (t.RightTile == null || t.RightTile.IsEmpty)
+                    return t;
+                else
+                    while (t.RightTile != null && !t.RightTile.IsEmpty)
+                    {
+                        t = t.RightTile;
+                    }
+                return t;
+            }
+        }
+        public VTile WordMostLeftTile
+        {
+            get
+            {
+                VTile t = this;
+                if (t.LeftTile == null || t.LeftTile.IsEmpty)
+                    return t;
+                else
+                    while (t.LeftTile != null && !t.LeftTile.IsEmpty)
+                    {
+                        t = t.LeftTile;
+                    }
+                return t;
+            }
+        }
+        public VTile WordLowerTile
+        {
+            get
+            {
+                VTile t = this;
+                if (t.DownTile == null || t.DownTile.IsEmpty)
+                    return t;
+                else
+                    while (t.DownTile != null && !t.DownTile.IsEmpty)
+                    {
+                        t = t.DownTile;
+                    }
+                return t;
+            }
+        }
+        public VTile WordUpperTile
+        {
+            get
+            {
+                VTile t = this;
+                if (t.UpTile == null || t.UpTile.IsEmpty)
+                    return t;
+                else
+                    while (t.UpTile != null && !t.UpTile.IsEmpty)
+                    {
+                        t = t.UpTile;
+                    }
+                return t;
+            }
+        }
+
         public Word GetWordFromTile(MovementDirection direction)
         {
             var word = new Word(Game);
@@ -153,56 +223,32 @@ namespace DawgResolver.Model
             int wordmulti = 1;
             if (direction == MovementDirection.Across)
             {
-                text += tile.Letter?.Char;
-                points += tile.Letter?.Value * tile.LetterMultiplier;
-                wordmulti *= tile.WordMultiplier;
-                tile = LeftTile;
-                while (tile != null && tile.LeftTile != null && !tile.IsEmpty)
+                var rTile = tile.WordMostRightTile;
+                var lTile = tile.WordMostLeftTile;
+                var wordLength = rTile.Col - lTile.Col;
+                for (int i = lTile.Col; i <= lTile.Col + wordLength; i++)
                 {
-                    points += tile.Letter?.Value * tile.LetterMultiplier;
-                    text += Game.Grid[tile.Ligne, tile.Col].Letter.Char;
-                    wordmulti *= tile.WordMultiplier;
-                    tile = tile.LeftTile;
+                    text += Game.Grid[lTile.Ligne, i].Letter.Char;
                 }
-                if (tile.Col == 0)
-                {
-                    points += tile.Letter?.Value * tile.LetterMultiplier;
-                    text += tile.Letter?.Char;
-                    wordmulti *= tile.WordMultiplier;
-                    word.StartTile = tile;
-                }
-                else
-                    word.StartTile = tile.RightTile;
+                word.Text = text;
+                word.StartTile = lTile;
             }
             else
             {
-                points += tile.Letter?.Value * tile.LetterMultiplier;
-                wordmulti *= tile.WordMultiplier;
-                text += tile.Letter?.Char;
-                tile = UpTile;
-                while (tile != null && tile.UpTile != null && !tile.IsEmpty)
+                var dTile = tile.WordLowerTile;
+                var uTile = tile.WordUpperTile;
+                var wordLength = dTile.Ligne - uTile.Ligne;
+                for (int i = uTile.Ligne; i <= uTile.Ligne + wordLength; i++)
                 {
-                    points += tile.Letter?.Value * tile.LetterMultiplier;
-                    wordmulti *= tile.WordMultiplier;
-                    text += Game.Grid[tile.Ligne, tile.Col].Letter.Char;
-                    tile = tile.UpTile;
+                    text += Game.Grid[i, tile.Col].Letter.Char;
                 }
-                if (tile.Ligne == 0)
-                {
-                    points += tile.Letter?.Value * tile.LetterMultiplier;
-                    wordmulti *= tile.WordMultiplier;
-                    text += tile.Letter?.Char;
-                    word.StartTile = tile;
-
-                }
-                else
-                    word.StartTile = tile.DownTile;
+                word.Text = text;
+                word.StartTile = uTile;
 
             }
             points = points * wordmulti;
             if (points.HasValue)
                 word.Points = points.Value;
-            word.Text = text.ReverseString();
             word.Direction = direction;
 
             return word;
@@ -219,7 +265,6 @@ namespace DawgResolver.Model
 
         public void Initialize()
         {
-            throw new System.NotImplementedException();
         }
     }
 

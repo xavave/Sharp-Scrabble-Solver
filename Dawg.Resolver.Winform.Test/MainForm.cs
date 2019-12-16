@@ -528,9 +528,15 @@ namespace Dawg.Resolver.Winform.Test
             if (index != System.Windows.Forms.ListBox.NoMatches)
             {
                 var word = lsbWords.Items[index] as Word;
-                if (word != null)
-                    Process.Start($"https://1mot.net/{word.Text.ToLower()}");
+                ShowDefinition(word);
             }
+        }
+
+        public void ShowDefinition(Word word)
+        {
+
+            if (word != null && !string.IsNullOrWhiteSpace(word.Text))
+                Process.Start($"https://1mot.net/{word.Text.ToLower()}");
         }
 
         private void rbMaxLength_CheckedChanged(object sender, EventArgs e)
