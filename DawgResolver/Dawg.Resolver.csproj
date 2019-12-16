@@ -53,7 +53,6 @@
     <Compile Include="Model\Word.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\dico_dawg.txt" />
     <EmbeddedResource Include="Resources\initial_board15W.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +69,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\initial_board11S.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\dico_dawgODS7.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

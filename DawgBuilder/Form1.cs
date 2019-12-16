@@ -61,8 +61,9 @@ namespace Test_DAWG
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            Cursor.Current = Cursors.WaitCursor;
             dico.ConstruireDawgEnDeuxTemps();
+            Cursor.Current = Cursors.Default;
 
         }
 

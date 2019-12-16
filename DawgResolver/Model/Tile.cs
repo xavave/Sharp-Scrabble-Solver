@@ -158,7 +158,8 @@ namespace DawgResolver.Model
             get
             {
                 VTile t = this;
-                if (t.RightTile == null || t.RightTile.IsEmpty)
+               
+                if (IsEmpty || t.RightTile == null || t.RightTile.IsEmpty)
                     return t;
                 else
                     while (t.RightTile != null && !t.RightTile.IsEmpty)
@@ -173,7 +174,7 @@ namespace DawgResolver.Model
             get
             {
                 VTile t = this;
-                if (t.LeftTile == null || t.LeftTile.IsEmpty)
+                if (IsEmpty || t.LeftTile == null || t.LeftTile.IsEmpty)
                     return t;
                 else
                     while (t.LeftTile != null && !t.LeftTile.IsEmpty)
@@ -188,7 +189,7 @@ namespace DawgResolver.Model
             get
             {
                 VTile t = this;
-                if (t.DownTile == null || t.DownTile.IsEmpty)
+                if (IsEmpty || t.DownTile == null || t.DownTile.IsEmpty)
                     return t;
                 else
                     while (t.DownTile != null && !t.DownTile.IsEmpty)
@@ -203,7 +204,7 @@ namespace DawgResolver.Model
             get
             {
                 VTile t = this;
-                if (t.UpTile == null || t.UpTile.IsEmpty)
+                if (IsEmpty || t.UpTile == null || t.UpTile.IsEmpty)
                     return t;
                 else
                     while (t.UpTile != null && !t.UpTile.IsEmpty)

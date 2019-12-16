@@ -50,7 +50,7 @@
     <EmbeddedResource Include="Resources\dico_dawg.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\dico_dawgODS7.txt" />
+    <EmbeddedResource Include="Resources\dico_dawgODS7.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
