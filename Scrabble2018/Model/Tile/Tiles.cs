@@ -100,6 +100,14 @@ namespace Scrabble2018.Model
         public string Serialize => throw new NotImplementedException();
 
         public bool? IsPlayedByPlayer1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public VTile WordMostRightTile => throw new NotImplementedException();
+
+        public VTile WordMostLeftTile => throw new NotImplementedException();
+
+        public VTile WordLowerTile => throw new NotImplementedException();
+
+        public VTile WordUpperTile => throw new NotImplementedException();
     }
     //public class Tile : IComparable
     //{

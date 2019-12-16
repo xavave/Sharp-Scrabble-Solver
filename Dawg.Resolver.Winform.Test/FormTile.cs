@@ -149,10 +149,12 @@ namespace Dawg.Resolver.Winform.Test
                 this.Text = this.Letter.Char.ToString();
                 if (!Game.Grid[Ligne, Col].IsValidated)
                 {
-                    Game.Grid[Ligne, Col].Letter = this.Letter;
+                    //Game.Grid[Ligne, Col].Letter = this.Letter;
+                    //this.Tile.Letter = this.Letter;
                     Game.Bag.RemoveLetterFromBag(this.Letter.Char);
                     Form.txtBag.Text = Game.Bag.GetBagContent();
-                    Game.Grid[Ligne, Col].IsValidated = true;
+                    //Game.Grid[Ligne, Col].IsValidated = true;
+                    IsValidated = true;
                     Form.LastPlayedTile = this;
 
                 }

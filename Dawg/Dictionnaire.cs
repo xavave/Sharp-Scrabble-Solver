@@ -13,9 +13,11 @@ namespace DawgResolver
     /// Cette classe permet de construire, enregistrer et utiliser un dictionnaire DAWG.
     /// Le principe de focntionnement est l'adapation en C# du tutoriel de CarlVB http://codes-sources.commentcamarche.net/faq/10903-compression-d-un-dictionnaire-sous-forme-de-premiereEtape#construction-directe-du-premiereEtape
     /// </summary>
-    [Serializable]
+  
     public class Dictionnaire
     {
+        public const string NomDicoDawg = "dico_dawgODS7.txt";
+        public const string NomDicoReel = "ODS7.txt";
         public const int AscShift = 64;
         public const int AscShiftBase0 = AscShift + 1;
         /// <summary>
@@ -169,7 +171,7 @@ namespace DawgResolver
             DAWG = dawg[0];
 
             AnnonceEtape("Ecriture du fichier.");
-            Noeud.Serialize(dawg, Mots.Count, "DawgEn2Temps.txt");
+            Noeud.Serialize(dawg, Mots.Count, NomDicoDawg);
             //chrono.Stop();
 
             //==================Ici la construction est finie
@@ -450,7 +452,7 @@ namespace DawgResolver
             //chrono.Restart();
             AnnonceEtape("Début du chargement du dictionnaire DAWG.");
             var assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("dico_dawg.txt"));
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(NomDicoDawg));
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream, true))
             {

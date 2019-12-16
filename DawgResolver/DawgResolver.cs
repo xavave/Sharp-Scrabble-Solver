@@ -57,7 +57,7 @@ namespace DawgResolver
 
             if (Game.FirstMove)
             {
-                grid[7, 7].AnchorLeftMinLimit = 0;
+                grid[(int)Game.BoardSize/2, (int)Game.BoardSize / 2].AnchorLeftMinLimit = 0;
                 grid[7, 7].AnchorLeftMaxLimit = 6;
 
                 foreach (var t in grid.OfType<VTile>())
@@ -275,6 +275,7 @@ namespace DawgResolver
         /// <param name="tile"></param>
         private bool Trouve(int lettre, ref int noeud)
         {
+            if (((char)lettre == ' ')) return false;
             if (Game.Dico.Legacy[lettre - Dictionnaire.AscShift, noeud] == 0)
                 return false;
             else
