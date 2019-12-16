@@ -149,18 +149,26 @@ namespace DawgResolver.Model
             var word = new Word(Game);
             VTile tile = this;
             string text = "";
+            int? points = 0;
+            int wordmulti = 1;
             if (direction == MovementDirection.Across)
             {
                 text += tile.Letter?.Char;
+                points += tile.Letter?.Value * tile.LetterMultiplier;
+                wordmulti *= tile.WordMultiplier;
                 tile = LeftTile;
                 while (tile != null && tile.LeftTile != null && !tile.IsEmpty)
                 {
+                    points += tile.Letter?.Value * tile.LetterMultiplier;
                     text += Game.Grid[tile.Ligne, tile.Col].Letter.Char;
+                    wordmulti *= tile.WordMultiplier;
                     tile = tile.LeftTile;
                 }
                 if (tile.Col == 0)
                 {
+                    points += tile.Letter?.Value * tile.LetterMultiplier;
                     text += tile.Letter?.Char;
+                    wordmulti *= tile.WordMultiplier;
                     word.StartTile = tile;
                 }
                 else
@@ -168,16 +176,22 @@ namespace DawgResolver.Model
             }
             else
             {
+                points += tile.Letter?.Value * tile.LetterMultiplier;
+                wordmulti *= tile.WordMultiplier;
                 text += tile.Letter?.Char;
                 tile = UpTile;
                 while (tile != null && tile.UpTile != null && !tile.IsEmpty)
                 {
+                    points += tile.Letter?.Value * tile.LetterMultiplier;
+                    wordmulti *= tile.WordMultiplier;
                     text += Game.Grid[tile.Ligne, tile.Col].Letter.Char;
                     tile = tile.UpTile;
                 }
                 if (tile.Ligne == 0)
                 {
-                    text+= tile.Letter?.Char;
+                    points += tile.Letter?.Value * tile.LetterMultiplier;
+                    wordmulti *= tile.WordMultiplier;
+                    text += tile.Letter?.Char;
                     word.StartTile = tile;
 
                 }
@@ -185,7 +199,9 @@ namespace DawgResolver.Model
                     word.StartTile = tile.DownTile;
 
             }
-
+            points = points * wordmulti;
+            if (points.HasValue)
+                word.Points = points.Value;
             word.Text = text.ReverseString();
             word.Direction = direction;
 

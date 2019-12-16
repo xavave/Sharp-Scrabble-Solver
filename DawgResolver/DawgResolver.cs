@@ -421,7 +421,7 @@ namespace DawgResolver
             //        Game.Bag.PutBackLetter(l);
             //}
 
-           
+
         }
 
 
@@ -538,7 +538,8 @@ namespace DawgResolver
                 Points = points,
                 Scramble = UsedDraughtLetters == 7
             };
-            if (!LegalWords.Any(w => w.Equals(newWord)) && !PlayedWords.Any(pw => pw.Equals(newWord)))
+            //if (!LegalWords.Any(w => w.Equals(newWord)) && !PlayedWords.Any(pw => pw.Equals(newWord)))
+            if (!PlayedWords.Any(pw => pw.Equals(newWord)))
             {
                 LegalWords.Add(newWord);
                 NbAcceptedMoves++;
