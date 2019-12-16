@@ -47,7 +47,7 @@
     <Compile Include="TravailEnCours.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\dico_dawg.txt" />
+    <EmbeddedResource Include="Resources\dico_dawgODS6.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\dico_dawgODS7.txt" />

@@ -560,6 +560,8 @@
             this.Controls.Add(this.txtRackP1);
             this.Name = "MainForm";
             this.Text = "Scrabble";
+            this.Click += new System.EventHandler(this.MainForm_Click);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

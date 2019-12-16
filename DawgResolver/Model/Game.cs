@@ -8,11 +8,14 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 
 namespace DawgResolver.Model
 {
     public class Game
     {
+        public bool Stop { get; set; } = false;
+
         public static char EmptyChar { get; } = ' ';
         public static MovementDirection CurrentWordDirection { get; set; } = MovementDirection.Across;
         public static int BoardSize { get; set; } = 15;
@@ -302,6 +305,9 @@ namespace DawgResolver.Model
         }
 
         public int NoMoreMovesCount { get; set; } = 0;
+        public CancellationToken Token { get; set; }
+        public CancellationTokenSource Cts { get; set; }
+        public CancellationTokenSource CancelToken { get; set; }
 
         public string Serialise()
         {

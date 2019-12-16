@@ -32,22 +32,22 @@ namespace Dawg.Resolver.Winform.Test
             set
             {
                 borderColor = value;
-                RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero, RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
+                //RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero, RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
             }
         }
-        protected override void WndProc(ref Message m)
-        {
-            base.WndProc(ref m);
-            if (m.Msg == WM_NCPAINT && BorderColor != Color.Transparent &&
-                BorderStyle == System.Windows.Forms.BorderStyle.Fixed3D)
-            {
-                var hdc = GetWindowDC(this.Handle);
-                using (var g = Graphics.FromHdcInternal(hdc))
-                using (var p = new Pen(BorderColor))
-                    g.DrawRectangle(p, new Rectangle(0, 0, Width - 1, Height - 1));
-                ReleaseDC(this.Handle, hdc);
-            }
-        }
+        //protected override void WndProc(ref Message m)
+        //{
+        //    base.WndProc(ref m);
+        //    if (m.Msg == WM_NCPAINT && BorderColor != Color.Transparent &&
+        //        BorderStyle == System.Windows.Forms.BorderStyle.Fixed3D)
+        //    {
+        //        var hdc = GetWindowDC(this.Handle);
+        //        using (var g = Graphics.FromHdcInternal(hdc))
+        //        using (var p = new Pen(BorderColor))
+        //            g.DrawRectangle(p, new Rectangle(0, 0, Width - 1, Height - 1));
+        //        ReleaseDC(this.Handle, hdc);
+        //    }
+        //}
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
@@ -65,7 +65,7 @@ namespace Dawg.Resolver.Winform.Test
             Game = g;
             Tile = t;
             this.Width = 30;
-            Enabled = true;
+            //Enabled = true;
             this.Height = 28;
             this.MaxLength = 1;
             Form = frm;
@@ -126,6 +126,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private void FormTile_KeyUp(object sender, KeyEventArgs e)
         {
+            
             if (e.Control && e.KeyCode == Keys.S)
             {
                 Form.SaveGame();

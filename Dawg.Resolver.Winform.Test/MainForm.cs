@@ -50,7 +50,7 @@ namespace Dawg.Resolver.Winform.Test
         private void RefreshGridTiles(bool initBoard = true)
         {
             if (initBoard) Game.InitBoard();
-            CustomGroupBox.SuspendDrawing(gbBoard.Parent);
+            //CustomGroupBox.SuspendDrawing(gbBoard.Parent);
             bool hasHeaderTile = gbBoard.Controls.Count > 0;
             FormTile frmTile = null;
             for (int i = 0; i < Game.BoardSize; i++)
@@ -88,7 +88,7 @@ namespace Dawg.Resolver.Winform.Test
 
                 }
             }
-            CustomGroupBox.ResumeDrawing(gbBoard.Parent);
+            //CustomGroupBox.ResumeDrawing(gbBoard.Parent);
         }
 
         public int PreviewWord(Player p, Word word, bool validateWord = false, bool addMove = true)
@@ -106,14 +106,19 @@ namespace Dawg.Resolver.Winform.Test
                     else
                     {
                         frmTile.Tile.IsPlayedByPlayer1 = p == Game.Player1;
-                        frmTile.BackColor = p == Game.Player1 ? Player1MoveColor : Player2MoveColor;
+                        this.BeginInvoke((Action)(() =>
+                        {
+                            frmTile.BackColor = p == Game.Player1 ? Player1MoveColor : Player2MoveColor;
+                        }));
                     }
 
                     if (!frmTile.Enabled)
                         continue;
 
-
-                    frmTile.Text = Game.Grid[t.Ligne, t.Col].Letter?.Char.ToString();
+                    this.BeginInvoke((Action)(() =>
+                    {
+                        frmTile.Text = Game.Grid[t.Ligne, t.Col].Letter?.Char.ToString();
+                    }));
                     if (t.FromJoker)
                     {
                         frmTile.BorderColor = Color.Gold;
@@ -132,8 +137,10 @@ namespace Dawg.Resolver.Winform.Test
                             Game.Player2.Rack.Remove(Game.Grid[t.Ligne, t.Col].Letter);
                     }
 
-
-                    frmTile.Enabled = false;
+                    this.BeginInvoke((Action)(() =>
+                    {
+                        frmTile.Enabled = false;
+                    }));
                 }
                 if (addMove)
                 {
@@ -153,23 +160,28 @@ namespace Dawg.Resolver.Winform.Test
         private VTile[,] RefreshBoard(VTile[,] grid)
         {
 
-            CustomGroupBox.SuspendDrawing(groupBox1.Parent);
+            //CustomGroupBox.SuspendDrawing(groupBox1.Parent);
             for (int ligne = 0; ligne <= grid.GetUpperBound(0); ligne++)
             {
                 for (int col = 0; col <= grid.GetUpperBound(1); col++)
                 {
+
                     var formTile = gbBoard.Controls.Find($"t{ligne}_{col}", false).First() as FormTile;
                     formTile.Tile = grid[ligne, col];
                     formTile.Text = formTile.Tile?.Letter?.Char.ToString();
                     formTile.Enabled = !formTile.Tile.IsValidated;
+
                 }
             }
-            CustomGroupBox.ResumeDrawing(groupBox1.Parent);
+            //CustomGroupBox.ResumeDrawing(groupBox1.Parent);
             //lsbInfos.Items.Add(Game.IsTransposed ? "Transposed" : "Not Transposed");
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, true);
             //txtRackP1.Text = Game.Player1.Rack.String();
             //txtRackP2.Text = Game.Player2.Rack.String();
-            txtBag.Text = Game.Bag.GetBagContent();
+            this.BeginInvoke((Action)(() =>
+            {
+                txtBag.Text = Game.Bag.GetBagContent();
+            }));
             DisplayScores();
 
             return grid;
@@ -279,13 +291,13 @@ namespace Dawg.Resolver.Winform.Test
             Cursor.Current = Cursors.Default;
         }
 
-        private void btnDemo_Click(object sender, EventArgs e)
+        private async void btnDemo_Click(object sender, EventArgs e)
         {
-            PlayDemo();
+            await PlayDemo();
         }
 
 
-        private void PlayDemo(int wait = 0)
+        private async Task PlayDemo(int wait = 0)
         {
 
             if (Game.NoMoreMovesCount >= 2)
@@ -294,109 +306,143 @@ namespace Dawg.Resolver.Winform.Test
                 return;
             }
             System.Windows.Forms.Application.DoEvents();
-
-            this.BeginInvoke((Action)(() =>
+            try
             {
-                try
+                Cursor.Current = Cursors.WaitCursor;
+                var rack = Game.Bag.GetLetters(Game.IsPlayer1 ? Game.Player1 : Game.Player2);
+                if (!rack.Any()) this.BeginInvoke((Action)(() =>
                 {
-                    Cursor.Current = Cursors.WaitCursor;
-                    var rack = Game.Bag.GetLetters(Game.IsPlayer1 ? Game.Player1 : Game.Player2);
-                    if (!rack.Any())
-                        lsbInfos.Items.Insert(0, "Le sac est vide !");
-                    if (Game.IsPlayer1)
+                    lsbInfos.Items.Insert(0, "Le sac est vide !");
+                }));
+                if (Game.IsPlayer1)
+                {
+                    this.BeginInvoke((Action)(() =>
                     {
                         txtRackP1.Text = Game.Player1.Rack.String();
-                    }
-                    else
+                    }));
+                }
+                else
+                {
+                    this.BeginInvoke((Action)(() =>
                     {
                         txtRackP2.Text = Game.Player2.Rack.String();
-                    }
+                    }));
+                }
+                this.BeginInvoke((Action)(() =>
+                {
                     lblCurrentRack.Text = $"{(Game.IsPlayer1 ? "Player 1 :" : "Player 2 :")} " + rack.String();
-                    if (!rack.Any())
+                }));
+                if (!rack.Any())
+                {
+                    Game.EndGame = true;
+                    return;
+                }
+                var ret = Game.Resolver.FindMoves(Game.IsPlayer1 ? Game.Player1 : Game.Player2, 30);
+                lsbHintWords.DataSource = ret;
+                if (ret.Any())
+                {
+                    Game.NoMoreMovesCount = 0;
+                    var word = ret.Where(w => !Game.Resolver.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).First() as Word;
+                    if (CurrentWord != null && CurrentWord.Serialize == word.Serialize)
                     {
                         Game.EndGame = true;
                         return;
                     }
-                    var ret = Game.Resolver.FindMoves(Game.IsPlayer1 ? Game.Player1 : Game.Player2, 30);
-                    lsbHintWords.DataSource = ret;
-                    if (ret.Any())
-                    {
-                        Game.NoMoreMovesCount = 0;
-                        var word = ret.Where(w => !Game.Resolver.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).First() as Word;
-                        if (CurrentWord != null && CurrentWord.Serialize == word.Serialize)
-                        {
-                            Game.EndGame = true;
-                            return;
-                        }
-                        CurrentWord = word;
-                        DisplayPlayerWord(word);
-                        int points = PreviewWord(Game.IsPlayer1 ? Game.Player1 : Game.Player2, word, true);
-                        if (Game.IsPlayer1)
-                            Game.Player1.Points += points;
-                        else
-                            Game.Player2.Points += points;
-
-
-                    }
+                    CurrentWord = word;
+                    DisplayPlayerWord(word);
+                    int points = PreviewWord(Game.IsPlayer1 ? Game.Player1 : Game.Player2, word, true);
+                    if (Game.IsPlayer1)
+                        Game.Player1.Points += points;
                     else
-                    {
-                        Game.NoMoreMovesCount++;
-                        if (Game.NoMoreMovesCount < 2)
-                            lsbInfos.Items.Insert(0, $"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> No words found !");
-                        Game.IsPlayer1 = !Game.IsPlayer1;
-                        return;
-                    }
-                    DisplayScores();
+                        Game.Player2.Points += points;
+
+
                 }
-                catch (ArgumentException ex)
+                else
                 {
-                    lsbInfos.Items.Insert(0, ex.Message);
+                    Game.NoMoreMovesCount++;
+                    if (Game.NoMoreMovesCount < 2)
+                        lsbInfos.Items.Insert(0, $"{(Game.IsPlayer1 ? $"Player 1:{Game.Player1.Rack.String()}" : $"Player 2:{Game.Player2.Rack.String()}")} --> No words found !");
+                    Game.IsPlayer1 = !Game.IsPlayer1;
+                    return;
                 }
-                finally
-                {
-                    Thread.Sleep(wait);
-                    Cursor.Current = Cursors.Default;
-                }
-            }));
+                //DisplayScores();
+            }
+            catch (ArgumentException ex)
+            {
+                lsbInfos.Items.Insert(0, ex.Message);
+            }
+            finally
+            {
+                await Task.Delay(wait);
+                Cursor.Current = Cursors.Default;
+            }
+
 
 
         }
 
         private void DisplayPlayerWord(Word word)
         {
-            lsbWords.Items.Add(word);
+            this.BeginInvoke((Action)(() =>
+            {
+                lsbWords.Items.Add(word);
+            }));
         }
 
         private void DisplayScores()
         {
-            lblPlayer1Score.Text = $"Player 1 Score :{Game.Player1.Points}";
-            lblPlayer2Score.Text = $"Player 2 Score :{Game.Player2.Points}";
-            var bestP1Move = Game.Player1.Moves.OrderByDescending(m => m.Points).FirstOrDefault();
-            if (bestP1Move != null) lblP1BestPlay.Text = $"{bestP1Move}";
-            var bestP2Move = Game.Player2.Moves.OrderByDescending(m => m.Points).FirstOrDefault();
-            if (bestP2Move != null) lblP2BestPlay.Text = $"{bestP2Move}";
+            this.BeginInvoke((Action)(() =>
+            {
+                lblPlayer1Score.Text = $"Player 1 Score :{Game.Player1.Points}";
+                lblPlayer2Score.Text = $"Player 2 Score :{Game.Player2.Points}";
+                var bestP1Move = Game.Player1.Moves.OrderByDescending(m => m.Points).FirstOrDefault();
+                if (bestP1Move != null) lblP1BestPlay.Text = $"{bestP1Move}";
+                var bestP2Move = Game.Player2.Moves.OrderByDescending(m => m.Points).FirstOrDefault();
+                if (bestP2Move != null) lblP2BestPlay.Text = $"{bestP2Move}";
+            }));
         }
 
         Word CurrentWord { get; set; }
         private void btnDemoAll_Click(object sender, EventArgs e)
         {
+
             if (!ckKeepExistingBoard.Checked)
                 NewGame();
+            Game.CancelToken = new CancellationTokenSource();
+            Task.Factory.StartNew(async () =>
+            {
+                await LoopDemo(Game.CancelToken);
+                // call web API
+            }, Game.CancelToken.Token);
 
+        }
+
+        private async Task LoopDemo(CancellationTokenSource cancelToken)
+        {
             while (!Game.EndGame)
             {
-                PlayDemo(500);
+                if (cancelToken.IsCancellationRequested)
+                {
+                    return;
+                }
+                await PlayDemo(500);
             }
-            ShowWinner(true);
+            if (Game.EndGame)
+                ShowWinner(true);
+
         }
 
         private void ShowWinner(bool endGame = false)
         {
             if (endGame)
             {
-                lsbInfos.Items.Insert(0, "Game Ended");
-                bool player1Wins = Game.Player1.Points > Game.Player2.Points;
-                lsbInfos.Items.Insert(0, $"{(player1Wins ? "Player 1" : "Player 2")} wins with a score of {(player1Wins ? Game.Player1.Points : Game.Player2.Points)}");
+                this.BeginInvoke((Action)(() =>
+                {
+                    lsbInfos.Items.Insert(0, "Game Ended");
+                    bool player1Wins = Game.Player1.Points > Game.Player2.Points;
+                    lsbInfos.Items.Insert(0, $"{(player1Wins ? "Player 1" : "Player 2")} wins with a score of {(player1Wins ? Game.Player1.Points : Game.Player2.Points)}");
+                }));
             }
         }
 
@@ -448,14 +494,14 @@ namespace Dawg.Resolver.Winform.Test
                     if (t.IsValidated)
                     {
 
-                        frmTile.IsValidated = t.IsValidated;
+                        //frmTile.IsValidated = t.IsValidated;
                         frmTile.BackColor = t.IsPlayedByPlayer1.HasValue && t.IsPlayedByPlayer1.Value ? Player1MoveColor : Player2MoveColor;
-                        frmTile.Enabled = false;
+                        //frmTile.Enabled = false;
                     }
                     else
                     {
                         frmTile.BackColor = frmTile.GetBackColor(t);
-                        frmTile.Enabled = true;
+                        //frmTile.Enabled = true;
                     }
                 }
                 //var wordsCount = Math.Max(Game.Player1.Moves.Count, Game.Player2.Moves.Count);
@@ -556,6 +602,7 @@ namespace Dawg.Resolver.Winform.Test
                 LoadGame();
 
             }
+
         }
         private void rbGameStyleScrabble_CheckedChanged(object sender, EventArgs e)
         {
@@ -580,6 +627,16 @@ namespace Dawg.Resolver.Winform.Test
             if (Game.Dico.MotAdmis(txtMotExiste.Text.Trim()))
                 Process.Start($"https://1mot.net/{txtMotExiste.Text.ToLower()}");
 
+        }
+
+        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+        }
+
+        private void MainForm_Click(object sender, EventArgs e)
+        {
+            Game.CancelToken.Cancel();
         }
     }
 }
