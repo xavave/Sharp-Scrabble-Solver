@@ -168,8 +168,11 @@ namespace Dawg.Resolver.Winform.Test
 
                     var formTile = gbBoard.Controls.Find($"t{ligne}_{col}", false).First() as FormTile;
                     formTile.Tile = grid[ligne, col];
-                    formTile.Text = formTile.Tile?.Letter?.Char.ToString();
-                    formTile.Enabled = !formTile.Tile.IsValidated;
+                    this.BeginInvoke((Action)(() =>
+                    {
+                        formTile.Text = formTile.Tile?.Letter?.Char.ToString();
+                        //formTile.Enabled = !formTile.Tile.IsValidated;
+                    }));
 
                 }
             }

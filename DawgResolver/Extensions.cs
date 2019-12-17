@@ -61,12 +61,14 @@ namespace DawgResolver
             {
                 Controlers = t.Controlers,
                 Letter = t.Letter,
-                //IsAnchor = transpose ? false : t.IsAnchor,
                 LetterMultiplier = t.LetterMultiplier,
                 WordMultiplier = t.WordMultiplier,
                 AnchorLeftMinLimit = t.AnchorLeftMinLimit,
                 AnchorLeftMaxLimit = t.AnchorLeftMaxLimit,
-                FromJoker = transpose ? false : t.FromJoker
+                FromJoker = t.FromJoker,
+                IsPlayedByPlayer1 = t.IsPlayedByPlayer1,
+                IsValidated = t.IsValidated,
+
             };
         }
 
@@ -219,7 +221,7 @@ namespace DawgResolver
         public static List<Letter> RemoveFromRack(this List<Letter> rack, Letter l)
         {
             var ret = rack;
-            var idxLetter = rack.Select(ra=>ra.Char).ToList().IndexOf(l.Char);
+            var idxLetter = rack.Select(ra => ra.Char).ToList().IndexOf(l.Char);
             ret.RemoveAt(idxLetter);
             return ret;
         }

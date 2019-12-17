@@ -57,7 +57,7 @@ namespace DawgResolver
 
             if (Game.FirstMove)
             {
-                grid[(int)Game.BoardSize/2, (int)Game.BoardSize / 2].AnchorLeftMinLimit = 0;
+                grid[(int)Game.BoardSize / 2, (int)Game.BoardSize / 2].AnchorLeftMinLimit = 0;
                 grid[7, 7].AnchorLeftMaxLimit = 6;
 
                 foreach (var t in grid.OfType<VTile>())
@@ -123,12 +123,16 @@ namespace DawgResolver
                     //Si tel est le cas, la lettre L est jouable pour la case considérée
                     //et on précalcule le point que le mot verticalement formé permettrait de gagner si L était jouée
                     L = 0;
-
-                    foreach (var c in Game.Alphabet.Where(c => (wordStart + c + wordEnd).Length > 1 && Game.Dico.MotAdmis((wordStart + c + wordEnd).ToUpper())))
+                    foreach (var c in Game.Alphabet)//.Where(c => (wordStart + c + wordEnd).Length > 1 && Game.Dico.MotAdmis((wordStart + c + wordEnd).ToUpper())))
                     {
-                        grid[t.Ligne, t.Col].Controlers[((int)c.Char) - Dictionnaire.AscShiftBase0] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
-                        L++;
-
+                        var mot = wordStart + c.Char + wordEnd;
+                        if (mot.Length > 1 && Game.Dico.MotAdmis(mot))
+                        {
+                            grid[t.Ligne, t.Col].Controlers[((int)c.Char) - Dictionnaire.AscShiftBase0] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
+                            L++;
+                        }
+                        else
+                            grid[t.Ligne, t.Col].Controlers[((int)c.Char) - Dictionnaire.AscShiftBase0] = 0;
                     }
 
                     //Si aucune lettre ne se trouve ni au dessus ni en dessous de la case, il n'y aucune contrainte à respecter
