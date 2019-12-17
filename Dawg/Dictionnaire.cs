@@ -17,8 +17,11 @@ namespace DawgResolver
     public class Dictionnaire
     {
         public const string NomDicoDawg = "dico_dawgODS7.txt";
+
         public const string NomDicoReel = "ODS7.txt";
+
         public const int AscShift = 64;
+
         public const int AscShiftBase0 = AscShift + 1;
         /// <summary>
         /// Chronomètre utilisé uniquement pour comparer les performances des 2 méthodes de construtions

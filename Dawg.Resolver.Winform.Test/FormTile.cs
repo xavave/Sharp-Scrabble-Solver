@@ -126,7 +126,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private void FormTile_KeyUp(object sender, KeyEventArgs e)
         {
-            
+
             if (e.Control && e.KeyCode == Keys.S)
             {
                 Form.SaveGame();
@@ -185,9 +185,12 @@ namespace Dawg.Resolver.Winform.Test
             }
             else if (e.KeyCode == Keys.Enter)
             {
-                //PreviewWord(Game.Player1, word, true);
+                Word word = null;
+                if (Game.CurrentWordDirection == MovementDirection.Across)
+                 word = Tile.LeftTile.GetWordFromTile(Game.CurrentWordDirection);
+                else
+                    word = Tile.UpTile.GetWordFromTile(Game.CurrentWordDirection);
 
-                var word = Tile.GetWordFromTile(Game.CurrentWordDirection);
                 if (Game.IsPlayer1)
                     Form.PreviewWord(Game.Player1, word, true);
                 else
