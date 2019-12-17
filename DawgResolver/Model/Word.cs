@@ -101,7 +101,7 @@ namespace DawgResolver.Model
         }
         public bool Equals(Word w)
         {
-            return Serialize == w.Serialize;
+            return w.Direction == Direction && w.StartTile.Col == StartTile.Col && w.StartTile.Ligne == StartTile.Ligne && w.Text==Text;
         }
     }
 }

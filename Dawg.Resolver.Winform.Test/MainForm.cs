@@ -642,7 +642,8 @@ namespace Dawg.Resolver.Winform.Test
 
         private void MainForm_Click(object sender, EventArgs e)
         {
-            Game.CancelToken.Cancel();
+            if (Game.CancelToken != null)
+                Game.CancelToken.Cancel();
         }
     }
 }
