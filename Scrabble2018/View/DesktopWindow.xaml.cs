@@ -78,26 +78,27 @@ namespace Scrabble2018
 
         private void GetNewRackLetters()
         {
-            try
-            {
-                var rack = drGame.Bag.GetLetters(drGame.Player1);
-                for (int i = 0; i < RackTileButtons.Count; ++i)
-                {
-                    if (i < drGame.Bag.LeftLettersCount)
-                    {
-                        char c = rack[i].Char;
-                        RackTileButtons[i].Text = c.ToString();
-                        //if (GameState.GSInstance.PlayerNow == ThisPlayer) { RackTileButtons[i].IsEnabled = true; EnableAll(); }
+            //TODO
+            //try
+            //{
+            //    drGame.Bag.GetLetters(drGame.Player1);
+            //    for (int i = 0; i < RackTileButtons.Count; ++i)
+            //    {
+            //        if (i < drGame.Bag.LeftLettersCount)
+            //        {
+            //            char c = rack[i].Char;
+            //            RackTileButtons[i].Text = c.ToString();
+            //            //if (GameState.GSInstance.PlayerNow == ThisPlayer) { RackTileButtons[i].IsEnabled = true; EnableAll(); }
 
-                        //else { RackTileButtons[i].IsEnabled = false; DisableAll(); }
-                    }
-                }
-                txtBagContent.Text = drGame.Bag.GetBagContent();
-            }
-            catch (ArgumentException)
-            {
-                LogBoardWriter("Bag is empty!");
-            }
+            //            //else { RackTileButtons[i].IsEnabled = false; DisableAll(); }
+            //        }
+            //    }
+            //    txtBagContent.Text = drGame.Bag.GetBagContent();
+            //}
+            //catch (ArgumentException)
+            //{
+            //    LogBoardWriter("Bag is empty!");
+            //}
         }
 
         private void B_TextChanged(object sender, TextChangedEventArgs e)

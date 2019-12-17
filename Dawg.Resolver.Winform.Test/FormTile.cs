@@ -187,7 +187,7 @@ namespace Dawg.Resolver.Winform.Test
             {
                 Word word = null;
                 if (Game.CurrentWordDirection == MovementDirection.Across)
-                 word = Tile.LeftTile.GetWordFromTile(Game.CurrentWordDirection);
+                    word = Tile.LeftTile.GetWordFromTile(Game.CurrentWordDirection);
                 else
                     word = Tile.UpTile.GetWordFromTile(Game.CurrentWordDirection);
 
@@ -300,7 +300,18 @@ namespace Dawg.Resolver.Winform.Test
         public int Col { get => Tile.Col; set => Tile.Col = value; }
         public int LetterMultiplier { get => Tile.LetterMultiplier; set => Tile.LetterMultiplier = value; }
         public int WordMultiplier { get => Tile.WordMultiplier; set => Tile.WordMultiplier = value; }
-        public Letter Letter { get => Tile.Letter; set => Tile.Letter = value; }
+        public Letter Letter
+        {
+            get => Tile.Letter;
+            set
+            {
+                if (Tile.Letter.Serialize != value.Serialize)
+                {
+                    Tile.Letter = value;
+                    Text = Tile.Letter?.Char.ToString();
+                }
+            }
+        }
         public int AnchorLeftMaxLimit { get => Tile.AnchorLeftMaxLimit; set => Tile.AnchorLeftMaxLimit = value; }
         public int AnchorLeftMinLimit { get => Tile.AnchorLeftMinLimit; set => Tile.AnchorLeftMinLimit = value; }
         public bool IsAnchor { get => Tile.IsAnchor; }

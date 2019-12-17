@@ -89,7 +89,7 @@ namespace DawgResolver
 
             };
             if (l.Count() > 6 && l[6] != "")
-                t.Letter = t.FromJoker ? Game.AlphabetWWFAvecJoker.Find(c => c.Char == Game.Joker) : Game.AlphabetWWFAvecJoker.Find(c => c.Char == l[6][0]);
+                t.Letter = Game.AlphabetWWFAvecJoker.Find(c => c.Char == l[6][0]);
             if (l.Count() > 7 && l[7] != "")
                 t.IsPlayedByPlayer1 = bool.Parse(l[7]);
             return t;
@@ -103,7 +103,8 @@ namespace DawgResolver
                 Text = l[2],
                 Points = int.Parse(l[3]),
                 Direction = (MovementDirection)Enum.Parse(typeof(MovementDirection), l[4]),
-                Scramble = l[5].First() == '*'
+                Scramble = l[5].First() == '*',
+                Index = l.Length > 6 ? int.Parse(l[6]) : 0
             };
         }
 
@@ -119,13 +120,10 @@ namespace DawgResolver
         public static void SetWord(this VTile t, Player p, string word, MovementDirection direction, bool Validate = false)
         {
             if (word == "") return;
-            if (t.Col == Game.BoardSize - 1)
-                t = t.LeftTile?.RightTile;
-            else
-                t = t.RightTile?.LeftTile;
+
             if (t != null)
             {
-                t.Letter = t.SetLetter(word[0], p, Validate);
+                t = t.SetLetter(word.First(), p, Validate);
 
                 foreach (var c in word.Skip(1))
                 {
@@ -136,22 +134,26 @@ namespace DawgResolver
                 }
             }
         }
-        public static Letter SetLetter(this VTile t, char c, Player p, bool Validate)
+        public static VTile SetLetter(this VTile t, char c, Player p, bool Validate)
         {
             if (t != null)
             {
+                if (t.Col == Game.BoardSize-1)
+                    t = t.LeftTile.RightTile;
+                else t = t.RightTile.LeftTile;
+
                 if (t.IsEmpty)
                     t.IsValidated = Validate;
                 t.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(c));
                 if (char.IsLower(c))
                     t.FromJoker = true;
                 if (t.FromJoker)
-                    p.Rack.Remove(Game.AlphabetWWFAvecJoker[26]);
+                    p.Rack.Remove(Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker[26] : Game.AlphabetWWFAvecJoker[26]);
                 else
                     p.Rack.Remove(t.Letter);
-
+                return t;
             }
-            return t.Letter;
+            return null;
         }
         public static VTile SetRightLetter(this VTile t, char c, Player p, bool Validate)
         {
@@ -211,6 +213,8 @@ namespace DawgResolver
                     ret[ligne, col].WordMultiplier = source.WordMultiplier;
                     ret[ligne, col].LetterMultiplier = source.LetterMultiplier;
                     ret[ligne, col].Letter = tiles[col, ligne].Letter;
+                    ret[ligne, col].Controlers = tiles[col, ligne].Controlers;
+                    ret[ligne, col].IsValidated = tiles[col, ligne].IsValidated;
 
                 }
             Game.IsTransposed = !Game.IsTransposed;

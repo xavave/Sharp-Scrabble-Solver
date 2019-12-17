@@ -77,17 +77,17 @@ namespace DawgResolver.Model
             return sb.ToString();
         }
 
-        public List<Letter> GetLetters(Player p, string forcedLetters = null)
+        public void GetLetters(Player p, string forcedLetters = null)
         {
-            if (p.Rack.Count() > 7) return new List<Letter>();
+            if (p.Rack.Count() > 7) return;
 
             if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
                 p.Rack = forcedLetters.Select(c => Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.Find(cc => cc.Char == c) : Game.AlphabetWWFAvecJoker.Find(cc => cc.Char == c)).ToList();
-                return p.Rack;
+                return;
             }
             // Si le sac est vide
-            if (LeftLettersCount == 0) return new List<Letter>();
+            if (LeftLettersCount == 0) return;
             //throw new ArgumentException("Il n'y a plus de lettres dans le sac");
 
             // S'il reste 7 lettres ou moins dans le sac, on n'a pas le choix, on les prend toutes
@@ -96,13 +96,13 @@ namespace DawgResolver.Model
             if (Math.Abs(lettersToTakeCount) > 7) lettersToTakeCount = 0;
             Random rnd = new Random();
             // Sinon on tire 7 lettres du sac à condition qu'il en reste suffisament
-            for (int i = 0; i < Math.Min(FlatList.Length, lettersToTakeCount); i++)
+            for (int i = 0; i <= Math.Min(FlatList.Length, lettersToTakeCount - 1); i++)
             {
                 var letter = GetLetterInFlatList(rnd);
 
                 p.Rack.Add(letter);
             }
-            return p.Rack;
+       
 
         }
     }

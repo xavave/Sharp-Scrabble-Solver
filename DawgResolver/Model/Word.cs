@@ -13,6 +13,7 @@ namespace DawgResolver.Model
     };
     public class Word
     {
+        public int Index { get; set; }
         public Game Game { get; set; }
         public Word(Game g)
         {
@@ -45,7 +46,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return $"{StartTile.Ligne};{StartTile.Col};{Text};{Points};{Direction};{(Scramble ? "*" : "-")}" + Environment.NewLine;
+                return $"{StartTile.Ligne};{StartTile.Col};{Text};{Points};{Direction};{(Scramble ? "*" : "-")};{Index}" + Environment.NewLine;
             }
         }
         public string DisplayText
@@ -69,9 +70,7 @@ namespace DawgResolver.Model
         {
             var ret = new List<VTile>();
             VTile t = StartTile;
-            if (StartTile.Col == Game.BoardSize - 1)
-                t = t.LeftTile.RightTile;
-            else t = t.RightTile.LeftTile;
+            
             ret.Add(t);
             for (int i = 1; i < Text.Length; i++)
             {
@@ -89,11 +88,7 @@ namespace DawgResolver.Model
             }
             return ret;
         }
-        //public void Validate()
-        //{
-        //    foreach (var t in GetTiles())
-        //        t.IsValidated = true;
-        //}
+        
 
         public override string ToString()
         {

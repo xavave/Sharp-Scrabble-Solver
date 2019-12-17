@@ -16,6 +16,7 @@ namespace DawgResolver.Model
     {
         public bool Stop { get; set; } = false;
 
+        public int MoveIndex { get; set; } = 1;
         public static char EmptyChar { get; } = ' ';
         public static MovementDirection CurrentWordDirection { get; set; } = MovementDirection.Across;
         public static int BoardSize { get; set; } = 15;
@@ -308,7 +309,6 @@ namespace DawgResolver.Model
         public CancellationToken Token { get; set; }
         public CancellationTokenSource Cts { get; set; }
         public CancellationTokenSource CancelToken { get; set; }
-
         public string Serialise()
         {
             var ret = $"P1?{IsPlayer1}" + Environment.NewLine;
@@ -322,17 +322,16 @@ namespace DawgResolver.Model
                 ret += t.Serialize + Environment.NewLine;
             }
 
-            //ret += "P1moves" + Environment.NewLine;
+            ret += "Moves" + Environment.NewLine;
 
-            //foreach (var w in Player1.Moves)
-            //{
-            //    ret += $"M1{w.Serialize}";
-            //}
-            //ret += "P2moves" + Environment.NewLine;
-            //foreach (var w in Player2.Moves)
-            //{
-            //    ret += $"M2{w.Serialize}";
-            //}
+            for (int i = 0; i < Math.Max(Player1.Moves.Count, Player2.Moves.Count); i++)
+            {
+                if (i < Player1.Moves.Count)
+                    ret += $"M1{Player1.Moves[i].Serialize}";
+                if (i < Player2.Moves.Count)
+                    ret += $"M2{Player2.Moves[i].Serialize}";
+            }
+
             return ret;
         }
 
@@ -348,38 +347,41 @@ namespace DawgResolver.Model
                 {
                     IsPlayer1 = bool.Parse(l.Substring(3));
                 }
-                if (l.StartsWith("L"))
+                else if (l.StartsWith("L"))
                 {
                     alphabet.Add(l.DeserializeLetter());
                 }
-                else
-                if (l.StartsWith("T"))
+                else if (l.StartsWith("T"))
                 {
                     tiles.Add(l.DeserializeTile(this));
                 }
-                //else
-                //if (l.StartsWith("M1"))
-                //{
-                //    Player1.Moves.Add(l.DeserializeMove(this));
-                //}
-                //else
-                //     if (l.StartsWith("M2"))
-                //{
-                //    Player2.Moves.Add(l.DeserializeMove(this));
-                //}
+                else if (l.StartsWith("M1"))
+                {
+                    Player1.Moves.Add(l.DeserializeMove(this));
+                }
+                else if (l.StartsWith("M2"))
+                {
+                    Player2.Moves.Add(l.DeserializeMove(this));
+                }
             }
             for (int idx = 0; idx < Bag.Letters.Count; idx++)
             {
                 Bag.Letters[idx].Count = alphabet[idx].Count;
             }
-            foreach (var t in tiles)
-            {
-                if (t.Ligne < Game.BoardSize && t.Col < Game.BoardSize)
-                {
-                    Grid[t.Ligne, t.Col] = t;
-                    if (!t.IsEmpty) Grid[t.Ligne, t.Col].IsValidated = true;
-                }
-            }
+            //foreach (var t in tiles)
+            //{
+            //    if (t.Ligne < Game.BoardSize && t.Col < Game.BoardSize)
+            //    {
+            //        if (t.Ligne == 3 && t.Col == 11)
+            //        {
+
+            //        }
+            //        Grid[t.Ligne, t.Col] = t;
+            //        if (!t.IsEmpty) Grid[t.Ligne, t.Col].IsValidated = true;
+            //    }
+            //}
+            
+
             Player1.Points = Player1.Moves.Sum(m => m.Points);
             Player2.Points = Player2.Moves.Sum(m => m.Points);
 

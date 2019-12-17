@@ -161,54 +161,50 @@ namespace DawgResolver
         private VTile[,] FindAnchors(VTile[,] grid)
         {
 
-            foreach (var t in grid.OfType<VTile>().Where(ti => ti.IsEmpty))
+            foreach (var t in grid.OfType<VTile>().Where(ti => ti.IsAnchor))
             {
                 // Cas où l'ancre est à l'extrème gauche du plateau, la taille du préfixe est exactement 0
                 // Cas où l'ancre est précédée d'une autre ancre, la taille du préfixe est exactement 0
-                if (t.IsAnchor)
+
+                t.IsValidated = false;
+                var tileCpy = t.Copy(Game, grid);
+
+                int cptPrefix = 0;
+
+                if (t.Col == 0 || t.LeftTile.IsAnchor)
                 {
-                    t.IsValidated = false;
-                    var tileCpy = t.Copy(Game, grid);
-
-                    int cptPrefix = 0;
-
-                    if (t.Col == 0 || t.LeftTile.IsAnchor)
-                    {
-                        t.AnchorLeftMinLimit = 0;
-                        t.AnchorLeftMaxLimit = 0;
-                    }
-                    else if (!t.LeftTile.IsEmpty)
-                    {
-                        // Cas où l'ancre est précédée d'une case occupée, la taille du préfixe est exactement également la taille du mot
-                        // ou de la chaîne qui précède l'ancre
-                        cptPrefix = 0;
-                        while (tileCpy != null && tileCpy.LeftTile != null && !tileCpy.LeftTile.IsEmpty)
-                        {
-                            cptPrefix++;
-                            tileCpy = tileCpy.LeftTile;
-
-                        }
-                        t.AnchorLeftMinLimit = cptPrefix;
-                        t.AnchorLeftMaxLimit = cptPrefix;
-                    }
-                    else if (t.LeftTile.IsEmpty)
-                    {
-                        // Cas où l'ancre est précédée par un case vide,
-                        // la taille du préfixe varie de 0 à k où k représente le nombre de cases vides non identifiées comme des ancres
-                        cptPrefix = 0;
-                        while (tileCpy != null && tileCpy.LeftTile != null && tileCpy.LeftTile.IsEmpty)
-                        {
-                            cptPrefix++;
-                            tileCpy = tileCpy.LeftTile;
-
-
-                        }
-                        t.AnchorLeftMinLimit = 0;
-                        t.AnchorLeftMaxLimit = cptPrefix;
-                    }
-
+                    t.AnchorLeftMinLimit = 0;
+                    t.AnchorLeftMaxLimit = 0;
                 }
+                else if (!t.LeftTile.IsEmpty)
+                {
+                    // Cas où l'ancre est précédée d'une case occupée, la taille du préfixe est exactement également la taille du mot
+                    // ou de la chaîne qui précède l'ancre
+                    cptPrefix = 0;
+                    while (tileCpy != null && tileCpy.LeftTile != null && !tileCpy.LeftTile.IsEmpty)
+                    {
+                        cptPrefix++;
+                        tileCpy = tileCpy.LeftTile;
 
+                    }
+                    t.AnchorLeftMinLimit = cptPrefix;
+                    t.AnchorLeftMaxLimit = cptPrefix;
+                }
+                else if (t.LeftTile.IsEmpty)
+                {
+                    // Cas où l'ancre est précédée par un case vide,
+                    // la taille du préfixe varie de 0 à k où k représente le nombre de cases vides non identifiées comme des ancres
+                    cptPrefix = 0;
+                    while (tileCpy != null && tileCpy.LeftTile != null && tileCpy.LeftTile.IsEmpty)
+                    {
+                        cptPrefix++;
+                        tileCpy = tileCpy.LeftTile;
+
+
+                    }
+                    t.AnchorLeftMinLimit = 0;
+                    t.AnchorLeftMaxLimit = cptPrefix;
+                }
             }
 
             return grid;
@@ -398,6 +394,8 @@ namespace DawgResolver
             NbPossibleMoves = 0;
             NbAcceptedMoves = 0;
             LegalWords.Clear();
+            LegalWords.AddRange(Game.Player1.Moves);
+            LegalWords.AddRange(Game.Player2.Moves);
             var backupGrid = Game.Grid.Copy();
             Game.Grid = DetectTiles(Game.Grid);
 
@@ -499,57 +497,57 @@ namespace DawgResolver
             int debutCol = colonne - word.Length;
             int UsedDraughtLetters = 0;
 
-
-            for (int j = 0; j < word.Length; j++)
-            {
-                var tile = grid[ligne, debutCol + j];
-                var L = word[j];
-                if (tile.IsEmpty)
-                {
-                    // Le calcul des points prend en compte les cases bonus non encore utilisées
-                    // Il faut noter que seules les lettres du tirage permettent de bénéficier des bonus
-                    // Les points verticaux ont été précalculés au moment du recensement des contrôleurs
-                    if (char.IsUpper(L))
-                    {
-                        horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value * tile.LetterMultiplier;
-                        verticalPoints += tile.Controlers.ContainsKey(L - Dictionnaire.AscShiftBase0) ? tile.Controlers[L - Dictionnaire.AscShiftBase0] : 0;
-                    }
-
-                    else
-                    {
-                        if (tile.Controlers.ContainsKey(((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0) && tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0] > 0)
-                            verticalPoints += tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0] - Game.AlphabetWWFAvecJoker.Find(c => c.Char == char.ToUpper(L)).Value
-                                * tile.LetterMultiplier * tile.WordMultiplier;
-
-                    }
-                    multiplier *= tile.WordMultiplier;
-                    UsedDraughtLetters++;
-                }
-                else
-                {
-                    if (char.IsUpper(L)) horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value;
-                }
-
-            }
-            // L'utilisation des 7 lettres du tirage rapporte en plus 50 points de bonus
-            points = horizontalPoints * multiplier + verticalPoints + (UsedDraughtLetters == 7 ? 50 : 0);
-
-            NbPossibleMoves++;
-            //if (LegalWords.Any() && points < LegalWords.Min(l => l.Points)) return;
-            // Tri et mise en forme des coups
-            //if (points <= MinPoint) return;
             var startTile = direction == MovementDirection.Across ? grid[ligne, debutCol] : grid[debutCol, ligne];
             var newWord = new Word(Game)
             {
                 StartTile = startTile,
                 Direction = direction,
                 Text = word,
-                Points = points,
-                Scramble = UsedDraughtLetters == 7
             };
-            //if (!LegalWords.Any(w => w.Equals(newWord)) && !PlayedWords.Any(pw => pw.Equals(newWord)))
             if (!LegalWords.Any(pw => pw.Equals(newWord)))
             {
+                for (int j = 0; j < word.Length; j++)
+                {
+                    var tile = grid[ligne, debutCol + j];
+                    var L = word[j];
+                    if (tile.IsEmpty)
+                    {
+                        // Le calcul des points prend en compte les cases bonus non encore utilisées
+                        // Il faut noter que seules les lettres du tirage permettent de bénéficier des bonus
+                        // Les points verticaux ont été précalculés au moment du recensement des contrôleurs
+                        if (char.IsUpper(L))
+                        {
+                            horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value * tile.LetterMultiplier;
+                            verticalPoints += tile.Controlers.ContainsKey(L - Dictionnaire.AscShiftBase0) ? tile.Controlers[L - Dictionnaire.AscShiftBase0] : 0;
+                        }
+
+                        else
+                        {
+                            if (tile.Controlers.ContainsKey(((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0) && tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0] > 0)
+                                verticalPoints += tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShiftBase0] - Game.AlphabetWWFAvecJoker.Find(c => c.Char == char.ToUpper(L)).Value
+                                    * tile.LetterMultiplier * tile.WordMultiplier;
+
+                        }
+                        multiplier *= tile.WordMultiplier;
+                        UsedDraughtLetters++;
+                    }
+                    else
+                    {
+                        if (char.IsUpper(L)) horizontalPoints += Game.Alphabet.Find(c => c.Char == char.ToUpper(L)).Value;
+                    }
+
+                }
+                // L'utilisation des 7 lettres du tirage rapporte en plus 50 points de bonus
+                points = horizontalPoints * multiplier + verticalPoints + (UsedDraughtLetters == 7 ? 50 : 0);
+
+                NbPossibleMoves++;
+                //if (LegalWords.Any() && points < LegalWords.Min(l => l.Points)) return;
+                // Tri et mise en forme des coups
+                //if (points <= MinPoint) return;
+                newWord.Points = points;
+                newWord.Scramble = UsedDraughtLetters == 7;
+                //if (!LegalWords.Any(w => w.Equals(newWord)) && !PlayedWords.Any(pw => pw.Equals(newWord)))
+
                 LegalWords.Add(newWord);
                 NbAcceptedMoves++;
             }
