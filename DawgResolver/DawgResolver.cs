@@ -117,7 +117,7 @@ namespace DawgResolver
                         points += tileCpy.Letter.Value;
 
                     }
-
+                    //TODO test avec "AINEE" puis "SURPAYA"
 
                     //On vérifie pour chaque Lettre L de A à Z si Debut+L+Fin forme un mot valide
                     //Si tel est le cas, la lettre L est jouable pour la case considérée
