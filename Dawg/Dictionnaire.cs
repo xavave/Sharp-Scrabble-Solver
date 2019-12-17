@@ -475,7 +475,7 @@ namespace DawgResolver
                 for (int i = 0; i < NombreNoeuds; i++)
                 {
 
-                    if (noeuds[i] == null)//on vérifie si le noeud à déserializé a pas déjà été créé par un arc
+                    if (noeuds[i] == null)//on vérifie si le noeud à déserialiser n'a pas déjà été créé par un arc
                         noeuds[i] = new Noeud(i + 1);//on l'initialise si nécessaire
 
                     Noeud n = noeuds[i];
