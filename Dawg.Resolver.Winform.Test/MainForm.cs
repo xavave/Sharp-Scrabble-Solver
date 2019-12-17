@@ -355,7 +355,7 @@ namespace Dawg.Resolver.Winform.Test
                         return;
                     }
                     CurrentWord = word;
-                    DisplayPlayerWord(word);
+                   
                     int points = PreviewWord(Game.IsPlayer1 ? Game.Player1 : Game.Player2, word, true);
                     if (Game.IsPlayer1)
                         Game.Player1.Points += points;
