@@ -17,8 +17,11 @@ namespace DawgResolver
     public class Dictionnaire
     {
         public const string NomDicoDawg = "dico_dawgODS7.txt";
+
         public const string NomDicoReel = "ODS7.txt";
+
         public const int AscShift = 64;
+
         public const int AscShiftBase0 = AscShift + 1;
         /// <summary>
         /// Chronomètre utilisé uniquement pour comparer les performances des 2 méthodes de construtions
@@ -472,7 +475,7 @@ namespace DawgResolver
                 for (int i = 0; i < NombreNoeuds; i++)
                 {
 
-                    if (noeuds[i] == null)//on vérifie si le noeud à déserializé a pas déjà été créé par un arc
+                    if (noeuds[i] == null)//on vérifie si le noeud à déserialiser n'a pas déjà été créé par un arc
                         noeuds[i] = new Noeud(i + 1);//on l'initialise si nécessaire
 
                     Noeud n = noeuds[i];

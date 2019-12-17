@@ -123,7 +123,7 @@ namespace DawgResolver
                     //Si tel est le cas, la lettre L est jouable pour la case considérée
                     //et on précalcule le point que le mot verticalement formé permettrait de gagner si L était jouée
                     L = 0;
-                    foreach (var c in Game.Alphabet)//.Where(c => (wordStart + c + wordEnd).Length > 1 && Game.Dico.MotAdmis((wordStart + c + wordEnd).ToUpper())))
+                    foreach (var c in Game.Alphabet)
                     {
                         var mot = wordStart + c.Char + wordEnd;
                         if (mot.Length > 1 && Game.Dico.MotAdmis(mot))
