@@ -666,6 +666,10 @@ namespace Dawg.Resolver.Winform.Test
             var allWords = Game.Player1.Moves.Union(Game.Player2.Moves).OrderByDescending(a => a.Index);
             var lastWord = allWords.FirstOrDefault();
             var tiles = lastWord.GetTiles();
+            foreach (var t in tiles)
+            {
+                Game.Bag.PutBackLetterInBag(t.Letter);
+            }
             foreach (var tile in tiles.Where(t => t.IsPlayedByPlayer1 == lastWord.IsPlayedByPlayer1))
             {
 
@@ -676,6 +680,9 @@ namespace Dawg.Resolver.Winform.Test
                 Game.Player1.Moves.Remove(lastWord);
             else
                 Game.Player2.Moves.Remove(lastWord);
+
+            
+
             RefreshBoard(Game.Grid);
         }
     }
