@@ -1,4 +1,5 @@
-﻿using DawgResolver.Model;
+﻿using DawgResolver;
+using DawgResolver.Model;
 using System;
 using Xamarin.Forms;
 
@@ -8,7 +9,7 @@ namespace Scrabbler
     {
         // Alternative sizes make the tiles a tad small.
 
-        public Game Game { get; set; } = new Game();
+        public Game Game { get; set; } = new Game(Dictionnaire.NomDicoDawgODS7);
         public VTile[,] tiles = new VTile[Game.BoardSize, Game.BoardSize];
         int flaggedTileCount;
         bool isGameInProgress;              // on first tap

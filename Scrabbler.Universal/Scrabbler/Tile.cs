@@ -228,6 +228,8 @@ namespace Scrabbler
 
         public VTile WordUpperTile => InnerTile.WordUpperTile;
 
+        public int WordIndex { get => InnerTile.WordIndex; set => InnerTile.WordIndex = value; }
+
         // Does not fire TileStatusChanged events.
         public void Initialize()
         {
