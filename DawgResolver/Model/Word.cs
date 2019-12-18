@@ -13,6 +13,7 @@ namespace DawgResolver.Model
     };
     public class Word
     {
+        public bool IsPlayedByPlayer1 { get; set; }
         public int Index { get; set; }
         public Game Game { get; set; }
         public Word(Game g)
@@ -69,8 +70,12 @@ namespace DawgResolver.Model
         public List<VTile> GetTiles()
         {
             var ret = new List<VTile>();
-            VTile t = StartTile;
-            
+            VTile t = null;
+            if (StartTile.Col == Game.BoardSize - 1)
+                t = StartTile.LeftTile.RightTile;
+            else
+                t = StartTile.RightTile.LeftTile;
+
             ret.Add(t);
             for (int i = 1; i < Text.Length; i++)
             {
@@ -88,7 +93,7 @@ namespace DawgResolver.Model
             }
             return ret;
         }
-        
+
 
         public override string ToString()
         {
@@ -96,7 +101,7 @@ namespace DawgResolver.Model
         }
         public bool Equals(Word w)
         {
-            return w.Direction == Direction && w.StartTile.Col == StartTile.Col && w.StartTile.Ligne == StartTile.Ligne && w.Text==Text;
+            return w.Direction == Direction && w.StartTile.Col == StartTile.Col && w.StartTile.Ligne == StartTile.Ligne && w.Text == Text;
         }
     }
 }

@@ -301,8 +301,8 @@ namespace DawgResolver
             bool jokerInDraught = leftLetters.Any(l => l.Char == Game.Joker);
 
             VTile t = null;
-            if (ligne >= 0 && colonne >= 0 && colonne < Game.BoardSize && ligne < Game.BoardSize && leftLetters.Count() <= 7 && leftLetters.Count() > 0) t = grid[ligne, colonne];
-
+            if (ligne >= 0 && colonne >= 0 && colonne < Game.BoardSize && ligne < Game.BoardSize && leftLetters.Count() <= 7 && leftLetters.Count() >= 0) t = grid[ligne, colonne];
+            
             if (t != null && t.IsEmpty)
             {
                 // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions
@@ -545,6 +545,7 @@ namespace DawgResolver
                 // Tri et mise en forme des coups
                 //if (points <= MinPoint) return;
                 newWord.Points = points;
+                
                 newWord.Scramble = UsedDraughtLetters == 7;
                 //if (!LegalWords.Any(w => w.Equals(newWord)) && !PlayedWords.Any(pw => pw.Equals(newWord)))
 

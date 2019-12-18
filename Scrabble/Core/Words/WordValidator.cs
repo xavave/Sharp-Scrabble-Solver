@@ -1,4 +1,5 @@
 ﻿using DawgResolver;
+using DawgResolver.Model;
 using DawgSharp;
 using Scrabble.Core.Movement;
 using System;

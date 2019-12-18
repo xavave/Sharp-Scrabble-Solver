@@ -1,4 +1,5 @@
 ﻿using DawgResolver;
+using DawgResolver.Model;
 using Scrabble.Core.Words;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace Scrabble.Core.Tile
             if (string.IsNullOrWhiteSpace(s.Text)) return;
             var idx = Tiles.IndexOf(s);
             if (ScrabbleForm.Game.Player1.Rack.Count > idx)
-                ScrabbleForm.Game.Player1.Rack[idx] = Game.AlphabetAvecJoker.Find(c => c.Char == s.Text[0]);
+                ScrabbleForm.Game.Player1.Rack[idx] = Game.AlphabetWWFAvecJoker.Find(c => c.Char == s.Text[0]);
         }
 
         private void Tile_MouseDown(object sender, MouseEventArgs e)
@@ -85,20 +86,20 @@ namespace Scrabble.Core.Tile
 
             //// Take random letters from the tile back, and fill up the rack again.
           var letters = ScrabbleForm.TileManager.TileBag.TakeLetters(missingLetters,removeLetter);
-            var rack = ScrabbleForm.Game.Resolver.NewDraught(ScrabbleForm.PlayerManager.CurrentPlayer == ScrabbleForm.PlayerManager.PlayerOne ? ScrabbleForm.Game.Player1 : ScrabbleForm.Game.Player2, letters);
+            //var rack = ScrabbleForm.Game.Resolver.NewDraught(ScrabbleForm.PlayerManager.CurrentPlayer == ScrabbleForm.PlayerManager.PlayerOne ? ScrabbleForm.Game.Player1 : ScrabbleForm.Game.Player2, letters);
 
-            for (int x = 0; x < rack.Count; x++)
-            {
-                var tile = tiles.FirstOrDefault(r => string.IsNullOrEmpty(r.Text));
-                if (tile != null)
-                {
-                    tile.Letter = rack[x].Char;
-                    tile.LetterValue = rack[x].Value;
-                    tile.TextChanged -= Tile_TextChanged;
-                    tile.Text = rack[x].Char.ToString();
-                    tile.TextChanged += Tile_TextChanged;
-                }
-            }
+            //for (int x = 0; x < rack.Count; x++)
+            //{
+            //    var tile = tiles.FirstOrDefault(r => string.IsNullOrEmpty(r.Text));
+            //    if (tile != null)
+            //    {
+            //        tile.Letter = rack[x].Char;
+            //        tile.LetterValue = rack[x].Value;
+            //        tile.TextChanged -= Tile_TextChanged;
+            //        tile.Text = rack[x].Char.ToString();
+            //        tile.TextChanged += Tile_TextChanged;
+            //    }
+            //}
         }
 
         /// <summary>

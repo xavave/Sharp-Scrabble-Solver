@@ -1,4 +1,5 @@
 ﻿using DawgResolver;
+using DawgResolver.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

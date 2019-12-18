@@ -1,4 +1,5 @@
 ﻿using DawgResolver;
+using DawgResolver.Model;
 using Scrabble.Core.Tile;
 using System;
 using System.Collections.Generic;
@@ -68,6 +69,48 @@ namespace Scrabble.Core
         public bool TileInPlay { get; set; }
         public TileType TileType { get; set; }
         public Letter Letter { get; set; }
+        ScrabbleForm ITile.ScrabbleForm { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        TileType ITile.TileType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool ITile.TileInPlay { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        string ITile.Text { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool VTile.IsValidated { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        TileType VTile.TileType => throw new NotImplementedException();
+
+        int VTile.Ligne { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        int VTile.Col { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        Letter VTile.Letter { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        int VTile.LetterMultiplier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        int VTile.WordMultiplier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        int VTile.AnchorLeftMinLimit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        int VTile.AnchorLeftMaxLimit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        bool VTile.IsAnchor => throw new NotImplementedException();
+
+        Dictionary<int, int> VTile.Controlers { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool VTile.FromJoker { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        bool VTile.IsEmpty => throw new NotImplementedException();
+
+        bool? VTile.IsPlayedByPlayer1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        VTile VTile.LeftTile => throw new NotImplementedException();
+
+        VTile VTile.RightTile => throw new NotImplementedException();
+
+        VTile VTile.UpTile => throw new NotImplementedException();
+
+        VTile VTile.DownTile => throw new NotImplementedException();
+
+        VTile VTile.WordMostRightTile => throw new NotImplementedException();
+
+        VTile VTile.WordMostLeftTile => throw new NotImplementedException();
+
+        VTile VTile.WordLowerTile => throw new NotImplementedException();
+
+        VTile VTile.WordUpperTile => throw new NotImplementedException();
+
+        string VTile.Serialize => throw new NotImplementedException();
 
         public void OnLetterPlaced(string letter)
         {
@@ -159,6 +202,26 @@ namespace Scrabble.Core
                 e.Effect = DragDropEffects.Copy;
             else
                 e.Effect = DragDropEffects.None;
+        }
+
+        void ITile.ClearHighlight()
+        {
+            throw new NotImplementedException();
+        }
+
+        void ITile.OnHighlight(bool valid)
+        {
+            throw new NotImplementedException();
+        }
+
+        void VTile.Initialize()
+        {
+            throw new NotImplementedException();
+        }
+
+        Word VTile.GetWordFromTile(MovementDirection direction)
+        {
+            throw new NotImplementedException();
         }
     }
 }

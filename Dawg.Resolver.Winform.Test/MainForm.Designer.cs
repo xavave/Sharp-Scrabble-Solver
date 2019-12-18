@@ -70,6 +70,7 @@
             this.txtMotExiste = new System.Windows.Forms.TextBox();
             this.lblMotExiste = new System.Windows.Forms.Label();
             this.gbBoard = new Dawg.Resolver.Winform.Test.CustomGroupBox();
+            this.btnUndoLast = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.gbWordDirection.SuspendLayout();
             this.gbGameStyle.SuspendLayout();
@@ -79,7 +80,7 @@
             // btnSearch
             // 
             this.btnSearch.Location = new System.Drawing.Point(309, 2);
-            this.btnSearch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(2);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(50, 23);
             this.btnSearch.TabIndex = 7;
@@ -91,7 +92,7 @@
             // 
             this.txtRackP1.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtRackP1.Location = new System.Drawing.Point(214, 2);
-            this.txtRackP1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtRackP1.Margin = new System.Windows.Forms.Padding(2);
             this.txtRackP1.Name = "txtRackP1";
             this.txtRackP1.Size = new System.Drawing.Size(91, 20);
             this.txtRackP1.TabIndex = 5;
@@ -100,7 +101,7 @@
             // 
             this.lsbHintWords.FormattingEnabled = true;
             this.lsbHintWords.Location = new System.Drawing.Point(8, 41);
-            this.lsbHintWords.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lsbHintWords.Margin = new System.Windows.Forms.Padding(2);
             this.lsbHintWords.Name = "lsbHintWords";
             this.lsbHintWords.Size = new System.Drawing.Size(174, 316);
             this.lsbHintWords.TabIndex = 8;
@@ -111,7 +112,7 @@
             this.txtBag.BackColor = System.Drawing.SystemColors.InfoText;
             this.txtBag.ForeColor = System.Drawing.SystemColors.InactiveBorder;
             this.txtBag.Location = new System.Drawing.Point(8, 365);
-            this.txtBag.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtBag.Margin = new System.Windows.Forms.Padding(2);
             this.txtBag.Multiline = true;
             this.txtBag.Name = "txtBag";
             this.txtBag.Size = new System.Drawing.Size(252, 97);
@@ -122,7 +123,7 @@
             this.txtGrid2.BackColor = System.Drawing.SystemColors.InfoText;
             this.txtGrid2.ForeColor = System.Drawing.SystemColors.InactiveBorder;
             this.txtGrid2.Location = new System.Drawing.Point(185, 123);
-            this.txtGrid2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtGrid2.Margin = new System.Windows.Forms.Padding(2);
             this.txtGrid2.Multiline = true;
             this.txtGrid2.Name = "txtGrid2";
             this.txtGrid2.Size = new System.Drawing.Size(177, 239);
@@ -131,7 +132,7 @@
             // btnTranspose
             // 
             this.btnTranspose.Location = new System.Drawing.Point(193, 79);
-            this.btnTranspose.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnTranspose.Margin = new System.Windows.Forms.Padding(2);
             this.btnTranspose.Name = "btnTranspose";
             this.btnTranspose.Size = new System.Drawing.Size(75, 25);
             this.btnTranspose.TabIndex = 12;
@@ -142,7 +143,7 @@
             // btnBackToRack
             // 
             this.btnBackToRack.Location = new System.Drawing.Point(280, 79);
-            this.btnBackToRack.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnBackToRack.Margin = new System.Windows.Forms.Padding(2);
             this.btnBackToRack.Name = "btnBackToRack";
             this.btnBackToRack.Size = new System.Drawing.Size(79, 25);
             this.btnBackToRack.TabIndex = 13;
@@ -153,7 +154,7 @@
             // btnValidate
             // 
             this.btnValidate.Location = new System.Drawing.Point(265, 365);
-            this.btnValidate.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnValidate.Margin = new System.Windows.Forms.Padding(2);
             this.btnValidate.Name = "btnValidate";
             this.btnValidate.Size = new System.Drawing.Size(94, 33);
             this.btnValidate.TabIndex = 15;
@@ -164,7 +165,7 @@
             // btnDemo
             // 
             this.btnDemo.Location = new System.Drawing.Point(11, 466);
-            this.btnDemo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnDemo.Margin = new System.Windows.Forms.Padding(2);
             this.btnDemo.Name = "btnDemo";
             this.btnDemo.Size = new System.Drawing.Size(77, 21);
             this.btnDemo.TabIndex = 16;
@@ -197,7 +198,7 @@
             // btnDemoAll
             // 
             this.btnDemoAll.Location = new System.Drawing.Point(92, 466);
-            this.btnDemoAll.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnDemoAll.Margin = new System.Windows.Forms.Padding(2);
             this.btnDemoAll.Name = "btnDemoAll";
             this.btnDemoAll.Size = new System.Drawing.Size(77, 21);
             this.btnDemoAll.TabIndex = 19;
@@ -209,7 +210,7 @@
             // 
             this.txtRackP2.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtRackP2.Location = new System.Drawing.Point(214, 24);
-            this.txtRackP2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtRackP2.Margin = new System.Windows.Forms.Padding(2);
             this.txtRackP2.Name = "txtRackP2";
             this.txtRackP2.Size = new System.Drawing.Size(91, 20);
             this.txtRackP2.TabIndex = 20;
@@ -250,7 +251,7 @@
             this.ckKeepExistingBoard.Checked = true;
             this.ckKeepExistingBoard.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ckKeepExistingBoard.Location = new System.Drawing.Point(173, 469);
-            this.ckKeepExistingBoard.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ckKeepExistingBoard.Margin = new System.Windows.Forms.Padding(2);
             this.ckKeepExistingBoard.Name = "ckKeepExistingBoard";
             this.ckKeepExistingBoard.Size = new System.Drawing.Size(76, 17);
             this.ckKeepExistingBoard.TabIndex = 24;
@@ -264,7 +265,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lsbInfos.FormattingEnabled = true;
             this.lsbInfos.Location = new System.Drawing.Point(883, 51);
-            this.lsbInfos.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lsbInfos.Margin = new System.Windows.Forms.Padding(2);
             this.lsbInfos.Name = "lsbInfos";
             this.lsbInfos.Size = new System.Drawing.Size(221, 186);
             this.lsbInfos.TabIndex = 25;
@@ -272,7 +273,7 @@
             // btnLoadGame
             // 
             this.btnLoadGame.Location = new System.Drawing.Point(193, 45);
-            this.btnLoadGame.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnLoadGame.Margin = new System.Windows.Forms.Padding(2);
             this.btnLoadGame.Name = "btnLoadGame";
             this.btnLoadGame.Size = new System.Drawing.Size(75, 30);
             this.btnLoadGame.TabIndex = 26;
@@ -283,7 +284,7 @@
             // btnSaveGame
             // 
             this.btnSaveGame.Location = new System.Drawing.Point(280, 45);
-            this.btnSaveGame.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSaveGame.Margin = new System.Windows.Forms.Padding(2);
             this.btnSaveGame.Name = "btnSaveGame";
             this.btnSaveGame.Size = new System.Drawing.Size(79, 30);
             this.btnSaveGame.TabIndex = 27;
@@ -307,7 +308,7 @@
             // btnNewGame
             // 
             this.btnNewGame.Location = new System.Drawing.Point(11, 491);
-            this.btnNewGame.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnNewGame.Margin = new System.Windows.Forms.Padding(2);
             this.btnNewGame.Name = "btnNewGame";
             this.btnNewGame.Size = new System.Drawing.Size(77, 21);
             this.btnNewGame.TabIndex = 28;
@@ -344,7 +345,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lsbWords.FormattingEnabled = true;
             this.lsbWords.Location = new System.Drawing.Point(883, 239);
-            this.lsbWords.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lsbWords.Margin = new System.Windows.Forms.Padding(2);
             this.lsbWords.Name = "lsbWords";
             this.lsbWords.Size = new System.Drawing.Size(221, 329);
             this.lsbWords.TabIndex = 31;
@@ -389,7 +390,7 @@
             // 
             this.ckShowGrid.AutoSize = true;
             this.ckShowGrid.Location = new System.Drawing.Point(193, 108);
-            this.ckShowGrid.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ckShowGrid.Margin = new System.Windows.Forms.Padding(2);
             this.ckShowGrid.Name = "ckShowGrid";
             this.ckShowGrid.Size = new System.Drawing.Size(94, 17);
             this.ckShowGrid.TabIndex = 33;
@@ -503,7 +504,7 @@
             // txtMotExiste
             // 
             this.txtMotExiste.Location = new System.Drawing.Point(239, 534);
-            this.txtMotExiste.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtMotExiste.Margin = new System.Windows.Forms.Padding(2);
             this.txtMotExiste.Name = "txtMotExiste";
             this.txtMotExiste.Size = new System.Drawing.Size(107, 20);
             this.txtMotExiste.TabIndex = 34;
@@ -523,13 +524,24 @@
             // gbBoard
             // 
             this.gbBoard.Location = new System.Drawing.Point(365, 3);
-            this.gbBoard.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbBoard.Margin = new System.Windows.Forms.Padding(2);
             this.gbBoard.Name = "gbBoard";
-            this.gbBoard.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbBoard.Padding = new System.Windows.Forms.Padding(2);
             this.gbBoard.Size = new System.Drawing.Size(515, 507);
             this.gbBoard.TabIndex = 11;
             this.gbBoard.TabStop = false;
             this.gbBoard.Text = "Board";
+            // 
+            // btnUndoLast
+            // 
+            this.btnUndoLast.Location = new System.Drawing.Point(265, 465);
+            this.btnUndoLast.Margin = new System.Windows.Forms.Padding(2);
+            this.btnUndoLast.Name = "btnUndoLast";
+            this.btnUndoLast.Size = new System.Drawing.Size(94, 33);
+            this.btnUndoLast.TabIndex = 36;
+            this.btnUndoLast.Text = "Undo Last";
+            this.btnUndoLast.UseVisualStyleBackColor = true;
+            this.btnUndoLast.Click += new System.EventHandler(this.btnUndoLast_Click);
             // 
             // MainForm
             // 
@@ -537,6 +549,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1112, 586);
+            this.Controls.Add(this.btnUndoLast);
             this.Controls.Add(this.lblMotExiste);
             this.Controls.Add(this.txtMotExiste);
             this.Controls.Add(this.gbSortBy);
@@ -569,7 +582,7 @@
             this.Controls.Add(this.lsbHintWords);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.txtRackP1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "Scrabble";
             this.Click += new System.EventHandler(this.MainForm_Click);
@@ -632,5 +645,6 @@
         private System.Windows.Forms.RadioButton rbBestScore;
         private System.Windows.Forms.TextBox txtMotExiste;
         private System.Windows.Forms.Label lblMotExiste;
+        private System.Windows.Forms.Button btnUndoLast;
     }
 }

@@ -98,8 +98,8 @@ namespace DawgResolver.Model
             if (Dico == null)
                 Dico = LoadDico();
             if (initBoard) InitBoard();
-            Player1 = new Player(this);
-            Player2 = new Player(this);
+            Player1 = new Player(this,"Player 1");
+            Player2 = new Player(this,"Player 2");
             Resolver = new Resolver(this);
             Bag = new Bag();
             //Bag.Letters = new List<Letter>(Game.AlphabetAvecJoker);
