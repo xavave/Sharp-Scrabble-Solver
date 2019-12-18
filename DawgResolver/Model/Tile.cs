@@ -5,7 +5,7 @@ namespace DawgResolver.Model
 
     public interface VTile
     {
-
+        int WordIndex { get; set; } 
         void Initialize();
         bool IsValidated { get; set; }
         TileType TileType { get; }
@@ -158,7 +158,7 @@ namespace DawgResolver.Model
             get
             {
                 VTile t = this;
-               
+
                 if (IsEmpty || t.RightTile == null || t.RightTile.IsEmpty)
                     return t;
                 else
@@ -214,6 +214,8 @@ namespace DawgResolver.Model
                 return t;
             }
         }
+
+        public int WordIndex { get; set; } = 0;
 
         public Word GetWordFromTile(MovementDirection direction)
         {

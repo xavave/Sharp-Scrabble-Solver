@@ -19,7 +19,7 @@ namespace DawgResolver.Model
         public Word(Game g)
         {
             Game = g;
-            StartTile = new Tile(Game, 7, 7);
+            StartTile = new Tile(Game,(int) Game.BoardSize/2, (int)Game.BoardSize / 2);
         }
         public int SetWord(Player p, bool validate)
         {

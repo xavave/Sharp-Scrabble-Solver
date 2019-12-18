@@ -231,6 +231,8 @@ namespace Dawg.Resolver.Winform.Test
             TxtInfos = string.Empty;
             TxtInfos = $"[{t.Ligne},{t.Col}] => IsAnchor:{t.IsAnchor} IsEmpty :{t.IsEmpty} => {t}";
             TxtInfos += Environment.NewLine;
+            TxtInfos += $"WordIndex={t.WordIndex}";
+            TxtInfos += Environment.NewLine;
             TxtInfos += $"IsPlayedByPlayer1={t.IsPlayedByPlayer1}";
             TxtInfos += Environment.NewLine;
             TxtInfos += $"LetterMultiplier={t.LetterMultiplier}";
@@ -334,5 +336,7 @@ namespace Dawg.Resolver.Winform.Test
         public VTile WordLowerTile => Tile.WordLowerTile;
 
         public VTile WordUpperTile => Tile.WordUpperTile;
+
+        public int WordIndex { get => Tile.WordIndex; set => Tile.WordIndex = value; }
     }
 }
