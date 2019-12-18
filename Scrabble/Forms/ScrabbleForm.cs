@@ -1,4 +1,5 @@
-﻿using DawgResolver.Model;
+﻿using DawgResolver;
+using DawgResolver.Model;
 using Scrabble.Core;
 using Scrabble.Core.Log;
 using Scrabble.Core.Players;
@@ -39,7 +40,7 @@ namespace Scrabble
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.None;
-            Game = new Game();
+            Game = new Game(Dictionnaire.NomDicoDawgODS7);
 
 
             //this.WordScorer = new WordScorer(this);

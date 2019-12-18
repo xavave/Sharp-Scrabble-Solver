@@ -71,10 +71,14 @@
             this.lblMotExiste = new System.Windows.Forms.Label();
             this.gbBoard = new Dawg.Resolver.Winform.Test.CustomGroupBox();
             this.btnUndoLast = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rbODS7 = new System.Windows.Forms.RadioButton();
+            this.rbODS6 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.gbWordDirection.SuspendLayout();
             this.gbGameStyle.SuspendLayout();
             this.gbSortBy.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSearch
@@ -356,9 +360,9 @@
             // 
             this.groupBox1.Controls.Add(this.rbSize15);
             this.groupBox1.Controls.Add(this.rbSize11);
-            this.groupBox1.Location = new System.Drawing.Point(12, 517);
+            this.groupBox1.Location = new System.Drawing.Point(12, 528);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(85, 68);
+            this.groupBox1.Size = new System.Drawing.Size(76, 57);
             this.groupBox1.TabIndex = 32;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Board Size";
@@ -367,7 +371,7 @@
             // 
             this.rbSize15.AutoSize = true;
             this.rbSize15.Checked = true;
-            this.rbSize15.Location = new System.Drawing.Point(15, 40);
+            this.rbSize15.Location = new System.Drawing.Point(6, 34);
             this.rbSize15.Name = "rbSize15";
             this.rbSize15.Size = new System.Drawing.Size(37, 17);
             this.rbSize15.TabIndex = 1;
@@ -379,7 +383,7 @@
             // rbSize11
             // 
             this.rbSize11.AutoSize = true;
-            this.rbSize11.Location = new System.Drawing.Point(15, 19);
+            this.rbSize11.Location = new System.Drawing.Point(6, 15);
             this.rbSize11.Name = "rbSize11";
             this.rbSize11.Size = new System.Drawing.Size(37, 17);
             this.rbSize11.TabIndex = 0;
@@ -436,9 +440,9 @@
             // 
             this.gbGameStyle.Controls.Add(this.rbGameStyleScrabble);
             this.gbGameStyle.Controls.Add(this.rbWordsWithFriends);
-            this.gbGameStyle.Location = new System.Drawing.Point(103, 517);
+            this.gbGameStyle.Location = new System.Drawing.Point(92, 528);
             this.gbGameStyle.Name = "gbGameStyle";
-            this.gbGameStyle.Size = new System.Drawing.Size(131, 68);
+            this.gbGameStyle.Size = new System.Drawing.Size(142, 57);
             this.gbGameStyle.TabIndex = 33;
             this.gbGameStyle.TabStop = false;
             this.gbGameStyle.Text = "Game Style";
@@ -447,7 +451,7 @@
             // 
             this.rbGameStyleScrabble.AutoSize = true;
             this.rbGameStyleScrabble.Checked = true;
-            this.rbGameStyleScrabble.Location = new System.Drawing.Point(15, 40);
+            this.rbGameStyleScrabble.Location = new System.Drawing.Point(13, 34);
             this.rbGameStyleScrabble.Name = "rbGameStyleScrabble";
             this.rbGameStyleScrabble.Size = new System.Drawing.Size(67, 17);
             this.rbGameStyleScrabble.TabIndex = 1;
@@ -459,7 +463,7 @@
             // rbWordsWithFriends
             // 
             this.rbWordsWithFriends.AutoSize = true;
-            this.rbWordsWithFriends.Location = new System.Drawing.Point(15, 19);
+            this.rbWordsWithFriends.Location = new System.Drawing.Point(13, 17);
             this.rbWordsWithFriends.Name = "rbWordsWithFriends";
             this.rbWordsWithFriends.Size = new System.Drawing.Size(112, 17);
             this.rbWordsWithFriends.TabIndex = 0;
@@ -543,12 +547,46 @@
             this.btnUndoLast.UseVisualStyleBackColor = true;
             this.btnUndoLast.Click += new System.EventHandler(this.btnUndoLast_Click);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.rbODS7);
+            this.groupBox2.Controls.Add(this.rbODS6);
+            this.groupBox2.Location = new System.Drawing.Point(92, 491);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(142, 34);
+            this.groupBox2.TabIndex = 34;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Game Style";
+            // 
+            // rbODS7
+            // 
+            this.rbODS7.AutoSize = true;
+            this.rbODS7.Checked = true;
+            this.rbODS7.Location = new System.Drawing.Point(79, 14);
+            this.rbODS7.Name = "rbODS7";
+            this.rbODS7.Size = new System.Drawing.Size(57, 17);
+            this.rbODS7.TabIndex = 1;
+            this.rbODS7.TabStop = true;
+            this.rbODS7.Text = "ODS 7";
+            this.rbODS7.UseVisualStyleBackColor = true;
+            // 
+            // rbODS6
+            // 
+            this.rbODS6.AutoSize = true;
+            this.rbODS6.Location = new System.Drawing.Point(6, 14);
+            this.rbODS6.Name = "rbODS6";
+            this.rbODS6.Size = new System.Drawing.Size(57, 17);
+            this.rbODS6.TabIndex = 0;
+            this.rbODS6.Text = "ODS 6";
+            this.rbODS6.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btnSearch;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1112, 586);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnUndoLast);
             this.Controls.Add(this.lblMotExiste);
             this.Controls.Add(this.txtMotExiste);
@@ -596,6 +634,8 @@
             this.gbGameStyle.PerformLayout();
             this.gbSortBy.ResumeLayout(false);
             this.gbSortBy.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -646,5 +686,8 @@
         private System.Windows.Forms.TextBox txtMotExiste;
         private System.Windows.Forms.Label lblMotExiste;
         private System.Windows.Forms.Button btnUndoLast;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton rbODS7;
+        private System.Windows.Forms.RadioButton rbODS6;
     }
 }

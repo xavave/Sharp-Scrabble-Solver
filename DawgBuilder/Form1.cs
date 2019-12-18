@@ -23,7 +23,7 @@ namespace Test_DAWG
             dico.EtapeAtteinte += dico_EtapeAtteinte;
             dico.Progression += dico_Progression;
             dico.ChargerDictionnaireAscii(Dictionnaire.NomDicoReel);
-            grpLectureDAWG.Enabled = File.Exists(Dictionnaire.NomDicoDawg);
+            grpLectureDAWG.Enabled = File.Exists(Dictionnaire.NomDicoDawgODS7);
             grpAjouterMot.Enabled = grpLectureDAWG.Enabled;
         }
 

@@ -9,7 +9,7 @@ namespace DawgResolverTest
     {
         static void Main(string[] args)
         {
-            var g = new Game();
+            var g = new Game(Dictionnaire.NomDicoDawgODS7);
             //Pour mes tests 
             var t = g.Grid[7, 5];
             t.SetWord(g.Player1, "famille", MovementDirection.Across);

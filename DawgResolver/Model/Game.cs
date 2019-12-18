@@ -93,14 +93,14 @@ namespace DawgResolver.Model
         public Bag Bag { get; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
-        public Game(bool initBoard = true)
+        public Game(string nomDico, bool initBoard = true)
         {
             if (Dico == null)
-                Dico = LoadDico();
+                Dico = LoadDico(nomDico);
             if (initBoard) InitBoard();
             Player1 = new Player(this,"Player 1");
             Player2 = new Player(this,"Player 2");
-            Resolver = new Resolver(this);
+            Resolver = new Resolver(this, nomDico);
             Bag = new Bag();
             //Bag.Letters = new List<Letter>(Game.AlphabetAvecJoker);
             Bag.Letters.ResetCount();
@@ -109,9 +109,9 @@ namespace DawgResolver.Model
             IsPlayer1 = true;
 
         }
-        private Dictionnaire LoadDico()
+        private Dictionnaire LoadDico(string nomDico)
         {
-            var dic = new Dictionnaire();
+            var dic = new Dictionnaire(nomDico);
             //dic.DAWG = dic.ChargerFichierDAWG();
             //dic.ChargerFichierDAWG();
 

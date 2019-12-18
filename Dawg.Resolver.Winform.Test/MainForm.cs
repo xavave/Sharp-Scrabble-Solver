@@ -24,10 +24,10 @@ namespace Dawg.Resolver.Winform.Test
         public MainForm()
         {
             InitializeComponent();
-            NewGame();
+            NewGame(rbODS7.Checked ? Dictionnaire.NomDicoDawgODS7 : Dictionnaire.NomDicoDawgODS6);
         }
 
-        private void NewGame()
+        private void NewGame(string nomDico)
         {
 
             DawgResolver.Model.Game.IsTransposed = false;
@@ -38,7 +38,7 @@ namespace Dawg.Resolver.Winform.Test
             txtRackP1.Text = txtRackP2.Text = "";
             lsbWords.DisplayMember = "DisplayInList";
             Cursor.Current = Cursors.WaitCursor;
-            Game = new Game();
+            Game = new Game(nomDico);
 
             lsbWords.Items.Clear();
             txtBag.Text = Game.Bag.GetBagContent();
@@ -442,7 +442,7 @@ namespace Dawg.Resolver.Winform.Test
         {
 
             if (!ckKeepExistingBoard.Checked)
-                NewGame();
+                NewGame(rbODS7.Checked ? Dictionnaire.NomDicoDawgODS7 : Dictionnaire.NomDicoDawgODS6);
             Game.CancelToken = new CancellationTokenSource();
             Task.Factory.StartNew(async () =>
             {
@@ -557,7 +557,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private void btnNewGame_Click(object sender, EventArgs e)
         {
-            NewGame();
+            NewGame(rbODS7.Checked ? Dictionnaire.NomDicoDawgODS7 : Dictionnaire.NomDicoDawgODS6);
         }
 
 
@@ -586,7 +586,7 @@ namespace Dawg.Resolver.Winform.Test
                 Game.BoardSize = 15;
             else
                 Game.BoardSize = 11;
-            NewGame();
+            NewGame(rbODS7.Checked ? Dictionnaire.NomDicoDawgODS7 : Dictionnaire.NomDicoDawgODS6);
         }
 
         private void ckShowGrid_CheckedChanged(object sender, EventArgs e)

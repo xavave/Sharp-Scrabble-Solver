@@ -33,7 +33,7 @@ namespace Scrabble2018
             ThisPlayer = P;
             game = g;
             game.Subs(this);
-            drGame = new Game();
+            drGame = new Game(Dictionnaire.NomDicoDawgODS7);
             foreach (var t in drGame.InitBoard())
             {
                 var b = new TextBoxTile(t);

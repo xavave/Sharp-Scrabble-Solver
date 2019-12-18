@@ -25,10 +25,10 @@ namespace DawgResolver
         public long NbAcceptedMoves { get; set; }
         Game Game { get; }
 
-        public Resolver(Game g)
+        public Resolver(Game g,string nomDico)
         {
             Game = g;
-            LoadDic();
+            LoadDic(nomDico);
         }
 
         public Dictionnaire Dictionnaire { get; private set; }
@@ -432,14 +432,14 @@ namespace DawgResolver
         }
 
 
-        public Noeud LoadDic()
+        public Noeud LoadDic(string nomDico)
         {
-            Dictionnaire = new Dictionnaire();
+            Dictionnaire = new Dictionnaire(nomDico);
 
             Noeud = Dictionnaire.DAWG;
 
             var assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(Dictionnaire.NomDicoDawg));
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(Dictionnaire.NomDicoDawgODS7));
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream, true))
             {
