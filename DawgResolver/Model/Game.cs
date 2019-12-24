@@ -252,23 +252,28 @@ namespace DawgResolver.Model
                                     Grid[row, col].LetterMultiplier = 1;
                                     break;
                                 case "CE":
-
+                                    Grid[row, col].WordMultiplier = 1;
+                                    Grid[row, col].LetterMultiplier = 1;
                                     break;
                                 case "TW":
                                 case "3W":
                                     Grid[row, col].WordMultiplier = 3;
+                                    Grid[row, col].LetterMultiplier = 1;
                                     break;
                                 case "TL":
                                 case "3L":
                                     Grid[row, col].LetterMultiplier = 3;
+                                    Grid[row, col].WordMultiplier = 1;
                                     break;
                                 case "DW":
                                 case "2W":
                                     Grid[row, col].WordMultiplier = 2;
+                                    Grid[row, col].LetterMultiplier = 1;
                                     break;
                                 case "DL":
                                 case "2L":
                                     Grid[row, col].LetterMultiplier = 2;
+                                    Grid[row, col].WordMultiplier = 1;
                                     break;
                                 default:
                                     throw new Exception($"Unknown tile type in inital_board file: {tp}");
@@ -368,19 +373,16 @@ namespace DawgResolver.Model
             {
                 Bag.Letters[idx].Count = alphabet[idx].Count;
             }
-            //foreach (var t in tiles)
-            //{
-            //    if (t.Ligne < Game.BoardSize && t.Col < Game.BoardSize)
-            //    {
-            //        if (t.Ligne == 3 && t.Col == 11)
-            //        {
+            foreach (var t in tiles)
+            {
+                if (t.Ligne < Game.BoardSize && t.Col < Game.BoardSize)
+                {
+                   
+                    Grid[t.Ligne, t.Col] = t;
+                    if (!t.IsEmpty) Grid[t.Ligne, t.Col].IsValidated = true;
+                }
+            }
 
-            //        }
-            //        Grid[t.Ligne, t.Col] = t;
-            //        if (!t.IsEmpty) Grid[t.Ligne, t.Col].IsValidated = true;
-            //    }
-            //}
-            
 
             Player1.Points = Player1.Moves.Sum(m => m.Points);
             Player2.Points = Player2.Moves.Sum(m => m.Points);

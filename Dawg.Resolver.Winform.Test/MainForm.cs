@@ -174,12 +174,12 @@ namespace Dawg.Resolver.Winform.Test
                     if (formTile.InvokeRequired)
                         formTile.BeginInvoke((Action)(() =>
                         {
-                            formTile.Text = formTile.Tile?.Letter.Char.ToString();
+                            formTile.Text = formTile.Tile?.Letter?.Char.ToString();
                         }));
                     else
                     {
 
-                        formTile.Text = formTile.Tile?.Letter.Char.ToString();
+                        formTile.Text = formTile.Tile?.Letter?.Char.ToString();
 
                     }
 
@@ -364,7 +364,7 @@ namespace Dawg.Resolver.Winform.Test
                 {
                     Game.NoMoreMovesCount = 0;
                     var word = ret.Where(w => !Game.Resolver.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).FirstOrDefault() as Word;
-                    if (word==null || CurrentWord != null && CurrentWord.Serialize == word.Serialize)
+                    if (word == null || CurrentWord != null && CurrentWord.Serialize == word.Serialize)
                     {
                         Game.EndGame = true;
                         return;
@@ -490,6 +490,9 @@ namespace Dawg.Resolver.Winform.Test
                 var ret = Game.Serialise();
                 File.WriteAllText(saveFileDialog1.FileName, ret);
                 MessageBox.Show($"Game saved as {saveFileDialog1.FileName}");
+                this.Text = $"Scrabble ({saveFileDialog1.FileName})";
+                openFileDialog1.FileName = saveFileDialog1.FileName;
+
             }
         }
 

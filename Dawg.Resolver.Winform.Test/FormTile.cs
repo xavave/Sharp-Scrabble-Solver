@@ -305,7 +305,7 @@ namespace Dawg.Resolver.Winform.Test
             get => Tile.Letter;
             set
             {
-                if (Tile.Letter.Serialize != value.Serialize)
+                if (Tile.Letter == null || Tile.Letter.Serialize != value.Serialize)
                 {
                     Tile.Letter = value;
                     Text = Tile.Letter?.Char.ToString();
