@@ -16,7 +16,8 @@ namespace DawgResolver
   
     public class Dictionnaire
     {
-        public const string NomDicoDawg = "dico_dawgODS7.txt";
+        public static string NomDicoDawgODS7 = "dico_dawgODS7.txt";
+        public static string NomDicoDawgODS6 = "dico_dawgODS6.txt";
 
         public const string NomDicoReel = "ODS7.txt";
 
@@ -36,9 +37,9 @@ namespace DawgResolver
         /// </summary>
         public List<Noeud> dawg;
 
-        public Dictionnaire()
+        public Dictionnaire(string nomDico)
         {
-          ChargerFichierDAWG();
+          ChargerFichierDAWG(nomDico);
         }
 
         #region Propriétés
@@ -174,7 +175,7 @@ namespace DawgResolver
             DAWG = dawg[0];
 
             AnnonceEtape("Ecriture du fichier.");
-            Noeud.Serialize(dawg, Mots.Count, NomDicoDawg);
+            Noeud.Serialize(dawg, Mots.Count, NomDicoDawgODS7);
             //chrono.Stop();
 
             //==================Ici la construction est finie
@@ -448,14 +449,14 @@ namespace DawgResolver
         /// </summary>
         /// <param name="FileName">Adresse du fichier compressé</param>
         /// <returns>DAWG</returns>
-        public void ChargerFichierDAWG()
+        public void ChargerFichierDAWG(string nomdico)
         {
             TravailEnCours = DawgResolver.TravailEnCours.ChargementFichierDAWG;
 
             //chrono.Restart();
             AnnonceEtape("Début du chargement du dictionnaire DAWG.");
             var assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(NomDicoDawg));
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(nomdico));
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream, true))
             {

@@ -25,10 +25,10 @@ namespace DawgResolver
         public long NbAcceptedMoves { get; set; }
         Game Game { get; }
 
-        public Resolver(Game g)
+        public Resolver(Game g,string nomDico)
         {
             Game = g;
-            LoadDic();
+            LoadDic(nomDico);
         }
 
         public Dictionnaire Dictionnaire { get; private set; }
@@ -301,8 +301,8 @@ namespace DawgResolver
             bool jokerInDraught = leftLetters.Any(l => l.Char == Game.Joker);
 
             VTile t = null;
-            if (ligne >= 0 && colonne >= 0 && colonne < Game.BoardSize && ligne < Game.BoardSize && leftLetters.Count() <= 7 && leftLetters.Count() > 0) t = grid[ligne, colonne];
-
+            if (ligne >= 0 && colonne >= 0 && colonne < Game.BoardSize && ligne < Game.BoardSize && leftLetters.Count() <= 7 && leftLetters.Count() >= 0) t = grid[ligne, colonne];
+            
             if (t != null && t.IsEmpty)
             {
                 // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions
@@ -432,14 +432,14 @@ namespace DawgResolver
         }
 
 
-        public Noeud LoadDic()
+        public Noeud LoadDic(string nomDico)
         {
-            Dictionnaire = new Dictionnaire();
+            Dictionnaire = new Dictionnaire(nomDico);
 
             Noeud = Dictionnaire.DAWG;
 
             var assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(Dictionnaire.NomDicoDawg));
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(Dictionnaire.NomDicoDawgODS7));
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream, true))
             {
@@ -545,6 +545,7 @@ namespace DawgResolver
                 // Tri et mise en forme des coups
                 //if (points <= MinPoint) return;
                 newWord.Points = points;
+                
                 newWord.Scramble = UsedDraughtLetters == 7;
                 //if (!LegalWords.Any(w => w.Equals(newWord)) && !PlayedWords.Any(pw => pw.Equals(newWord)))
 

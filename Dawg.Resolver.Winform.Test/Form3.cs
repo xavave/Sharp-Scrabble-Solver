@@ -12,7 +12,7 @@ namespace Dawg.Resolver.Winform.Test
         public Form3()
         {
             InitializeComponent();
-            Game = new Game();
+            Game = new Game(Dictionnaire.NomDicoDawgODS7);
             textBox3.Text = Game.Bag.GetBagContent();
             var t = Game.Grid[7, 5];
             t.SetWord(Game.Player1, "famille", MovementDirection.Across,true);

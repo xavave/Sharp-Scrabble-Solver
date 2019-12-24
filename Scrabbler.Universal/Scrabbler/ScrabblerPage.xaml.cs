@@ -189,7 +189,7 @@ namespace Scrabbler
 
             try
             {
-                var rack = Game.Bag.GetLetters(Game.IsPlayer1 ? Game.Player1 : Game.Player2);
+                Game.Bag.GetLetters(Game.IsPlayer1 ? Game.Player1 : Game.Player2);
                 //if (!rack.Any())
                 //    lsbInfos.Items.Insert(0, "Le sac est vide !");
                 if (Game.IsPlayer1)
@@ -200,8 +200,8 @@ namespace Scrabbler
                 {
                     txtRackP2.Text = Game.Player2.Rack.String();
                 }
-                lblCurrentRack.Text = $"{(Game.IsPlayer1 ? "Player 1 :" : "Player 2 :")} " + rack.String();
-                if (!rack.Any())
+                lblCurrentRack.Text = $"{(Game.IsPlayer1 ? "Player 1 :" : "Player 2 :")} " +( Game.IsPlayer1 ? Game.Player1.Rack.String() : Game.Player2.Rack.String());
+                if (Game.IsPlayer1 ? !Game.Player1.Rack.Any() : !Game.Player2.Rack.Any())
                 {
                     Game.EndGame = true;
                     return;

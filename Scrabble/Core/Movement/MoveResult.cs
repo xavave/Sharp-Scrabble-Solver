@@ -1,4 +1,5 @@
 ﻿using DawgResolver;
+using DawgResolver.Model;
 using Scrabble.Core.Words;
 using System;
 using System.Collections.Generic;

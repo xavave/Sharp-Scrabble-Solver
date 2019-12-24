@@ -134,7 +134,7 @@ namespace DawgResolver
                 }
             }
         }
-        public static VTile SetLetter(this VTile t, char c, Player p, bool Validate)
+        public static VTile SetLetter(this VTile t, char c, Player p, bool validate)
         {
             if (t != null)
             {
@@ -143,7 +143,10 @@ namespace DawgResolver
                 else t = t.RightTile.LeftTile;
 
                 if (t.IsEmpty)
-                    t.IsValidated = Validate;
+                    t.IsValidated = validate;
+
+                t.IsPlayedByPlayer1 = p.Name == "Player 1";
+
                 t.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(c));
                 if (char.IsLower(c))
                     t.FromJoker = true;
@@ -162,6 +165,9 @@ namespace DawgResolver
                 if (t.RightTile.IsEmpty)
                     t.RightTile.IsValidated = Validate;
                 t.RightTile.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(c));
+
+                t.IsPlayedByPlayer1 = p.Name == "Player 1";
+
                 if (char.IsLower(c))
                     t.RightTile.FromJoker = true;
                 if (t.RightTile.FromJoker)
@@ -179,6 +185,9 @@ namespace DawgResolver
                 if (t.DownTile.IsEmpty)
                     t.DownTile.IsValidated = Validate;
                 t.DownTile.Letter = Game.Alphabet.Find(a => a.Char == char.ToUpper(c));
+
+                t.IsPlayedByPlayer1 = p.Name == "Player 1";
+
                 if (char.IsLower(c))
                     t.DownTile.FromJoker = true;
                 if (t.DownTile.FromJoker)
