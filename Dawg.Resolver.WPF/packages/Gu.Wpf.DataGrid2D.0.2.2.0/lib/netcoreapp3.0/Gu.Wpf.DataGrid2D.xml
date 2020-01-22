@@ -1,0 +1,291 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Gu.Wpf.DataGrid2D</name>
+    </assembly>
+    <members>
+        <member name="T:Gu.Wpf.DataGrid2D.Cell">
+            <summary>
+            Exposes attached properties for <see cref="T:System.Windows.Controls.DataGrid"/> cells.
+            </summary>
+        </member>
+        <member name="F:Gu.Wpf.DataGrid2D.Cell.TemplateProperty">
+            <summary>
+            Gets or sets the <see cref="T:System.Windows.DataTemplate"/> to use when rendering cell contents.
+            </summary>
+        </member>
+        <member name="F:Gu.Wpf.DataGrid2D.Cell.TemplateSelectorProperty">
+            <summary>
+            Gets or sets the <see cref="T:System.Windows.Controls.DataTemplateSelector"/> to use when rendering cell contents.
+            </summary>
+        </member>
+        <member name="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateProperty">
+            <summary>
+            Gets or sets the <see cref="T:System.Windows.DataTemplate"/> to use when editing cell contents.
+            </summary>
+        </member>
+        <member name="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateSelectorProperty">
+            <summary>
+            Gets or sets the <see cref="T:System.Windows.Controls.DataTemplateSelector"/> to use when editing cell contents.
+            </summary>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Cell.SetTemplate(System.Windows.Controls.DataGrid,System.Windows.DataTemplate)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.Cell.TemplateProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.Cell.TemplateProperty"/> on.</param>
+            <param name="value">Template property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Cell.GetTemplate(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.Cell.TemplateProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.Cell.TemplateProperty"/> from.</param>
+            <returns>Template property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Cell.SetTemplateSelector(System.Windows.Controls.DataGrid,System.Windows.Controls.DataTemplateSelector)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.Cell.TemplateSelectorProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.Cell.TemplateSelectorProperty"/> on.</param>
+            <param name="value">TemplateSelector property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Cell.GetTemplateSelector(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.Cell.TemplateSelectorProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.Cell.TemplateSelectorProperty"/> from.</param>
+            <returns>TemplateSelector property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Cell.SetEditingTemplate(System.Windows.Controls.DataGrid,System.Windows.DataTemplate)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateProperty"/> on.</param>
+            <param name="value">EditingTemplate property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Cell.GetEditingTemplate(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateProperty"/> from.</param>
+            <returns>EditingTemplate property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Cell.SetEditingTemplateSelector(System.Windows.DependencyObject,System.Windows.Controls.DataTemplateSelector)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateSelectorProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.DependencyObject"/> to set <see cref="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateSelectorProperty"/> on.</param>
+            <param name="value">EditingTemplateSelector property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Cell.GetEditingTemplateSelector(System.Windows.DependencyObject)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateSelectorProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.DependencyObject"/> to read <see cref="F:Gu.Wpf.DataGrid2D.Cell.EditingTemplateSelectorProperty"/> from.</param>
+            <returns>EditingTemplateSelector property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Index.SetOfRow(System.Windows.Controls.DataGridRow,System.Int32)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.Index.OfRowPropertyKey"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGridRow"/> to set <see cref="F:Gu.Wpf.DataGrid2D.Index.OfRowPropertyKey"/> on.</param>
+            <param name="value">OfRow property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Index.GetOfRow(System.Windows.Controls.DataGridRow)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.Index.OfRowProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGridRow"/> to read <see cref="F:Gu.Wpf.DataGrid2D.Index.OfRowProperty"/> from.</param>
+            <returns>OfRow property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Index.SetStartAt(System.Windows.Controls.Control,System.Int32)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.Index.StartAtProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.Control"/> to set <see cref="F:Gu.Wpf.DataGrid2D.Index.StartAtProperty"/> on.</param>
+            <param name="value">StartAt property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Index.GetStartAt(System.Windows.Controls.Control)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.Index.StartAtProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.Control"/> to read <see cref="F:Gu.Wpf.DataGrid2D.Index.StartAtProperty"/> from.</param>
+            <returns>StartAt property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.TypeExt.Implements(System.Type,System.Type,System.Type)">
+            <summary>
+            To check if type implements IEquatable{string}
+            Call like this type.Implements(typeof(IEquatable{}, typeof(string)).
+            </summary>
+        </member>
+        <member name="T:Gu.Wpf.DataGrid2D.ItemsSource">
+            <summary>
+            Attached properties for setting ItemsSource to 2D collections of different shapes.
+            </summary>
+        </member>
+        <member name="F:Gu.Wpf.DataGrid2D.ItemsSource.Array2DProperty">
+            <summary>
+            For setting the <see cref="F:System.Windows.Controls.ItemsControl.ItemsSourceProperty"/> to a two-dimensional array.
+            </summary>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.SetArray2D(System.Windows.Controls.DataGrid,System.Array)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.Array2DProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.Array2DProperty"/> on.</param>
+            <param name="value">Array2D property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.GetArray2D(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.Array2DProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.Array2DProperty"/> from.</param>
+            <returns>Array2D property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.SetArray2DTransposed(System.Windows.Controls.DataGrid,System.Array)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.Array2DTransposedProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.Array2DTransposedProperty"/> on.</param>
+            <param name="value">Array2DTransposed property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.GetArray2DTransposed(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.Array2DTransposedProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.Array2DTransposedProperty"/> from.</param>
+            <returns>Array2DTransposed property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.SetColumnHeadersSource(System.Windows.Controls.DataGrid,System.Collections.IEnumerable)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.ColumnHeadersSourceProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.ColumnHeadersSourceProperty"/> on.</param>
+            <param name="value">ColumnHeadersSource property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.GetColumnHeadersSource(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.ColumnHeadersSourceProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.ColumnHeadersSourceProperty"/> from.</param>
+            <returns>ColumnHeadersSource property value.</returns>
+        </member>
+        <member name="F:Gu.Wpf.DataGrid2D.ItemsSource.ColumnsSourceProperty">
+            <summary>
+            An <see cref="T:System.Collections.IEnumerable"/> of columns where each row is an <see cref="T:System.Collections.IEnumerable"/> with the values.
+            </summary>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.SetColumnsSource(System.Windows.Controls.DataGrid,System.Collections.IEnumerable)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.ColumnsSourceProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.ColumnsSourceProperty"/> on.</param>
+            <param name="value">ColumnsSource property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.GetColumnsSource(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.ColumnsSourceProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.ColumnsSourceProperty"/> from.</param>
+            <returns>ColumnsSource property value.</returns>
+        </member>
+        <member name="F:Gu.Wpf.DataGrid2D.ItemsSource.RowHeadersSourceProperty">
+            <summary>
+            An <see cref="T:System.Collections.IEnumerable"/> with values to display in the row headers.
+            </summary>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.SetRowHeadersSource(System.Windows.Controls.DataGrid,System.Collections.IEnumerable)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.RowHeadersSourceProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.RowHeadersSourceProperty"/> on.</param>
+            <param name="value">RowHeadersSource property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.GetRowHeadersSource(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.RowHeadersSourceProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.RowHeadersSourceProperty"/> from.</param>
+            <returns>RowHeadersSource property value.</returns>
+        </member>
+        <member name="F:Gu.Wpf.DataGrid2D.ItemsSource.RowsSourceProperty">
+            <summary>
+            An <see cref="T:System.Collections.IEnumerable"/> of rows where each row is an <see cref="T:System.Collections.IEnumerable"/> with the values.
+            </summary>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.SetRowsSource(System.Windows.Controls.DataGrid,System.Collections.IEnumerable)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.RowsSourceProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.RowsSourceProperty"/> on.</param>
+            <param name="value">RowsSource property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.GetRowsSource(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.RowsSourceProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.RowsSourceProperty"/> from.</param>
+            <returns>RowsSource property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.SetTransposedSource(System.Windows.Controls.DataGrid,System.Collections.IEnumerable)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.TransposedSourceProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.TransposedSourceProperty"/> on.</param>
+            <param name="value">TransposedSource property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.GetTransposedSource(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.TransposedSourceProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.TransposedSourceProperty"/> from.</param>
+            <returns>TransposedSource property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.SetPropertySource(System.Windows.DependencyObject,System.Object)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.PropertySourceProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.DependencyObject"/> to set <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.PropertySourceProperty"/> on.</param>
+            <param name="value">PropertySource property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.ItemsSource.GetPropertySource(System.Windows.DependencyObject)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.PropertySourceProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.DependencyObject"/> to read <see cref="F:Gu.Wpf.DataGrid2D.ItemsSource.PropertySourceProperty"/> from.</param>
+            <returns>PropertySource property value.</returns>
+        </member>
+        <member name="T:Gu.Wpf.DataGrid2D.RowColumnIndexConverter">
+            <inheritdoc />
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.RowColumnIndexConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+            <inheritdoc />
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.RowColumnIndexConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Type)">
+            <inheritdoc />
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.RowColumnIndexConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.RowColumnIndexConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
+            <inheritdoc />
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Selected.SetCellItem(System.Windows.Controls.DataGrid,System.Object)">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.Selected.CellItemProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.Selected.CellItemProperty"/> on.</param>
+            <param name="value">CellItem property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Selected.GetCellItem(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.Selected.CellItemProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.Selected.CellItemProperty"/> from.</param>
+            <returns>CellItem property value.</returns>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Selected.SetIndex(System.Windows.Controls.DataGrid,System.Nullable{Gu.Wpf.DataGrid2D.RowColumnIndex})">
+            <summary>Helper for setting <see cref="F:Gu.Wpf.DataGrid2D.Selected.IndexProperty"/> on <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to set <see cref="F:Gu.Wpf.DataGrid2D.Selected.IndexProperty"/> on.</param>
+            <param name="value">Index property value.</param>
+        </member>
+        <member name="M:Gu.Wpf.DataGrid2D.Selected.GetIndex(System.Windows.Controls.DataGrid)">
+            <summary>Helper for getting <see cref="F:Gu.Wpf.DataGrid2D.Selected.IndexProperty"/> from <paramref name="element"/>.</summary>
+            <param name="element"><see cref="T:System.Windows.Controls.DataGrid"/> to read <see cref="F:Gu.Wpf.DataGrid2D.Selected.IndexProperty"/> from.</param>
+            <returns>Index property value.</returns>
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Array2DView.Count">
+            <inheritdoc />
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Array2DView.IsReadOnly">
+            <inheritdoc />
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Array2DView.IsFixedSize">
+            <inheritdoc />
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Array2DView.Source">
+            <inheritdoc />
+        </member>
+        <member name="E:Gu.Wpf.DataGrid2D.Lists2DViewBase.ColumnsChanged">
+            <summary>
+            Not sure how to best handle the situation when the number of columns changes.
+            Testing to raise this event and refresh the ItemsSource binding in the DataGrid.
+            Just adding a column would not play nice with explicit columns.
+            This way will not be ideal for performance if it changes frequently
+            </summary>
+        </member>
+        <member name="E:Gu.Wpf.DataGrid2D.Lists2DViewBase.PropertyChanged">
+            <inheritdoc />
+        </member>
+        <member name="E:Gu.Wpf.DataGrid2D.Lists2DViewBase.CollectionChanged">
+            <inheritdoc />
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Lists2DViewBase.Count">
+            <inheritdoc />
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Lists2DViewBase.System#Collections#IList#IsReadOnly">
+            <inheritdoc />
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Lists2DViewBase.System#Collections#IList#IsFixedSize">
+            <inheritdoc />
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Lists2DViewBase.System#Collections#ICollection#SyncRoot">
+            <inheritdoc />
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Lists2DViewBase.System#Collections#ICollection#IsSynchronized">
+            <inheritdoc />
+        </member>
+        <member name="P:Gu.Wpf.DataGrid2D.Lists2DViewBase.Gu#Wpf#DataGrid2D#IView2D#Source">
+            <inheritdoc />
+        </member>
+        <member name="E:Gu.Wpf.DataGrid2D.TransposedItemsSource.ColumnsChanged">
+            <summary>
+            Not sure how to best handle the situation when the number of columns changes.
+            Testing to raise this event and refresh the ItemsSource binding in the DataGrid.
+            Just adding a column would not play nice with explicit columns.
+            This way will not be ideal for performance if it changes frequently
+            </summary>
+        </member>
+    </members>
+</doc>

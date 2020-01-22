@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Gu.Wpf.DataGrid2D, Version=0.2.2.0, Culture=neutral, PublicKeyToken=34988ea4e73235be, processorArchitecture=MSIL">
-      <HintPath>..\packages\Gu.Wpf.DataGrid2D.0.2.2.0\lib\net45\Gu.Wpf.DataGrid2D.dll</HintPath>
+      <HintPath>packages\Gu.Wpf.DataGrid2D.0.2.2.0\lib\net45\Gu.Wpf.DataGrid2D.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -102,6 +102,10 @@
     <ProjectReference Include="..\DawgResolver\Dawg.Resolver.csproj">
       <Project>{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}</Project>
       <Name>Dawg.Resolver</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dawg\Dawg.csproj">
+      <Project>{95af0c36-e8cb-422a-9060-aca73ccd0c36}</Project>
+      <Name>Dawg</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

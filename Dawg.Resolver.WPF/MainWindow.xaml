@@ -1,15 +1,19 @@
-﻿<Window x:Class="DawgResolver.Resolver.WPF.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DawgResolver.Resolver.WPF"
-        mc:Ignorable="d" DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        xmlns:dataGrid2D="http://gu.se/DataGrid2D"
-        xmlns:dawg="clr-namespace:DawgResolver;assembly=DawgResolver"
-        Title="MainWindow" Height="500" Width="1000">
+﻿<Window
+    x:Class="DawgResolver.Resolver.WPF.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dataGrid2D="http://gu.se/DataGrid2D"
+    xmlns:dawg="clr-namespace:DawgResolver.Model;assembly=DawgResolver"
+    xmlns:local="clr-namespace:DawgResolver.Resolver.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="1000"
+    Height="500"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    mc:Ignorable="d">
     <Window.Resources>
-        <dawg:Game x:Key="game"/>
+        <dawg:Game x:Key="game" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -17,19 +21,51 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <ToolBar>
-            <Button Content="New Game" Click="OnNewGame"/>
+            <Button Click="OnNewGame" Content="New Game" />
         </ToolBar>
-        <DataGrid x:Name="dgBoard" Grid.Row="1"  dataGrid2D:ItemsSource.Array2D="{Binding Data,UpdateSourceTrigger=PropertyChanged}" Width="400" Height="400" DisplayMemberPath="Letter"
-                  dataGrid2D:ItemsSource.ColumnHeadersSource="{Binding ColumnHeaders}" 
-                  dataGrid2D:ItemsSource.RowHeadersSource="{Binding RowHeaders}" 
-                  />
-        <TextBox Grid.Column="1" Grid.Row="1" Width="150" Height="35" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="25" x:Name="txtRack">EUDNA*A</TextBox>
-        <Button Grid.Column="1" Grid.Row="1" x:Name="btnHint" Click="btnHint_Click" Width="50" Height="20" VerticalAlignment="Top" >Hint</Button>
-        <ListBox x:Name="lstHint"   Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" Height="400" VerticalAlignment="Top" Width="200" SelectedItem="{Binding SelectedHintWord}"/>
+        <DataGrid
+            x:Name="dgBoard"
+            Grid.Row="1"
+            Width="400"
+            Height="400"
+            dataGrid2D:ItemsSource.Array2D="{Binding Data, UpdateSourceTrigger=PropertyChanged}"
+            dataGrid2D:ItemsSource.ColumnHeadersSource="{Binding ColumnHeaders}"
+            dataGrid2D:ItemsSource.RowHeadersSource="{Binding RowHeaders}"
+            DisplayMemberPath="Letter" />
+        <TextBox
+            x:Name="txtRack"
+            Grid.Row="1"
+            Grid.Column="1"
+            Width="150"
+            Height="35"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="25">
+            EUDNA*A
+        </TextBox>
+        <Button
+            x:Name="btnHint"
+            Grid.Row="1"
+            Grid.Column="1"
+            Width="50"
+            Height="20"
+            VerticalAlignment="Top"
+            Click="btnHint_Click">
+            Hint
+        </Button>
+        <ListBox
+            x:Name="lstHint"
+            Grid.Row="1"
+            Grid.Column="1"
+            Width="200"
+            Height="400"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            SelectedItem="{Binding SelectedHintWord}" />
 
     </Grid>
 </Window>
