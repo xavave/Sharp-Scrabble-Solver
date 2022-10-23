@@ -1,18 +1,19 @@
-﻿using DawgResolver;
-using DawgResolver.Model;
-
-using Scrabble2018.Model;
-using Scrabble2018.View;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
+
+using Dawg;
+
+using DawgResolver;
+using DawgResolver.Model;
+
+using Scrabble2018.Model;
+using Scrabble2018.View;
 
 namespace Scrabble2018
 {
@@ -22,10 +23,13 @@ namespace Scrabble2018
         Controller.GameGUI game;
         public Game drGame { get; set; }
         List<TextBox> RackTileButtons;
-        private int ThisPlayer;
-        int PlayerNow;
+
+        readonly int ThisPlayer;
+        
+        readonly int PlayerNow;
 
         public ObservableCollection<TextBoxTile> BoardTiles { get => boardTiles; set { boardTiles = value; } }
+
         List<TextBox> ListSwapRackButton = new List<TextBox>();
         public DesktopWindow(int P, Controller.GameGUI g)
         {
@@ -34,7 +38,9 @@ namespace Scrabble2018
             game = g;
             game.Subs(this);
             drGame = new Game(Dictionnaire.NomDicoDawgODS7);
-            foreach (var t in drGame.InitBoard())
+            var vTiles = drGame.InitGameBoardTiles();
+            if (vTiles == null) return;
+            foreach (var t in vTiles)
             {
                 var b = new TextBoxTile(t);
                 b.TextChanged += B_TextChanged;
@@ -106,8 +112,8 @@ namespace Scrabble2018
             var tile = (sender as TextBoxTile);
             if (!string.IsNullOrWhiteSpace(tile.Text) && char.IsLetter(tile.Text[0]))
             {
-                tile.Letter = Game.Alphabet.Find(a => a.Char == tile.Text[0]);
-                drGame.Grid[tile.Ligne, tile.Col] = (VTile)tile;
+                tile.Letter = drGame.Resolver.Alphabet.Find(tile.Text[0]);
+                drGame.Grid[tile.Ligne, tile.Col] = (IExtendedTile)tile;
 
             }
 
@@ -275,11 +281,11 @@ namespace Scrabble2018
         }
 
 
-        bool SwapMode = false;
+        //bool SwapMode = false;
         private ObservableCollection<TextBoxTile> boardTiles = new ObservableCollection<TextBoxTile>();
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string propertyName = "")
+        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -428,7 +434,7 @@ namespace Scrabble2018
         {
             //drGame.Resolver.NewDraught(drGame.Player1, "EUDNA*A");
 
-            var ret = drGame.Resolver.FindMoves(drGame.Player1);
+            var ret = drGame.Resolver.FindMoves(drGame);
             lstHint.ItemsSource = ret;
         }
 
@@ -440,16 +446,16 @@ namespace Scrabble2018
                 var word = addedItems[0] as Word;
                 if (word != null)
                 {
-                    foreach (var tile in drGame.Grid.OfType<VTile>().Where(t => !t.IsValidated))
+                    foreach (var tile in drGame.Grid.OfType<IExtendedTile>().Where(t => !t.IsValidated))
                     {
                         var bt = BoardTiles.First(t => t.Ligne == tile.Ligne && t.Col == tile.Col);
                         bt.Text = "";
                         tile.IsValidated = false;
                     }
                     //drGame.ClearTilesInPlay(drGame.Player1);
-                    word.SetWord(drGame.Player1,false);
+                    word.SetWord(false);
                     txtBagContent.Text = drGame.Bag.GetBagContent();
-                    foreach (var tile in drGame.Grid.OfType<VTile>().Where(t => !t.IsEmpty))
+                    foreach (var tile in drGame.Grid.OfType<IExtendedTile>().Where(t => !t.IsEmpty))
                     {
                         var bt = BoardTiles.First(t => t.Ligne == tile.Ligne && t.Col == tile.Col);
                         bt.Text = tile.Letter.Char.ToString();

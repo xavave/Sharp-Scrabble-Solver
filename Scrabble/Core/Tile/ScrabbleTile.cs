@@ -1,13 +1,8 @@
-﻿using DawgResolver;
-using DawgResolver.Model;
-using Scrabble.Core.Tile;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using DawgResolver.Model;
 
 namespace Scrabble.Core
 {
@@ -69,48 +64,50 @@ namespace Scrabble.Core
         public bool TileInPlay { get; set; }
         public TileType TileType { get; set; }
         public Letter Letter { get; set; }
-        ScrabbleForm ITile.ScrabbleForm { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        TileType ITile.TileType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        bool ITile.TileInPlay { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        string ITile.Text { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        bool VTile.IsValidated { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        ScrabbleForm ITile.ScrabbleForm { get; set; }
+        TileType ITile.TileType { get; set; }
+        bool ITile.TileInPlay { get; set; }
+        string ITile.Text { get; set; }
+        bool VTile.IsValidated { get; set; }
 
-        TileType VTile.TileType => throw new NotImplementedException();
+        TileType VTile.TileType { get; }
 
-        int VTile.Ligne { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        int VTile.Col { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        Letter VTile.Letter { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        int VTile.LetterMultiplier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        int VTile.WordMultiplier { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        int VTile.AnchorLeftMinLimit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        int VTile.AnchorLeftMaxLimit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        int VTile.Ligne { get; set; }
+        int VTile.Col { get; set; }
+        Letter VTile.Letter { get; set; }
+        int VTile.LetterMultiplier { get; set; }
+        int VTile.WordMultiplier { get; set; }
+        int VTile.AnchorLeftMinLimit { get; set; }
+        int VTile.AnchorLeftMaxLimit { get; set; }
 
-        bool VTile.IsAnchor => throw new NotImplementedException();
+        bool VTile.IsAnchor { get; }
 
-        Dictionary<int, int> VTile.Controlers { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        bool VTile.FromJoker { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        Dictionary<int, int> VTile.Controlers { get;}
+        bool VTile.FromJoker { get;set;}
 
-        bool VTile.IsEmpty => throw new NotImplementedException();
+        bool VTile.IsEmpty {get;}
 
-        bool? VTile.IsPlayedByPlayer1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        bool? VTile.IsPlayedByPlayer1 { get;set;}
 
-        VTile VTile.LeftTile => throw new NotImplementedException();
+        VTile VTile.LeftTile {get;}
 
-        VTile VTile.RightTile => throw new NotImplementedException();
+        VTile VTile.RightTile {get;}
 
-        VTile VTile.UpTile => throw new NotImplementedException();
+        VTile VTile.UpTile {get;}
 
-        VTile VTile.DownTile => throw new NotImplementedException();
+        VTile VTile.DownTile {get;}
 
-        VTile VTile.WordMostRightTile => throw new NotImplementedException();
+        VTile VTile.WordMostRightTile {get;}
 
-        VTile VTile.WordMostLeftTile => throw new NotImplementedException();
+        VTile VTile.WordMostLeftTile {get;}
 
-        VTile VTile.WordLowerTile => throw new NotImplementedException();
+        VTile VTile.WordLowerTile {get;}
 
-        VTile VTile.WordUpperTile => throw new NotImplementedException();
+        VTile VTile.WordUpperTile {get;}
 
-        string VTile.Serialize => throw new NotImplementedException();
+        string VTile.Serialize {get;}
+
+        public int WordIndex { get;set;}
 
         public void OnLetterPlaced(string letter)
         {
@@ -206,22 +203,27 @@ namespace Scrabble.Core
 
         void ITile.ClearHighlight()
         {
-            throw new NotImplementedException();
+            
         }
 
         void ITile.OnHighlight(bool valid)
         {
-            throw new NotImplementedException();
+           
         }
 
         void VTile.Initialize()
         {
-            throw new NotImplementedException();
+           
         }
 
-        Word VTile.GetWordFromTile(MovementDirection direction)
+        Word VTile.GetWordFromTile(Game g, MovementDirection direction)
         {
-            throw new NotImplementedException();
+            return null;
+        }
+
+        public void CopyControllers(Dictionary<int, int> source)
+        {
+            (this as VTile).CopyControllers(source);
         }
     }
 }

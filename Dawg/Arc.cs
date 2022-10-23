@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DawgResolver
+namespace Dawg
 {
     /// <summary>
     /// Décrit un arc reliant un noeud à un autre en représentant une lettre

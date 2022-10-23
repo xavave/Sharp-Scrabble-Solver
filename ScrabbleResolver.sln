@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.960
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrabbleGUI", "Scrabble\ScrabbleGUI.csproj", "{3D86F1C4-8562-4823-90A7-5805970FA1AF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver", "DawgResolver\Dawg.Resolver.csproj", "{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver.Console.Test", "DawgResolverTest\Dawg.Resolver.Console.Test.csproj", "{12237048-0C49-446E-A50A-6B66F0D0802D}"
@@ -19,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "legacyVBAscramble", "legacy
 		legacyVBAscramble\Scramble V2.xlsm = legacyVBAscramble\Scramble V2.xlsm
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scrabble2018", "Scrabble2018\Scrabble2018.csproj", "{4162BFAA-E305-40C9-923C-3FD3FD42566F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver.Winform", "Dawg.Resolver.Winform.Test\Dawg.Resolver.Winform.csproj", "{8DA2C29C-DD08-4CAF-92AF-84012420155A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DawgBuilder", "DawgBuilder\DawgBuilder.csproj", "{0CD1331C-3B74-4A9B-9C5D-87272DEC7B32}"
@@ -33,10 +29,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3D86F1C4-8562-4823-90A7-5805970FA1AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D86F1C4-8562-4823-90A7-5805970FA1AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D86F1C4-8562-4823-90A7-5805970FA1AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D86F1C4-8562-4823-90A7-5805970FA1AF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,10 +41,6 @@ Global
 		{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4162BFAA-E305-40C9-923C-3FD3FD42566F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4162BFAA-E305-40C9-923C-3FD3FD42566F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4162BFAA-E305-40C9-923C-3FD3FD42566F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4162BFAA-E305-40C9-923C-3FD3FD42566F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8DA2C29C-DD08-4CAF-92AF-84012420155A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8DA2C29C-DD08-4CAF-92AF-84012420155A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DA2C29C-DD08-4CAF-92AF-84012420155A}.Release|Any CPU.ActiveCfg = Release|Any CPU

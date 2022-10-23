@@ -1,5 +1,7 @@
-﻿using DawgResolver;
+﻿using Dawg;
+
 using DawgResolver.Model;
+
 using System;
 using System.Diagnostics;
 
@@ -9,16 +11,16 @@ namespace DawgResolverTest
     {
         static void Main(string[] args)
         {
-            var g = new Game(Dictionnaire.NomDicoDawgODS7);
+            var g = new Game(Dictionnaire.NomDicoDawgEN_Collins);
             //Pour mes tests 
             var t = g.Grid[7, 5];
-            t.SetWord(g.Player1, "famille", MovementDirection.Across);
-            t.SetWord(g.Player1, "foin", MovementDirection.Down);
+            //t.SetWord(g.Player1, "famille", MovementDirection.Across);
+            //t.SetWord(g.Player1, "foin", MovementDirection.Down);
 
-            g.Bag.GetLetters(g.Player1, "EUDNA*A");
+            g.Bag.GetLetters(g.Player1, "???OTES");
             
             var sw = Stopwatch.StartNew();
-            var ret = g.Resolver.FindMoves(g.Player1);
+            var ret = g.Resolver.FindMoves(g);
             sw.Stop();
             Debug.WriteLine(string.Join(Environment.NewLine, ret));
         }

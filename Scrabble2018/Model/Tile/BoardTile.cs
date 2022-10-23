@@ -1,8 +1,4 @@
-﻿using DawgResolver;
-using DawgResolver.Model;
-using System.Windows.Media;
-
-namespace Scrabble2018
+﻿namespace Scrabble2018
 {
 
 

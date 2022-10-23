@@ -1,4 +1,4 @@
-﻿using DawgResolver;
+﻿using Dawg;
 using System;
 using System.Collections.Generic;
 using System.Linq;

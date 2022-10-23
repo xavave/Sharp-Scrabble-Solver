@@ -1,80 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using DawgResolver.Model;
-using System.Runtime.InteropServices;
 
 namespace Dawg.Resolver.Winform.Test
 {
 
-    public partial class FormTile : TextBox, VTile
+    public partial class FormTile : TranspTextBox, IExtendedTile
     {
-        const int WM_NCPAINT = 0x85;
-        const uint RDW_INVALIDATE = 0x1;
-        const uint RDW_IUPDATENOW = 0x100;
-        const uint RDW_FRAME = 0x400;
-        [DllImport("user32.dll")]
-        static extern IntPtr GetWindowDC(IntPtr hWnd);
-        [DllImport("user32.dll")]
-        static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
-        [DllImport("user32.dll")]
-        static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprc, IntPtr hrgn, uint flags);
-        Color borderColor = Color.DarkGray;
-        public Color BorderColor
-        {
-            get { return borderColor; }
-            set
-            {
-                borderColor = value;
-                //RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero, RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
-            }
-        }
-        //protected override void WndProc(ref Message m)
-        //{
-        //    base.WndProc(ref m);
-        //    if (m.Msg == WM_NCPAINT && BorderColor != Color.Transparent &&
-        //        BorderStyle == System.Windows.Forms.BorderStyle.Fixed3D)
-        //    {
-        //        var hdc = GetWindowDC(this.Handle);
-        //        using (var g = Graphics.FromHdcInternal(hdc))
-        //        using (var p = new Pen(BorderColor))
-        //            g.DrawRectangle(p, new Rectangle(0, 0, Width - 1, Height - 1));
-        //        ReleaseDC(this.Handle, hdc);
-        //    }
-        //}
-        protected override void OnSizeChanged(EventArgs e)
-        {
-            base.OnSizeChanged(e);
-            RedrawWindow(Handle, IntPtr.Zero, IntPtr.Zero,
-                   RDW_FRAME | RDW_IUPDATENOW | RDW_INVALIDATE);
-        }
+
+
         private MainForm Form { get; }
         public string TxtInfos { get; set; }
-        public VTile Tile { get; set; }
-        public Game Game { get; set; }
-        public FormTile(MainForm frm, Game g, VTile t, string tileName = "", Color? color = null)
-        {
+        public IExtendedTile Tile { get; set; }
+        public Game game { get; set; }
+        public FormTile(MainForm frm, Game g, int ligne, int col, string tileName = "", Color? color = null) : this(frm, g, new BaseVirtualTile(g.Resolver, ligne, col), tileName, color) { }
 
-            BorderStyle = BorderStyle.Fixed3D;
-            Game = g;
+        public FormTile(MainForm frm, Game g, IExtendedTile t, string tileName = "", Color? color = null)
+        {
+            game = g;
             Tile = t;
             this.Width = 30;
             //Enabled = true;
             this.Height = 28;
             this.MaxLength = 1;
             Form = frm;
-            this.Font = new Font("Verdana", 14);
+            this.Font = new Font("Verdana", 14, FontStyle.Bold);
             this.CharacterCasing = CharacterCasing.Upper;
             if (!color.HasValue)
             {
                 if (!Tile.IsPlayedByPlayer1.HasValue)
-                    this.BackColor = GetBackColor(t);
+                    GetBackColor(t);
                 else
                     if (Tile.IsPlayedByPlayer1.Value)
                     this.BackColor = Form.Player1MoveColor;
@@ -88,6 +47,9 @@ namespace Dawg.Resolver.Winform.Test
                 this.ForeColor = frm.HeaderTilesForeColor;
             }
             Text = t.Letter?.Char.ToString();
+            if (!string.IsNullOrWhiteSpace(Text)) this.BorderStyle = BorderStyle.Fixed3D;
+            else this.BorderStyle = BorderStyle.FixedSingle;
+
             if (tileName == "")
                 Name = $"t{t.Ligne}_{t.Col}";
             else
@@ -96,28 +58,32 @@ namespace Dawg.Resolver.Winform.Test
             KeyUp += FormTile_KeyUp;
             DoubleClick += FormTile_DoubleClick;
 
-            if (Name.StartsWith($"header_col"))
+            if (Name.StartsWith("header_"))
             {
-                Location = new Point(15 + this.Width + t.Col * this.Width, 15 + t.Ligne * this.Height);
-                Enabled = false;
-            }
-            else if (Name.StartsWith($"header_ligne"))
-            {
-                Location = new Point(15 + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
-                Enabled = false;
+                this.BorderStyle = BorderStyle.Fixed3D;
+                if (Name.Contains($"_col"))
+                {
+                    Location = new Point(15 + this.Width + t.Col * this.Width, 15 + t.Ligne * this.Height);
+                    Enabled = false;
+                }
+                else if (Name.Contains($"_ligne"))
+                {
+                    Location = new Point(15 + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
+                    Enabled = false;
+                }
             }
             else
                 Location = new Point(15 + this.Width + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
 
-            if (Tile.FromJoker) this.BorderStyle = BorderStyle.Fixed3D;
+
         }
 
         private void FormTile_DoubleClick(object sender, EventArgs e)
         {
             var frmTile = sender as FormTile;
-            var word = frmTile.GetWordFromTile(MovementDirection.Across);
+            var word = frmTile.GetWordFromTile(game, MovementDirection.Across);
             if (word.Text.Trim().Length <= 1)
-                word = frmTile.GetWordFromTile(MovementDirection.Down);
+                word = frmTile.GetWordFromTile(game, MovementDirection.Down);
             Form.ShowDefinition(word);
         }
 
@@ -146,22 +112,22 @@ namespace Dawg.Resolver.Winform.Test
 
             if (e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
             {
-                this.Letter = Game.Alphabet.Find(a => a.Char == e.KeyData.ToString().First());
+                this.Letter = game.Resolver.Find(e.KeyData.ToString().First());
                 this.Text = this.Letter.Char.ToString();
-                if (!Game.Grid[Ligne, Col].IsValidated)
+                if (!game.Grid[Ligne, Col].IsValidated)
                 {
                     //Game.Grid[Ligne, Col].Letter = this.Letter;
                     //this.Tile.Letter = this.Letter;
-                    Game.Bag.RemoveLetterFromBag(this.Letter.Char);
-                    Form.txtBag.Text = Game.Bag.GetBagContent();
+                    game.Bag.RemoveLetterFromBag(this.Letter.Char);
+                    Form.txtBag.Text = game.Bag.GetBagContent();
                     //Game.Grid[Ligne, Col].IsValidated = true;
                     IsValidated = true;
                     Form.LastPlayedTile = this;
 
                 }
 
-                frmTile.BackColor = Game.IsPlayer1 ? Form.Player1MoveColor : Form.Player2MoveColor;
-                if (Col < Game.BoardSize - 1 && Game.CurrentWordDirection == MovementDirection.Across)
+                frmTile.BackColor = game.IsPlayer1 ? Form.Player1MoveColor : Form.Player2MoveColor;
+                if (Col < game.BoardSize - 1 && Game.CurrentWordDirection == MovementDirection.Across)
                 {
                     GetNextTile(Keys.Right, frmTile);
 
@@ -171,30 +137,30 @@ namespace Dawg.Resolver.Winform.Test
             }
             else if (e.KeyCode == Keys.Back)
             {
-                frmTile.BackColor = GetBackColor(frmTile.Tile);
+                frmTile.GetBackColor(frmTile.Tile);
                 if (Game.CurrentWordDirection == MovementDirection.Across)
                     GetNextTile(Keys.Left, frmTile, false);
                 else
                     GetNextTile(Keys.Up, frmTile, false);
 
-                Game.Grid[Ligne, Col].Letter = new Letter();
-                Game.Grid[Ligne, Col].IsValidated = false;
+                game.Grid[Ligne, Col].Letter = new Letter(game.Resolver);
+                game.Grid[Ligne, Col].IsValidated = false;
                 this.Text = Game.EmptyChar.ToString();
-                frmTile.Tile = Game.Grid[Ligne, Col];
+                frmTile.Tile = game.Grid[Ligne, Col];
 
             }
             else if (e.KeyCode == Keys.Enter)
             {
                 Word word = null;
                 if (Game.CurrentWordDirection == MovementDirection.Across)
-                    word = Tile.LeftTile.GetWordFromTile(Game.CurrentWordDirection);
+                    word = Tile.LeftTile.GetWordFromTile(game, Game.CurrentWordDirection);
                 else
-                    word = Tile.UpTile.GetWordFromTile(Game.CurrentWordDirection);
+                    word = Tile.UpTile.GetWordFromTile(game, Game.CurrentWordDirection);
 
-                if (Game.IsPlayer1)
-                    Form.PreviewWord(Game.Player1, word, true);
+                if (game.IsPlayer1)
+                    Form.PreviewWord(game.Player1, word, true);
                 else
-                    Form.PreviewWord(Game.Player2, word, true);
+                    Form.PreviewWord(game.Player2, word, true);
 
             }
             else
@@ -217,7 +183,7 @@ namespace Dawg.Resolver.Winform.Test
             else if (key == Keys.Down)
                 nextTile = parent.Controls.Find($"t{nextTile.Ligne + 1}_{nextTile.Col}", false).FirstOrDefault() as FormTile;
             if (skipNotEmpty)
-                while (nextTile != null && !nextTile.IsEmpty && nextTile.Col < (Game.BoardSize - 1) && nextTile.Ligne < (Game.BoardSize - 1))
+                while (nextTile != null && !nextTile.IsEmpty && nextTile.Col < (game.BoardSize - 1) && nextTile.Ligne < (game.BoardSize - 1))
                     nextTile = GetNextTile(key, nextTile);
             if (nextTile != null) nextTile.Focus();
             return nextTile;
@@ -241,7 +207,7 @@ namespace Dawg.Resolver.Winform.Test
             TxtInfos += Environment.NewLine;
             TxtInfos += $"IsValidated={t.IsValidated}";
             TxtInfos += Environment.NewLine;
-            TxtInfos += $"FromJoker={t.FromJoker}";
+            TxtInfos += $"FromJoker={t.Letter.LetterType == LetterType.Joker}";
             TxtInfos += Environment.NewLine;
             TxtInfos += $"AnchorLeftMinLimit = {t.AnchorLeftMinLimit}";
             TxtInfos += Environment.NewLine;
@@ -258,7 +224,7 @@ namespace Dawg.Resolver.Winform.Test
 
             TxtInfos += "Controlers:" + Environment.NewLine;
             foreach (var c in t.Controlers)
-                TxtInfos += $"{Game.AlphabetWWFAvecJoker[c.Key].Char}:{c.Value}{Environment.NewLine}";
+                TxtInfos += $"{game.Resolver.Alphabet.ElementAt(c.Key).Char}:{c.Value}{Environment.NewLine}";
 
             Form.lsbInfos.Items.Clear();
             foreach (var l in TxtInfos.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
@@ -267,39 +233,57 @@ namespace Dawg.Resolver.Winform.Test
             }
         }
 
-        public Color GetBackColor(VTile t)
+        public void GetBackColor(IExtendedTile t)
         {
-            switch (t.TileType)
-            {
-                case TileType.TripleWord:
-                    return Color.OrangeRed;
-                case TileType.DoubleWord:
-                    return Color.Coral;
-                case TileType.DoubleLetter:
-                    return Color.LightSkyBlue;
-                case TileType.TripleLetter:
-                    return Color.MediumBlue;
-                case TileType.Center:
-                    return Color.Gold;
-                default:
-                    return Color.Bisque;
-            }
+            this.BackColor = Color.FromName(new TileColor(t.TileType).Name);
+        }
+        public void GetBackColorFromLetterType(IExtendedTile t)
+        {
+            this.BackColor = Color.FromName(new TileColor(t.Letter.LetterType).Name);
+        }
+        public void GetBackColorFromInnerLetterType()
+        {
+            GetBackColorFromLetterType(this.Tile);
+        }
+        public void GetBackColorFromInnerTile()
+        {
+            GetBackColor(this.Tile);
         }
 
-        public Word GetWordFromTile(MovementDirection direction)
+        public Word GetWordFromTile(Game g, MovementDirection direction)
         {
-            return Tile.GetWordFromTile(direction);
+            return Tile.GetWordFromTile(g, direction);
         }
 
-        public void Initialize()
+        //public void Initialize()
+        //{
+        //    Tile.Initialize();
+        //}
+
+        public void CopyControllers(Dictionary<int, int> source)
         {
-            Tile.Initialize();
+            throw new NotImplementedException();
+        }
+
+        public void SetWord(Game game, string text, MovementDirection direction, bool validate)
+        {
+            Tile.SetWord(game, text, direction, validate);
+        }
+
+        public void CopyControllers(IDictionary<int, int> controlers)
+        {
+            Tile.CopyControllers(controlers);
+        }
+
+        public IExtendedTile Copy(DawgResolver.Resolver r, bool transpose = false)
+        {
+            return Tile.Copy(r, transpose);
         }
 
         public Color Background { get; set; }
         public bool IsValidated { get => Tile.IsValidated; set => Tile.IsValidated = value; }
-        public bool FromJoker { get => Tile.FromJoker; set => Tile.FromJoker = value; }
-        public Dictionary<int, int> Controlers { get => Tile.Controlers; set => Tile.Controlers = value; }
+        //public bool FromJoker { get => Tile.FromJoker; set => Tile.FromJoker = value; }
+        public IDictionary<int, int> Controlers { get => Tile.Controlers; set => Tile.CopyControllers(value); }
         public int Ligne { get => Tile.Ligne; set => Tile.Ligne = value; }
         public int Col { get => Tile.Col; set => Tile.Col = value; }
         public int LetterMultiplier { get => Tile.LetterMultiplier; set => Tile.LetterMultiplier = value; }
@@ -321,22 +305,16 @@ namespace Dawg.Resolver.Winform.Test
         public bool IsAnchor { get => Tile.IsAnchor; }
         public TileType TileType { get => Tile.TileType; }
         public bool IsEmpty { get => Tile.IsEmpty; }
-        public VTile LeftTile { get => Tile.LeftTile; }
-        public VTile RightTile { get => Tile.RightTile; }
-        public VTile DownTile { get => Tile.DownTile; }
-        public VTile UpTile { get => Tile.UpTile; }
+        public IExtendedTile LeftTile { get => Tile.LeftTile; }
+        public IExtendedTile RightTile { get => Tile.RightTile; }
+        public IExtendedTile DownTile { get => Tile.DownTile; }
+        public IExtendedTile UpTile { get => Tile.UpTile; }
         public string Serialize => Tile.Serialize;
-
-        public bool? IsPlayedByPlayer1 { get => Tile.IsPlayedByPlayer1; set => Tile.IsPlayedByPlayer1 = value; }
-
-        public VTile WordMostRightTile => Tile.WordMostRightTile;
-
-        public VTile WordMostLeftTile => Tile.WordMostLeftTile;
-
-        public VTile WordLowerTile => Tile.WordLowerTile;
-
-        public VTile WordUpperTile => Tile.WordUpperTile;
-
+        public bool? IsPlayedByPlayer1 => Tile.IsPlayedByPlayer1;
+        public IExtendedTile WordMostRightTile => Tile.WordMostRightTile;
+        public IExtendedTile WordMostLeftTile => Tile.WordMostLeftTile;
+        public IExtendedTile WordLowerTile => Tile.WordLowerTile;
+        public IExtendedTile WordUpperTile => Tile.WordUpperTile;
         public int WordIndex { get => Tile.WordIndex; set => Tile.WordIndex = value; }
     }
 }

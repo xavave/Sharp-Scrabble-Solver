@@ -1,9 +1,5 @@
-﻿using DawgResolver;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DawgResolver.Model
 {
@@ -11,7 +7,7 @@ namespace DawgResolver.Model
     {
         public string Name { get; set; }
         Game Game { get; set; }
-        public Player(Game g,string name)
+        public Player(Game g, string name)
         {
             Game = g;
             Name = name;
@@ -19,9 +15,24 @@ namespace DawgResolver.Model
 
         public List<Letter> Rack { get; set; } = new List<Letter>(7);
         public int Points { get; set; }
-        public List<Word> Moves { get; set; } = new List<Word>();
+        public HashSet<Word> Moves { get; set; } = new HashSet<Word>();
+
+        public void SetRackFromWord(string word)
+        {
+            Rack.Clear();
+            Rack.AddRange(word.Select(s => new Letter(Game.Resolver, s, 1, 1)));
+        }
 
 
+        public string ToRackString()
+        {
+            var ret = "";
+            for (int i = 0; i < Rack.Count(); i++)
+            {
+                ret += Rack[i].Char;
+            }
+            return ret;
+        }
 
     }
 }

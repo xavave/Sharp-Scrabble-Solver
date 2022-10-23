@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace DawgResolver
+namespace Dawg
 {
     /// <summary>
     /// Représente un noeud du DAWG

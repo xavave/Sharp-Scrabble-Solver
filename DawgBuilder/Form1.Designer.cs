@@ -29,7 +29,9 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnReadDicoText = new System.Windows.Forms.Button();
+            this.brtnSortTxtDico = new System.Windows.Forms.Button();
+            this.btnCreationDawg = new System.Windows.Forms.Button();
             this.pgb2etapes = new System.Windows.Forms.ProgressBar();
             this.lstAvancement2Etapes = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -41,7 +43,6 @@
             this.grpLectureDAWG = new System.Windows.Forms.GroupBox();
             this.butLectureDAWG = new System.Windows.Forms.Button();
             this.lstLectureDAWG = new System.Windows.Forms.ListBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.grpAjouterMot.SuspendLayout();
@@ -50,8 +51,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.button2);
-            this.groupBox1.Controls.Add(this.button1);
+            this.groupBox1.Controls.Add(this.btnReadDicoText);
+            this.groupBox1.Controls.Add(this.brtnSortTxtDico);
+            this.groupBox1.Controls.Add(this.btnCreationDawg);
             this.groupBox1.Controls.Add(this.pgb2etapes);
             this.groupBox1.Controls.Add(this.lstAvancement2Etapes);
             this.groupBox1.Location = new System.Drawing.Point(10, 120);
@@ -61,18 +63,43 @@
             this.groupBox1.Size = new System.Drawing.Size(978, 255);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Création en 2 étapes";
+            this.groupBox1.Text = "Création du DAWG";
             // 
-            // button1
+            // btnReadDicoText
             // 
-            this.button1.Location = new System.Drawing.Point(198, 29);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(156, 35);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Création du dawg";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnReadDicoText.Location = new System.Drawing.Point(0, 29);
+            this.btnReadDicoText.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnReadDicoText.Name = "btnReadDicoText";
+            this.btnReadDicoText.Size = new System.Drawing.Size(239, 35);
+            this.btnReadDicoText.TabIndex = 3;
+            this.btnReadDicoText.Text = "Lecture du dico Texte";
+            this.btnReadDicoText.UseVisualStyleBackColor = true;
+            this.btnReadDicoText.Click += new System.EventHandler(this.btnReadDicoText_Click);
+            // 
+            // brtnSortTxtDico
+            // 
+            this.brtnSortTxtDico.Enabled = false;
+            this.brtnSortTxtDico.Location = new System.Drawing.Point(260, 29);
+            this.brtnSortTxtDico.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.brtnSortTxtDico.Name = "brtnSortTxtDico";
+            this.brtnSortTxtDico.Size = new System.Drawing.Size(156, 35);
+            this.brtnSortTxtDico.TabIndex = 2;
+            this.brtnSortTxtDico.Text = "Tri dico réel";
+            this.brtnSortTxtDico.UseVisualStyleBackColor = true;
+            this.brtnSortTxtDico.Visible = false;
+            this.brtnSortTxtDico.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // btnCreationDawg
+            // 
+            this.btnCreationDawg.Enabled = false;
+            this.btnCreationDawg.Location = new System.Drawing.Point(446, 29);
+            this.btnCreationDawg.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnCreationDawg.Name = "btnCreationDawg";
+            this.btnCreationDawg.Size = new System.Drawing.Size(156, 35);
+            this.btnCreationDawg.TabIndex = 1;
+            this.btnCreationDawg.Text = "Création du dawg";
+            this.btnCreationDawg.UseVisualStyleBackColor = true;
+            this.btnCreationDawg.Click += new System.EventHandler(this.btnCreationDawg_Click);
             // 
             // pgb2etapes
             // 
@@ -119,7 +146,6 @@
             this.grpAjouterMot.Controls.Add(this.txtNvMot);
             this.grpAjouterMot.Controls.Add(this.butAjouterUnMot);
             this.grpAjouterMot.Controls.Add(this.lstAjoutMot);
-            this.grpAjouterMot.Enabled = false;
             this.grpAjouterMot.Location = new System.Drawing.Point(10, 583);
             this.grpAjouterMot.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.grpAjouterMot.Name = "grpAjouterMot";
@@ -161,7 +187,6 @@
             // 
             this.grpLectureDAWG.Controls.Add(this.butLectureDAWG);
             this.grpLectureDAWG.Controls.Add(this.lstLectureDAWG);
-            this.grpLectureDAWG.Enabled = false;
             this.grpLectureDAWG.Location = new System.Drawing.Point(10, 385);
             this.grpLectureDAWG.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.grpLectureDAWG.Name = "grpLectureDAWG";
@@ -180,7 +205,7 @@
             this.butLectureDAWG.TabIndex = 1;
             this.butLectureDAWG.Text = "Lecture du fichier DAWG";
             this.butLectureDAWG.UseVisualStyleBackColor = true;
-            this.butLectureDAWG.Click += new System.EventHandler(this.butLectureDAWG_Click);
+            this.butLectureDAWG.Click += new System.EventHandler(this.btnLectureDAWG_Click);
             // 
             // lstLectureDAWG
             // 
@@ -191,17 +216,6 @@
             this.lstLectureDAWG.Name = "lstLectureDAWG";
             this.lstLectureDAWG.Size = new System.Drawing.Size(962, 104);
             this.lstLectureDAWG.TabIndex = 0;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(417, 29);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(156, 35);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Tri dico réel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Form1
             // 
@@ -230,7 +244,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ProgressBar pgb2etapes;
         private System.Windows.Forms.ListBox lstAvancement2Etapes;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnCreationDawg;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ListBox lstChargementASCII;
         private System.Windows.Forms.GroupBox grpAjouterMot;
@@ -240,7 +254,8 @@
         private System.Windows.Forms.Button butLectureDAWG;
         private System.Windows.Forms.ListBox lstLectureDAWG;
         private System.Windows.Forms.TextBox txtNvMot;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button brtnSortTxtDico;
+        private System.Windows.Forms.Button btnReadDicoText;
     }
 }
 

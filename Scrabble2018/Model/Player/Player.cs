@@ -1,10 +1,7 @@
-﻿using DawgResolver;
-using DawgResolver.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using DawgResolver.Model;
 
 namespace Scrabble2018.Model
 {
@@ -26,11 +23,11 @@ namespace Scrabble2018.Model
 
         public string LastAction;
 
-        public List<VTile> PlayingTiles;
+        public List<IExtendedTile> PlayingTiles;
 
         public Player()
         {
-            PlayingTiles = new List<VTile>();
+            PlayingTiles = new List<IExtendedTile>();
         }
         public int CompareTo(object obj)
         {

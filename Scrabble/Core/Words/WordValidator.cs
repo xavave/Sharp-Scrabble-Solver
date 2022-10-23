@@ -1,15 +1,11 @@
-﻿using DawgResolver;
-using DawgResolver.Model;
-using DawgSharp;
-using Scrabble.Core.Movement;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+
+using DawgResolver.Model;
+
+using DawgSharp;
 
 namespace Scrabble.Core.Words
 {

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
+using DawgResolver.Model;
 
 namespace Scrabble2018.Converters
 {
@@ -13,7 +10,7 @@ namespace Scrabble2018.Converters
         {
             if (char.IsLetter((char)value))
             {
-                return DawgResolver.Model.Game.Alphabet.Find(c => c.Char == (char)value);
+                //return Game.Alphabet.Find(c => c.Char == (char)value);
             }
             return false;
         }

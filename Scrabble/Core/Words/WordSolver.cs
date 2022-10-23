@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Scrabble.Core.Words
+﻿namespace Scrabble.Core.Words
 {
     // Todo: Need to finish this
     public class WordSolver

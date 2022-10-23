@@ -1,10 +1,7 @@
-﻿using DawgResolver;
-using DawgResolver.Model;
-using Scrabble.Core;
-using Scrabble.Core.Tile;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+
+using DawgResolver.Model;
 
 namespace Scrabble
 {

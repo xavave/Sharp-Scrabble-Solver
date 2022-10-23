@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Scrabble2018.Model.Game;
-using System.Text;
-using System.Threading.Tasks;
-using DawgResolver;
-using DawgResolver.Model;
-
-namespace Scrabble2018.Model.Game
+﻿namespace Scrabble2018.Model.Game
 {
     //public static class GameStartDraw
     //{

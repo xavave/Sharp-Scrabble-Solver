@@ -6,30 +6,34 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Threading;
+using System.Xml;
 
-namespace DawgResolver
+namespace Dawg
 {
     /// <summary>
     /// Cette classe permet de construire, enregistrer et utiliser un dictionnaire DAWG.
     /// Le principe de focntionnement est l'adapation en C# du tutoriel de CarlVB http://codes-sources.commentcamarche.net/faq/10903-compression-d-un-dictionnaire-sous-forme-de-premiereEtape#construction-directe-du-premiereEtape
     /// </summary>
-  
+
     public class Dictionnaire
     {
-        public static string NomDicoDawgODS7 = "dico_dawgODS7.txt";
+        public static string NomDicoDawg { get; set; }
+        public static string NomDicoDawgODS7 { get; set; } = "dico_dawgODS7.txt";
         public static string NomDicoDawgODS6 = "dico_dawgODS6.txt";
+        public static string NomDicoDawgEN_Collins = "EN_Collins_dawg.txt";
 
-        public const string NomDicoReel = "ODS7.txt";
+        public static string NomDicoReel { get; set; }//"ODS7.txt";
 
         public const int AscShift = 64;
+        public char Joker { get; }
 
         public const int AscShiftBase0 = AscShift + 1;
         /// <summary>
         /// Chronomètre utilisé uniquement pour comparer les performances des 2 méthodes de construtions
         /// </summary>
-        //private Stopwatch chrono = new Stopwatch();
+        private Stopwatch chrono = new Stopwatch();
 
-        //private Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+        private Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
 
         /// <summary>
         /// Cette liste est consituée lors de la construction ou lors de la lecture du fichier compressé.
@@ -37,9 +41,11 @@ namespace DawgResolver
         /// </summary>
         public List<Noeud> dawg;
 
-        public Dictionnaire(string nomDico)
+        public Dictionnaire(string nomDico = null)
         {
-          ChargerFichierDAWG(nomDico);
+            Joker = '?';
+            if (!string.IsNullOrEmpty(nomDico))
+                ChargerFichierDAWG(nomDico);
         }
 
         #region Propriétés
@@ -52,7 +58,7 @@ namespace DawgResolver
         /// <summary>
         /// Liste des mots dans le dictionnaire, cette liste est issue du fichier ASCII servant de base à la construction
         /// </summary>
-        public List<string> Mots { get; set; }
+        public List<string> Mots { get; set; } = new List<string>();
 
         /// <summary>
         /// Noeud père de tout le graphe
@@ -78,12 +84,12 @@ namespace DawgResolver
         /// <param name="Texte"></param>
         private void AnnonceEtape(string Texte)
         {
-            //long duree = chrono.ElapsedMilliseconds;
-            //if (this.EtapeAtteinte != null)
-            //    dispatcher.Invoke(new Action(delegate
-            //        {
-            //            this.EtapeAtteinte(Texte + " Chrono: ", duree);
-            //        }), DispatcherPriority.Send);
+            long duree = chrono.ElapsedMilliseconds;
+            if (this.EtapeAtteinte != null)
+                dispatcher.Invoke(new Action(delegate
+                    {
+                        this.EtapeAtteinte(Texte + " Chrono: ", duree);
+                    }), DispatcherPriority.Send);
         }
 
         /// <summary>
@@ -92,11 +98,11 @@ namespace DawgResolver
         /// <param name="Pourcent"></param>
         private void AnnonceProgression(int Pourcent)
         {
-            //if (this.Progression != null)
-            //    dispatcher.Invoke(new Action(delegate
-            //        {
-            //            this.Progression(Pourcent);
-            //        }), DispatcherPriority.Normal);
+            if (this.Progression != null)
+                dispatcher.Invoke(new Action(delegate
+                    {
+                        this.Progression(Pourcent);
+                    }), DispatcherPriority.Normal);
         }
 
         /// <summary>
@@ -126,7 +132,7 @@ namespace DawgResolver
         /// </summary>
         private void ComparerListeMotsEtDAWG()
         {
-            //chrono.Restart();
+            chrono.Restart();
 
             AnnonceEtape("Comparaison entre la liste de mots et le DAWG");
 
@@ -139,7 +145,7 @@ namespace DawgResolver
             else
                 AnnonceEtape("La liste de mots et le DAWG sont identiques");
 
-            //chrono.Stop();
+            chrono.Stop();
         }
 
         #endregion
@@ -151,13 +157,15 @@ namespace DawgResolver
         /// </summary>
         public void ConstruireDawgEnDeuxTemps()
         {
-            //chrono.Restart();
+            if (!File.Exists(NomDicoReel)) return;
+            chrono.Restart();
 
             this.TravailEnCours = TravailEnCours.CreationDawgEn2Etapes;
             Noeud.ResetCompteur();
 
             //Le Dawg est crée par un thread, ainsi le reste du programme n'est pas bloqué par le processus.
             //Cela permet par exemple de faire défiler une barre de progression sans figer l'interface.
+            if (string.IsNullOrEmpty(NomDicoDawg)) NomDicoDawg = Path.GetFileNameWithoutExtension(NomDicoReel) + "_dawg.txt";
             Thread construire = new Thread(new ThreadStart(leThread2Etapes));
             construire.Start();
         }
@@ -175,16 +183,17 @@ namespace DawgResolver
             DAWG = dawg[0];
 
             AnnonceEtape("Ecriture du fichier.");
-            Noeud.Serialize(dawg, Mots.Count, NomDicoDawgODS7);
-            //chrono.Stop();
+
+            Noeud.Serialize(dawg, Mots.Count, NomDicoDawg);
+            chrono.Stop();
 
             //==================Ici la construction est finie
 
             //Cette étape n'est utile que pour la démo et le débug
             ComparerListeMotsEtDAWG();
 
+            TravailEnCours = Dawg.TravailEnCours.Aucun;
 
-            TravailEnCours = DawgResolver.TravailEnCours.Aucun;
         }
 
         /// <summary>
@@ -194,7 +203,7 @@ namespace DawgResolver
         private List<Noeud> ConstruireArbre()
         {
             List<Noeud> noeuds = new List<Noeud> { new Noeud() };
-
+            if (Mots == null) return noeuds;
             AnnonceEtape("Début de la création de l'arbre.");
             int p = -1;
             for (int i = 0; i < Mots.Count; i++)
@@ -398,9 +407,10 @@ namespace DawgResolver
         /// Charge le fichier ASCII
         /// </summary>
         /// <param name="FileName">Chemin du fichier</param>
-        public void ChargerDictionnaireAscii(string FileName)
+        public bool ChargerDictionnaireAscii(string FileName)
         {
-            //chrono.Restart();
+            if (string.IsNullOrEmpty(FileName)) return false;
+            chrono.Restart();
             this.TravailEnCours = TravailEnCours.ChargementFichierASCII;
 
             AnnonceEtape("Début du chargement du dictionnaire Ascii.");
@@ -410,7 +420,10 @@ namespace DawgResolver
             AnnonceEtape(string.Format("Dictionnaire de {0:#,0} mots, chargé et trié.", Mots.Count));
 
             this.TravailEnCours = TravailEnCours.Aucun;
-            //chrono.Stop();
+            chrono.Stop();
+            return Mots.Any();
+
+
         }
 
         /// <summary>
@@ -422,7 +435,7 @@ namespace DawgResolver
             List<string> mots = new List<string>();
 
             foreach (Arc a in DAWG.Sortants)
-                ParcoursDAWG(new List<Arc> { a }, mots);
+                ParcoursDAWG(new List<Arc> { a }, ref mots);
 
             return mots;
         }
@@ -432,7 +445,7 @@ namespace DawgResolver
         /// </summary>
         /// <param name="LesMots">Liste de mots dans laquelle les mots trouvés sont ajoutés</param>
         /// <param name="Arcs">Liste des arcs du chemin en cours</param>
-        private void ParcoursDAWG(List<Arc> Arcs, List<string> LesMots)
+        public void ParcoursDAWG(List<Arc> Arcs, ref List<string> LesMots)
         {
             Noeud enCours = Arcs.Last().Destination;
 
@@ -440,7 +453,7 @@ namespace DawgResolver
                 LesMots.Add(Arc.RetourneMot(Arcs));
 
             foreach (Arc a in enCours.Sortants)
-                ParcoursDAWG(Arcs.Concat(new List<Arc> { a }).ToList(), LesMots);
+                ParcoursDAWG(Arcs.Concat(new List<Arc> { a }).ToList(), ref LesMots);
         }
 
         /// <summary>
@@ -451,74 +464,114 @@ namespace DawgResolver
         /// <returns>DAWG</returns>
         public void ChargerFichierDAWG(string nomdico)
         {
-            TravailEnCours = DawgResolver.TravailEnCours.ChargementFichierDAWG;
-
-            //chrono.Restart();
+            if (string.IsNullOrEmpty(nomdico)) return;
+            TravailEnCours = Dawg.TravailEnCours.ChargementFichierDAWG;
+            Noeud[] noeuds = null;
+            chrono.Restart();
             AnnonceEtape("Début du chargement du dictionnaire DAWG.");
             var assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(nomdico));
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (StreamReader reader = new StreamReader(stream, true))
+            string resourceName = assembly.GetManifestResourceNames().SingleOrDefault(str => str.EndsWith(nomdico));
+            if (resourceName != null)
             {
-                string content = reader.ReadToEnd();
-                string[] lignes = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-                //string[] lignes = File.ReadAllLines(FileName);
-                //le nombre de mots est présent dans le fichier par soucis de compatibilité avec le tutoriel de CArlVB, mais il n'est pas utile 
-                NombreNoeuds = lignes.Count() - 2; // Convert.ToInt32(lignes[1].Split(':')[1]);
-
-                /*On connait à l'avance le nombre de noeuds car c'est écrit en entête par soucis de compatibilité avec le tutoriel de CArlVB
-                 *Cependant, on aurait pu le déduire à partir de lignes.Length
-                 *Utiliser un tableau permet de regarder au bon index si le noeud a déjà été créé par un arc entrant ou s'il faut le faire
-                 */
-                Legacy = new int[28, NombreNoeuds + 1];
-                Noeud[] noeuds = new Noeud[NombreNoeuds];
-
-                for (int i = 0; i < NombreNoeuds; i++)
+                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                using (StreamReader reader = new StreamReader(stream, true))
                 {
-
-                    if (noeuds[i] == null)//on vérifie si le noeud à déserialiser n'a pas déjà été créé par un arc
-                        noeuds[i] = new Noeud(i + 1);//on l'initialise si nécessaire
-
-                    Noeud n = noeuds[i];
-
-                    string ligne = lignes[i + 2];//on lit la ligne correspondante, il faut penser à sauter les 2 lignes d'entête
-
-                    n.IsTerminal = ligne.EndsWith("#");
-                    Legacy[27, n.Numero] = n.IsTerminal ? 1 : 0;
-                    if (ligne != "#")//on exclu le cas particulier du noeud terminal sans enfant
-                    {
-                        //on désérialize les arcs sortants
-                        string[] arcs = ligne.Replace("#", "").Split("-".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-                        n.Sortants = (from a in arcs
-                                      select new Arc(n, a, noeuds)
-                                        ).ToList();
-                        foreach (var s in n.Sortants)
-                        {
-                            Legacy[(int)s.Lettre - AscShift, s.Origine.Numero] = s.Destination.Numero;
-                        }
-                    }
-
-
-
+                    noeuds = BuildDawgNoeuds(reader.ReadToEnd());
                 }
-
+            }
+            else if (File.Exists(nomdico))
+            {
+                noeuds = BuildDawgNoeuds(File.ReadAllText(nomdico));
+            }
+            if (noeuds != null)
+            {
                 DAWG = noeuds[0];
                 dawg = noeuds.ToList();
 
                 AnnonceEtape("Fin du chargement du dictionnaire DAWG.");
-
-                //chrono.Stop();
-
-                //==================Ici la lecture du fichier est finie
-
-                //Cette étape n'est utile que pour la démo et le débug
-                //ComparerListeMotsEtDAWG();
-
-                TravailEnCours = DawgResolver.TravailEnCours.Aucun;
-
-                //return dawg[0];
             }
+            else
+            {
+                AnnonceEtape("Rien à charger!");
+            }
+
+            chrono.Stop();
+
+            //==================Ici la lecture du fichier est finie
+
+            //Cette étape n'est utile que pour la démo et le débug
+            //ComparerListeMotsEtDAWG();
+
+            TravailEnCours = Dawg.TravailEnCours.Aucun;
+
+            //return dawg[0];
+        }
+
+
+        private Noeud[] BuildDawgNoeuds(string content)
+        {
+            string[] lignes = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            //string[] lignes = File.ReadAllLines(FileName);
+            //le nombre de mots est présent dans le fichier par soucis de compatibilité avec le tutoriel de CArlVB, mais il n'est pas utile 
+            NombreNoeuds = lignes.Count() - 2; // Convert.ToInt32(lignes[1].Split(':')[1]);
+
+            /*On connait à l'avance le nombre de noeuds car c'est écrit en entête par soucis de compatibilité avec le tutoriel de CArlVB
+             *Cependant, on aurait pu le déduire à partir de lignes.Length
+             *Utiliser un tableau permet de regarder au bon index si le noeud a déjà été créé par un arc entrant ou s'il faut le faire
+             */
+            Legacy = new int[28, NombreNoeuds + 1];
+            Noeud[] noeuds = new Noeud[NombreNoeuds];
+
+            for (int i = 0; i < NombreNoeuds; i++)
+            {
+
+                if (noeuds[i] == null)//on vérifie si le noeud à déserialiser n'a pas déjà été créé par un arc
+                    noeuds[i] = new Noeud(i + 1);//on l'initialise si nécessaire
+
+                Noeud n = noeuds[i];
+
+                string ligne = lignes[i + 2];//on lit la ligne correspondante, il faut penser à sauter les 2 lignes d'entête
+
+                n.IsTerminal = ligne.EndsWith("#");
+                Legacy[27, n.Numero] = n.IsTerminal ? 1 : 0;
+                if (ligne != "#")//on exclu le cas particulier du noeud terminal sans enfant
+                {
+                    //on désérialize les arcs sortants
+                    string[] arcs = ligne.Replace("#", "").Split("-".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                    n.Sortants = (from a in arcs
+                                  select new Arc(n, a, noeuds)
+                                    ).ToList();
+                    foreach (var s in n.Sortants)
+                    {
+                        Legacy[(int)s.Lettre - AscShift, s.Origine.Numero] = s.Destination.Numero;
+                    }
+                }
+            }
+            return noeuds;
+        }
+
+
+        public Arc BoucleDawg(char c, ref Noeud enCours)
+        {
+            var sortants = enCours.Sortants.Where(a => a.Lettre == c).ToList();
+            switch (sortants.Count)
+            {
+                case 0:
+                    return null;
+
+                case 1:
+                    enCours = sortants[0].Destination;
+
+                    break;
+
+                default:
+                    //il ne devrait jamais y avoir plus d'un arc pour une lettre sortant d'un noeud, si ça passe ici il y a un problème
+                    AnnonceEtape(string.Format("Problème lors de la lecture du DAWG, le noeud n°{0} possède plusieurs arcs sortants avec la lettre {1}.", enCours.Numero, c));
+                    break;
+
+            }
+            return sortants.FirstOrDefault();
         }
         /// <summary>
         /// Vérifie la présence d'un mot dans le dictionnaire.
@@ -552,7 +605,7 @@ namespace DawgResolver
                 }
             }
 
-            ParcoursDAWG(arcs, ret);
+            ParcoursDAWG(arcs, ref ret);
             return ret;
 
         }
@@ -632,10 +685,8 @@ namespace DawgResolver
         /// <returns></returns>
         public bool MotAdmis(string mot)
         {
-            if (mot == "")
-            {
+            if (string.IsNullOrWhiteSpace(mot)) return false;
 
-            }
             Noeud enCours = DAWG;
             var arcs = new List<Arc>();
 
@@ -670,8 +721,8 @@ namespace DawgResolver
         /// <remarks>On vérifie d'abord que le mot n'est pas déjà présent</remarks>
         public void AjouterUnMot(string mot)
         {
-            //chrono.Restart();
-            TravailEnCours = DawgResolver.TravailEnCours.AjoutMot;
+            chrono.Restart();
+            TravailEnCours = Dawg.TravailEnCours.AjoutMot;
 
             mot = mot.ToUpper();//au cas ou il soit en minuscule
 
@@ -724,7 +775,7 @@ namespace DawgResolver
                 AnnonceEtape(string.Format("Le mot \"{0}\" existe déja.", mot));
 
 
-            //chrono.Stop();
+            chrono.Stop();
 
 
 
@@ -734,7 +785,7 @@ namespace DawgResolver
             ComparerListeMotsEtDAWG();
 
 
-            TravailEnCours = DawgResolver.TravailEnCours.Aucun;
+            TravailEnCours = Dawg.TravailEnCours.Aucun;
 
         }
 

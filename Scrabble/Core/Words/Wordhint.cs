@@ -1,13 +1,10 @@
-﻿using DawgResolver;
-using DawgResolver.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using DawgResolver.Model;
 
 namespace Scrabble.Core.Words
 {
@@ -77,9 +74,9 @@ namespace Scrabble.Core.Words
         public void PrintGridConsole(ScrabbleTile[,] Tiles)
         {
 
-            for (int x = 0; x < Game.BoardSize; x++)
+            for (int x = 0; x < ScrabbleForm.Game.BoardSize; x++)
             {
-                for (int y = 0; y < Game.BoardSize; y++)
+                for (int y = 0; y < ScrabbleForm.Game.BoardSize; y++)
                 {
                     var tile = ScrabbleForm.Game.Grid[x, y];
 
@@ -131,7 +128,7 @@ namespace Scrabble.Core.Words
 
             for (int i = 0; i < word.Text.Length; i++)
             {
-                tile.Letter = Game.Alphabet.Find(c => c.Char == char.ToUpper(word.Text[i]));
+                tile.Letter = ScrabbleForm.Game.Resolver.Alphabet.Find(c => c.Char == char.ToUpper(word.Text[i]));
                 tile.Text = char.IsLower(word.Text[i]) ? tile.Letter.Char.ToString().ToLower() : tile.Letter.Char.ToString();
                 if (word.Direction == MovementDirection.Across)
                     tile = scrabbleTile[word.StartTile.Ligne, word.StartTile.Col + i + 1];

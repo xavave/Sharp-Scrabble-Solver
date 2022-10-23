@@ -1,33 +1,35 @@
-﻿using DawgResolver;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DawgResolver.Model
 {
     public class Bag
     {
-        public Bag()
+        private Resolver resolver { get; }
+        private Bag(Resolver r)
         {
-            Letters = new List<Letter>(Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker : Game.AlphabetWWFAvecJoker);
+            resolver = r;
+            if (Letters == null)
+                Letters = r.Alphabet.Select(s => s.Clone() as Letter).ToHashSet();
+            ResetCount();
         }
 
-        public List<Letter> Letters { get; set; }
-        public string FlatList
+        public static Bag Build(Resolver r)
         {
-            get
-            {
-                var ret = "";
-                foreach (var l in Letters)
-                {
-                    ret += new string(l.Char, l.Count);
-                }
-                return ret;
-            }
+            return new Bag(r);
         }
+
+        public void ResetCount()
+        {
+            foreach (var l in Letters)
+                l.Count = l.DefaultCount;
+        }
+
+        public HashSet<Letter> Letters { get; }
+        public string FlatList => string.Join("", Letters.Select(l => string.Join("", new string(l.Char, l.Count))));
+
         // On compte le nombre de lettres restantes dans le sac et on établit la liste des choix
         public int LeftLettersCount
         {
@@ -36,8 +38,8 @@ namespace DawgResolver.Model
         }
         public void RemoveLetterFromBag(char c)
         {
-            var letter = Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.Find(cc => cc.Char == c) : Game.AlphabetWWFAvecJoker.Find(cc => cc.Char == c);
-            if (letter.Count > 0) letter.Count = --letter.Count;
+            var bagLetter = Letters.FirstOrDefault(l => l.Char == c);
+            if (bagLetter.Count > 0) bagLetter.Count--;
         }
 
         public Letter GetLetterInFlatList(Random r)
@@ -50,16 +52,16 @@ namespace DawgResolver.Model
             int charIdx = r.Next(0, FlatList.Length - 1);
             var c = FlatList[charIdx];
             if (c == Game.EmptyChar) throw new ArgumentException(nameof(c));
-            var letter = Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.First(cc => cc.Char == c) : Game.AlphabetWWFAvecJoker.First(cc => cc.Char == c);
+            var alphabetLetter = resolver.Find(c);
 
-            var le = Letters.Find(l => l.Char == letter.Char);
-            if (letter.Count > 0) letter.Count = --letter.Count;
-            return le;
+            var bagLetter = Letters.FirstOrDefault(l => l.Char == alphabetLetter.Char);
+            if (bagLetter.Count > 0) bagLetter.Count--;
+            return bagLetter;
 
         }
         public void PutBackLetterInBag(Letter l)
         {
-            var letter = Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.Find(cc => cc == l) : Game.AlphabetWWFAvecJoker.Find(cc => cc == l);
+            var letter = resolver.Find(l.Char);
             letter.Count++;
         }
 
@@ -83,7 +85,7 @@ namespace DawgResolver.Model
 
             if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
-                p.Rack = forcedLetters.Select(c => Game.GameStyle == 'S' ? Game.AlphabetScrabbleAvecJoker.Find(cc => cc.Char == c) : Game.AlphabetWWFAvecJoker.Find(cc => cc.Char == c)).ToList();
+                p.Rack = forcedLetters.Select(c => resolver.Find(c)).ToList();
                 return;
             }
             // Si le sac est vide
@@ -102,7 +104,7 @@ namespace DawgResolver.Model
 
                 p.Rack.Add(letter);
             }
-       
+
 
         }
     }

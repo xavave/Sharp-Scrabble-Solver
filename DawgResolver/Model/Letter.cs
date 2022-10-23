@@ -1,7 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
+
+using Dawg;
 
 namespace DawgResolver.Model
 {
@@ -9,13 +8,15 @@ namespace DawgResolver.Model
     public class Letter : ICloneable
     {
         private char @char;
-        private int defaultCount = -1;
-
-        public Letter()
+        public Resolver Resolver { get; }
+        public LetterType LetterType { get; set; }
+        public Letter(Resolver r)
         {
+            Resolver = r;
             Char = Game.EmptyChar;
             Value = 0;
             Count = 0;
+            LetterType = LetterType.Regular;
 
         }
         public int DefaultCount { get; set; } = -1;
@@ -27,10 +28,7 @@ namespace DawgResolver.Model
                 return $"L{Char};{Value};{Count}";
             }
         }
-       
-
-
-        public Letter(char @char, int value, int count)
+        public Letter(Resolver r, char @char, int value, int count) : this(r)
         {
             Char = @char;
             Value = value;
@@ -41,6 +39,11 @@ namespace DawgResolver.Model
         {
             return this != null && this.Char != Game.EmptyChar;
         }
+        public string GetLetterByIndex(int index)
+        {
+            return Resolver.Find((char)(index + Dictionnaire.AscShift)).Char.ToString();
+        }
+
         public char Char
         {
             get => @char; set { @char = value; }
@@ -55,7 +58,7 @@ namespace DawgResolver.Model
 
         public object Clone()
         {
-            return new Letter(this.Char, this.Value, this.DefaultCount);
+            return new Letter(Resolver, this.Char, this.Value, this.DefaultCount);
 
         }
     }

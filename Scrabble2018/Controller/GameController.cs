@@ -4,7 +4,7 @@ using Scrabble2018.Model;
 using Scrabble2018.Model.Word;
 using Scrabble2018.View;
 using System.Windows.Media;
-using DawgResolver;
+using Dawg;
 
 namespace Scrabble2018.Controller
 {

@@ -1,12 +1,7 @@
-﻿using DawgResolver;
-using DawgResolver.Model;
-using Scrabble.Core.Words;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Scrabble.Core.Tile
@@ -60,7 +55,7 @@ namespace Scrabble.Core.Tile
             if (string.IsNullOrWhiteSpace(s.Text)) return;
             var idx = Tiles.IndexOf(s);
             if (ScrabbleForm.Game.Player1.Rack.Count > idx)
-                ScrabbleForm.Game.Player1.Rack[idx] = Game.AlphabetWWFAvecJoker.Find(c => c.Char == s.Text[0]);
+                ScrabbleForm.Game.Player1.Rack[idx] = ScrabbleForm.Game.Resolver.AlphabetWWFAvecJoker.Find(c => c.Char == s.Text[0]);
         }
 
         private void Tile_MouseDown(object sender, MouseEventArgs e)

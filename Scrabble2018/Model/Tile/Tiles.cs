@@ -1,32 +1,28 @@
-﻿using DawgResolver;
-using DawgResolver.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using DawgResolver.Model;
 
 namespace Scrabble2018.Model
 {
-    public class TextBoxTile : TextBox, VTile
+    public class TextBoxTile : TextBox, IBaseTile
     {
         private Letter letter;
         private int ligne;
         private int col;
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string property = "")
+        public void OnPropertyChanged([CallerMemberName] string property = "")
         {
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }
-        public TextBoxTile(VTile t)
+        public TextBoxTile(IExtendedTile t)
         {
             TileType = t.TileType;
             Background = UpdateColor(t);
@@ -36,7 +32,7 @@ namespace Scrabble2018.Model
             WordMultiplier = t.IsEmpty ? t.WordMultiplier : 1;
             LetterMultiplier = t.IsEmpty ? t.LetterMultiplier : 1;
         }
-        public SolidColorBrush UpdateColor(VTile t)
+        public SolidColorBrush UpdateColor(IExtendedTile t)
         {
             switch (t.TileType)
             {
@@ -54,13 +50,52 @@ namespace Scrabble2018.Model
                     return Brushes.Bisque;
             }
         }
+        //public void Initialize()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public DawgResolver.Model.Word GetWordFromTile(MovementDirection direction)
+        public DawgResolver.Model.Word GetWordFromTile(DawgResolver.Model.Game g, MovementDirection direction)
         {
-            throw new NotImplementedException();
+            var word = new DawgResolver.Model.Word(g);
+            IExtendedTile tile = this;
+            string text = "";
+            int? points = 0;
+            int wordmulti = 1;
+            if (direction == MovementDirection.Across)
+            {
+                var rTile = tile.WordMostRightTile;
+                var lTile = tile.WordMostLeftTile;
+                var wordLength = rTile.Col - lTile.Col;
+                for (int i = lTile.Col; i <= lTile.Col + wordLength; i++)
+                {
+                    text += g.Grid[lTile.Ligne, i].Letter.Char;
+                }
+                word.Text = text;
+                word.StartTile = lTile;
+            }
+            else
+            {
+                var dTile = tile.WordLowerTile;
+                var uTile = tile.WordUpperTile;
+                var wordLength = dTile.Ligne - uTile.Ligne;
+                for (int i = uTile.Ligne; i <= uTile.Ligne + wordLength; i++)
+                {
+                    text += g.Grid[i, tile.Col].Letter.Char;
+                }
+                word.Text = text;
+                word.StartTile = uTile;
+
+            }
+            points = points * wordmulti;
+            if (points.HasValue)
+                word.Points = points.Value;
+            word.Direction = direction;
+
+            return word;
         }
 
-        public void Initialize()
+        public void CopyControllers(Dictionary<int, int> source)
         {
             throw new NotImplementedException();
         }
@@ -89,25 +124,27 @@ namespace Scrabble2018.Model
         public bool IsEmpty { get; }
         public bool IsValidated { get; set; }
 
-        public VTile LeftTile { get; }
+        public IExtendedTile LeftTile { get; }
 
-        public VTile RightTile { get; }
+        public IExtendedTile RightTile { get; }
 
-        public VTile UpTile { get; }
+        public IExtendedTile UpTile { get; }
 
-        public VTile DownTile { get; }
+        public IExtendedTile DownTile { get; }
 
-        public string Serialize => throw new NotImplementedException();
+        public string Serialize { get; }
 
-        public bool? IsPlayedByPlayer1 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool? IsPlayedByPlayer1 { get; set; }
 
-        public VTile WordMostRightTile => throw new NotImplementedException();
+        public IExtendedTile WordMostRightTile { get; }
 
-        public VTile WordMostLeftTile => throw new NotImplementedException();
+        public IExtendedTile WordMostLeftTile { get; }
 
-        public VTile WordLowerTile => throw new NotImplementedException();
+        public IExtendedTile WordLowerTile { get; }
 
-        public VTile WordUpperTile => throw new NotImplementedException();
+        public IExtendedTile WordUpperTile { get; }
+
+        public int WordIndex { get; set; }
     }
     //public class Tile : IComparable
     //{

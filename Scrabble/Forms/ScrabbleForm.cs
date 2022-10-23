@@ -1,4 +1,9 @@
-﻿using DawgResolver;
+﻿using System;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using Dawg;
 using DawgResolver.Model;
 using Scrabble.Core;
 using Scrabble.Core.Log;
@@ -7,12 +12,6 @@ using Scrabble.Core.Stats;
 using Scrabble.Core.Tile;
 using Scrabble.Core.Words;
 using Scrabble.Forms;
-
-using System;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace Scrabble
 {
@@ -33,8 +32,6 @@ namespace Scrabble
         //public WordScorer WordScorer { get; set; }
         public GameLog Logger { get; set; }
         public WordHint WordHint { get; set; }
-
-
         public Game Game { get; set; }
         public ScrabbleForm()
         {
@@ -45,9 +42,10 @@ namespace Scrabble
 
             //this.WordScorer = new WordScorer(this);
             this.TileManager = new TileManager(this);
+            Game.IsFirstMove = TileManager.Tiles[7, 7].Text == "";
             TileManager.SetupTiles();
 
-           this.WordValidator = new WordValidator { ScrabbleForm = this };
+            this.WordValidator = new WordValidator { ScrabbleForm = this };
             this.WordSolver = new WordSolver { ScrabbleForm = this };
             this.StatManager = new StatManager();
             this.RackManager = new RackManager(this);
@@ -107,7 +105,7 @@ namespace Scrabble
                 MessageBox.Show("You must place some tiles on the board and make a word to play. You can pass or swap your letters if cannot make a word. You can use the hint to see available words in your rack.");
                 return;
             }
-
+            Game.IsFirstMove = TileManager.Tiles[7, 7].Text == "";
             var checkTilePositions = TileManager.ValidateTilePositions();
             //var moveResult = WordValidator.ValidateWordsInPlay();
 
@@ -119,7 +117,7 @@ namespace Scrabble
             {
                 foreach (var t in this.TileManager.TilesInPlay)
                 {
-                    Game.Grid[t.Ligne, t.Col].Letter = Game.Alphabet.Find(a => a.Char == t.Text[0]);
+                    Game.Grid[t.Ligne, t.Col].Letter = Game.Resolver.Alphabet.Find(a => a.Char == t.Text[0]);
                 }
 
                 TileManager.ResetTilesInPlay();
@@ -235,14 +233,14 @@ namespace Scrabble
         private void btnHint_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-           
+
             WordHint.ClearText();
-            
+
             WordHint.BeginUpdate();
-           
-            foreach (var w in Game.Resolver.FindMoves(PlayerManager.CurrentPlayer.Name== PlayerManager.PlayerOne.Name ?  Game.Player1: Game.Player2))
+
+            foreach (var w in Game.Resolver.FindMoves(this.Game))
                 WordHint.AddWord(w);
-           
+
             WordHint.EndUpdate();
             Cursor.Current = Cursors.Default;
         }
@@ -347,7 +345,7 @@ namespace Scrabble
         {
             DraggingFromGrid = false;
 
-            
+
         }
         //private void ImplementComputerLogicHere()
         //{

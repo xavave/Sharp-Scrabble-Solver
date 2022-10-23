@@ -1,6 +1,6 @@
 ﻿namespace Dawg.Resolver.Winform.Test
 {
-    partial class Form3
+    partial class FrmDebug
     {
         /// <summary>
         /// Required designer variable.
@@ -42,7 +42,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 36);
             this.button1.TabIndex = 7;
-            this.button1.Text = "button1";
+            this.button1.Text = "OK";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
@@ -95,8 +95,9 @@
             this.txtGrid2.Size = new System.Drawing.Size(213, 393);
             this.txtGrid2.TabIndex = 10;
             // 
-            // Form2
+            // frmDebug
             // 
+            this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1344, 464);
@@ -106,8 +107,8 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
-            this.Name = "Form2";
-            this.Text = "Form2";
+            this.Name = "frmDebug";
+            this.Text = "Debug";
             this.ResumeLayout(false);
             this.PerformLayout();
 
