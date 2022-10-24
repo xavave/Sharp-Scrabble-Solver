@@ -26,8 +26,8 @@ namespace DawgResolver.Model
         public static MovementDirection CurrentWordDirection { get; set; } = MovementDirection.Across;
         public static bool HintSortByBestScore { get; set; } = true;
         public Player CurrentPlayer => IsPlayer1 ? this.Player1 : this.Player2;
-
         public int BoardSize { get; set; } = 15;
+        public int BoardCenter => BoardSize % 2 == 0 ? BoardSize / 2 : (BoardSize - 1) / 2;
 
         public string GenerateHtml(IExtendedTile[,] Tiles)
         {
@@ -180,13 +180,14 @@ namespace DawgResolver.Model
 
             if (IsFirstMove)
             {
-                Grid[BoardSize / 2, BoardSize / 2].AnchorLeftMinLimit = 0;
-                Grid[7, 7].AnchorLeftMaxLimit = 6;
+                Grid[BoardCenter, BoardCenter].AnchorLeftMinLimit = 0;
+                Grid[BoardCenter, BoardCenter].AnchorLeftMaxLimit = 6;
 
-                foreach (var t in Grid.OfType<IExtendedTile>())
+                foreach (var t in Grid.OfType<IExtendedTile>().Where(g => g.Col == BoardCenter || g.Ligne == BoardCenter))
                 {
                     t.Controlers[26] = 26;
                 }
+
             }
             else
             {
@@ -287,7 +288,7 @@ namespace DawgResolver.Model
         }
         public CustomExtendedTilesGrid BackupGameGrid()
         {
-            var ret = new CustomExtendedTilesGrid(this, BoardSize);
+            var ret = new CustomExtendedTilesGrid(this, BoardSize, true);
             for (int ligne = 0; ligne < Grid.GetLength(0); ligne++)
                 for (int col = 0; col < Grid.GetLength(1); col++)
                 {
@@ -307,13 +308,13 @@ namespace DawgResolver.Model
 
         public Game(string nomDico = null)
         {
-           
+
             Dico = new Dictionnaire(nomDico);
             Joker = Dico.Joker;
             Resolver = new Resolver(this, nomDico);
             Player1 = new Player(this, "Player 1");
             Player2 = new Player(this, "Player 2");
-            Grid = new CustomExtendedTilesGrid(this, BoardSize);
+            Grid = new CustomExtendedTilesGrid(this, BoardSize, true);
             //InitBoard();
             InitGameProperties();
         }
@@ -325,6 +326,7 @@ namespace DawgResolver.Model
             NoMoreMovesCount = 0;
             EndGame = false;
             IsPlayer1 = true;
+            MoveIndex = 1;
         }
 
         //public List<Letter> ClearTilesInPlay(Player p)
@@ -355,9 +357,9 @@ namespace DawgResolver.Model
         //    return p.Rack;
         //}
 
-        public IExtendedTile[,] InitGameBoardTiles()
+        public CustomExtendedTilesGrid InitGameBoardTiles()
         {
-            IExtendedTile[,] vTiles = new BaseVirtualTile[this.BoardSize, this.BoardSize];
+            var vTiles = new CustomExtendedTilesGrid(this, this.BoardSize, true);
 
             // Définition des cases bonus
             var assembly = Assembly.GetExecutingAssembly();
@@ -437,24 +439,13 @@ namespace DawgResolver.Model
                 return vTiles;
             }
         }
-        //protected static VTile[,] StaGrid { get; }
-        //{
-        //    get => grid; set { grid = value; }
-        //}
+       
         public bool IsTransposed { get; set; } = false;
-        public bool FirstMove
-        {
-            get
-            {
-                return Grid.OfType<IExtendedTile>().First(t => t.TileType == TileType.Center).IsEmpty;
-            }
-        }
+        public bool IsFirstMove => Grid.Any(t => t.TileType == TileType.Center && t.IsEmpty);
         public CustomExtendedTilesGrid Grid { get; }
         public int NoMoreMovesCount { get; set; } = 0;
         public CancellationToken Token { get; set; }
         public CancellationTokenSource CancelToken { get; set; }
-        public bool IsFirstMove { get; set; }
-
         public string Serialise()
         {
             var ret = $"P1?{IsPlayer1}" + Environment.NewLine;

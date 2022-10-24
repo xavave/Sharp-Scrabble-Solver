@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 
-using DawgResolver;
 using DawgResolver.Model;
 
 namespace Dawg.Resolver.Winform.Test
@@ -41,7 +39,7 @@ namespace Dawg.Resolver.Winform.Test
             if (word == null) return;
             //ClearTilesInPlay(Game.Player1);
             word.SetWord(false);
-            textBox1.Text = new string(Game.Player1.Rack.Select(r => r.Char).ToArray());
+            textBox1.Text = Game.Player1.Rack.ToString();
             textBox2.Text = Game.GenerateTextGrid(Game.Grid, false);
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, null);
             textBox3.Text = Game.Bag.GetBagContent();

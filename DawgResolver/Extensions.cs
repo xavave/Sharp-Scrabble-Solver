@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 
 using DawgResolver.Model;
 
@@ -46,11 +50,33 @@ namespace DawgResolver
         //    return r.Alphabet.Where(t => t.Char == c).Select((Value, Index) => Index).First();
 
         //}
-        public static string GetLetterFromAlphabetByIndex(this HashSet<Letter> l, int index)
+
+        // extension for arrays, lists, any Enumerable -> AsString
+        //public static string AsString<T>(this IEnumerable<T> enumerable)
+        //{
+        //    var sb = new StringBuilder();
+        //    enumerable.Select((idx, itm) => sb.Append($"{idx}: {itm}\r\n"));
+        //    return sb.ToString();
+        //}
+        public static void RemoveLetterByIndex(this List<Letter> letters, Letter letterToRemove)
         {
-            if (l == null || !l.Any()) return "";
-            return l.First().GetLetterByIndex(index);
+            var charIndex= letters.IndexOf(letterToRemove);
+            if (charIndex == -1) return;
+            letters.RemoveAt(charIndex);
         }
+        public static Letter FindLetterByIndex(this BindingList<Letter> letters, Letter letter)
+        {
+            var charIndex = letters.IndexOf(letter);
+            if (charIndex == -1) return null;
+            return letters[charIndex];
+        }
+        public static Letter FindLetterByChar(this BindingList<Letter> letters, Char c)
+        {
+            var foundLetter = letters.FirstOrDefault(l => l.Char == c);
+          return FindLetterByIndex(letters, foundLetter);
+        }
+
+
         public static Letter DeserializeLetter(this string s, Resolver r)
         {
             var l = s.Split(';');

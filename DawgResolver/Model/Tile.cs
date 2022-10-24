@@ -110,7 +110,7 @@ namespace DawgResolver.Model
             LetterMultiplier = 1;
             WordMultiplier = 1;
             AnchorLeftMinLimit = AnchorLeftMaxLimit = 0;
-           
+
             if (isPlayedByPlayer1 != null) IsPlayedByPlayer1 = isPlayedByPlayer1;
             else
             {
@@ -170,22 +170,19 @@ namespace DawgResolver.Model
         public Letter Letter { get; set; }
         public int AnchorLeftMaxLimit { get; set; }
         public int AnchorLeftMinLimit { get; set; }
-        public bool IsAnchor
-        {
-            get
-            {
-                return (IsEmpty && TileType == TileType.Center) || (IsEmpty && (
+        public bool IsAnchor => (IsEmpty && TileType == TileType.Center)
+                || (IsEmpty && (
                     (UpTile != null && !UpTile.IsEmpty) ||
                     (DownTile != null && !DownTile.IsEmpty) ||
                     (RightTile != null && !RightTile.IsEmpty) ||
-                    (LeftTile != null && !LeftTile.IsEmpty)));
-            }
-        }
+                    (LeftTile != null && !LeftTile.IsEmpty))
+                );
         public TileType TileType
         {
             get
             {
-                if (Ligne == (int)(resolver.game.BoardSize / 2) && Col == (int)(resolver.game.BoardSize / 2))
+                
+                if (Ligne == resolver.game.BoardCenter && Col == resolver.game.BoardCenter)
                     return TileType.Center;
                 else if (WordMultiplier == 2) return TileType.DoubleWord;
                 else if (LetterMultiplier == 2) return TileType.DoubleLetter;

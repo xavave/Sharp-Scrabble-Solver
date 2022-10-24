@@ -9,10 +9,8 @@ using DawgResolver.Model;
 namespace Dawg.Resolver.Winform.Test
 {
 
-    public partial class FormTile : TranspTextBox, IExtendedTile
+    public partial class FormTile : TranspTextBox, IExtendedTile, IFormattable
     {
-
-
         private MainForm Form { get; }
         public string TxtInfos { get; set; }
         public IExtendedTile Tile { get; set; }
@@ -33,7 +31,7 @@ namespace Dawg.Resolver.Winform.Test
             if (!color.HasValue)
             {
                 if (!Tile.IsPlayedByPlayer1.HasValue)
-                    GetBackColor(t);
+                    SetBackColorFrom(t);
                 else
                     if (Tile.IsPlayedByPlayer1.Value)
                     this.BackColor = Form.Player1MoveColor;
@@ -82,8 +80,9 @@ namespace Dawg.Resolver.Winform.Test
         {
             var frmTile = sender as FormTile;
             var word = frmTile.GetWordFromTile(game, MovementDirection.Across);
-            if (word.Text.Trim().Length <= 1)
+            if (word == null || word.Text.Trim().Length <= 1)
                 word = frmTile.GetWordFromTile(game, MovementDirection.Down);
+            if (word == null) return;
             Form.ShowDefinition(word);
         }
 
@@ -137,7 +136,7 @@ namespace Dawg.Resolver.Winform.Test
             }
             else if (e.KeyCode == Keys.Back)
             {
-                frmTile.GetBackColor(frmTile.Tile);
+                frmTile.SetBackColorFrom(frmTile.Tile);
                 if (Game.CurrentWordDirection == MovementDirection.Across)
                     GetNextTile(Keys.Left, frmTile, false);
                 else
@@ -224,7 +223,7 @@ namespace Dawg.Resolver.Winform.Test
 
             TxtInfos += "Controlers:" + Environment.NewLine;
             foreach (var c in t.Controlers)
-                TxtInfos += $"{game.Resolver.Alphabet.ElementAt(c.Key).Char}:{c.Value}{Environment.NewLine}";
+                TxtInfos += $"{game.Resolver.Alphabet[c.Key]}:{c.Value}{Environment.NewLine}";
 
             Form.lsbInfos.Items.Clear();
             foreach (var l in TxtInfos.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
@@ -233,21 +232,29 @@ namespace Dawg.Resolver.Winform.Test
             }
         }
 
-        public void GetBackColor(IExtendedTile t)
+        public void SetBackColorFrom(IExtendedTile t)
         {
-            this.BackColor = Color.FromName(new TileColor(t.TileType).Name);
+            this.BackColor = GetBackColorFrom(t);
         }
-        public void GetBackColorFromLetterType(IExtendedTile t)
+        public Color GetBackColorFrom(IExtendedTile t)
+        {
+            return Color.FromName(new TileColor(t.TileType).Name);
+        }
+        public Color GetBackColorInnerTile()
+        {
+            return GetBackColorFrom(this);
+        }
+        public void SetBackColorFromLetterType(IExtendedTile t)
         {
             this.BackColor = Color.FromName(new TileColor(t.Letter.LetterType).Name);
         }
-        public void GetBackColorFromInnerLetterType()
+        public void SetBackColorFromInnerLetterType()
         {
-            GetBackColorFromLetterType(this.Tile);
+            SetBackColorFromLetterType(this.Tile);
         }
-        public void GetBackColorFromInnerTile()
+        public void SetBackColorFromInnerTile()
         {
-            GetBackColor(this.Tile);
+            SetBackColorFrom(this.Tile);
         }
 
         public Word GetWordFromTile(Game g, MovementDirection direction)
@@ -279,6 +286,10 @@ namespace Dawg.Resolver.Winform.Test
         {
             return Tile.Copy(r, transpose);
         }
+
+        public string ToString(string format, IFormatProvider formatProvider) => Serialize;
+        public override string ToString() => ToString(null, System.Globalization.CultureInfo.CurrentCulture);
+
 
         public Color Background { get; set; }
         public bool IsValidated { get => Tile.IsValidated; set => Tile.IsValidated = value; }

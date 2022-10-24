@@ -1,13 +1,29 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 using Dawg;
 
 namespace DawgResolver.Model
 {
 
-    public class Letter : ICloneable
+    public class Letter : ICloneable, INotifyPropertyChanged
     {
         private char @char;
+        private int count;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string caller = null)
+        {
+            // make sure only to call this if the value actually changes
+
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(caller));
+            }
+        }
         public Resolver Resolver { get; }
         public LetterType LetterType { get; set; }
         public Letter(Resolver r)
@@ -49,7 +65,12 @@ namespace DawgResolver.Model
             get => @char; set { @char = value; }
         }
         public int Value { get; set; }
-        public int Count { get; set; }
+        public int Count { get => count; set
+            {
+                count = value;
+                OnPropertyChanged();
+            }
+        }
 
         public override string ToString()
         {
@@ -61,5 +82,6 @@ namespace DawgResolver.Model
             return new Letter(Resolver, this.Char, this.Value, this.DefaultCount);
 
         }
+
     }
 }

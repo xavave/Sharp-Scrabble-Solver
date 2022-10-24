@@ -26,7 +26,7 @@ namespace DawgResolver.Model
         public Word(Game g) : this(g.Resolver)
         {
             game = g;
-            StartTile = new BaseVirtualTile(g.Resolver, (int)game.BoardSize / 2, (int)game.BoardSize / 2);
+            StartTile = new BaseVirtualTile(g.Resolver, game.BoardCenter, game.BoardCenter);
         }
         public int SetWord(bool validate)
         {
@@ -34,7 +34,6 @@ namespace DawgResolver.Model
             return this.Points;
         }
         public bool Scramble { get; set; }
-
         public MovementDirection Direction { get; set; }
         public IExtendedTile StartTile { get; set; }
         public int Points
@@ -47,7 +46,7 @@ namespace DawgResolver.Model
         {
             return $"{DateTime.Now:H:mm:ss} - {$"Player {(isPlayer1 ? '1' : '2')}:{lst.ToCharString()}"} --> {this}";
         }
-     
+
 
         public string Serialize
         {
@@ -94,9 +93,9 @@ namespace DawgResolver.Model
 
         public override string ToString()
         {
-            var pos = $"{resolver.Alphabet.GetLetterFromAlphabetByIndex(StartTile.Ligne)}{StartTile.Col + 1}";
+            var pos = $"{resolver.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
             if (Direction == MovementDirection.Down)
-                pos = $"{StartTile.Col + 1}{resolver.Alphabet.ElementAt(StartTile.Ligne)}";
+                pos = $"{StartTile.Col + 1}{resolver.Alphabet[StartTile.Ligne]}";
             return $"[{pos}] {Text} ({Points}){(Scramble ? "*" : "")}";
         }
         public bool Equals(Word w)

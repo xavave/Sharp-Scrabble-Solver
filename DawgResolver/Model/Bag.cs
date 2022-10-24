@@ -12,7 +12,7 @@ namespace DawgResolver.Model
         {
             resolver = r;
             if (Letters == null)
-                Letters = r.Alphabet.Select(s => s.Clone() as Letter).ToHashSet();
+                Letters = new List<Letter>(r.Alphabet.Select(s => s.Clone() as Letter));
             ResetCount();
         }
 
@@ -27,7 +27,7 @@ namespace DawgResolver.Model
                 l.Count = l.DefaultCount;
         }
 
-        public HashSet<Letter> Letters { get; }
+        public IList<Letter> Letters { get; }
         public string FlatList => string.Join("", Letters.Select(l => string.Join("", new string(l.Char, l.Count))));
 
         // On compte le nombre de lettres restantes dans le sac et on établit la liste des choix
@@ -85,7 +85,7 @@ namespace DawgResolver.Model
 
             if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
-                p.Rack = forcedLetters.Select(c => resolver.Find(c)).ToList();
+                p.Rack.Letters = forcedLetters.Select(c => resolver.Find(c)).ToList();
                 return;
             }
             // Si le sac est vide

@@ -7,14 +7,16 @@ namespace DawgResolver.Model
     {
         public override void SetArrayTile(int ligne, int colonne)
         {
-            Tile.Col = ligne;
-            Tile.Ligne = colonne;
+            if (Tile != null)
+            {
+                Tile.Col = colonne;
+                Tile.Ligne = ligne;
+            }
             base.SetArrayTile(ligne, colonne);
         }
 
-        public CustomExtendedTilesGrid(Game g, int boardSize) : base(boardSize, new BaseVirtualTile(g.Resolver, -1, -1), true)
+        public CustomExtendedTilesGrid(Game g, int boardSize, bool initialize, IExtendedTile defaultTile=default(IExtendedTile)) : base(boardSize, defaultTile, initialize)
         {
-            CreateArray();
         }
 
     }
@@ -49,7 +51,7 @@ namespace DawgResolver.Model
             Array = new T[iLigne, iCol];
             for (int x = 0; x < iLigne; x++)
             {
-                for (int y = 0; y < iLigne; y++)
+                for (int y = 0; y < iCol; y++)
                 {
                     SetArrayTile(x, y);
                 }
@@ -83,5 +85,6 @@ namespace DawgResolver.Model
         {
             return Array.GetEnumerator();
         }
+
     }
 }
