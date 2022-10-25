@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 namespace Dawg.Resolver.Winform.Test
 {
-    public class TranspTextBox : TextBox
+    public abstract class TranspTextBox : TextBox
     {
         const int WM_NCPAINT = 0x85;
         const uint RDW_INVALIDATE = 0x1;

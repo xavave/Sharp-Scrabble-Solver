@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver", "DawgResolver\Dawg.Resolver.csproj", "{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Scrabble.Model", "DawgResolver\Dawg.Scrabble.Model.csproj", "{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver.Console.Test", "DawgResolverTest\Dawg.Resolver.Console.Test.csproj", "{12237048-0C49-446E-A50A-6B66F0D0802D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Scrabble.Solver.Console.Test", "DawgResolverTest\Dawg.Scrabble.Solver.Console.Test.csproj", "{12237048-0C49-446E-A50A-6B66F0D0802D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg", "Dawg\Dawg.csproj", "{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Dictionary.Model", "Dawg\Dawg.Dictionary.Model.csproj", "{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "legacyVBAscramble", "legacyVBAscramble", "{BCE298ED-04F1-4AF7-8702-B5BF2E24EAF3}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,11 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "legacyVBAscramble", "legacy
 		legacyVBAscramble\Scramble V2.xlsm = legacyVBAscramble\Scramble V2.xlsm
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Resolver.Winform", "Dawg.Resolver.Winform.Test\Dawg.Resolver.Winform.csproj", "{8DA2C29C-DD08-4CAF-92AF-84012420155A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Scrabble.Solver.View.Winform", "Dawg.Resolver.Winform.Test\Dawg.Scrabble.Solver.View.Winform.csproj", "{8DA2C29C-DD08-4CAF-92AF-84012420155A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DawgBuilder", "DawgBuilder\DawgBuilder.csproj", "{0CD1331C-3B74-4A9B-9C5D-87272DEC7B32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dawg.Dictionary.Builder", "DawgBuilder\Dawg.Dictionary.Builder.csproj", "{0CD1331C-3B74-4A9B-9C5D-87272DEC7B32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaddag", "Gaddag\Gaddag.csproj", "{C6B349D4-D4A3-423A-9505-775275E7D1A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gaddag.Example", "Gaddag\Gaddag.Example.csproj", "{C6B349D4-D4A3-423A-9505-775275E7D1A3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Éléments de solution", "Éléments de solution", "{A8D00325-0585-40B2-95C9-08F3BF75F39A}"
 	ProjectSection(SolutionItems) = preProject

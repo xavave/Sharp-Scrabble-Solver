@@ -1,6 +1,6 @@
 ﻿using Dawg;
 
-using DawgResolver.Model;
+using DawgSolver.Model;
 
 using System;
 using System.Diagnostics;

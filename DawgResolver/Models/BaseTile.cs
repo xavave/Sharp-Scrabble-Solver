@@ -1,22 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace DawgResolver.Model
+namespace Dawg.Scrabble.Model.Models
 {
-
-    public interface IBaseTile
+    public interface IBaseTile : ITileLetterPosition
     {
+        string Name { get; set; }
         TileType TileType { get; }
-        int Ligne { get; set; }
-        int Col { get; set; }
-        Letter Letter { get; set; }
+
         int LetterMultiplier { get; set; }
         int WordMultiplier { get; set; }
         int AnchorLeftMinLimit { get; set; }
         int AnchorLeftMaxLimit { get; set; }
         bool IsAnchor { get; }
         IDictionary<int, int> Controlers { get; }
-        //bool FromJoker { get; set; }
         bool IsEmpty { get; }
         int WordIndex { get; set; }
         bool IsValidated { get; set; }
@@ -29,17 +26,7 @@ namespace DawgResolver.Model
         IExtendedTile WordLowerTile { get; }
         IExtendedTile WordUpperTile { get; }
     }
-    public interface IExtendedTile : IBaseTile
-    {
-        bool? IsPlayedByPlayer1 { get; }
-        string Serialize { get; }
-        Word GetWordFromTile(Game game, MovementDirection currentWordDirection);
-        void SetWord(Game game, string text, MovementDirection direction, bool validate);
-        void CopyControllers(IDictionary<int, int> controlers);
-        IExtendedTile Copy(Resolver r, bool transpose = false);
-    }
-
-    public class BaseVirtualTile : IExtendedTile
+    public abstract class BaseTile : IExtendedTile
     {
         public void SetWord(Game g, string word, MovementDirection direction, bool Validate = false)
         {
@@ -100,7 +87,7 @@ namespace DawgResolver.Model
         }
         public bool IsValidated { get; set; } = false;
         private Resolver resolver { get; }
-        public BaseVirtualTile(Resolver r, int ligne, int col, bool? isPlayedByPlayer1 = null, bool fromJoker = false)
+        public BaseTile(Resolver r, int ligne, int col, bool? isPlayedByPlayer1 = null, bool fromJoker = false)
         {
             Controlers = new Dictionary<int, int>(27);
             resolver = r;
@@ -124,23 +111,8 @@ namespace DawgResolver.Model
 
         }
 
-        public IExtendedTile Copy(Resolver r, bool transpose = false)
-        {
-            IExtendedTile newT = this;
-            if (transpose) newT = r.game.Grid[this.Col, this.Ligne];
+        public abstract IExtendedTile Copy(Resolver r, bool transpose = false);
 
-            IExtendedTile nTile = new BaseVirtualTile(r, newT.Ligne, newT.Col)
-            {
-                Letter = this.Letter,
-                LetterMultiplier = this.LetterMultiplier,
-                WordMultiplier = this.WordMultiplier,
-                AnchorLeftMinLimit = this.AnchorLeftMinLimit,
-                AnchorLeftMaxLimit = this.AnchorLeftMaxLimit,
-                IsValidated = this.IsValidated,
-            };
-            nTile.CopyControllers(this.Controlers);
-            return nTile;
-        }
         //public Tile(Resolver r, char c, int col) : this(r, c.FindIndex(r), col)
         //{
         //}
@@ -163,8 +135,8 @@ namespace DawgResolver.Model
         public bool? IsPlayedByPlayer1 { get; }
         //public bool FromJoker { get; set; } = false;
         public IDictionary<int, int> Controlers { get; }
-        public int Ligne { get; set; }
-        public int Col { get; set; }
+        public int Ligne { get; private set; }
+        public int Col { get; private set; }
         public int LetterMultiplier { get; set; }
         public int WordMultiplier { get; set; }
         public Letter Letter { get; set; }
@@ -181,7 +153,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                
+
                 if (Ligne == resolver.game.BoardCenter && Col == resolver.game.BoardCenter)
                     return TileType.Center;
                 else if (WordMultiplier == 2) return TileType.DoubleWord;
@@ -262,6 +234,8 @@ namespace DawgResolver.Model
             }
         }
         public int WordIndex { get; set; } = 0;
+        public string Name { get; set; }
+
         public override string ToString()
         {
             //var c = $"{Letter} min / max:{AnchorLeftMinLimit};{AnchorLeftMaxLimit}";
@@ -270,6 +244,13 @@ namespace DawgResolver.Model
             //    cont += $"{Game.AlphabetAvecJoker[co.Key + Dictionnaire.AscShiftBase0]}{co.Value};";
             //return $"{ c} [{Game.AlphabetAvecJoker[Ligne]}{ Col + 1}] {(isAnchor ? "*" : "")} {cont}";
             return $"{this?.Letter?.Char}";
+        }
+
+        public void SetTilePos(int ligne, int col)
+        {
+            Ligne = ligne;
+            Col = col;
+
         }
 
         //public void Initialize()

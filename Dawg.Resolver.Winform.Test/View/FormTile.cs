@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-using DawgResolver.Model;
+using Dawg.Scrabble.Model.Models;
 
 namespace Dawg.Resolver.Winform.Test
 {
@@ -13,27 +13,27 @@ namespace Dawg.Resolver.Winform.Test
     {
         private MainForm Form { get; }
         public string TxtInfos { get; set; }
-        public IExtendedTile Tile { get; set; }
         public Game game { get; set; }
-        public FormTile(MainForm frm, Game g, int ligne, int col, string tileName = "", Color? color = null) : this(frm, g, new BaseVirtualTile(g.Resolver, ligne, col), tileName, color) { }
-
-        public FormTile(MainForm frm, Game g, IExtendedTile t, string tileName = "", Color? color = null)
+        public int Ligne { get; }
+        public int Col { get; }
+        public FormTile(MainForm frm, Game g, string tileName = "", Color? color = null, int? ligne = null, int? col = null)
         {
             game = g;
-            Tile = t;
             this.Width = 30;
             //Enabled = true;
             this.Height = 28;
             this.MaxLength = 1;
             Form = frm;
+            Ligne = ligne ?? default(int);
+            Col = col ?? default(int);
             this.Font = new Font("Verdana", 14, FontStyle.Bold);
             this.CharacterCasing = CharacterCasing.Upper;
             if (!color.HasValue)
             {
-                if (!Tile.IsPlayedByPlayer1.HasValue)
-                    SetBackColorFrom(t);
-                else
-                    if (Tile.IsPlayedByPlayer1.Value)
+                //if (!IsPlayedByPlayer1.HasValue)
+                //    SetBackColorFrom(t);
+                //else
+                if (IsPlayedByPlayer1.Value)
                     this.BackColor = Form.Player1MoveColor;
                 else
                     this.BackColor = Form.Player2MoveColor;
@@ -44,12 +44,12 @@ namespace Dawg.Resolver.Winform.Test
                 this.BackColor = color.Value;
                 this.ForeColor = frm.HeaderTilesForeColor;
             }
-            Text = t.Letter?.Char.ToString();
+            Text = Letter?.Char.ToString();
             if (!string.IsNullOrWhiteSpace(Text)) this.BorderStyle = BorderStyle.Fixed3D;
             else this.BorderStyle = BorderStyle.FixedSingle;
 
             if (tileName == "")
-                Name = $"t{t.Ligne}_{t.Col}";
+                Name = $"t{Ligne}_{Col}";
             else
                 Name = tileName;
             Click += FormTile_Click;
@@ -61,17 +61,17 @@ namespace Dawg.Resolver.Winform.Test
                 this.BorderStyle = BorderStyle.Fixed3D;
                 if (Name.Contains($"_col"))
                 {
-                    Location = new Point(15 + this.Width + t.Col * this.Width, 15 + t.Ligne * this.Height);
+                    Location = new Point(15 + this.Width + Col * this.Width, 15 + Ligne * this.Height);
                     Enabled = false;
                 }
                 else if (Name.Contains($"_ligne"))
                 {
-                    Location = new Point(15 + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
+                    Location = new Point(15 + Col * this.Width, 15 + this.Height + Ligne * this.Height);
                     Enabled = false;
                 }
             }
             else
-                Location = new Point(15 + this.Width + t.Col * this.Width, 15 + this.Height + t.Ligne * this.Height);
+                Location = new Point(15 + this.Width + Col * this.Width, 15 + this.Height + Ligne * this.Height);
 
 
         }
@@ -136,7 +136,7 @@ namespace Dawg.Resolver.Winform.Test
             }
             else if (e.KeyCode == Keys.Back)
             {
-                frmTile.SetBackColorFrom(frmTile.Tile);
+                //frmTile.SetBackColorFrom(Tile); //TODO
                 if (Game.CurrentWordDirection == MovementDirection.Across)
                     GetNextTile(Keys.Left, frmTile, false);
                 else
@@ -145,16 +145,16 @@ namespace Dawg.Resolver.Winform.Test
                 game.Grid[Ligne, Col].Letter = new Letter(game.Resolver);
                 game.Grid[Ligne, Col].IsValidated = false;
                 this.Text = Game.EmptyChar.ToString();
-                frmTile.Tile = game.Grid[Ligne, Col];
+                //TODO frmTile.Tile = game.Grid[Ligne, Col];
 
             }
             else if (e.KeyCode == Keys.Enter)
             {
                 Word word = null;
                 if (Game.CurrentWordDirection == MovementDirection.Across)
-                    word = Tile.LeftTile.GetWordFromTile(game, Game.CurrentWordDirection);
+                    word = LeftTile.GetWordFromTile(game, Game.CurrentWordDirection);
                 else
-                    word = Tile.UpTile.GetWordFromTile(game, Game.CurrentWordDirection);
+                    word = UpTile.GetWordFromTile(game, Game.CurrentWordDirection);
 
                 if (game.IsPlayer1)
                     Form.PreviewWord(game.Player1, word, true);
@@ -190,8 +190,7 @@ namespace Dawg.Resolver.Winform.Test
 
         private void FormTile_Click(object sender, EventArgs e)
         {
-            var txt = sender as FormTile;
-            var t = txt.Tile;
+            IExtendedTile t = sender as FormTile;
 
             TxtInfos = string.Empty;
             TxtInfos = $"[{t.Ligne},{t.Col}] => IsAnchor:{t.IsAnchor} IsEmpty :{t.IsEmpty} => {t}";
@@ -250,82 +249,93 @@ namespace Dawg.Resolver.Winform.Test
         }
         public void SetBackColorFromInnerLetterType()
         {
-            SetBackColorFromLetterType(this.Tile);
+            SetBackColorFromLetterType(this);
         }
         public void SetBackColorFromInnerTile()
         {
-            SetBackColorFrom(this.Tile);
+            SetBackColorFrom(this);
         }
 
         public Word GetWordFromTile(Game g, MovementDirection direction)
         {
-            return Tile.GetWordFromTile(g, direction);
-        }
-
-        //public void Initialize()
-        //{
-        //    Tile.Initialize();
-        //}
-
-        public void CopyControllers(Dictionary<int, int> source)
-        {
-            throw new NotImplementedException();
+            return GetWordFromTile(g, direction);
         }
 
         public void SetWord(Game game, string text, MovementDirection direction, bool validate)
         {
-            Tile.SetWord(game, text, direction, validate);
+            SetWord(game, text, direction, validate);
         }
 
         public void CopyControllers(IDictionary<int, int> controlers)
         {
-            Tile.CopyControllers(controlers);
+            CopyControllers(controlers);
         }
 
-        public IExtendedTile Copy(DawgResolver.Resolver r, bool transpose = false)
+        public IExtendedTile Copy(DawgSolver.Resolver r, bool transpose = false)
         {
-            return Tile.Copy(r, transpose);
+            IExtendedTile newT = this;
+            if (transpose) newT = r.game.Grid[this.Col, this.Ligne];
+
+            IExtendedTile nTile = new FormTile(this.Form, game, newT.Name, null, newT.Ligne, newT.Col)
+            {
+                Letter = this.Letter,
+                LetterMultiplier = this.LetterMultiplier,
+                WordMultiplier = this.WordMultiplier,
+                AnchorLeftMinLimit = this.AnchorLeftMinLimit,
+                AnchorLeftMaxLimit = this.AnchorLeftMaxLimit,
+                IsValidated = this.IsValidated,
+            };
+            nTile.CopyControllers(this.Controlers);
+            return nTile;
         }
 
         public string ToString(string format, IFormatProvider formatProvider) => Serialize;
         public override string ToString() => ToString(null, System.Globalization.CultureInfo.CurrentCulture);
 
+        public void SetTilePos(int ligne, int col)
+        {
+
+        }
+
+        public IExtendedTile Copy(Scrabble.Model.Models.Resolver r, bool transpose = false)
+        {
+            throw new NotImplementedException();
+        }
 
         public Color Background { get; set; }
-        public bool IsValidated { get => Tile.IsValidated; set => Tile.IsValidated = value; }
+        public bool IsValidated { get => IsValidated; set => IsValidated = value; }
         //public bool FromJoker { get => Tile.FromJoker; set => Tile.FromJoker = value; }
-        public IDictionary<int, int> Controlers { get => Tile.Controlers; set => Tile.CopyControllers(value); }
-        public int Ligne { get => Tile.Ligne; set => Tile.Ligne = value; }
-        public int Col { get => Tile.Col; set => Tile.Col = value; }
-        public int LetterMultiplier { get => Tile.LetterMultiplier; set => Tile.LetterMultiplier = value; }
-        public int WordMultiplier { get => Tile.WordMultiplier; set => Tile.WordMultiplier = value; }
+        public IDictionary<int, int> Controlers { get => Controlers; set => CopyControllers(value); }
+
+        public int LetterMultiplier { get => LetterMultiplier; set => LetterMultiplier = value; }
+        public int WordMultiplier { get => WordMultiplier; set => WordMultiplier = value; }
         public Letter Letter
         {
-            get => Tile.Letter;
+            get => Letter;
             set
             {
-                if (Tile.Letter == null || Tile.Letter.Serialize != value.Serialize)
+                if (Letter == null || Letter.Serialize != value.Serialize)
                 {
-                    Tile.Letter = value;
-                    Text = Tile.Letter?.Char.ToString();
+                    Letter = value;
+                    Text = Letter?.Char.ToString();
                 }
             }
         }
-        public int AnchorLeftMaxLimit { get => Tile.AnchorLeftMaxLimit; set => Tile.AnchorLeftMaxLimit = value; }
-        public int AnchorLeftMinLimit { get => Tile.AnchorLeftMinLimit; set => Tile.AnchorLeftMinLimit = value; }
-        public bool IsAnchor { get => Tile.IsAnchor; }
-        public TileType TileType { get => Tile.TileType; }
-        public bool IsEmpty { get => Tile.IsEmpty; }
-        public IExtendedTile LeftTile { get => Tile.LeftTile; }
-        public IExtendedTile RightTile { get => Tile.RightTile; }
-        public IExtendedTile DownTile { get => Tile.DownTile; }
-        public IExtendedTile UpTile { get => Tile.UpTile; }
-        public string Serialize => Tile.Serialize;
-        public bool? IsPlayedByPlayer1 => Tile.IsPlayedByPlayer1;
-        public IExtendedTile WordMostRightTile => Tile.WordMostRightTile;
-        public IExtendedTile WordMostLeftTile => Tile.WordMostLeftTile;
-        public IExtendedTile WordLowerTile => Tile.WordLowerTile;
-        public IExtendedTile WordUpperTile => Tile.WordUpperTile;
-        public int WordIndex { get => Tile.WordIndex; set => Tile.WordIndex = value; }
+        public int AnchorLeftMaxLimit { get => AnchorLeftMaxLimit; set => AnchorLeftMaxLimit = value; }
+        public int AnchorLeftMinLimit { get => AnchorLeftMinLimit; set => AnchorLeftMinLimit = value; }
+        public bool IsAnchor { get => IsAnchor; }
+        public TileType TileType { get => TileType; }
+        public bool IsEmpty { get => IsEmpty; }
+        public IExtendedTile LeftTile { get => LeftTile; }
+        public IExtendedTile RightTile { get => RightTile; }
+        public IExtendedTile DownTile { get => DownTile; }
+        public IExtendedTile UpTile { get => UpTile; }
+        public string Serialize => Serialize;
+        public bool? IsPlayedByPlayer1 => IsPlayedByPlayer1;
+        public IExtendedTile WordMostRightTile => WordMostRightTile;
+        public IExtendedTile WordMostLeftTile => WordMostLeftTile;
+        public IExtendedTile WordLowerTile => WordLowerTile;
+        public IExtendedTile WordUpperTile => WordUpperTile;
+        public int WordIndex { get => WordIndex; set => WordIndex = value; }
     }
 }

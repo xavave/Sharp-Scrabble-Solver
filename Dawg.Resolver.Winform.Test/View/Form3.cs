@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-using DawgResolver.Model;
+using DawgSolver.Model;
 
 namespace Dawg.Resolver.Winform.Test
 {

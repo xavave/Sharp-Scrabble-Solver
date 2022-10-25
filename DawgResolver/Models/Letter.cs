@@ -2,9 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-using Dawg;
-
-namespace DawgResolver.Model
+namespace Dawg.Scrabble.Model.Models
 {
 
     public class Letter : ICloneable, INotifyPropertyChanged

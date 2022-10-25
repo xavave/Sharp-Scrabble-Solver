@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Windows.Forms;
 
-using DawgResolver;
-using DawgResolver.Model;
+using DawgSolver;
+using DawgSolver.Model;
 
 namespace Dawg.Resolver.Winform.Test
 {

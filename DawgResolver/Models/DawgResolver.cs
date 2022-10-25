@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -10,9 +8,7 @@ using System.Reflection;
 
 using Dawg;
 
-using DawgResolver.Model;
-
-namespace DawgResolver
+namespace Dawg.Scrabble.Model.Models
 {
     public class Resolver
     {

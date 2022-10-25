@@ -7,8 +7,8 @@
     <ProjectGuid>{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DawgResolver</RootNamespace>
-    <AssemblyName>DawgResolver</AssemblyName>
+    <RootNamespace>Dawg.Scrabble.Model</RootNamespace>
+    <AssemblyName>Dawg.Scrabble.Model</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -45,26 +45,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Bag.cs" />
-    <Compile Include="Model\CustomGrid.cs" />
-    <Compile Include="Model\Game.cs" />
-    <Compile Include="DawgResolver.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Model\IColor.cs" />
-    <Compile Include="Model\Letter.cs" />
+    <Compile Include="Models\Bag.cs" />
+    <Compile Include="Models\CustomGrid.cs" />
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\DawgResolver.cs" />
+    <Compile Include="Models\Extensions.cs" />
+    <Compile Include="Models\IColor.cs" />
+    <Compile Include="Models\IExtendedTile.cs" />
+    <Compile Include="Models\TileLetterPosition.cs" />
+    <Compile Include="Models\Letter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Model\Player.cs" />
-    <Compile Include="Model\Tile.cs" />
-    <Compile Include="Model\TileType.cs" />
-    <Compile Include="Model\Word.cs" />
+    <Compile Include="Models\Player.cs" />
+    <Compile Include="Models\BaseTile.cs" />
+    <Compile Include="Models\TileType.cs" />
+    <Compile Include="Models\Word.cs" />
+    <Compile Include="Repository\IPlayerRepository.cs" />
+    <Compile Include="Repository\IMainRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\initial_board15W.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dawg\Dawg.csproj">
+    <ProjectReference Include="..\Dawg\Dawg.Dictionary.Model.csproj">
       <Project>{95af0c36-e8cb-422a-9060-aca73ccd0c36}</Project>
-      <Name>Dawg</Name>
+      <Name>Dawg.Dictionary.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

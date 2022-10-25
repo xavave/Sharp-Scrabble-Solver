@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace DawgResolver.Model
+namespace Dawg.Scrabble.Model.Models
 {
     public class CustomExtendedTilesGrid : CustomGrid<IExtendedTile>
     {
@@ -9,8 +9,8 @@ namespace DawgResolver.Model
         {
             if (Tile != null)
             {
-                Tile.Col = colonne;
-                Tile.Ligne = ligne;
+                Tile.SetTilePos(ligne, colonne);
+               
             }
             base.SetArrayTile(ligne, colonne);
         }

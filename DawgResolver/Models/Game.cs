@@ -5,10 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-
 using Dawg;
 
-namespace DawgResolver.Model
+
+namespace Dawg.Scrabble.Model.Models
 {
     public class Game
     {
@@ -95,9 +95,8 @@ namespace DawgResolver.Model
                 {
                     var source = backupGrid[col, ligne];
                     if (source == null) continue;
-                    this.Grid[ligne, col] = new BaseVirtualTile(this.Resolver, col, ligne);
-                    this.Grid[ligne, col].Ligne = ligne;
-                    this.Grid[ligne, col].Col = col;
+                    this.Grid[ligne, col] = new BaseTile(this.Resolver, col, ligne);
+                    this.Grid[ligne, col].SetTilePos(ligne,col);
                     this.Grid[ligne, col].WordMultiplier = source.WordMultiplier;
                     this.Grid[ligne, col].LetterMultiplier = source.LetterMultiplier;
                     this.Grid[ligne, col].Letter = backupGrid[col, ligne].Letter;
@@ -377,7 +376,7 @@ namespace DawgResolver.Model
                 {
                     foreach (var tp in w.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                     {
-                        if (vTiles[row, col] == null) vTiles[row, col] = new BaseVirtualTile(Resolver, row, col);
+                        if (vTiles[row, col] == null) vTiles[row, col] = new BaseTile(Resolver, row, col);
                         else
                         {
 

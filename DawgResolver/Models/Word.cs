@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Dawg;
 
-namespace DawgResolver.Model
+namespace Dawg.Scrabble.Model.Models
 {
     public enum MovementDirection
     {
@@ -26,7 +25,7 @@ namespace DawgResolver.Model
         public Word(Game g) : this(g.Resolver)
         {
             game = g;
-            StartTile = new BaseVirtualTile(g.Resolver, game.BoardCenter, game.BoardCenter);
+            StartTile = new TileLetterPosition(game.BoardCenter, game.BoardCenter);
         }
         public int SetWord(bool validate)
         {
@@ -35,7 +34,7 @@ namespace DawgResolver.Model
         }
         public bool Scramble { get; set; }
         public MovementDirection Direction { get; set; }
-        public IExtendedTile StartTile { get; set; }
+        public ITileLetterPosition StartTile { get; set; }
         public int Points
         {
             get; set;

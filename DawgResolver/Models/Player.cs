@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 
-namespace DawgResolver.Model
+namespace Dawg.Scrabble.Model.Models
 {
     public class Player
     {

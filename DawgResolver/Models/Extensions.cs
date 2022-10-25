@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 
-using DawgResolver.Model;
+using DawgSolver.Model;
 
-namespace DawgResolver
+namespace Dawg.Scrabble.Model.Models
 {
     public static class Extensions
     {
@@ -88,7 +83,7 @@ namespace DawgResolver
             bool? isPlayedByPlayer1 = null;
             if (l.Count() > 7 && l[7] != "") isPlayedByPlayer1 = bool.Parse(l[7]);
 
-            IExtendedTile t = new BaseVirtualTile(r, int.Parse(l[0].Substring(1)), int.Parse(l[1]), isPlayedByPlayer1, bool.Parse(l[4]))
+            IExtendedTile t = new BaseTile(r, int.Parse(l[0].Substring(1)), int.Parse(l[1]), isPlayedByPlayer1, bool.Parse(l[4]))
             {
                 LetterMultiplier = int.Parse(l[2]),
                 WordMultiplier = int.Parse(l[3]),
@@ -103,7 +98,7 @@ namespace DawgResolver
             var l = s.Split(';');
             return new Word(g)
             {
-                StartTile = new BaseVirtualTile(g.Resolver, int.Parse(l[0].Substring(2)), int.Parse(l[1])),
+                StartTile = new BaseTile(g.Resolver, int.Parse(l[0].Substring(2)), int.Parse(l[1])),
                 Text = l[2],
                 Points = int.Parse(l[3]),
                 Direction = (MovementDirection)Enum.Parse(typeof(MovementDirection), l[4]),
