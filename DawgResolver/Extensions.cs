@@ -80,7 +80,7 @@ namespace DawgResolver
         public static Letter DeserializeLetter(this string s, Resolver r)
         {
             var l = s.Split(';');
-            return new Letter(r, l[0].Skip(1).First(), int.Parse(l[1]), int.Parse(l[2]));
+            return new Letter( l[0].Skip(1).First(), int.Parse(l[1]), int.Parse(l[2]));
         }
         public static IExtendedTile DeserializeTile(this string s, Resolver r)
         {
@@ -88,7 +88,7 @@ namespace DawgResolver
             bool? isPlayedByPlayer1 = null;
             if (l.Count() > 7 && l[7] != "") isPlayedByPlayer1 = bool.Parse(l[7]);
 
-            IExtendedTile t = new BaseVirtualTile(r, int.Parse(l[0].Substring(1)), int.Parse(l[1]), isPlayedByPlayer1, bool.Parse(l[4]))
+            IExtendedTile t = new GenericTile(r, int.Parse(l[0].Substring(1)), int.Parse(l[1]), isPlayedByPlayer1, bool.Parse(l[4]))
             {
                 LetterMultiplier = int.Parse(l[2]),
                 WordMultiplier = int.Parse(l[3]),
@@ -103,7 +103,7 @@ namespace DawgResolver
             var l = s.Split(';');
             return new Word(g)
             {
-                StartTile = new BaseVirtualTile(g.Resolver, int.Parse(l[0].Substring(2)), int.Parse(l[1])),
+                StartTile = new GenericTile(g.Resolver, int.Parse(l[0].Substring(2)), int.Parse(l[1])),
                 Text = l[2],
                 Points = int.Parse(l[3]),
                 Direction = (MovementDirection)Enum.Parse(typeof(MovementDirection), l[4]),

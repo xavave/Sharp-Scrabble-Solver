@@ -12,7 +12,7 @@ namespace Dawg.Resolver.Winform.Test
             {
                 base.OnPaint(e);
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException )
             {
                 if (CustomEvent != null)
                 {

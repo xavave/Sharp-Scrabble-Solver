@@ -11,11 +11,11 @@ namespace Dawg.Resolver.Winform.Test
         public FrmDebug()
         {
             InitializeComponent();
-            Game = new Game(Dictionnaire.NomDicoDawgEN_Collins);
+            Game =  Game.DefaultInstance;
             textBox3.Text = Game.Bag.GetBagContent();
             var t = Game.Grid[7, 5];
-            t.SetWord(Game, "famille", MovementDirection.Across, true);
-            t.SetWord(Game, "foin", MovementDirection.Down, true);
+            t.SetWord("famille", MovementDirection.Across, true);
+            t.SetWord( "foin", MovementDirection.Down, true);
             textBox2.Text = Game.GenerateTextGrid(Game.Grid, false);
             txtGrid2.Text = Game.GenerateTextGrid(Game.Grid, null);
         }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 
@@ -10,8 +8,34 @@ using Dawg;
 
 namespace DawgResolver.Model
 {
+    public class GameBuilder
+    {
+        string DicoName { get; }
+        public GameBuilder(string dicoName = null)
+        {
+            DicoName = dicoName;
+        }
+        public Game Build()
+        {
+
+            return new Game(DicoName) { };
+        }
+    }
     public class Game
     {
+        private bool isFirstInit => EndGame;
+        private static Game instance = null;
+        public static Game DefaultInstance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new GameBuilder().Build();
+                else if (instance.isFirstInit)
+                    instance.InitGameProperties();
+                return instance;
+            }
+        }
         protected Dictionnaire Dico { get; private set; }
         public static char Joker;
         public bool IsPlayer1 { get; set; } = true;
@@ -28,6 +52,7 @@ namespace DawgResolver.Model
         public Player CurrentPlayer => IsPlayer1 ? this.Player1 : this.Player2;
         public int BoardSize { get; set; } = 15;
         public int BoardCenter => BoardSize % 2 == 0 ? BoardSize / 2 : (BoardSize - 1) / 2;
+        public CustomExtendedTilesGrid Grid => CustomExtendedTilesGrid.Instance;
 
         public string GenerateHtml(IExtendedTile[,] Tiles)
         {
@@ -95,7 +120,7 @@ namespace DawgResolver.Model
                 {
                     var source = backupGrid[col, ligne];
                     if (source == null) continue;
-                    this.Grid[ligne, col] = new BaseVirtualTile(this.Resolver, col, ligne);
+                    this.Grid[ligne, col] = new GenericTile(this.Resolver, col, ligne);
                     this.Grid[ligne, col].Ligne = ligne;
                     this.Grid[ligne, col].Col = col;
                     this.Grid[ligne, col].WordMultiplier = source.WordMultiplier;
@@ -314,7 +339,7 @@ namespace DawgResolver.Model
             Resolver = new Resolver(this, nomDico);
             Player1 = new Player(this, "Player 1");
             Player2 = new Player(this, "Player 2");
-            Grid = new CustomExtendedTilesGrid(this, BoardSize, true);
+            //TODO Grid = new CustomExtendedTilesGrid(this, BoardSize, true);
             //InitBoard();
             InitGameProperties();
         }
@@ -327,6 +352,7 @@ namespace DawgResolver.Model
             EndGame = false;
             IsPlayer1 = true;
             MoveIndex = 1;
+          
         }
 
         //public List<Letter> ClearTilesInPlay(Player p)
@@ -357,92 +383,10 @@ namespace DawgResolver.Model
         //    return p.Rack;
         //}
 
-        public CustomExtendedTilesGrid InitGameBoardTiles()
-        {
-            var vTiles = new CustomExtendedTilesGrid(this, this.BoardSize, true);
-
-            // Définition des cases bonus
-            var assembly = Assembly.GetExecutingAssembly();
-
-            string resourceName = assembly.GetManifestResourceNames().SingleOrDefault(str => str.EndsWith($"initial_board{BoardSize}{Resolver.Mode}.txt"));
-            if (string.IsNullOrWhiteSpace(resourceName)) return null;
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (StreamReader reader = new StreamReader(stream, true))
-            {
-                string content = reader.ReadToEnd();
-
-                int row = 0;
-                int col = 0;
-                foreach (var w in content.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
-                {
-                    foreach (var tp in w.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        if (vTiles[row, col] == null) vTiles[row, col] = new BaseVirtualTile(Resolver, row, col);
-                        else
-                        {
-
-                        }
-
-                        if (string.IsNullOrEmpty(tp))
-                            continue;
-                        else
 
 
-                            switch (tp.Trim())
-                            {
-                                case "RE":
-                                case "__":
-                                    vTiles[row, col].WordMultiplier = 1;
-                                    vTiles[row, col].LetterMultiplier = 1;
-                                    break;
-                                case "CE":
-                                    vTiles[row, col].WordMultiplier = 1;
-                                    vTiles[row, col].LetterMultiplier = 1;
-                                    break;
-                                case "TW":
-                                case "3W":
-                                    vTiles[row, col].WordMultiplier = 3;
-                                    vTiles[row, col].LetterMultiplier = 1;
-                                    break;
-                                case "TL":
-                                case "3L":
-                                    vTiles[row, col].LetterMultiplier = 3;
-                                    vTiles[row, col].WordMultiplier = 1;
-                                    break;
-                                case "DW":
-                                case "2W":
-                                    vTiles[row, col].WordMultiplier = 2;
-                                    vTiles[row, col].LetterMultiplier = 1;
-                                    break;
-                                case "DL":
-                                case "2L":
-                                    vTiles[row, col].LetterMultiplier = 2;
-                                    vTiles[row, col].WordMultiplier = 1;
-                                    break;
-                                default:
-                                    throw new Exception($"Unknown tile type in inital_board file: {tp}");
-                            }
-                        col += 1;
-                    }
-
-                    col = 0;
-                    row += 1;
-                }
-
-                ////'Initialisation du contenu du sac d'où sont tirées les lettres
-                //for (int nl = 0; nl < 27; nl++)
-                //{
-                //    BagContent[nl] = LettersCount[nl];
-                //    //LetterValue[nl] = LetterPoints[nl];
-                //}
-                //Afficher_Contenu_Sac
-                return vTiles;
-            }
-        }
-       
         public bool IsTransposed { get; set; } = false;
         public bool IsFirstMove => Grid.Any(t => t.TileType == TileType.Center && t.IsEmpty);
-        public CustomExtendedTilesGrid Grid { get; }
         public int NoMoreMovesCount { get; set; } = 0;
         public CancellationToken Token { get; set; }
         public CancellationTokenSource CancelToken { get; set; }

@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using DawgResolver;
 using DawgResolver.Model;
 
 namespace Dawg.Resolver.Winform.Test
@@ -21,45 +20,36 @@ namespace Dawg.Resolver.Winform.Test
         public Color HeaderTilesBackColor { get; } = Color.Black;
         public Color HeaderTilesForeColor { get; } = Color.White;
         public string CurrentDicoName { get; set; } = Dictionnaire.NomDicoDawgEN_Collins;
-        public Game game { get; set; }
+        public Game game => Game.DefaultInstance;
         public FormTile LastPlayedTile { get; set; }
-        public HashSet<FormTile> BoardTiles { get; }
-
+        public HashSet<IExtendedTile> BoardTiles { get; }
 
         public MainForm()
         {
             InitializeComponent();
-            BoardTiles = gbBoard.Controls.OfType<FormTile>().ToHashSet();
+            BoardTiles = gbBoard.Controls.OfType<IExtendedTile>().ToHashSet();
             NewGame(CurrentDicoName, true);
         }
 
         private void NewGame(string nomDico, bool initUI)
         {
             Cursor.Current = Cursors.WaitCursor;
-            using (new SuspendDrawingUpdate(this))
+
+            if (initUI)
             {
-                if (string.IsNullOrEmpty(nomDico) || nomDico != CurrentDicoName || game == null) game = new Game(nomDico);
-                else
-                {
-                    game.InitGameProperties();
-                }
+                txtGrid2.Visible = ckShowGrid.Checked;
+                lsbInfos.Items.Clear();
+                lblPlayer1Score.Text = lblPlayer2Score.Text = "";
+                lblP1BestPlay.Text = "Player 1 best play";
+                lblP2BestPlay.Text = "Player 2 best play";
+                txtRackP1.Text = txtRackP2.Text = "";
+                lsbWords.DisplayMember = "DisplayInList";
+                lsbWords.Items.Clear();
+                txtBag.Text = game.Bag.GetBagContent();
 
-                if (initUI)
-                {
-                    txtGrid2.Visible = ckShowGrid.Checked;
-                    lsbInfos.Items.Clear();
-                    lblPlayer1Score.Text = lblPlayer2Score.Text = "";
-                    lblP1BestPlay.Text = "Player 1 best play";
-                    lblP2BestPlay.Text = "Player 2 best play";
-                    txtRackP1.Text = txtRackP2.Text = "";
-                    lsbWords.DisplayMember = "DisplayInList";
-                    lsbWords.Items.Clear();
-                    txtBag.Text = game.Bag.GetBagContent();
+                if (ckShowGrid.Checked) txtGrid2.Text = game.GenerateTextGrid(game.Grid, true);
 
-                    if (ckShowGrid.Checked) txtGrid2.Text = game.GenerateTextGrid(game.Grid, true);
-
-                    RefreshGridTiles();
-                }
+                RefreshGridTiles();
             }
             Cursor.Current = Cursors.Default;
 
@@ -67,12 +57,10 @@ namespace Dawg.Resolver.Winform.Test
 
         private void RefreshGridTiles()
         {
-
-            ClearBoardTilesExceptHeaders();
-            var customExtendedTilesGrid = game.InitGameBoardTiles();
+            //ClearBoardTilesExceptHeaders();
 
             //construct tiles with letter/word multipliers
-            ConstructBoardTiles(customExtendedTilesGrid);
+            ConstructBoardTiles();
             //construct headers
             ConstructHeaderBoardTiles();
 
@@ -83,34 +71,34 @@ namespace Dawg.Resolver.Winform.Test
         {
             gbBoard.SuspendLayout();
             gbBoard.Controls.Clear();
-            gbBoard.Controls.AddRange(BoardTiles.ToArray());
+            gbBoard.Controls.AddRange(BoardTiles.Cast<FormTile>().ToArray());
             gbBoard.ResumeLayout();
         }
 
-        private void ConstructBoardTiles(CustomExtendedTilesGrid vTiles)
+        private void ConstructBoardTiles()
         {
 
-            foreach (var vtile in vTiles)
+            foreach (var vtile in game.Grid)
             {
-                var frmTile = new FormTile(this, game, vtile)
-                {
-                    Text = vtile.Letter?.Char.ToString(),
-                    LetterMultiplier = vtile.LetterMultiplier,
-                    WordMultiplier = vtile.WordMultiplier,
-                };
-                frmTile.SetBackColorFrom(vtile);
-                BoardTiles.Add(frmTile);
+                //IExtendedTile frmTile = new FormTile(this, game, vtile)
+                //{
+                //    Text = vtile.Letter?.Char.ToString(),
+                //    LetterMultiplier = vtile.LetterMultiplier,
+                //    WordMultiplier = vtile.WordMultiplier,
+                //};
+                //frmTile.SetBackColorFrom(vtile);
+                BoardTiles.Add(new FormTile(this, vtile));
             }
         }
 
 
-        private void ClearBoardTilesExceptHeaders()
-        {
-            foreach (var tile in BoardTiles.Where(t => !t.Name.StartsWith("header_")))
-            {
-                tile.Clear();
-            }
-        }
+        //private void ClearBoardTilesExceptHeaders()
+        //{
+        //    foreach (var tile in BoardTiles.Where(t => !t.Name.StartsWith("header_")))
+        //    {
+        //        tile.Clear();
+        //    }
+        //}
         private void ConstructHeaderBoardTiles()
         {
             for (int i = 0; i < game.BoardSize; i++)
@@ -118,20 +106,20 @@ namespace Dawg.Resolver.Winform.Test
                 var frmTile = BoardTiles.FirstOrDefault(f => f.Name == $"header_col{i}");
                 if (frmTile == null)
                 {
-                    frmTile = new FormTile(this, game, 0, i, $"header_col{i}", HeaderTilesBackColor) { Text = $"{i + 1}" };
+                    frmTile = new FormTile(this, 0, i, $"header_col{i}", HeaderTilesBackColor) { Text = $"{i + 1}" };
                     BoardTiles.Add(frmTile);
                 }
 
                 frmTile = BoardTiles.FirstOrDefault(f => f.Name == $"header_ligne{i}");
                 if (frmTile == null)
                 {
-                    frmTile = new FormTile(this, game, i, 0, $"header_ligne{i}", HeaderTilesBackColor) { Text = $"{game.Resolver.Alphabet.ElementAt(i).Char}" };
+                    frmTile = new FormTile(this, i, 0, $"header_ligne{i}", HeaderTilesBackColor) { Text = $"{game.Resolver.Alphabet.ElementAt(i).Char}" };
                     BoardTiles.Add(frmTile);
                 }
             }
         }
 
-        private FormTile FindFormTile(IExtendedTile t)
+        private IExtendedTile FindFormTile(IExtendedTile t)
         {
             return BoardTiles.FirstOrDefault(f => f.Name == $"t{t.Ligne}_{t.Col}");
         }
@@ -155,11 +143,11 @@ namespace Dawg.Resolver.Winform.Test
                     var frmTile = FindFormTile(t);
                     if (frmTile.IsEmpty)
                     {
-                        frmTile.Invoke((MethodInvoker)(() =>
-                        {
-                            frmTile.SetBackColorFromInnerTile();
+                        //frmTile.Invoke((MethodInvoker)(() =>
+                        //{
+                        frmTile.SetBackColorFromInnerTile();
 
-                        }));
+                        //}));
                     }
                     else
                     {
@@ -167,11 +155,10 @@ namespace Dawg.Resolver.Winform.Test
                         {
                             //frmTile.IsPlayedByPlayer1 = p == game.Player1;
                             t.WordIndex = word.Index;
-                            frmTile.Invoke((MethodInvoker)(() =>
-                            {
-                                if (t.IsPlayedByPlayer1.HasValue)
-                                    frmTile.BackColor = t.IsPlayedByPlayer1.Value ? Player1MoveColor : Player2MoveColor;
-                            }));
+
+                            if (t.IsPlayedByPlayer1.HasValue)
+                                frmTile.BackColor = t.IsPlayedByPlayer1.Value ? Player1MoveColor : Player2MoveColor;
+
                         }
                     }
 
@@ -180,8 +167,7 @@ namespace Dawg.Resolver.Winform.Test
 
                     if (t.Letter.LetterType == LetterType.Joker)
                     {
-                        if (frmTile.InvokeRequired) frmTile.Invoke((MethodInvoker)(() => frmTile.SetBackColorFromInnerLetterType()));
-                        else frmTile.BackColor = Color.Gold;
+                        frmTile.SetBackColorFromInnerLetterType();
 
                         game.CurrentPlayer.Rack.Remove(game.Resolver.Alphabet[26]);
                     }
@@ -388,7 +374,7 @@ namespace Dawg.Resolver.Winform.Test
                 if (ret.Any())
                 {
                     var word = ret.Where(w => !game.Resolver.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).FirstOrDefault() as Word;
-                    if (word == null || CurrentWord?.Text == word.Text)
+                    if (word == null)//TODO CHECK || CurrentWord?.Text == word.Text)
                     {
                         game.EndGame = true;
                         return;
@@ -727,7 +713,7 @@ namespace Dawg.Resolver.Winform.Test
             foreach (var tile in tiles.Where(t => t.WordIndex == lastWord.Index))
             {
 
-                game.Grid[tile.Ligne, tile.Col] = new BaseVirtualTile(game.Resolver, tile.Ligne, tile.Col);
+                game.Grid[tile.Ligne, tile.Col] = new FormTile(this, tile.Ligne, tile.Col);
                 game.Grid[tile.Ligne, tile.Col].Letter.Char = Game.EmptyChar;
             }
             //using (new SuspendDrawingUpdate(sender as Control))

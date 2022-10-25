@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace DawgResolver.Model
 {
@@ -26,7 +24,7 @@ namespace DawgResolver.Model
         public void SetRackFromWord(string word)
         {
             Rack.Clear();
-            Rack.AddRange(word.Select(s => new Letter(Game.Resolver, s, 1, 1)));
+            Rack.AddRange(word.Select(s => new Letter( s, 1, 1)));
         }
 
     }

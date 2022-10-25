@@ -26,11 +26,11 @@ namespace DawgResolver.Model
         public Word(Game g) : this(g.Resolver)
         {
             game = g;
-            StartTile = new BaseVirtualTile(g.Resolver, game.BoardCenter, game.BoardCenter);
+            StartTile = new GenericTile();
         }
         public int SetWord(bool validate)
         {
-            this.StartTile.SetWord(game, Text, Direction, validate);
+            this.StartTile.SetWord( Text, Direction, validate);
             return this.Points;
         }
         public bool Scramble { get; set; }

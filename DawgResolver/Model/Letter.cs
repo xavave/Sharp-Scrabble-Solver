@@ -26,9 +26,9 @@ namespace DawgResolver.Model
         }
         public Resolver Resolver { get; }
         public LetterType LetterType { get; set; }
-        public Letter(Resolver r)
+        public Letter()
         {
-            Resolver = r;
+            Resolver = Game.DefaultInstance.Resolver;
             Char = Game.EmptyChar;
             Value = 0;
             Count = 0;
@@ -44,7 +44,7 @@ namespace DawgResolver.Model
                 return $"L{Char};{Value};{Count}";
             }
         }
-        public Letter(Resolver r, char @char, int value, int count) : this(r)
+        public Letter(char @char, int value, int count) : this()
         {
             Char = @char;
             Value = value;
@@ -79,7 +79,7 @@ namespace DawgResolver.Model
 
         public object Clone()
         {
-            return new Letter(Resolver, this.Char, this.Value, this.DefaultCount);
+            return new Letter(this.Char, this.Value, this.DefaultCount);
 
         }
 

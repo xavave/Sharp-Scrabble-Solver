@@ -6,6 +6,7 @@ namespace DawgResolver.Model
 
     public interface IBaseTile
     {
+        string Name { get; set; }
         TileType TileType { get; }
         int Ligne { get; set; }
         int Col { get; set; }
@@ -33,80 +34,57 @@ namespace DawgResolver.Model
     {
         bool? IsPlayedByPlayer1 { get; }
         string Serialize { get; }
-        Word GetWordFromTile(Game game, MovementDirection currentWordDirection);
-        void SetWord(Game game, string text, MovementDirection direction, bool validate);
+        System.Drawing.Color BackColor { get; set; }
+
+        Word GetWordFromTile(MovementDirection currentWordDirection);
+        void SetWord(string text, MovementDirection direction, bool validate);
         void CopyControllers(IDictionary<int, int> controlers);
-        IExtendedTile Copy(Resolver r, bool transpose = false);
+        IExtendedTile Copy(bool transpose = false);
+        void SetBackColorFrom(IExtendedTile t);
+        void SetBackColorFromInnerTile();
+        void SetBackColorFromInnerLetterType();
     }
 
-    public class BaseVirtualTile : IExtendedTile
+    public class GenericTile : IExtendedTile
     {
-        public void SetWord(Game g, string word, MovementDirection direction, bool Validate = false)
+        public void SetWord(string word, MovementDirection direction, bool Validate = false)
         {
-            if (word == "") return;
-
-
-            this.SetFirstLetter(g.Resolver, word.First(), g.CurrentPlayer, Validate);
-
-            foreach (var c in word.Skip(1))
-            {
-                this.SetRightOrDownLetter(g.Resolver, c, g.CurrentPlayer, Validate, direction);
-
-            }
+            
         }
-        public IExtendedTile SetFirstLetter(Resolver r, char c, Player p, bool validate)
-        {
-            //IExtendedTile nextTile = null;
-            //if (this.Col == r.game.BoardSize - 1)
-            //    nextTile = this.LeftTile.RightTile;
-            //else nextTile = this.RightTile.LeftTile;
-
-            if (this.IsEmpty) this.IsValidated = validate;
-
-            this.Letter = r.Find(char.ToUpper(c));
-            if (char.IsLower(c))
-                this.Letter.LetterType = LetterType.Joker;
-            if (this.Letter.LetterType == LetterType.Joker)
-                p.Rack.Remove(r.Alphabet.ElementAt(26));
-            else
-                p.Rack.Remove(this.Letter);
-            return this;
-
-        }
-        private IExtendedTile SetRightOrDownLetter(Resolver r, char c, Player p, bool validate, MovementDirection direction)
+        
+        private IExtendedTile SetRightOrDownLetter(char c, Player p, bool validate, MovementDirection direction)
         {
             var nextTile = direction == MovementDirection.Down ? this.DownTile : this.RightTile;
 
             if (nextTile != null)
             {
                 if (nextTile.IsEmpty) nextTile.IsValidated = validate;
-                nextTile.Letter = r.Find(char.ToUpper(c));
+                nextTile.Letter = Game.DefaultInstance.Resolver.Find(char.ToUpper(c));
 
                 if (char.IsLower(c)) nextTile.Letter.LetterType = LetterType.Joker;
 
                 if (nextTile.Letter.LetterType == LetterType.Joker)
-                    p.Rack.Remove(r.Alphabet.ElementAt(26));
+                    p.Rack.Remove(Game.DefaultInstance.Resolver.Alphabet.ElementAt(26));
                 else
-                    p.Rack.Remove(r.Alphabet.First(a => a.Char == char.ToUpper(c)));
+                    p.Rack.Remove(Game.DefaultInstance.Resolver.Alphabet.First(a => a.Char == char.ToUpper(c)));
                 return nextTile;
             }
             return nextTile;
         }
 
 
-        public Word GetWordFromTile(Game g, MovementDirection direction)
+        public Word GetWordFromTile(MovementDirection direction)
         {
             return null;
         }
         public bool IsValidated { get; set; } = false;
-        private Resolver resolver { get; }
-        public BaseVirtualTile(Resolver r, int ligne, int col, bool? isPlayedByPlayer1 = null, bool fromJoker = false)
+        public GenericTile(int? ligne = null, int? col = null, bool? isPlayedByPlayer1 = null, bool fromJoker = false)
         {
             Controlers = new Dictionary<int, int>(27);
-            resolver = r;
-            Ligne = ligne;
-            Col = col;
-            Letter = new Letter(r) { Char = EmptyChar, LetterType = fromJoker ? LetterType.Joker : LetterType.Regular };
+
+            Ligne = ligne ?? Game.DefaultInstance.BoardCenter;
+            Col = col ?? Game.DefaultInstance.BoardCenter;
+            Letter = new Letter() { Char = EmptyChar, LetterType = fromJoker ? LetterType.Joker : LetterType.Regular };
             LetterMultiplier = 1;
             WordMultiplier = 1;
             AnchorLeftMinLimit = AnchorLeftMaxLimit = 0;
@@ -114,9 +92,9 @@ namespace DawgResolver.Model
             if (isPlayedByPlayer1 != null) IsPlayedByPlayer1 = isPlayedByPlayer1;
             else
             {
-                if (r.game.CurrentPlayer.Name == r.game.Player1.Name)
+                if (Game.DefaultInstance.CurrentPlayer.Name == Game.DefaultInstance.Player1.Name)
                     IsPlayedByPlayer1 = true;
-                else if (r.game.CurrentPlayer.Name == r.game.Player2.Name)
+                else if (Game.DefaultInstance.CurrentPlayer.Name == Game.DefaultInstance.Player2.Name)
                     IsPlayedByPlayer1 = false;
                 else
                     IsPlayedByPlayer1 = null;
@@ -124,12 +102,12 @@ namespace DawgResolver.Model
 
         }
 
-        public IExtendedTile Copy(Resolver r, bool transpose = false)
+        public IExtendedTile Copy(bool transpose = false)
         {
             IExtendedTile newT = this;
-            if (transpose) newT = r.game.Grid[this.Col, this.Ligne];
+            if (transpose) newT = Game.DefaultInstance.Grid[this.Col, this.Ligne];
 
-            IExtendedTile nTile = new BaseVirtualTile(r, newT.Ligne, newT.Col)
+            IExtendedTile nTile = new GenericTile(newT.Ligne, newT.Col)
             {
                 Letter = this.Letter,
                 LetterMultiplier = this.LetterMultiplier,
@@ -181,8 +159,8 @@ namespace DawgResolver.Model
         {
             get
             {
-                
-                if (Ligne == resolver.game.BoardCenter && Col == resolver.game.BoardCenter)
+
+                if (Ligne == Game.DefaultInstance.BoardCenter && Col == Game.DefaultInstance.BoardCenter)
                     return TileType.Center;
                 else if (WordMultiplier == 2) return TileType.DoubleWord;
                 else if (LetterMultiplier == 2) return TileType.DoubleLetter;
@@ -193,10 +171,10 @@ namespace DawgResolver.Model
         }
 
         public bool IsEmpty => this == null || Letter == null || !Letter.HasValue() || Letter.Char == Game.EmptyChar;
-        public IExtendedTile LeftTile => Col > 0 ? resolver.game.Grid[this.Ligne, this.Col - 1] : null;
-        public IExtendedTile RightTile => Col < resolver.game.BoardSize - 1 ? resolver.game.Grid[this.Ligne, this.Col + 1] : null;
-        public IExtendedTile DownTile => Ligne < resolver.game.BoardSize - 1 ? resolver.game.Grid[this.Ligne + 1, this.Col] : null;
-        public IExtendedTile UpTile => Ligne > 0 ? resolver.game.Grid[this.Ligne - 1, this.Col] : null;
+        public IExtendedTile LeftTile => Col > 0 ? Game.DefaultInstance.Grid[this.Ligne, this.Col - 1] : null;
+        public IExtendedTile RightTile => Col < Game.DefaultInstance.BoardSize - 1 ? Game.DefaultInstance.Grid[this.Ligne, this.Col + 1] : null;
+        public IExtendedTile DownTile => Ligne < Game.DefaultInstance.BoardSize - 1 ? Game.DefaultInstance.Grid[this.Ligne + 1, this.Col] : null;
+        public IExtendedTile UpTile => Ligne > 0 ? Game.DefaultInstance.Grid[this.Ligne - 1, this.Col] : null;
         public string Serialize => $"T{Ligne};{Col};{LetterMultiplier};{WordMultiplier};{(Letter.LetterType == LetterType.Joker ? "true" : "false")};{IsValidated};{Letter?.Char};{IsPlayedByPlayer1}";
         public char EmptyChar => ' ';
 
@@ -262,6 +240,9 @@ namespace DawgResolver.Model
             }
         }
         public int WordIndex { get; set; } = 0;
+        public string Name { get; set; }
+        public System.Drawing.Color BackColor { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
         public override string ToString()
         {
             //var c = $"{Letter} min / max:{AnchorLeftMinLimit};{AnchorLeftMaxLimit}";
@@ -270,6 +251,21 @@ namespace DawgResolver.Model
             //    cont += $"{Game.AlphabetAvecJoker[co.Key + Dictionnaire.AscShiftBase0]}{co.Value};";
             //return $"{ c} [{Game.AlphabetAvecJoker[Ligne]}{ Col + 1}] {(isAnchor ? "*" : "")} {cont}";
             return $"{this?.Letter?.Char}";
+        }
+
+        public void SetBackColorFrom(IExtendedTile t)
+        {
+            //rien
+        }
+
+        public void SetBackColorFromInnerTile()
+        {
+            SetBackColorFrom(this);
+        }
+
+        public void SetBackColorFromInnerLetterType()
+        {
+            throw new System.NotImplementedException();
         }
 
         //public void Initialize()
