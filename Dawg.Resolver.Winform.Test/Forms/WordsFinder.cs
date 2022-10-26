@@ -18,7 +18,7 @@ namespace Dawg.Solver.Winform
             if (string.IsNullOrWhiteSpace(txtLetters.Text)) return;
             Cursor.Current = Cursors.WaitCursor;
 
-            var foundWords = game.Solver.FindMoves( 500, false, txtLetters.Text);
+            var foundWords = Solver.DefaultInstance.FindMoves( 500, false, txtLetters.Text);
 
             lsbWords.DataSource = foundWords;
             lblNbWords.Text = $"{foundWords.Count} words found";

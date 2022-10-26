@@ -25,7 +25,7 @@ namespace Dawg.Solver.Winform.Test
         {
             Game.Bag.GetLetters(Game.Player1, textBox1.Text);
             lsb.DisplayMember = "DisplayText";
-            var ret = Game.Solver.FindMoves();
+            var ret = Solver.DefaultInstance.FindMoves();
             lsb.Items.Clear();
             foreach (var r in ret)
                 lsb.Items.Add(r);

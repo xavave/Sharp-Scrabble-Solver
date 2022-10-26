@@ -48,7 +48,7 @@ namespace Dawg.Solver.Winform
             // Définition des cases bonus
             var assembly = Assembly.GetExecutingAssembly();
 
-            string resourceName = assembly.GetManifestResourceNames().SingleOrDefault(str => str.EndsWith($"initial_board{Game.DefaultInstance.BoardSize}{Game.DefaultInstance.Solver.Mode}.txt"));
+            string resourceName = assembly.GetManifestResourceNames().SingleOrDefault(str => str.EndsWith($"initial_board{Game.DefaultInstance.BoardSize}{Solver.DefaultInstance.Mode}.txt"));
             if (string.IsNullOrWhiteSpace(resourceName)) return;
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream, true))

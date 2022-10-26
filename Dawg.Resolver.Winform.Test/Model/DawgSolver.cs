@@ -2,22 +2,30 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-
-using Dawg;
-using Dawg.Solver.Winform;
 
 using DawgResolver.Model;
 
-namespace DawgResolver
+namespace Dawg.Solver.Winform
 {
-    public class Solver
+    public sealed class Solver
     {
+        static readonly Solver instance = new Solver();
+
+        // Explicit static constructor to tell C# compiler not to mark type as beforefieldinit
+        static Solver()
+        {
+        }
+        public static Solver DefaultInstance
+        {
+            get
+            {
+                return instance;
+            }
+        }
         public char Mode { get; set; } = 'S';//S=Scrabble
-        private ImmutableList<Letter> AlphabetWWFAvecJoker { get; }
-        private ImmutableList<Letter> AlphabetScrabbleAvecJoker { get; }
+        private List<Letter> AlphabetWWFAvecJoker { get; }
+        private List<Letter> AlphabetScrabbleAvecJoker { get; }
 
         //variables definition
         public int WordCount { get; set; }
@@ -30,14 +38,11 @@ namespace DawgResolver
         public long NbAcceptedMoves { get; set; }
         public BindingList<Letter> Alphabet => Mode == 'S' ?
             new BindingList<Letter>(this.AlphabetScrabbleAvecJoker) : new BindingList<Letter>(this.AlphabetWWFAvecJoker);
-        public Dictionnaire Dico { get; private set; }
         public Noeud Noeud { get; private set; }
-        public Solver(string nomDico = null)
+        public Solver()
         {
 
-            if (nomDico == null) nomDico = Dictionnaire.NomDicoDawgEN_Collins;
-            LoadDic(nomDico);
-            AlphabetWWFAvecJoker = ImmutableList.Create<Letter>(
+            AlphabetWWFAvecJoker = new List<Letter>() {
 
             new Letter('A', 1, 9),
             new Letter('B', 5, 2),
@@ -65,9 +70,9 @@ namespace DawgResolver
             new Letter('X', 10, 1),
             new Letter('Y', 10, 1),
             new Letter('Z', 10, 1),
-            new Letter(Dico.Joker, 0, 2)
-            );
-            AlphabetScrabbleAvecJoker = ImmutableList.Create<Letter>(
+            new Letter(Dictionnaire.DefaultInstance.Joker, 0, 2)
+            };
+            AlphabetScrabbleAvecJoker = new List<Letter>() {
             new Letter('A', 1, 9),
             new Letter('B', 3, 2),
             new Letter('C', 3, 2),
@@ -94,8 +99,8 @@ namespace DawgResolver
             new Letter('X', 10, 1),
             new Letter('Y', 10, 1),
             new Letter('Z', 10, 1),
-            new Letter(Dico.Joker, 0, 2)
-);
+            new Letter(Dictionnaire.DefaultInstance.Joker, 0, 2)
+            };
 
             Alphabet.ListChanged += (s, e) =>
             {
@@ -103,6 +108,46 @@ namespace DawgResolver
             };
         }
 
+        public Letter FindLetterByIndex(BindingList<Letter> letters, Letter letter)
+        {
+            var charIndex = letters.IndexOf(letter);
+            if (charIndex == -1) return null;
+            return letters[charIndex];
+        }
+        public IExtendedTile DeserializeTile(string s)
+        {
+            var l = s.Split(';');
+            bool? isPlayedByPlayer1 = null;
+            if (l.Count() > 7 && l[7] != "") isPlayedByPlayer1 = bool.Parse(l[7]);
+
+            //IExtendedTile t = new FormTile(MainForm, int.Parse(l[0].Substring(1)), int.Parse(l[1]), bool.Parse(l[4]))
+            IExtendedTile t = new FormTile(int.Parse(l[0].Substring(1)), int.Parse(l[1]))//, bool.Parse(l[4]))
+            {
+                LetterMultiplier = int.Parse(l[2]),
+                WordMultiplier = int.Parse(l[3]),
+                IsValidated = bool.Parse(l[5]),
+
+            };
+            if (l.Count() > 6 && l[6] != "") t.Letter.CopyFromOtherLetter(Solver.DefaultInstance.Find(l[6][0]));
+
+            return t;
+        }
+        public Letter DeserializeLetter(string s)
+        {
+            var l = s.Split(';');
+            return new Letter(l[0].Skip(1).First(), int.Parse(l[1]), int.Parse(l[2]));
+        }
+
+        public Letter FindLetterByChar(BindingList<Letter> letters, Char c)
+        {
+            var foundLetter = letters.FirstOrDefault(l => l.Char == c);
+            return FindLetterByIndex(letters, foundLetter);
+        }
+
+        public Letter Find(char c)
+        {
+            return FindLetterByChar(Alphabet, c);
+        }
         /// <summary>
         /// Pour chaque ancre identifiée,
         /// Cette procédure lance la recherche des différents mots formables à partir de l'ancre
@@ -119,7 +164,7 @@ namespace DawgResolver
             var newWords = new HashSet<Word>();
 
             var leftLetters = Game.DefaultInstance.CurrentPlayer.Rack.Letters;
-            var anchorTiles = Game.DefaultInstance.Grid.OfType<IExtendedTile>().Where(t => t.IsAnchor);
+            var anchorTiles = Game.DefaultInstance.Grid.Where(t => t.IsAnchor);
             foreach (var t in anchorTiles)
             {
                 // Cas où la taille du préfixe est imposée
@@ -145,7 +190,7 @@ namespace DawgResolver
                                 Trouve(Game.DefaultInstance.Grid[t.Ligne, k].Letter.Char, ref noeudActuel);
                             }
                         }
-                        newWords.UnionWith(ExtendRight( prefixe.ToUpper(), ref leftLetters, 1, noeudActuel, t.Ligne, t.Col));
+                        newWords.UnionWith(ExtendRight(prefixe.ToUpper(), ref leftLetters, 1, noeudActuel, t.Ligne, t.Col));
                     }
                 }
                 else
@@ -154,7 +199,7 @@ namespace DawgResolver
                     // On essaie les différents préfixes possibles allant de 0 à k lettres
                     for (int k = 0; k <= t.AnchorLeftMaxLimit; k++)
                     {
-                        newWords.UnionWith(ExtendRight( string.Empty, ref leftLetters, k, 1, t.Ligne, t.Col - k));
+                        newWords.UnionWith(ExtendRight(string.Empty, ref leftLetters, k, 1, t.Ligne, t.Col - k));
                     }
                 }
             }
@@ -169,11 +214,11 @@ namespace DawgResolver
         public bool Trouve(int lettre, ref int noeud)
         {
             if (((char)lettre == ' ')) return false;
-            if (Dico.Legacy[lettre - Dictionnaire.AscShift, noeud] == 0)
+            if (Dictionnaire.DefaultInstance.Legacy[lettre - Dictionnaire.AscShift, noeud] == 0)
                 return false;
             else
             {
-                noeud = Dico.Legacy[lettre - Dictionnaire.AscShift, noeud];
+                noeud = Dictionnaire.DefaultInstance.Legacy[lettre - Dictionnaire.AscShift, noeud];
                 return true;
             }
         }
@@ -198,18 +243,16 @@ namespace DawgResolver
         /// <param name="isTransposed"></param>
         private HashSet<Word> ExtendRight(string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne)
         {
-            bool jokerInDraught = leftLetters.Any(l => l.Char == Dico.Joker);
+            bool jokerInDraught = leftLetters.Any(l => l.Char == Dictionnaire.DefaultInstance.Joker);
             var newWords = new HashSet<Word>();
             IExtendedTile t = null;
-            if (ligne >= 0 && colonne >= 0 && colonne < Game.DefaultInstance.BoardSize && ligne < Game.DefaultInstance.BoardSize
-                && leftLetters.Count() <= 7 && leftLetters.Count() >= 0)
-            {
-                t = Game.DefaultInstance.Grid[ligne, colonne];
-            }
+            if (ligne >= 0 && colonne >= 0 && colonne < Game.DefaultInstance.BoardSize && ligne < Game.DefaultInstance.BoardSize && leftLetters.Count() <= 7
+                && leftLetters.Count() >= 0) t = Game.DefaultInstance.Grid[ligne, colonne];
+
             if (t != null && t.IsEmpty)
             {
                 // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions
-                if (Dico.Legacy[27, noeud] != 0 && partialWord.Length > minSize && partialWord.Length > 1)
+                if (Dictionnaire.DefaultInstance.Legacy[27, noeud] != 0 && partialWord.Length > minSize && partialWord.Length > 1)
                 {
                     // Si le préfixe constitue déjà un mot valide
                     // alors on peut rajouter le préfixe dans la liste des coups admis
@@ -221,13 +264,13 @@ namespace DawgResolver
                 for (int i = 1; i <= 26; i++)
                 {
 
-                    if (Dico.Legacy[i, noeud] != 0)
+                    if (Dictionnaire.DefaultInstance.Legacy[i, noeud] != 0)
                         for (int l = 0; l < leftLetters.Count; l++)
                         {
 
                             if (char.ToUpper(leftLetters[l].Char) == (char)(i + Dictionnaire.AscShift))
                             {
-                                if (((t.Controlers.ContainsKey(i - 1) && t.Controlers[i - 1] > 0)) || t.Controlers[26] == 26)
+                                if (((t.Controllers.ContainsKey(i - 1) && t.Controllers[i - 1] > 0)) || t.Controllers[26] == 26)
                                 // Pour chacune des lettres qui répondent au précédent critère dans le tirage
                                 {
                                     // Si la lettre permet également de former des mots verticalement
@@ -241,7 +284,7 @@ namespace DawgResolver
                                     //if (l < leftLetters.Count() && leftLetters[l].Char == Game.Joker)
                                     //    lettre = char.ToLower(lettre);
                                     // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-                                    newWords.UnionWith(ExtendRight( partialWord + lettre, ref leftLetters, minSize, Dico.Legacy[i, noeud], ligne, colonne + 1));
+                                    newWords.UnionWith(ExtendRight(partialWord + lettre, ref leftLetters, minSize, Dictionnaire.DefaultInstance.Legacy[i, noeud], ligne, colonne + 1));
 
                                     // Au retour de l'appel recursif on restitue la lettre dans le tirage
 
@@ -251,10 +294,10 @@ namespace DawgResolver
                                 if (!jokerInDraught)
                                     break;
                             }
-                            else if (l < leftLetters.Count() && leftLetters[l].Char == Dico.Joker)
+                            else if (l < leftLetters.Count() && leftLetters[l].Char == Dictionnaire.DefaultInstance.Joker)
                             {
                                 // Cas d'un joker
-                                if (((t.Controlers.ContainsKey(i - 1) && t.Controlers[i - 1] > 0)) || t.Controlers[26] == 26)
+                                if (((t.Controllers.ContainsKey(i - 1) && t.Controllers[i - 1] > 0)) || t.Controllers[26] == 26)
                                 {
                                     // Si une lettre quelconque (représentée par le joker) permet également de former des mots verticalement
                                     // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)
@@ -264,8 +307,7 @@ namespace DawgResolver
                                     leftLetters.RemoveAt(l);
 
                                     // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
-                                    newWords.UnionWith(ExtendRight(partialWord + char.ToLower((char)(i + Dictionnaire.AscShift)), ref leftLetters,
-                                        minSize, Dico.Legacy[i, noeud], ligne, colonne + 1));
+                                    newWords.UnionWith(ExtendRight(partialWord + char.ToLower((char)(i + Dictionnaire.AscShift)), ref leftLetters, minSize, Dictionnaire.DefaultInstance.Legacy[i, noeud], ligne, colonne + 1));
 
                                     // Au retour de l'appel recursif on restitue le joker dans le tirage
                                     leftLetters.Add(backupLetter);
@@ -279,10 +321,10 @@ namespace DawgResolver
             {
                 if (colonne < Game.DefaultInstance.BoardSize && ligne < Game.DefaultInstance.BoardSize)
                     t = Game.DefaultInstance.Grid[ligne, colonne];
-                if (t != null && !t.IsEmpty && Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud] != 0)
+                if (t != null && !t.IsEmpty && Dictionnaire.DefaultInstance.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud] != 0)
                 {
-                    newWords.UnionWith(ExtendRight( partialWord + t.Letter.Char, ref leftLetters, 1, 
-                        Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud], ligne, colonne + 1));
+                    newWords.UnionWith(ExtendRight(partialWord + t.Letter.Char, ref leftLetters, 1, Dictionnaire.DefaultInstance.Legacy[(int)char.ToUpper(t.Letter.Char)
+                        - Dictionnaire.AscShift, noeud], ligne, colonne + 1));
                 }
 
             }
@@ -292,13 +334,13 @@ namespace DawgResolver
         /// <summary>
         /// Recherche des différents coups admis
         /// </summary>
-        public List<Word> FindMoves(Game g, int maxWordCount = 120, bool sortByBestScore = true, string customRack = null)
+        public List<Word> FindMoves(int maxWordCount = 120, bool sortByBestScore = true, string customRack = null)
         {
 
             var foundWords = new HashSet<Word>();
-            g.IsTransposed = false;
-            var backUpCurrentRack = g.CurrentPlayer.Rack.Backup();
-            if (!string.IsNullOrWhiteSpace(customRack)) g.CurrentPlayer.SetRackFromWord(customRack);
+            Game.DefaultInstance.IsTransposed = false;
+            var backUpCurrentRack = Game.DefaultInstance.CurrentPlayer.Rack.Backup();
+            if (!string.IsNullOrWhiteSpace(customRack)) Game.DefaultInstance.CurrentPlayer.SetRackFromWord(customRack);
 
             NbPossibleMoves = 0;
             NbAcceptedMoves = 0;
@@ -306,25 +348,25 @@ namespace DawgResolver
             //LegalWords.ToList().AddRange(g.Player1.Moves);
             //LegalWords.ToList().AddRange(g.Player2.Moves);
 
-            var backupGrid = g.BackupGameGrid();
+            var backupGrid = Game.DefaultInstance.BackupGameGrid();
             //var vTiles = g.Grid;
-            g.DetectTiles();
+            Game.DefaultInstance.DetectTiles();
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
             foundWords.UnionWith(FindMovesPerAnchor());
             // Recherche des coups verticaux
             // par transposition de la grille, on refait tout le processus
-            g.RestoreGameGridFrom(backupGrid);
-            g.CurrentPlayer.Rack.Restore(backUpCurrentRack);
+            Game.DefaultInstance.RestoreGameGridFrom(backupGrid);
+            Game.DefaultInstance.CurrentPlayer.Rack.Restore(backUpCurrentRack);
 
-            g.TransposeGameGrid();
-            g.DetectTiles();
+            Game.DefaultInstance.TransposeGameGrid();
+            Game.DefaultInstance.DetectTiles();
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
             foundWords.UnionWith(FindMovesPerAnchor());
 
             //on remet la grille à son état initial
-            g.RestoreGameGridFrom(backupGrid);
-            g.IsTransposed = false;
+            Game.DefaultInstance.RestoreGameGridFrom(backupGrid);
+            Game.DefaultInstance.IsTransposed = false;
 
             if (sortByBestScore)
                 return foundWords.OrderByDescending(t => t.Points).Take(maxWordCount).ToList();
@@ -349,7 +391,7 @@ namespace DawgResolver
         {
             List<string> ret = new List<string>();
 
-            Noeud noeudEnCours = Dico.DAWG;
+            Noeud noeudEnCours = Dictionnaire.DefaultInstance.DAWG;
             List<Arc> arcs = new List<Arc>();
             var end = false;
             for (int i = 0; i < mot.Length; i++)
@@ -357,7 +399,7 @@ namespace DawgResolver
                 var c = mot[i];
 
                 end = false;
-                if (c == Dico.Joker)
+                if (c == Dictionnaire.DefaultInstance.Joker)
                 {
                     var tmpArcs = noeudEnCours.Sortants;
                     end = InternalLoop(ref noeudEnCours, tmpArcs, c);
@@ -371,14 +413,14 @@ namespace DawgResolver
 
             }
             if (end) return ret;
-            Dico.ParcoursDAWG(arcs, ref ret);
+            Dictionnaire.DefaultInstance.ParcoursDAWG(arcs, ref ret);
             return ret;
 
         }
 
         bool InternalLoop(ref Noeud enCours, List<Arc> arcs, char c)
         {
-            var arc = Dico.BoucleDawg(c, ref enCours);
+            var arc = Dictionnaire.DefaultInstance.BoucleDawg(c, ref enCours);
             if (arc != null) arcs.Add(arc);
             else if (!enCours.IsTerminal)
                 return true;
@@ -387,45 +429,44 @@ namespace DawgResolver
         }
         public Noeud LoadDic(string nomDico)
         {
-            Dico = new Dictionnaire(nomDico);
-            Noeud = Dico.DAWG;
+            Noeud = Dictionnaire.DefaultInstance.DAWG;
 
-            var assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(Dictionnaire.NomDicoDawgODS7));
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (StreamReader reader = new StreamReader(stream, true))
-            {
-                string content = reader.ReadToEnd();
-                List<string> dic = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            //var assembly = Assembly.GetExecutingAssembly();
+            //string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(Dictionnaire.NomDicoDawgODS7));
+            //using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            //using (StreamReader reader = new StreamReader(stream, true))
+            //{
+            //    string content = reader.ReadToEnd();
+            //    List<string> dic = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                WordCount = int.Parse(dic[0].Replace("NBMOTS : ", ""));
-                NodeCount = dic.Count - 2;// int.Parse(dic[1].Replace("NBNOEUDS : ", ""));
-                Dictionary = new long[28, NodeCount + 2];
-                for (int lineIdx = 2; lineIdx < dic.Count; lineIdx++)
-                {
-                    var line = dic[lineIdx];
-                    //Remplacement du marqueur de noeud terminal "#" utilisé à la place de "[1" lors de la compilation du dico
-                    //Ce remplacement avait deux objectifs : diminuer la taille du fichier tout en améliorant la lisibilité du dawg
-                    if (line == "#")
-                        line = line.Replace("#", "[1");
-                    else
-                        line = line.Replace("#", "-[1");
+            //    WordCount = int.Parse(dic[0].Replace("NBMOTS : ", ""));
+            //    NodeCount = dic.Count - 2;// int.Parse(dic[1].Replace("NBNOEUDS : ", ""));
+            //    Dictionary = new long[28, NodeCount + 2];
+            //    for (int lineIdx = 2; lineIdx < dic.Count; lineIdx++)
+            //    {
+            //        var line = dic[lineIdx];
+            //        //Remplacement du marqueur de noeud terminal "#" utilisé à la place de "[1" lors de la compilation du dico
+            //        //Ce remplacement avait deux objectifs : diminuer la taille du fichier tout en améliorant la lisibilité du dawg
+            //        if (line == "#")
+            //            line = line.Replace("#", "[1");
+            //        else
+            //            line = line.Replace("#", "-[1");
 
-                    // chaque ligne est décomposée pour en extraire les arcs sortants du noeud
-                    // un arc est noté par une lettre de A à Z
-                    // et par la référence du noeud atteint par l'arc
-                    // les arcs sont séparés par le marqueur "-"
+            //        // chaque ligne est décomposée pour en extraire les arcs sortants du noeud
+            //        // un arc est noté par une lettre de A à Z
+            //        // et par la référence du noeud atteint par l'arc
+            //        // les arcs sont séparés par le marqueur "-"
 
-                    foreach (var arc in line.Split('-'))
-                    {
-                        var partie = arc;
-                        var letterCode = (int)partie[0] - Dictionnaire.AscShift;
-                        var node = int.Parse(partie.Substring(1));
-                        Dictionary[letterCode, lineIdx - 1] = node;
-                    }
+            //        foreach (var arc in line.Split('-'))
+            //        {
+            //            var partie = arc;
+            //            var letterCode = (int)partie[0] - Dictionnaire.AscShift;
+            //            var node = int.Parse(partie.Substring(1));
+            //            Dictionary[letterCode, lineIdx - 1] = node;
+            //        }
 
-                }
-            }
+            //    }
+            //}
             //DicLoaded = true;
             return Noeud;
             //return DicLoaded;
@@ -440,7 +481,7 @@ namespace DawgResolver
         /// </summary>
         /// <param name="word"></param>
         /// <param name="t"></param>
-        private HashSet<Word> Add( string word, int ligne, int colonne, MovementDirection direction)
+        private HashSet<Word> Add(string word, int ligne, int colonne, MovementDirection direction)
         {
             int multiplier = 1;
             int horizontalPoints = 0;
@@ -452,9 +493,9 @@ namespace DawgResolver
             var startTile = direction == MovementDirection.Across ? Game.DefaultInstance.Grid[ligne, debutCol] : Game.DefaultInstance.Grid[debutCol, ligne];
             var newWord = new Word()
             {
-                StartTile = startTile,
                 Direction = direction,
                 Text = word,
+                StartTile = startTile
             };
             //if (!referenceWords.Any(pw => pw.Equals(newWord)))
             //{
@@ -470,13 +511,13 @@ namespace DawgResolver
                     if (char.IsUpper(L))
                     {
                         horizontalPoints += this.Alphabet.First(c => c.Char == L).Value * tile.LetterMultiplier;
-                        verticalPoints += tile.Controlers.ContainsKey(L - Dictionnaire.AscShift) ? tile.Controlers[L - Dictionnaire.AscShift] : 0;
+                        verticalPoints += tile.Controllers.ContainsKey(L - Dictionnaire.AscShift) ? tile.Controllers[L - Dictionnaire.AscShift] : 0;
                     }
 
                     else
                     {
-                        if (tile.Controlers.ContainsKey(((int)char.ToUpper(L)) - Dictionnaire.AscShift) && tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShift] > 0)
-                            verticalPoints += tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShift] - this.Alphabet.First(c => c.Char == char.ToUpper(L)).Value
+                        if (tile.Controllers.ContainsKey(((int)char.ToUpper(L)) - Dictionnaire.AscShift) && tile.Controllers[((int)char.ToUpper(L)) - Dictionnaire.AscShift] > 0)
+                            verticalPoints += tile.Controllers[((int)char.ToUpper(L)) - Dictionnaire.AscShift] - this.Alphabet.First(c => c.Char == char.ToUpper(L)).Value
                                 * tile.LetterMultiplier * tile.WordMultiplier;
 
                     }

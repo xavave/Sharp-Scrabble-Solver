@@ -18,7 +18,7 @@ namespace DawgResolverTest
             Game.DefaultInstance.Bag.GetLetters(Game.DefaultInstance.Player1, "???OTES");
 
             var sw = Stopwatch.StartNew();
-            var ret = Game.DefaultInstance.Solver.FindMoves();
+            var ret = Solver.DefaultInstance.FindMoves();
             sw.Stop();
             Debug.WriteLine(string.Join(Environment.NewLine, ret));
         }

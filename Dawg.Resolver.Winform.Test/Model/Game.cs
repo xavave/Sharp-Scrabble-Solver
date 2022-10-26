@@ -1,52 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-
-using Dawg;
+using System.Windows.Forms;
 
 using DawgResolver.Model;
 
 namespace Dawg.Solver.Winform
 {
-    public class GameBuilder
-    {
-        string DicoName { get; }
-        public GameBuilder(string dicoName = null)
-        {
-            DicoName = dicoName;
-        }
-        public Game Build()
-        {
 
-            return new Game(DicoName) { };
-        }
-    }
-    public class Game
+    public sealed class Game
     {
-        private bool isFirstInit => EndGame;
-        private static Game instance
+        static readonly Game instance = new Game();
+
+        // Explicit static constructor to tell C# compiler not to mark type as beforefieldinit
+        static Game()
         {
-            get;
-            set;
         }
         public static Game DefaultInstance
         {
             get
             {
-                if (instance == null)
-                    instance = new GameBuilder().Build();
-                else if (instance.isFirstInit)
-                    instance.InitGameProperties();
                 return instance;
             }
         }
-        protected Dictionnaire Dico { get; private set; }
+
         public static char Joker;
         public bool IsPlayer1 { get; set; } = true;
         public bool EndGame { get; set; } = false;
-        public Solver Solver { get; private set; }
         public Bag Bag { get; private set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
@@ -84,7 +67,7 @@ namespace Dawg.Solver.Winform
             sb.AppendLine("_______________");
             for (int ligne = 0; ligne < Tiles.GetLength(0); ligne++)
             {
-                sb.Append($"{Solver.Alphabet.ElementAt(ligne).Char}|");
+                sb.Append($"{Solver.DefaultInstance.Alphabet.ElementAt(ligne).Char}|");
                 for (int col = 0; col < Tiles.GetLength(1); col++)
                 {
 
@@ -131,8 +114,8 @@ namespace Dawg.Solver.Winform
                     this.Grid[ligne, col].Col = col;
                     this.Grid[ligne, col].WordMultiplier = source.WordMultiplier;
                     this.Grid[ligne, col].LetterMultiplier = source.LetterMultiplier;
-                    this.Grid[ligne, col].Letter = backupGrid[col, ligne].Letter;
-                    this.Grid[ligne, col].CopyControllers(backupGrid[col, ligne].Controlers);
+                    this.Grid[ligne, col].Letter.CopyFromOtherLetter(backupGrid[col, ligne].Letter);
+                    this.Grid[ligne, col].CopyControllers(backupGrid[col, ligne].Controllers);
                     this.Grid[ligne, col].IsValidated = backupGrid[col, ligne].IsValidated;
                 }
             this.IsTransposed = !this.IsTransposed;
@@ -216,7 +199,7 @@ namespace Dawg.Solver.Winform
 
                 foreach (var t in Grid.OfType<IExtendedTile>().Where(g => g.Col == BoardCenter || g.Ligne == BoardCenter))
                 {
-                    t.Controlers[26] = 26;
+                    t.Controllers[26] = 26;
                 }
 
             }
@@ -238,7 +221,7 @@ namespace Dawg.Solver.Winform
             {
                 if (t.AnchorLeftMaxLimit != 0) t.AnchorLeftMaxLimit = 0;
                 if (t.AnchorLeftMinLimit != 0) t.AnchorLeftMinLimit = 0;
-                t.Controlers.Clear();
+                t.Controllers.Clear();
                 t.Letter.Char = Game.EmptyChar;
                 t.Letter.Value = 0;
                 t.Letter.Count = 0;
@@ -291,28 +274,28 @@ namespace Dawg.Solver.Winform
                     //Si tel est le cas, la lettre L est jouable pour la case considérée
                     //et on précalcule le point que le mot verticalement formé permettrait de gagner si L était jouée
                     L = 0;
-                    foreach (var c in Solver.Alphabet)
+                    foreach (var c in Solver.DefaultInstance.Alphabet)
                     {
                         var mot = wordStart + c.Char + wordEnd;
-                        if (mot.Length > 1 && Solver.Dico.MotAdmis(mot))
+                        if (mot.Length > 1 && Dictionnaire.DefaultInstance.MotAdmis(mot))
                         {
-                            Grid[t.Ligne, t.Col].Controlers[((int)c.Char) - Dictionnaire.AscShift] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
+                            Grid[t.Ligne, t.Col].Controllers[((int)c.Char) - Dictionnaire.AscShift] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
                             L++;
                         }
                         else
-                            Grid[t.Ligne, t.Col].Controlers[((int)c.Char) - Dictionnaire.AscShift] = 0;
+                            Grid[t.Ligne, t.Col].Controllers[((int)c.Char) - Dictionnaire.AscShift] = 0;
                     }
 
                     //Si aucune lettre ne se trouve ni au dessus ni en dessous de la case, il n'y aucune contrainte à respecter
                     //toutes les lettres peuvent être placées dans la case considérée.
                     if (string.IsNullOrWhiteSpace(wordStart + wordEnd))
-                        t.Controlers[26] = 26;
+                        t.Controllers[26] = 26;
                     else
-                        t.Controlers[26] = L;
+                        t.Controllers[26] = L;
                 }
                 else
                 {
-                    if (t.IsEmpty) t.Controlers[26] = 26;
+                    if (t.IsEmpty) t.Controllers[26] = 26;
                 }
             }
 
@@ -340,9 +323,7 @@ namespace Dawg.Solver.Winform
         public Game(string nomDico = null)
         {
 
-            Dico = new Dictionnaire(nomDico);
-            Joker = Dico.Joker;
-            Solver = new Solver(nomDico);
+            Joker = Dictionnaire.DefaultInstance.Joker;
             Player1 = new Player("Player 1");
             Player2 = new Player("Player 2");
             //TODO Grid = new CustomExtendedTilesGrid(this, BoardSize, true);
@@ -350,9 +331,102 @@ namespace Dawg.Solver.Winform
             InitGameProperties();
         }
 
+        public void Load(HashSet<IExtendedTile> boardTiles)
+        {
+            var filter = "Scrabble Game|*.gam";
+
+            var sfd = new SaveFileDialog()
+            {
+                Filter = filter,
+                DefaultExt = "gam",
+                OverwritePrompt = false,
+                RestoreDirectory = true,
+            };
+            var ofd = new OpenFileDialog()
+            {
+                Filter = filter,
+                DefaultExt = "gam",
+                RestoreDirectory = true,
+                FileName = "Game"
+            };
+
+
+            InitGameProperties();
+            Player1.Moves.Clear();
+            Player2.Moves.Clear();
+            IsTransposed = false;
+            var dialog = ofd.ShowDialog();
+            if (dialog == DialogResult.OK)
+            {
+                sfd.FileName = ofd.FileName;
+                var txt = File.ReadAllText(ofd.FileName);
+                this.Deserialize(txt);
+                this.IsPlayer1 = true;
+                foreach (var t in this.Grid)
+                {
+                    var frmTile = t.FindFormTile(boardTiles);
+                    if (t.IsValidated)
+                    {
+                        frmTile.BackColor = t.IsPlayer1.HasValue && t.IsPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
+                    }
+                    else
+                    {
+                        frmTile.SetBackColorFromInnerTile();
+
+                    }
+                }
+                var wordsCount = Math.Max(this.Player1.Moves.Count, this.Player2.Moves.Count);
+                for (int i = 0; i < wordsCount; i++)
+                {
+                    if (i < this.Player1.Moves.Count)
+                    {
+                        PreviewWord(this.Player1, this.Player1.Moves.ElementAt(i), true, true);
+
+                    }
+                    if (i < this.Player2.Moves.Count)
+                    {
+                        PreviewWord(this.Player2, this.Player2.Moves.ElementAt(i), true, true);
+
+                    }
+                }
+               
+                RefreshBoard();
+            }
+        }
+        public void SaveGame()
+        {
+            var filter = "Scrabble Game|*.gam";
+
+            var sfd = new SaveFileDialog()
+            {
+                Filter = filter,
+                DefaultExt = "gam",
+                OverwritePrompt = false,
+                RestoreDirectory = true,
+            };
+            var ofd = new OpenFileDialog()
+            {
+                Filter = filter,
+                DefaultExt = "gam",
+                RestoreDirectory = true,
+                FileName = "Game"
+            };
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                var ret = this.Serialise();
+                File.WriteAllText(sfd.FileName, ret);
+                MessageBox.Show($"Game saved as {sfd.FileName}");
+                //this.Text = $"Scrabble ({sfd.FileName})";
+                ofd.FileName = sfd.FileName;
+
+            }
+        }
         public void InitGameProperties()
         {
             Bag = Bag.Build();
+            Player1.Moves.Clear();
+            Player2.Moves.Clear();
             IsTransposed = false;
             NoMoreMovesCount = 0;
             EndGame = false;
@@ -400,7 +474,7 @@ namespace Dawg.Solver.Winform
         {
             var ret = $"P1?{IsPlayer1}" + Environment.NewLine;
             ret += "letters" + Environment.NewLine;
-            foreach (var l in Solver.Alphabet)
+            foreach (var l in Solver.DefaultInstance.Alphabet)
                 ret += l.Serialize + Environment.NewLine;
 
             ret += "tiles" + Environment.NewLine;
@@ -452,11 +526,11 @@ namespace Dawg.Solver.Winform
                 }
                 else if (l.StartsWith("L"))
                 {
-                    alphabet.Add(Solver.DeserializeLetter(l));
+                    alphabet.Add(Solver.DefaultInstance.DeserializeLetter(l));
                 }
                 else if (l.StartsWith("T"))
                 {
-                    tiles.Add(Solver.DeserializeTile(l));
+                    tiles.Add(Solver.DefaultInstance.DeserializeTile(l));
                 }
                 else if (l.StartsWith("M1"))
                 {

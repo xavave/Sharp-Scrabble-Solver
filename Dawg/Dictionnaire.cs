@@ -13,8 +13,19 @@ namespace Dawg
     /// Le principe de focntionnement est l'adapation en C# du tutoriel de CarlVB http://codes-sources.commentcamarche.net/faq/10903-compression-d-un-dictionnaire-sous-forme-de-premiereEtape#construction-directe-du-premiereEtape
     /// </summary>
 
-    public class Dictionnaire
+    public sealed class Dictionnaire
     {
+        static readonly Dictionnaire instance = new Dictionnaire(NomDicoDawgEN_Collins);
+        static Dictionnaire()
+        {
+        }
+        public static Dictionnaire DefaultInstance
+        {
+            get
+            {
+                return instance;
+            }
+        }
         public static string NomDicoDawg { get; set; }
         public static string NomDicoDawgODS7 { get; set; } = "dico_dawgODS7.txt";
         public static string NomDicoDawgODS6 = "dico_dawgODS6.txt";

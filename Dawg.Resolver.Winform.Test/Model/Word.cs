@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
+using Dawg;
 using Dawg.Solver.Winform;
 
 namespace DawgResolver.Model
@@ -12,7 +14,7 @@ namespace DawgResolver.Model
     };
     public class Word
     {
-        public bool IsPlayedByPlayer1 { get; set; }
+        public bool IsPlayedByPlayer1 { get; }
         public int Index { get; set; }
         public bool Scramble { get; set; }
         public MovementDirection Direction { get; set; }
@@ -21,6 +23,7 @@ namespace DawgResolver.Model
         public string Text { get; set; }
         public Word()
         {
+            IsPlayedByPlayer1= Game.DefaultInstance.IsPlayer1;
         }
 
         public int SetWord(bool validate)
@@ -41,6 +44,11 @@ namespace DawgResolver.Model
         {
             return $"{DateTime.Now:H:mm:ss} - {$"Player {(isPlayer1 ? '1' : '2')}:{ToCharString(lst)}"} --> {this}";
         }
+        public void ShowDefinition()
+        {
+            if (!string.IsNullOrWhiteSpace(this.Text))
+                Process.Start($"https://1mot.net/{this.Text.ToLower()}");
+        }
 
 
         public string Serialize
@@ -55,7 +63,7 @@ namespace DawgResolver.Model
         {
             get
             {
-                return Game.DefaultInstance.Solver.Dico.MotAdmis(Text);
+                return Dictionnaire.DefaultInstance.MotAdmis(Text);
             }
         }
         public HashSet<IExtendedTile> GetTiles()
@@ -88,9 +96,9 @@ namespace DawgResolver.Model
 
         public override string ToString()
         {
-            var pos = $"{Game.DefaultInstance.Solver.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
+            var pos = $"{Solver.DefaultInstance.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
             if (Direction == MovementDirection.Down)
-                pos = $"{StartTile.Col + 1}{Game.DefaultInstance.Solver.Alphabet[StartTile.Ligne]}";
+                pos = $"{StartTile.Col + 1}{Solver.DefaultInstance.Alphabet[StartTile.Ligne]}";
             return $"[{pos}] {Text} ({Points}){(Scramble ? "*" : "")}";
         }
         public bool Equals(Word w)

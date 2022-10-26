@@ -27,10 +27,7 @@ namespace DawgResolver.Model
         public LetterType LetterType { get; set; }
         public Letter()
         {
-            Char = Game.EmptyChar;
-            Value = 0;
-            Count = 0;
-            LetterType = LetterType.Regular;
+            InitLetter(Game.EmptyChar, 0, 0, -1, LetterType.Regular);
 
         }
         public int DefaultCount { get; set; } = -1;
@@ -42,20 +39,30 @@ namespace DawgResolver.Model
                 return $"L{Char};{Value};{Count}";
             }
         }
-        public Letter(char @char, int value, int count) : this()
+        public Letter(char mychar, int value, int count) : this()
         {
-            Char = @char;
+            InitLetter(mychar, value, count);
+        }
+        public void CopyFromOtherLetter(Letter other)
+        {
+            InitLetter(other.Char, other.Value, other.Count, other.DefaultCount, other.LetterType);
+        }
+        public void InitLetter(char mychar, int value, int count, int? defaultCount = null, LetterType letterType = LetterType.Regular)
+        {
+            Char = mychar;
             Value = value;
             Count = count;
-            if (DefaultCount == -1) DefaultCount = count;
+            DefaultCount = defaultCount ?? count;
+            LetterType = letterType;
         }
+
         public bool HasValue()
         {
             return this != null && this.Char != Game.EmptyChar;
         }
         public string GetLetterByIndex(int index)
         {
-            return Game.DefaultInstance.Solver.Find((char)(index + Dictionnaire.AscShift)).Char.ToString();
+            return Solver.DefaultInstance.Find((char)(index + Dictionnaire.AscShift)).Char.ToString();
         }
 
         public char Char
@@ -63,7 +70,9 @@ namespace DawgResolver.Model
             get => @char; set { @char = value; }
         }
         public int Value { get; set; }
-        public int Count { get => count; set
+        public int Count
+        {
+            get => count; set
             {
                 count = value;
                 OnPropertyChanged();

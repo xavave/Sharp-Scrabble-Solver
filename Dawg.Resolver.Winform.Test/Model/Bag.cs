@@ -13,7 +13,7 @@ namespace DawgResolver.Model
         private Bag()
         {
             if (Letters == null)
-                Letters = new List<Letter>(Game.DefaultInstance.Solver.Alphabet.Select(s => s.Clone() as Letter));
+                Letters = new List<Letter>(Solver.DefaultInstance.Alphabet.Select(s => s.Clone() as Letter));
             ResetCount();
         }
 
@@ -53,7 +53,7 @@ namespace DawgResolver.Model
             int charIdx = r.Next(0, FlatList.Length - 1);
             var c = FlatList[charIdx];
             if (c == Game.EmptyChar) throw new ArgumentException(nameof(c));
-            var alphabetLetter = Game.DefaultInstance.Solver.Find(c);
+            var alphabetLetter = Solver.DefaultInstance.Find(c);
 
             var bagLetter = Letters.FirstOrDefault(l => l.Char == alphabetLetter.Char);
             if (bagLetter.Count > 0) bagLetter.Count--;
@@ -62,7 +62,7 @@ namespace DawgResolver.Model
         }
         public void PutBackLetterInBag(Letter l)
         {
-            var letter = Game.DefaultInstance.Solver.Find(l.Char);
+            var letter = Solver.DefaultInstance.Find(l.Char);
             letter.Count++;
         }
 
@@ -86,7 +86,7 @@ namespace DawgResolver.Model
 
             if (!string.IsNullOrWhiteSpace(forcedLetters))
             {
-                p.Rack.Letters = forcedLetters.Select(c => Game.DefaultInstance.Solver.Find(c)).ToList();
+                p.Rack.Letters = forcedLetters.Select(c => Solver.DefaultInstance.Find(c)).ToList();
                 return;
             }
             // Si le sac est vide

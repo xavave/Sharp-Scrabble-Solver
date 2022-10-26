@@ -1,6 +1,6 @@
 ---
-name: Sharp Scrabble Resolver
-description: scrabble resolver ODS6 / ODS7 in french
+name: Sharp Scrabble Solver
+description: scrabble Solver ODS6 - ODS7 in french  / English Collins (2019)
 page_type: 
 languages:
 - csharp

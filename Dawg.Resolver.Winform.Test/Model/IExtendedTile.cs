@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using Dawg.Solver.Winform;
+
 namespace DawgResolver.Model
 {
 
@@ -9,13 +11,13 @@ namespace DawgResolver.Model
         TileType TileType { get; }
         int Ligne { get; set; }
         int Col { get; set; }
-        Letter Letter { get; set; }
+        Letter Letter { get; }
         int LetterMultiplier { get; set; }
         int WordMultiplier { get; set; }
         int AnchorLeftMinLimit { get; set; }
         int AnchorLeftMaxLimit { get; set; }
         bool IsAnchor { get; }
-        IDictionary<int, int> Controlers { get; }
+        IDictionary<int, int> Controllers { get; }
         bool IsEmpty { get; }
         int WordIndex { get; set; }
         bool IsValidated { get; set; }
@@ -30,7 +32,7 @@ namespace DawgResolver.Model
     }
     public interface IExtendedTile : IBaseTile
     {
-        bool? IsPlayedByPlayer1 { get; }
+        bool? IsPlayer1 { get; }
         string Serialize { get; }
         System.Drawing.Color BackColor { get; set; }
 
@@ -41,6 +43,7 @@ namespace DawgResolver.Model
         void SetBackColorFrom(IExtendedTile t);
         void SetBackColorFromInnerTile();
         void SetBackColorFromInnerLetterType();
+        IExtendedTile FindFormTile(HashSet<IExtendedTile> boardTiles);
     }
 
 }

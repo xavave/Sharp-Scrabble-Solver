@@ -110,16 +110,13 @@ namespace Dawg.Solver.Winform
                 frmTile = BoardTiles.FirstOrDefault(f => f.Name == $"header_ligne{i}");
                 if (frmTile == null)
                 {
-                    frmTile = new FormTile(i, 0, $"header_ligne{i}", FormTile.HeaderTilesBackColor) { Text = $"{game.Solver.Alphabet.ElementAt(i).Char}" };
+                    frmTile = new FormTile(i, 0, $"header_ligne{i}", FormTile.HeaderTilesBackColor) { Text = $"{Solver.DefaultInstance.Alphabet.ElementAt(i).Char}" };
                     BoardTiles.Add(frmTile);
                 }
             }
         }
 
-        private IExtendedTile FindFormTile(IExtendedTile t)
-        {
-            return BoardTiles.FirstOrDefault(f => f.Name == $"t{t.Ligne}_{t.Col}");
-        }
+       
 
         public int PreviewWord(Player p, Word word, bool validateWord = false, bool addMove = true)
         {
@@ -130,14 +127,14 @@ namespace Dawg.Solver.Winform
                 if (addMove)
                 {
                     word.Index = game.MoveIndex++;
-                    word.IsPlayedByPlayer1 = p.Name == game.Player1.Name;
+                  
                     p.Moves.Add(word);
-                    game.Solver.PlayedWords.Add(word);
+                    Solver.DefaultInstance.PlayedWords.Add(word);
                     DisplayPlayerWord(word);
                 }
                 foreach (var t in word.GetTiles())
                 {
-                    var frmTile = FindFormTile(t);
+                    var frmTile = t.FindFormTile(BoardTiles);
                     if (frmTile.IsEmpty)
                     {
                         //frmTile.Invoke((MethodInvoker)(() =>
@@ -153,8 +150,8 @@ namespace Dawg.Solver.Winform
                             //frmTile.IsPlayedByPlayer1 = p == game.Player1;
                             t.WordIndex = word.Index;
 
-                            if (t.IsPlayedByPlayer1.HasValue)
-                                frmTile.BackColor = t.IsPlayedByPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
+                            if (t.IsPlayer1.HasValue)
+                                frmTile.BackColor = t.IsPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
 
                         }
                     }
@@ -166,7 +163,7 @@ namespace Dawg.Solver.Winform
                     {
                         frmTile.SetBackColorFromInnerLetterType();
 
-                        game.CurrentPlayer.Rack.Remove(game.Solver.Alphabet[26]);
+                        game.CurrentPlayer.Rack.Remove(Solver.DefaultInstance.Alphabet[26]);
                     }
 
                     else
@@ -279,7 +276,7 @@ namespace Dawg.Solver.Winform
         {
 
             if (LastPlayedTile == null) return;
-            var word = LastPlayedTile.Tile.GetWordFromTile(Game.CurrentWordDirection);
+            var word = LastPlayedTile.GetWordFromTile(Game.CurrentWordDirection);
             if (word == null) return;
             if (game.IsPlayer1)
                 PreviewWord(game.Player1, word, true);
@@ -320,10 +317,10 @@ namespace Dawg.Solver.Winform
             Cursor.Current = Cursors.WaitCursor;
             game.Bag.GetLetters(game.Player1, txtRackP1.Text.Trim());
             lsbHintWords.DisplayMember = "DisplayText";
-            var ret = game.Solver.FindMoves(150, Game.HintSortByBestScore);
+            var ret = Solver.DefaultInstance.FindMoves(150, Game.HintSortByBestScore);
             lsbInfos.Items.Insert(0, game.IsTransposed ? "Transposed" : "Not Transposed");
-            lsbInfos.Items.Insert(0, $"NbPossibleMoves={game.Solver.NbPossibleMoves}");
-            lsbInfos.Items.Insert(0, $"NbAcceptedMoves={game.Solver.NbAcceptedMoves}");
+            lsbInfos.Items.Insert(0, $"NbPossibleMoves={Solver.DefaultInstance.NbPossibleMoves}");
+            lsbInfos.Items.Insert(0, $"NbAcceptedMoves={Solver.DefaultInstance.NbAcceptedMoves}");
 
             lsbHintWords.DataSource = ret;
             Cursor.Current = Cursors.Default;
@@ -362,7 +359,7 @@ namespace Dawg.Solver.Winform
                     game.NoMoreMovesCount++;
 
                 }
-                var ret = game.Solver.FindMoves(60);
+                var ret = Solver.DefaultInstance.FindMoves(60);
                 lsbHintWords.Invoke((MethodInvoker)(() =>
                 {
                     using (var susp = new SuspendDrawingUpdate(lsbHintWords))
@@ -370,7 +367,7 @@ namespace Dawg.Solver.Winform
                 }));
                 if (ret.Any())
                 {
-                    var word = ret.Where(w => !game.Solver.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).FirstOrDefault() as Word;
+                    var word = ret.Where(w => !Solver.DefaultInstance.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).FirstOrDefault() as Word;
                     if (word == null)//TODO CHECK || CurrentWord?.Text == word.Text)
                     {
                         game.EndGame = true;
@@ -510,72 +507,17 @@ namespace Dawg.Solver.Winform
 
         private void btnSaveGame_Click(object sender, EventArgs e)
         {
-            SaveGame();
+            Game.DefaultInstance.SaveGame();
         }
 
-        public void SaveGame()
-        {
-            var sfd = saveFileDialog1.ShowDialog();
-            if (sfd == DialogResult.OK)
-            {
-                var ret = game.Serialise();
-                File.WriteAllText(saveFileDialog1.FileName, ret);
-                MessageBox.Show($"Game saved as {saveFileDialog1.FileName}");
-                this.Text = $"Scrabble ({saveFileDialog1.FileName})";
-                openFileDialog1.FileName = saveFileDialog1.FileName;
-
-            }
-        }
+       
 
         private void btnLoadGame_Click(object sender, EventArgs e)
         {
-            LoadGame();
+            Game.DefaultInstance.Load();
         }
 
-        public void LoadGame()
-        {
-            game.Player1.Moves.Clear();
-            game.Player2.Moves.Clear();
-            game.IsTransposed = false;
-            var ofd = openFileDialog1.ShowDialog();
-            if (ofd == DialogResult.OK)
-            {
-                saveFileDialog1.FileName = openFileDialog1.FileName;
-                this.Text = $"Scrabble ({openFileDialog1.FileName})";
-                var txt = File.ReadAllText(openFileDialog1.FileName);
-                game.Deserialize(txt);
-                game.IsPlayer1 = true;
-                foreach (var t in game.Grid)
-                {
-                    var frmTile = FindFormTile(t);
-                    if (t.IsValidated)
-                    {
-                        frmTile.BackColor = t.IsPlayedByPlayer1.HasValue && t.IsPlayedByPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
-                    }
-                    else
-                    {
-                        frmTile.SetBackColorFromInnerTile();
-
-                    }
-                }
-                var wordsCount = Math.Max(game.Player1.Moves.Count, game.Player2.Moves.Count);
-                for (int i = 0; i < wordsCount; i++)
-                {
-                    if (i < game.Player1.Moves.Count)
-                    {
-                        PreviewWord(game.Player1, game.Player1.Moves.ElementAt(i), true, true);
-
-                    }
-                    if (i < game.Player2.Moves.Count)
-                    {
-                        PreviewWord(game.Player2, game.Player2.Moves.ElementAt(i), true, true);
-
-                    }
-                }
-                //using (new SuspendDrawingUpdate(this))
-                RefreshBoard();
-            }
-        }
+       
 
         private void btnNewGame_Click(object sender, EventArgs e)
         {
@@ -597,7 +539,7 @@ namespace Dawg.Solver.Winform
             bool isPlayer1word = game.Player1.Moves.Contains(word);
             foreach (var t in word.GetTiles())
             {
-                var frmTile = FindFormTile(t);
+                var frmTile = t.FindFormTile(BoardTiles);
 
                 frmTile.BackColor = isPlayer1word ? Color.LightBlue : Color.LightCoral;
             }
@@ -630,17 +572,12 @@ namespace Dawg.Solver.Winform
             if (index != System.Windows.Forms.ListBox.NoMatches)
             {
                 var word = lsbWords.Items[index] as Word;
-                ShowDefinition(word);
+                if (word == null) return;
+                word.ShowDefinition();
             }
         }
 
-        public void ShowDefinition(Word word)
-        {
-
-            if (word != null && !string.IsNullOrWhiteSpace(word.Text))
-                Process.Start($"https://1mot.net/{word.Text.ToLower()}");
-        }
-
+       
         private void rbMaxLength_CheckedChanged(object sender, EventArgs e)
         {
             Game.HintSortByBestScore = !rbMaxLength.Checked;
@@ -650,12 +587,12 @@ namespace Dawg.Solver.Winform
         {
             if (e.Control && e.KeyCode == Keys.S)
             {
-                SaveGame();
+                Game.DefaultInstance.SaveGame();
 
             }
             else if (e.Control && e.KeyCode == Keys.L)
             {
-                LoadGame();
+                Game.DefaultInstance.Load();
 
             }
 
@@ -666,18 +603,18 @@ namespace Dawg.Solver.Winform
         }
         private void rbWordsWithFriends_CheckedChanged(object sender, EventArgs e)
         {
-            game.Solver.Mode = rbGameStyleScrabble.Checked ? 'S' : 'W';
+            Solver.DefaultInstance.Mode = rbGameStyleScrabble.Checked ? 'S' : 'W';
             NewGame(CurrentDicoName, !ckKeepExistingBoard.Checked);
         }
 
         private void txtMotExiste_TextChanged(object sender, EventArgs e)
         {
-            lblMotExiste.ForeColor = game.Solver.Dico.MotAdmis(txtMotExiste.Text.Trim()) ? Color.Green : Color.Red;
+            lblMotExiste.ForeColor = Dictionnaire.DefaultInstance.MotAdmis(txtMotExiste.Text.Trim()) ? Color.Green : Color.Red;
         }
 
         private void txtMotExiste_DoubleClick(object sender, EventArgs e)
         {
-            if (game.Solver.Dico.MotAdmis(txtMotExiste.Text.Trim()))
+            if (Dictionnaire.DefaultInstance.MotAdmis(txtMotExiste.Text.Trim()))
                 Process.Start($"https://1mot.net/{txtMotExiste.Text.ToLower()}");
 
         }
