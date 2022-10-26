@@ -33,6 +33,7 @@ namespace Dawg.Solver.Winform
         public Bag Bag { get; private set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
+        public IExtendedTile LastPlayedTile { get; set; }
         public bool Stop { get; set; } = false;
         public int MoveIndex { get; set; } = 1;
         public static char EmptyChar { get; } = ' ';
@@ -331,10 +332,75 @@ namespace Dawg.Solver.Winform
             InitGameProperties();
         }
 
-        public void Load(HashSet<IExtendedTile> boardTiles)
+
+        public int PreviewWord(Player p, Action<Word> displayWord, Word word, bool validateWord = false, bool addMove = true)
+        {
+            //ClearTilesInPlay(p);
+            int points = word.SetWord(validateWord);
+            if (validateWord || points > 0)
+            {
+                if (addMove)
+                {
+                    word.Index = MoveIndex++;
+
+                    p.Moves.Add(word);
+                    Solver.DefaultInstance.PlayedWords.Add(word);
+                    displayWord.Invoke(word);
+
+                }
+                foreach (var t in word.GetTiles())
+                {
+                    //var frmTile = t.FindFormTile(boardTiles);
+                    if (t.IsEmpty)
+                    {
+                        //frmTile.Invoke((MethodInvoker)(() =>
+                        //{
+                        t.SetBackColorFromInnerTile();
+
+                        //}));
+                    }
+                    else
+                    {
+                        if (t.WordIndex == 0)
+                        {
+                            //frmTile.IsPlayedByPlayer1 = p == game.Player1;
+                            t.WordIndex = word.Index;
+
+                            if (t.IsPlayer1.HasValue)
+                                t.BackColor = t.IsPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
+
+                        }
+                    }
+
+                    if (t.IsValidated)
+                        continue;
+
+                    if (t.Letter.LetterType == LetterType.Joker)
+                    {
+                        t.SetBackColorFromInnerLetterType();
+
+                        CurrentPlayer.Rack.Remove(Solver.DefaultInstance.Alphabet[26]);
+                    }
+
+                    else
+                    {
+                        CurrentPlayer.Rack.Remove(t.Letter);
+
+                    }
+                }
+
+                if (validateWord)
+                    IsPlayer1 = !IsPlayer1;
+
+            }
+            else return 0;
+
+            return points;
+        }
+        public void Load(HashSet<IExtendedTile> boardTiles, Action<Word> displayWord)
         {
             var filter = "Scrabble Game|*.gam";
-
+            var wordsCount = 0;
             var sfd = new SaveFileDialog()
             {
                 Filter = filter,
@@ -375,22 +441,27 @@ namespace Dawg.Solver.Winform
 
                     }
                 }
-                var wordsCount = Math.Max(this.Player1.Moves.Count, this.Player2.Moves.Count);
-                for (int i = 0; i < wordsCount; i++)
+                wordsCount = Math.Max(this.Player1.Moves.Count, this.Player2.Moves.Count);
+
+            }
+            if (displayWord == null) return;
+            PreviewWords((w)=>displayWord, wordsCount);
+
+        }
+        private void PreviewWords(Func<Word, Action<Word>> displayWord, int wordsCount)
+        {
+            for (int i = 0; i < wordsCount; i++)
+            {
+                if (i < Player1.Moves.Count)
                 {
-                    if (i < this.Player1.Moves.Count)
-                    {
-                        PreviewWord(this.Player1, this.Player1.Moves.ElementAt(i), true, true);
+                    PreviewWord(Player1, displayWord(Player1.Moves[i]), Player1.Moves[i], true, true);
 
-                    }
-                    if (i < this.Player2.Moves.Count)
-                    {
-                        PreviewWord(this.Player2, this.Player2.Moves.ElementAt(i), true, true);
-
-                    }
                 }
-               
-                RefreshBoard();
+                if (i < Player2.Moves.Count)
+                {
+                    PreviewWord(Player2, displayWord(Player2.Moves[i]), Player2.Moves[i], true, true);
+
+                }
             }
         }
         public void SaveGame()

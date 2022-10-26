@@ -50,10 +50,9 @@ namespace Dawg
         /// </summary>
         public List<Noeud> dawg;
 
-        public Dictionnaire(string nomDico = null)
+        public Dictionnaire(string nomDico)
         {
             Joker = '?';
-            if (!string.IsNullOrEmpty(nomDico) && DAWG == null)
                 ChargerFichierDAWG(nomDico);
         }
 

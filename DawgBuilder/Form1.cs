@@ -10,7 +10,6 @@ namespace Test_DAWG
     public partial class Form1 : Form
     {
 
-        Dictionnaire dico = new Dictionnaire();
 
         public Form1()
         {
@@ -19,8 +18,8 @@ namespace Test_DAWG
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            dico.EtapeAtteinte += dico_EtapeAtteinte;
-            dico.Progression += dico_Progression;
+            Dictionnaire.DefaultInstance.EtapeAtteinte += dico_EtapeAtteinte;
+            Dictionnaire.DefaultInstance.Progression += dico_Progression;
         }
 
         void dico_EtapeAtteinte(string Etape, long TempsExecution)
@@ -29,7 +28,7 @@ namespace Test_DAWG
 
             ListBox lst;
 
-            switch (dico.TravailEnCours)
+            switch (Dictionnaire.DefaultInstance.TravailEnCours)
             {
                 case TravailEnCours.ChargementFichierASCII:
                     lst = lstChargementASCII;
@@ -57,7 +56,7 @@ namespace Test_DAWG
 
         void dico_Progression(int Pourcent)
         {
-            switch (dico.TravailEnCours)
+            switch (Dictionnaire.DefaultInstance.TravailEnCours)
             {
                 case TravailEnCours.ChargementFichierASCII:
                     break;
@@ -84,15 +83,15 @@ namespace Test_DAWG
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                  
-                    dico.ChargerFichierDAWG(ofd.FileName);
+
+                    Dictionnaire.DefaultInstance.ChargerFichierDAWG(ofd.FileName);
                 }
             }
         }
 
         private void butAjouterUnMot_Click(object sender, EventArgs e)
         {
-            dico.AjouterUnMot(txtNvMot.Text.ToLower());
+            Dictionnaire.DefaultInstance.AjouterUnMot(txtNvMot.Text.ToLower());
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -114,7 +113,7 @@ namespace Test_DAWG
 
                     grpLectureDAWG.Enabled = true;
                     grpAjouterMot.Enabled = grpLectureDAWG.Enabled;
-                    dicoLoaded = dico.ChargerDictionnaireAscii(ofd.FileName);
+                    dicoLoaded = Dictionnaire.DefaultInstance.ChargerDictionnaireAscii(ofd.FileName);
                 }
             }
             btnCreationDawg.Enabled = dicoLoaded;
@@ -123,7 +122,7 @@ namespace Test_DAWG
         private void btnCreationDawg_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            dico.ConstruireDawgEnDeuxTemps();
+            Dictionnaire.DefaultInstance.ConstruireDawgEnDeuxTemps();
 
             Cursor.Current = Cursors.Default;
 

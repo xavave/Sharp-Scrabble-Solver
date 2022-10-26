@@ -9,13 +9,13 @@ namespace DawgResolver.Model
         public string Name { get; set; }
         public PlayerRack Rack { get; }
         public int Points { get; set; }
-        public HashSet<Word> Moves { get; }
+        public IList<Word> Moves { get; }
         public Player(string name)
         {
 
             Name = name;
             Rack = new PlayerRack();
-            Moves = new HashSet<Word>();
+            Moves = new List<Word>();
 
         }
 

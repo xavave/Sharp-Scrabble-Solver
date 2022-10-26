@@ -116,73 +116,6 @@ namespace Dawg.Solver.Winform
             }
         }
 
-       
-
-        public int PreviewWord(Player p, Word word, bool validateWord = false, bool addMove = true)
-        {
-            //ClearTilesInPlay(p);
-            int points = word.SetWord(validateWord);
-            if (validateWord || points > 0)
-            {
-                if (addMove)
-                {
-                    word.Index = game.MoveIndex++;
-                  
-                    p.Moves.Add(word);
-                    Solver.DefaultInstance.PlayedWords.Add(word);
-                    DisplayPlayerWord(word);
-                }
-                foreach (var t in word.GetTiles())
-                {
-                    var frmTile = t.FindFormTile(BoardTiles);
-                    if (frmTile.IsEmpty)
-                    {
-                        //frmTile.Invoke((MethodInvoker)(() =>
-                        //{
-                        frmTile.SetBackColorFromInnerTile();
-
-                        //}));
-                    }
-                    else
-                    {
-                        if (t.WordIndex == 0)
-                        {
-                            //frmTile.IsPlayedByPlayer1 = p == game.Player1;
-                            t.WordIndex = word.Index;
-
-                            if (t.IsPlayer1.HasValue)
-                                frmTile.BackColor = t.IsPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
-
-                        }
-                    }
-
-                    if (frmTile.IsValidated)
-                        continue;
-
-                    if (t.Letter.LetterType == LetterType.Joker)
-                    {
-                        frmTile.SetBackColorFromInnerLetterType();
-
-                        game.CurrentPlayer.Rack.Remove(Solver.DefaultInstance.Alphabet[26]);
-                    }
-
-                    else
-                    {
-                        game.CurrentPlayer.Rack.Remove(t.Letter);
-
-                    }
-                }
-
-                if (validateWord)
-                    game.IsPlayer1 = !game.IsPlayer1;
-
-            }
-            else return 0;
-
-            RefreshBoard();
-            return points;
-        }
-
         private void RefreshBoard()
         {
             //gbBoard.Invoke((MethodInvoker)(() => gbBoard.SuspendLayout()));
@@ -279,12 +212,16 @@ namespace Dawg.Solver.Winform
             var word = LastPlayedTile.GetWordFromTile(Game.CurrentWordDirection);
             if (word == null) return;
             if (game.IsPlayer1)
-                PreviewWord(game.Player1, word, true);
+                Game.DefaultInstance.PreviewWord(game.Player1, (w) => AddWord(w), word, true);
             else
-                PreviewWord(game.Player2, word, true);
-
+                Game.DefaultInstance.PreviewWord(game.Player2, (w) => AddWord(w), word, true);
+            RefreshBoard();
         }
-
+        private Word AddWord(Word word)
+        {
+            lsbWords.Invoke((MethodInvoker)(() => lsbWords.Text = word.Text));
+            return word;
+        }
         //private bool ValidateWord(Player p)
         //{
         //    var validate = new List<VTile>();
@@ -375,7 +312,8 @@ namespace Dawg.Solver.Winform
                     }
                     CurrentWord = word;
 
-                    int points = PreviewWord(game.CurrentPlayer, word, true);
+                    int points = Game.DefaultInstance.PreviewWord(game.CurrentPlayer, (w) => AddWord(w), word, true);
+                    RefreshBoard();
                     game.CurrentPlayer.Points += points;
 
                 }
@@ -409,10 +347,6 @@ namespace Dawg.Solver.Winform
         private void InsertLsbText(ListBox lsb, string txt)
         {
             lsb.Invoke((MethodInvoker)(() => lsb.Items.Insert(0, txt)));
-        }
-        private void DisplayPlayerWord(Word word)
-        {
-            lsbWords.Invoke((MethodInvoker)(() => lsbWords.Items.Add(word)));
         }
 
         private void DisplayScores()
@@ -501,7 +435,8 @@ namespace Dawg.Solver.Winform
         {
             var word = lsbHintWords.SelectedItem as Word;
             if (word == null) return;
-            PreviewWord(game.CurrentPlayer, word, false, false);
+            Game.DefaultInstance.PreviewWord(game.CurrentPlayer, (w) => AddWord(w), word, false, false);
+            RefreshBoard();
 
         }
 
@@ -510,14 +445,15 @@ namespace Dawg.Solver.Winform
             Game.DefaultInstance.SaveGame();
         }
 
-       
+
 
         private void btnLoadGame_Click(object sender, EventArgs e)
         {
-            Game.DefaultInstance.Load();
+            Game.DefaultInstance.Load(BoardTiles, (w) => AddWord(w));
+
         }
 
-       
+
 
         private void btnNewGame_Click(object sender, EventArgs e)
         {
@@ -577,7 +513,7 @@ namespace Dawg.Solver.Winform
             }
         }
 
-       
+
         private void rbMaxLength_CheckedChanged(object sender, EventArgs e)
         {
             Game.HintSortByBestScore = !rbMaxLength.Checked;
@@ -592,7 +528,7 @@ namespace Dawg.Solver.Winform
             }
             else if (e.Control && e.KeyCode == Keys.L)
             {
-                Game.DefaultInstance.Load();
+                Game.DefaultInstance.Load(BoardTiles, (w) => AddWord(w));
 
             }
 

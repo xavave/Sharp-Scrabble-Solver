@@ -207,7 +207,7 @@ namespace Dawg.Solver.Winform
             }
             else if (e.Control && e.KeyCode == Keys.L)
             {
-                Game.DefaultInstance.Load();
+               //TODO Game.DefaultInstance.Load(boardTiles);
                 return;
             }
             IExtendedTile frmTile = sender as FormTile;
@@ -226,10 +226,10 @@ namespace Dawg.Solver.Winform
                     //Game.Grid[Ligne, Col].Letter = this.Letter;
                     //this.Tile.Letter = this.Letter;
                     Game.DefaultInstance.Bag.RemoveLetterFromBag(this.Letter.Char);
-                    Form.txtBag.Text = Game.DefaultInstance.Bag.GetBagContent();
+                    //TODO Form.txtBag.Text = Game.DefaultInstance.Bag.GetBagContent();
                     //Game.Grid[Ligne, Col].IsValidated = true;
                     IsValidated = true;
-                    Form.LastPlayedTile = this;
+                    Game.DefaultInstance.LastPlayedTile = this;
 
                 }
 
@@ -264,10 +264,11 @@ namespace Dawg.Solver.Winform
                 else
                     word = this.UpTile.GetWordFromTile(Game.CurrentWordDirection);
 
-                if (Game.DefaultInstance.IsPlayer1)
-                    Form.PreviewWord(Game.DefaultInstance.Player1, word, true);
-                else
-                    Form.PreviewWord(Game.DefaultInstance.Player2, word, true);
+                //TODO
+                //if (Game.DefaultInstance.IsPlayer1)
+                //    Game.DefaultInstance.PreviewWord(Game.DefaultInstance.Player1,(w) => addw word, true);
+                //else
+                //    Game.DefaultInstance.PreviewWord(Game.DefaultInstance.Player2, word, true);
 
             }
             else
@@ -331,12 +332,12 @@ namespace Dawg.Solver.Winform
             TxtInfos += "Controlers:" + Environment.NewLine;
             foreach (var c in t.Controllers)
                 TxtInfos += $"{Solver.DefaultInstance.Alphabet[c.Key]}:{c.Value}{Environment.NewLine}";
-
-            Form.lsbInfos.Items.Clear();
-            foreach (var l in TxtInfos.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
-            {
-                Form.lsbInfos.Items.Add(l);
-            }
+            //TODO
+            //Form.lsbInfos.Items.Clear();
+            //foreach (var l in TxtInfos.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            //{
+            //    Form.lsbInfos.Items.Add(l);
+            //}
         }
 
 
