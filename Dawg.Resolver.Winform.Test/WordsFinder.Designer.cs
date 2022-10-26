@@ -1,4 +1,4 @@
-﻿namespace Dawg.Resolver.Winform.Test
+﻿namespace Dawg.Solver.Winform
 {
     partial class WordsFinder
     {

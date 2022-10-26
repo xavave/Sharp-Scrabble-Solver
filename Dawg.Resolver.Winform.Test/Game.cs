@@ -6,7 +6,9 @@ using System.Threading;
 
 using Dawg;
 
-namespace DawgResolver.Model
+using DawgResolver.Model;
+
+namespace Dawg.Solver.Winform
 {
     public class GameBuilder
     {
@@ -24,7 +26,11 @@ namespace DawgResolver.Model
     public class Game
     {
         private bool isFirstInit => EndGame;
-        private static Game instance = null;
+        private static Game instance
+        {
+            get;
+            set;
+        }
         public static Game DefaultInstance
         {
             get
@@ -40,7 +46,7 @@ namespace DawgResolver.Model
         public static char Joker;
         public bool IsPlayer1 { get; set; } = true;
         public bool EndGame { get; set; } = false;
-        public Resolver Resolver { get; private set; }
+        public Solver Solver { get; private set; }
         public Bag Bag { get; private set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
@@ -78,7 +84,7 @@ namespace DawgResolver.Model
             sb.AppendLine("_______________");
             for (int ligne = 0; ligne < Tiles.GetLength(0); ligne++)
             {
-                sb.Append($"{Resolver.Alphabet.ElementAt(ligne).Char}|");
+                sb.Append($"{Solver.Alphabet.ElementAt(ligne).Char}|");
                 for (int col = 0; col < Tiles.GetLength(1); col++)
                 {
 
@@ -120,7 +126,7 @@ namespace DawgResolver.Model
                 {
                     var source = backupGrid[col, ligne];
                     if (source == null) continue;
-                    this.Grid[ligne, col] = new GenericTile(this.Resolver, col, ligne);
+                    this.Grid[ligne, col] = new FormTile(col, ligne);
                     this.Grid[ligne, col].Ligne = ligne;
                     this.Grid[ligne, col].Col = col;
                     this.Grid[ligne, col].WordMultiplier = source.WordMultiplier;
@@ -138,7 +144,7 @@ namespace DawgResolver.Model
         /// Il s'agit des cases inocupées adjacentes à une case déjà occupée
         /// Ce recensement est utile afin de limiter les recherches aux cases où l'on peut jouer des coups
         /// </summary>
-        public void FindAnchors(Resolver r)
+        public void FindAnchors()
         {
 
             foreach (var t in this.Grid.OfType<IExtendedTile>().Where(ti => ti.IsAnchor))
@@ -147,7 +153,7 @@ namespace DawgResolver.Model
                 // Cas où l'ancre est précédée d'une autre ancre, la taille du préfixe est exactement 0
 
                 t.IsValidated = false;
-                IExtendedTile tileCpy = t.Copy(r);
+                IExtendedTile tileCpy = t.Copy();
 
                 int cptPrefix = 0;
 
@@ -218,10 +224,10 @@ namespace DawgResolver.Model
             {
                 // A partir du deuxième coup
                 // Il faut recenser les cases où l'on peut commencer de nouveaux mots ou continuer des mots existants
-                FindAnchors(Resolver);
+                FindAnchors();
 
                 // Et vérifier les lettres qu'on peut y placer pour que les éventuels mots formés verticalement soient valides
-                FindControlers(Resolver);
+                FindControlers();
             }
 
         }
@@ -246,7 +252,7 @@ namespace DawgResolver.Model
         /// dans le sens vertical. Ce travail est effectué avant la recherche proprement dite pour limiter les possibilités à tester
         /// on en profite également pour précalculer le point rapporté par les mots formés verticalement
         /// </summary>
-        public void FindControlers(Resolver r)
+        public void FindControlers()
         {
             int L = 0;
 
@@ -256,7 +262,7 @@ namespace DawgResolver.Model
                 {
                     var wordStart = string.Empty;
                     var wordEnd = string.Empty;
-                    var tileCpy = t.Copy(r);
+                    var tileCpy = t.Copy();
                     int points = 0;
 
                     //On rassemble le début éventuel des mots (lettres situées au dessus de la case)
@@ -269,7 +275,7 @@ namespace DawgResolver.Model
                     }
                     wordStart = string.Join("", wordStart.Reverse());
                     wordEnd = "";
-                    tileCpy = t.Copy(r);
+                    tileCpy = t.Copy();
 
                     //On rassemble la fin éventuelle des mots (lettres situées en dessous de la case)
                     while (tileCpy.DownTile != null && !tileCpy.DownTile.IsEmpty)
@@ -285,10 +291,10 @@ namespace DawgResolver.Model
                     //Si tel est le cas, la lettre L est jouable pour la case considérée
                     //et on précalcule le point que le mot verticalement formé permettrait de gagner si L était jouée
                     L = 0;
-                    foreach (var c in r.Alphabet)
+                    foreach (var c in Solver.Alphabet)
                     {
                         var mot = wordStart + c.Char + wordEnd;
-                        if (mot.Length > 1 && r.Dico.MotAdmis(mot))
+                        if (mot.Length > 1 && Solver.Dico.MotAdmis(mot))
                         {
                             Grid[t.Ligne, t.Col].Controlers[((int)c.Char) - Dictionnaire.AscShift] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
                             L++;
@@ -313,7 +319,7 @@ namespace DawgResolver.Model
         }
         public CustomExtendedTilesGrid BackupGameGrid()
         {
-            var ret = new CustomExtendedTilesGrid(this, BoardSize, true);
+            var ret = new CustomExtendedTilesGrid(BoardSize, true);
             for (int ligne = 0; ligne < Grid.GetLength(0); ligne++)
                 for (int col = 0; col < Grid.GetLength(1); col++)
                 {
@@ -336,9 +342,9 @@ namespace DawgResolver.Model
 
             Dico = new Dictionnaire(nomDico);
             Joker = Dico.Joker;
-            Resolver = new Resolver(this, nomDico);
-            Player1 = new Player(this, "Player 1");
-            Player2 = new Player(this, "Player 2");
+            Solver = new Solver(nomDico);
+            Player1 = new Player("Player 1");
+            Player2 = new Player("Player 2");
             //TODO Grid = new CustomExtendedTilesGrid(this, BoardSize, true);
             //InitBoard();
             InitGameProperties();
@@ -346,13 +352,13 @@ namespace DawgResolver.Model
 
         public void InitGameProperties()
         {
-            Bag = Bag.Build(Resolver);
+            Bag = Bag.Build();
             IsTransposed = false;
             NoMoreMovesCount = 0;
             EndGame = false;
             IsPlayer1 = true;
             MoveIndex = 1;
-          
+
         }
 
         //public List<Letter> ClearTilesInPlay(Player p)
@@ -394,7 +400,7 @@ namespace DawgResolver.Model
         {
             var ret = $"P1?{IsPlayer1}" + Environment.NewLine;
             ret += "letters" + Environment.NewLine;
-            foreach (var l in Resolver.Alphabet)
+            foreach (var l in Solver.Alphabet)
                 ret += l.Serialize + Environment.NewLine;
 
             ret += "tiles" + Environment.NewLine;
@@ -415,7 +421,23 @@ namespace DawgResolver.Model
 
             return ret;
         }
+        public Word DeserializeMove(string s)
+        {
+            var l = s.Split(';');
+            var retWord = new Word()
+            {
+                Text = l[2],
+                Points = int.Parse(l[3]),
+                Direction = (MovementDirection)Enum.Parse(typeof(MovementDirection), l[4]),
+                Scramble = l[5].First() == '*',
+                Index = l.Length > 6 ? int.Parse(l[6]) : 0,
+                //TODO  //StartTile.Ligne = int.Parse(l[0].Substring(2)),
+                //StartTile.Col = int.Parse(l[1]),
 
+            };
+
+            return retWord;
+        }
         public void Deserialize(string txt)
         {
             //InitBoard();
@@ -430,19 +452,19 @@ namespace DawgResolver.Model
                 }
                 else if (l.StartsWith("L"))
                 {
-                    alphabet.Add(l.DeserializeLetter(Resolver));
+                    alphabet.Add(Solver.DeserializeLetter(l));
                 }
                 else if (l.StartsWith("T"))
                 {
-                    tiles.Add(l.DeserializeTile(Resolver));
+                    tiles.Add(Solver.DeserializeTile(l));
                 }
                 else if (l.StartsWith("M1"))
                 {
-                    Player1.Moves.Add(l.DeserializeMove(this));
+                    Player1.Moves.Add(DeserializeMove(l));
                 }
                 else if (l.StartsWith("M2"))
                 {
-                    Player2.Moves.Add(l.DeserializeMove(this));
+                    Player2.Moves.Add(DeserializeMove(l));
                 }
             }
             for (int idx = 0; idx < Bag.Letters.Count; idx++)

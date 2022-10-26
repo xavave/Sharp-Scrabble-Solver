@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 
-using DawgResolver;
-using DawgResolver.Model;
-
-namespace Dawg.Resolver.Winform.Test
+namespace Dawg.Solver.Winform
 {
     public partial class WordsFinder : Form
     {
@@ -22,7 +18,7 @@ namespace Dawg.Resolver.Winform.Test
             if (string.IsNullOrWhiteSpace(txtLetters.Text)) return;
             Cursor.Current = Cursors.WaitCursor;
 
-            var foundWords = game.Resolver.FindMoves(game, 500, false, txtLetters.Text);
+            var foundWords = game.Solver.FindMoves( 500, false, txtLetters.Text);
 
             lsbWords.DataSource = foundWords;
             lblNbWords.Text = $"{foundWords.Count} words found";

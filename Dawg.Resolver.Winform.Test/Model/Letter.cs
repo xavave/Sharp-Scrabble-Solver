@@ -3,10 +3,10 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 using Dawg;
+using Dawg.Solver.Winform;
 
 namespace DawgResolver.Model
 {
-
     public class Letter : ICloneable, INotifyPropertyChanged
     {
         private char @char;
@@ -24,11 +24,9 @@ namespace DawgResolver.Model
                 handler(this, new PropertyChangedEventArgs(caller));
             }
         }
-        public Resolver Resolver { get; }
         public LetterType LetterType { get; set; }
         public Letter()
         {
-            Resolver = Game.DefaultInstance.Resolver;
             Char = Game.EmptyChar;
             Value = 0;
             Count = 0;
@@ -57,7 +55,7 @@ namespace DawgResolver.Model
         }
         public string GetLetterByIndex(int index)
         {
-            return Resolver.Find((char)(index + Dictionnaire.AscShift)).Char.ToString();
+            return Game.DefaultInstance.Solver.Find((char)(index + Dictionnaire.AscShift)).Char.ToString();
         }
 
         public char Char

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8DA2C29C-DD08-4CAF-92AF-84012420155A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Dawg.Resolver.Winform.Test</RootNamespace>
-    <AssemblyName>Dawg.Resolver.Winform.Test</AssemblyName>
+    <RootNamespace>Dawg.Resolver.Winform</RootNamespace>
+    <AssemblyName>Dawg.Resolver.Winform</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Dawg.Resolver.Winform.Test.Program</StartupObject>
+    <StartupObject>Dawg.Solver.Winform.Test.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Scrabble_letters.ico</ApplicationIcon>
@@ -53,15 +53,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomGrid.cs" />
     <Compile Include="CustomGroupBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DawgSolver.cs" />
     <Compile Include="Form3.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form3.Designer.cs">
       <DependentUpon>Form3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Game.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -71,6 +74,14 @@
     <Compile Include="FormTile.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Model\Bag.cs" />
+    <Compile Include="Model\DawgSolver.cs" />
+    <Compile Include="Model\IColor.cs" />
+    <Compile Include="Model\IExtendedTile.cs" />
+    <Compile Include="Model\Letter.cs" />
+    <Compile Include="Model\Player.cs" />
+    <Compile Include="Model\TileType.cs" />
+    <Compile Include="Model\Word.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TranspTextBox.cs">
@@ -118,16 +129,20 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DawgResolver\Dawg.Resolver.csproj">
-      <Project>{E12BB466-F92A-40DC-B0C7-4CE18EE15EB9}</Project>
-      <Name>Dawg.Resolver</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Dawg\Dawg.csproj">
       <Project>{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}</Project>
       <Name>Dawg</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\dico_dawgODS7.txt" />
+    <None Include="EN_Collins_dawg.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="Resources\initial_board11S.txt" />
+    <EmbeddedResource Include="Resources\initial_board11W.txt" />
+    <EmbeddedResource Include="Resources\initial_board15S.txt" />
+    <EmbeddedResource Include="Resources\initial_board15W.txt" />
     <Content Include="Scrabble_letters.ico" />
   </ItemGroup>
   <ItemGroup>

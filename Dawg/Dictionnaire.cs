@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Threading;
-using System.Xml;
 
 namespace Dawg
 {
@@ -44,7 +42,7 @@ namespace Dawg
         public Dictionnaire(string nomDico = null)
         {
             Joker = '?';
-            if (!string.IsNullOrEmpty(nomDico))
+            if (!string.IsNullOrEmpty(nomDico) && DAWG == null)
                 ChargerFichierDAWG(nomDico);
         }
 
@@ -469,17 +467,18 @@ namespace Dawg
             Noeud[] noeuds = null;
             chrono.Restart();
             AnnonceEtape("Début du chargement du dictionnaire DAWG.");
-            var assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().SingleOrDefault(str => str.EndsWith(nomdico));
-            if (resourceName != null)
-            {
-                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                using (StreamReader reader = new StreamReader(stream, true))
-                {
-                    noeuds = BuildDawgNoeuds(reader.ReadToEnd());
-                }
-            }
-            else if (File.Exists(nomdico))
+            //var assembly = Assembly.GetExecutingAssembly();
+            //string resourceName = assembly.GetManifestResourceNames().SingleOrDefault(str => str.EndsWith(nomdico));
+            //if (resourceName != null)
+            //{
+            //    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            //    using (StreamReader reader = new StreamReader(stream, true))
+            //    {
+            //        noeuds = BuildDawgNoeuds(reader.ReadToEnd());
+            //    }
+            //}
+            //else
+            if (File.Exists(nomdico))
             {
                 noeuds = BuildDawgNoeuds(File.ReadAllText(nomdico));
             }

@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
 using Dawg;
+using Dawg.Solver.Winform;
 
 using DawgResolver.Model;
 
 namespace DawgResolver
 {
-    public class Resolver
+    public class Solver
     {
         public char Mode { get; set; } = 'S';//S=Scrabble
         private ImmutableList<Letter> AlphabetWWFAvecJoker { get; }
@@ -33,70 +32,69 @@ namespace DawgResolver
             new BindingList<Letter>(this.AlphabetScrabbleAvecJoker) : new BindingList<Letter>(this.AlphabetWWFAvecJoker);
         public Dictionnaire Dico { get; private set; }
         public Noeud Noeud { get; private set; }
-        public Game game { get; }
-        public Resolver(Game g, string nomDico = null)
+        public Solver(string nomDico = null)
         {
-            game = g;
+
             if (nomDico == null) nomDico = Dictionnaire.NomDicoDawgEN_Collins;
             LoadDic(nomDico);
             AlphabetWWFAvecJoker = ImmutableList.Create<Letter>(
 
-            new Letter(this, 'A', 1, 9),
-            new Letter(this, 'B', 5, 2),
-            new Letter(this, 'C', 4, 2),
-            new Letter(this, 'D', 3, 5),
-            new Letter(this, 'E', 1, 13),
-            new Letter(this, 'F', 5, 2),
-            new Letter(this, 'G', 5, 3),
-            new Letter(this, 'H', 5, 4),
-            new Letter(this, 'I', 1, 8),
-            new Letter(this, 'J', 8, 1),
-            new Letter(this, 'K', 10, 1),
-            new Letter(this, 'L', 2, 4),
-            new Letter(this, 'M', 4, 2),
-            new Letter(this, 'N', 1, 5),
-            new Letter(this, 'O', 4, 8),
-            new Letter(this, 'P', 4, 2),
-            new Letter(this, 'Q', 10, 1),
-            new Letter(this, 'R', 1, 6),
-            new Letter(this, 'S', 1, 5),
-            new Letter(this, 'T', 1, 7),
-            new Letter(this, 'U', 2, 4),
-            new Letter(this, 'V', 8, 2),
-            new Letter(this, 'W', 10, 1),
-            new Letter(this, 'X', 10, 1),
-            new Letter(this, 'Y', 10, 1),
-            new Letter(this, 'Z', 10, 1),
-            new Letter(this, Dico.Joker, 0, 2)
+            new Letter('A', 1, 9),
+            new Letter('B', 5, 2),
+            new Letter('C', 4, 2),
+            new Letter('D', 3, 5),
+            new Letter('E', 1, 13),
+            new Letter('F', 5, 2),
+            new Letter('G', 5, 3),
+            new Letter('H', 5, 4),
+            new Letter('I', 1, 8),
+            new Letter('J', 8, 1),
+            new Letter('K', 10, 1),
+            new Letter('L', 2, 4),
+            new Letter('M', 4, 2),
+            new Letter('N', 1, 5),
+            new Letter('O', 4, 8),
+            new Letter('P', 4, 2),
+            new Letter('Q', 10, 1),
+            new Letter('R', 1, 6),
+            new Letter('S', 1, 5),
+            new Letter('T', 1, 7),
+            new Letter('U', 2, 4),
+            new Letter('V', 8, 2),
+            new Letter('W', 10, 1),
+            new Letter('X', 10, 1),
+            new Letter('Y', 10, 1),
+            new Letter('Z', 10, 1),
+            new Letter(Dico.Joker, 0, 2)
             );
             AlphabetScrabbleAvecJoker = ImmutableList.Create<Letter>(
-            new Letter(this, 'A', 1, 9),
-            new Letter(this, 'B', 3, 2),
-            new Letter(this, 'C', 3, 2),
-            new Letter(this, 'D', 2, 3),
-            new Letter(this, 'E', 1, 15),
-            new Letter(this, 'F', 4, 2),
-            new Letter(this, 'G', 2, 2),
-            new Letter(this, 'H', 4, 2),
-            new Letter(this, 'I', 1, 8),
-            new Letter(this, 'J', 8, 1),
-            new Letter(this, 'K', 10, 1),
-            new Letter(this, 'L', 1, 5),
-            new Letter(this, 'M', 2, 3),
-            new Letter(this, 'N', 1, 6),
-            new Letter(this, 'O', 1, 6),
-            new Letter(this, 'P', 3, 2),
-            new Letter(this, 'Q', 8, 1),
-            new Letter(this, 'R', 1, 6),
-            new Letter(this, 'S', 1, 6),
-            new Letter(this, 'T', 1, 6),
-            new Letter(this, 'U', 1, 6),
-            new Letter(this, 'V', 4, 2),
-            new Letter(this, 'W', 10, 1),
-            new Letter(this, 'X', 10, 1),
-            new Letter(this, 'Y', 10, 1),
-            new Letter(this, 'Z', 10, 1),
-            new Letter(this, Dico.Joker, 0, 2)
+            new Letter('A', 1, 9),
+            new Letter('B', 3, 2),
+            new Letter('C', 3, 2),
+            new Letter('D', 2, 3),
+            new Letter('E', 1, 15),
+            new Letter('F', 4, 2),
+            new Letter('G', 2, 2),
+            new Letter('H', 4, 2),
+            new Letter('I', 1, 8),
+            new Letter('J', 8, 1),
+            new Letter('K', 10, 1),
+            new Letter('L', 1, 5),
+            new Letter('M', 2, 3),
+            new Letter('N', 1, 6),
+            new Letter('O', 1, 6),
+            new Letter('P', 3, 2),
+            new Letter('Q', 8, 1),
+            new Letter('R', 1, 6),
+            new Letter('S', 1, 6),
+            new Letter('T', 1, 6),
+            new Letter('U', 1, 6),
+            new Letter('V', 4, 2),
+            new Letter('W', 10, 1),
+            new Letter('X', 10, 1),
+            new Letter('Y', 10, 1),
+            new Letter('Z', 10, 1),
+            new Letter(Dico.Joker, 0, 2)
 );
 
             Alphabet.ListChanged += (s, e) =>
@@ -105,11 +103,6 @@ namespace DawgResolver
             };
         }
 
-
-        public Letter Find(char c)
-        {
-            return Alphabet.FindLetterByChar(c);
-        }
         /// <summary>
         /// Pour chaque ancre identifiée,
         /// Cette procédure lance la recherche des différents mots formables à partir de l'ancre
@@ -121,12 +114,12 @@ namespace DawgResolver
         /// <param name="direction"></param>
         /// <param name="noeudActuel"></param>
         /// <returns></returns>
-        public HashSet<Word> FindMovesPerAnchor(Game g, int noeudActuel = 1)
+        public HashSet<Word> FindMovesPerAnchor(int noeudActuel = 1)
         {
             var newWords = new HashSet<Word>();
 
-            var leftLetters = g.CurrentPlayer.Rack.Letters;
-            var anchorTiles = g.Grid.OfType<IExtendedTile>().Where(t => t.IsAnchor);
+            var leftLetters = Game.DefaultInstance.CurrentPlayer.Rack.Letters;
+            var anchorTiles = Game.DefaultInstance.Grid.OfType<IExtendedTile>().Where(t => t.IsAnchor);
             foreach (var t in anchorTiles)
             {
                 // Cas où la taille du préfixe est imposée
@@ -136,7 +129,7 @@ namespace DawgResolver
                     // On ne peut que former un nouveau mot vers la droite
                     if (t.AnchorLeftMinLimit == 0)
                     {
-                        newWords.UnionWith(ExtendRight(g, string.Empty, ref leftLetters, 1, 1, t.Ligne, t.Col));
+                        newWords.UnionWith(ExtendRight(string.Empty, ref leftLetters, 1, 1, t.Ligne, t.Col));
                     }
                     else
                     {
@@ -146,13 +139,13 @@ namespace DawgResolver
                         string prefixe = "";
                         for (int k = t.Col - t.AnchorLeftMinLimit; k < t.Col; k++)
                         {
-                            if (g.Grid[t.Ligne, k].Letter.HasValue())
+                            if (Game.DefaultInstance.Grid[t.Ligne, k].Letter.HasValue())
                             {
-                                prefixe += g.Grid[t.Ligne, k].Letter;
-                                Trouve(g.Grid[t.Ligne, k].Letter.Char, ref noeudActuel);
+                                prefixe += Game.DefaultInstance.Grid[t.Ligne, k].Letter;
+                                Trouve(Game.DefaultInstance.Grid[t.Ligne, k].Letter.Char, ref noeudActuel);
                             }
                         }
-                        newWords.UnionWith(ExtendRight(g, prefixe.ToUpper(), ref leftLetters, 1, noeudActuel, t.Ligne, t.Col));
+                        newWords.UnionWith(ExtendRight( prefixe.ToUpper(), ref leftLetters, 1, noeudActuel, t.Ligne, t.Col));
                     }
                 }
                 else
@@ -161,7 +154,7 @@ namespace DawgResolver
                     // On essaie les différents préfixes possibles allant de 0 à k lettres
                     for (int k = 0; k <= t.AnchorLeftMaxLimit; k++)
                     {
-                        newWords.UnionWith(ExtendRight(g, string.Empty, ref leftLetters, k, 1, t.Ligne, t.Col - k));
+                        newWords.UnionWith(ExtendRight( string.Empty, ref leftLetters, k, 1, t.Ligne, t.Col - k));
                     }
                 }
             }
@@ -203,13 +196,16 @@ namespace DawgResolver
         /// <param name="colonne"></param>
         /// <param name="boardSize"></param>
         /// <param name="isTransposed"></param>
-        private HashSet<Word> ExtendRight(Game g, string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne)
+        private HashSet<Word> ExtendRight(string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne)
         {
             bool jokerInDraught = leftLetters.Any(l => l.Char == Dico.Joker);
             var newWords = new HashSet<Word>();
             IExtendedTile t = null;
-            if (ligne >= 0 && colonne >= 0 && colonne < g.BoardSize && ligne < g.BoardSize && leftLetters.Count() <= 7 && leftLetters.Count() >= 0) t = g.Grid[ligne, colonne];
-
+            if (ligne >= 0 && colonne >= 0 && colonne < Game.DefaultInstance.BoardSize && ligne < Game.DefaultInstance.BoardSize
+                && leftLetters.Count() <= 7 && leftLetters.Count() >= 0)
+            {
+                t = Game.DefaultInstance.Grid[ligne, colonne];
+            }
             if (t != null && t.IsEmpty)
             {
                 // Si une case vide, on peut la remplir avec une lettre du tirage sous certaines conditions
@@ -217,7 +213,7 @@ namespace DawgResolver
                 {
                     // Si le préfixe constitue déjà un mot valide
                     // alors on peut rajouter le préfixe dans la liste des coups admis
-                    newWords.UnionWith(Add(g, partialWord, ligne, colonne, g.IsTransposed ? MovementDirection.Down : MovementDirection.Across));
+                    newWords.UnionWith(Add(partialWord, ligne, colonne, Game.DefaultInstance.IsTransposed ? MovementDirection.Down : MovementDirection.Across));
                     //Add(grid, partialWord, Game.IsTransposed ? grid[t.Col - partialWord.Length, t.Ligne] : grid[t.Ligne, t.Col - partialWord.Length], Game.IsTransposed ? MovementDirection.Down : MovementDirection.Across);
                 }
                 //if (t == null) return;
@@ -245,7 +241,7 @@ namespace DawgResolver
                                     //if (l < leftLetters.Count() && leftLetters[l].Char == Game.Joker)
                                     //    lettre = char.ToLower(lettre);
                                     // De manière récursive, on essaye de continuer le nouveau préfixe vers la droite
-                                    newWords.UnionWith(ExtendRight(g, partialWord + lettre, ref leftLetters, minSize, Dico.Legacy[i, noeud], ligne, colonne + 1));
+                                    newWords.UnionWith(ExtendRight( partialWord + lettre, ref leftLetters, minSize, Dico.Legacy[i, noeud], ligne, colonne + 1));
 
                                     // Au retour de l'appel recursif on restitue la lettre dans le tirage
 
@@ -268,7 +264,8 @@ namespace DawgResolver
                                     leftLetters.RemoveAt(l);
 
                                     // De manière récursive, on essayer de continuer le nouveau préfixe vers la droite
-                                    newWords.UnionWith(ExtendRight(g, partialWord + char.ToLower((char)(i + Dictionnaire.AscShift)), ref leftLetters, minSize, Dico.Legacy[i, noeud], ligne, colonne + 1));
+                                    newWords.UnionWith(ExtendRight(partialWord + char.ToLower((char)(i + Dictionnaire.AscShift)), ref leftLetters,
+                                        minSize, Dico.Legacy[i, noeud], ligne, colonne + 1));
 
                                     // Au retour de l'appel recursif on restitue le joker dans le tirage
                                     leftLetters.Add(backupLetter);
@@ -280,11 +277,12 @@ namespace DawgResolver
             }
             else
             {
-                if (colonne < g.BoardSize && ligne < g.BoardSize)
-                    t = g.Grid[ligne, colonne];
+                if (colonne < Game.DefaultInstance.BoardSize && ligne < Game.DefaultInstance.BoardSize)
+                    t = Game.DefaultInstance.Grid[ligne, colonne];
                 if (t != null && !t.IsEmpty && Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud] != 0)
                 {
-                    newWords.UnionWith(ExtendRight(g, partialWord + t.Letter.Char, ref leftLetters, 1, Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud], ligne, colonne + 1));
+                    newWords.UnionWith(ExtendRight( partialWord + t.Letter.Char, ref leftLetters, 1, 
+                        Dico.Legacy[(int)char.ToUpper(t.Letter.Char) - Dictionnaire.AscShift, noeud], ligne, colonne + 1));
                 }
 
             }
@@ -313,7 +311,7 @@ namespace DawgResolver
             g.DetectTiles();
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            foundWords.UnionWith(FindMovesPerAnchor(g));
+            foundWords.UnionWith(FindMovesPerAnchor());
             // Recherche des coups verticaux
             // par transposition de la grille, on refait tout le processus
             g.RestoreGameGridFrom(backupGrid);
@@ -322,7 +320,7 @@ namespace DawgResolver
             g.TransposeGameGrid();
             g.DetectTiles();
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
-            foundWords.UnionWith(FindMovesPerAnchor(g));
+            foundWords.UnionWith(FindMovesPerAnchor());
 
             //on remet la grille à son état initial
             g.RestoreGameGridFrom(backupGrid);
@@ -442,7 +440,7 @@ namespace DawgResolver
         /// </summary>
         /// <param name="word"></param>
         /// <param name="t"></param>
-        private HashSet<Word> Add(Game g, string word, int ligne, int colonne, MovementDirection direction)
+        private HashSet<Word> Add( string word, int ligne, int colonne, MovementDirection direction)
         {
             int multiplier = 1;
             int horizontalPoints = 0;
@@ -451,8 +449,8 @@ namespace DawgResolver
             int debutCol = colonne - word.Length;
             int UsedDraughtLetters = 0;
             var retWords = new HashSet<Word>();
-            var startTile = direction == MovementDirection.Across ? g.Grid[ligne, debutCol] : g.Grid[debutCol, ligne];
-            var newWord = new Word(g)
+            var startTile = direction == MovementDirection.Across ? Game.DefaultInstance.Grid[ligne, debutCol] : Game.DefaultInstance.Grid[debutCol, ligne];
+            var newWord = new Word()
             {
                 StartTile = startTile,
                 Direction = direction,
@@ -462,7 +460,7 @@ namespace DawgResolver
             //{
             for (int j = 0; j < word.Length; j++)
             {
-                var tile = g.Grid[ligne, debutCol + j];
+                var tile = Game.DefaultInstance.Grid[ligne, debutCol + j];
                 var L = word[j];
                 if (tile.IsEmpty)
                 {
@@ -471,14 +469,14 @@ namespace DawgResolver
                     // Les points verticaux ont été précalculés au moment du recensement des contrôleurs
                     if (char.IsUpper(L))
                     {
-                        horizontalPoints += g.Resolver.Alphabet.First(c => c.Char == L).Value * tile.LetterMultiplier;
+                        horizontalPoints += this.Alphabet.First(c => c.Char == L).Value * tile.LetterMultiplier;
                         verticalPoints += tile.Controlers.ContainsKey(L - Dictionnaire.AscShift) ? tile.Controlers[L - Dictionnaire.AscShift] : 0;
                     }
 
                     else
                     {
                         if (tile.Controlers.ContainsKey(((int)char.ToUpper(L)) - Dictionnaire.AscShift) && tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShift] > 0)
-                            verticalPoints += tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShift] - g.Resolver.AlphabetWWFAvecJoker.First(c => c.Char == char.ToUpper(L)).Value
+                            verticalPoints += tile.Controlers[((int)char.ToUpper(L)) - Dictionnaire.AscShift] - this.Alphabet.First(c => c.Char == char.ToUpper(L)).Value
                                 * tile.LetterMultiplier * tile.WordMultiplier;
 
                     }
@@ -487,7 +485,7 @@ namespace DawgResolver
                 }
                 else
                 {
-                    if (char.IsUpper(L)) horizontalPoints += g.Resolver.Alphabet.First(c => c.Char == char.ToUpper(L)).Value;
+                    if (char.IsUpper(L)) horizontalPoints += this.Alphabet.First(c => c.Char == char.ToUpper(L)).Value;
                 }
 
             }

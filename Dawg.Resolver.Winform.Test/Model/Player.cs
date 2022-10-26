@@ -7,13 +7,12 @@ namespace DawgResolver.Model
     public class Player
     {
         public string Name { get; set; }
-        Game Game { get; set; }
         public PlayerRack Rack { get; }
         public int Points { get; set; }
         public HashSet<Word> Moves { get; }
-        public Player(Game g, string name)
+        public Player(string name)
         {
-            Game = g;
+
             Name = name;
             Rack = new PlayerRack();
             Moves = new HashSet<Word>();
@@ -24,7 +23,7 @@ namespace DawgResolver.Model
         public void SetRackFromWord(string word)
         {
             Rack.Clear();
-            Rack.AddRange(word.Select(s => new Letter( s, 1, 1)));
+            Rack.AddRange(word.Select(s => new Letter(s, 1, 1)));
         }
 
     }
@@ -51,9 +50,14 @@ namespace DawgResolver.Model
 
         internal int Count() => Letters.Count;
         public override string ToString() => string.Join("", Letters.Select(s => s.Char));
-
+        public void RemoveLetterByIndex(List<Letter> letters, Letter letterToRemove)
+        {
+            var charIndex = letters.IndexOf(letterToRemove);
+            if (charIndex == -1) return;
+            letters.RemoveAt(charIndex);
+        }
         public bool Any() => Letters.Any();
-        public void Remove(Letter letter) => Letters.RemoveLetterByIndex(letter);
+        public void Remove(Letter letter) => RemoveLetterByIndex(Letters, letter);
 
         public PlayerRack Backup()
         {

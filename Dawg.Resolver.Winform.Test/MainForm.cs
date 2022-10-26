@@ -10,15 +10,12 @@ using System.Windows.Forms;
 
 using DawgResolver.Model;
 
-namespace Dawg.Resolver.Winform.Test
+namespace Dawg.Solver.Winform
 {
     public partial class MainForm : Form
     {
-        public Color Player1MoveColor { get; } = Color.LightYellow;
-        public Color Player2MoveColor { get; } = Color.LightGreen;
-        public Color BothPlayersMoveColor { get; } = Color.GreenYellow;
-        public Color HeaderTilesBackColor { get; } = Color.Black;
-        public Color HeaderTilesForeColor { get; } = Color.White;
+
+
         public string CurrentDicoName { get; set; } = Dictionnaire.NomDicoDawgEN_Collins;
         public Game game => Game.DefaultInstance;
         public FormTile LastPlayedTile { get; set; }
@@ -87,7 +84,7 @@ namespace Dawg.Resolver.Winform.Test
                 //    WordMultiplier = vtile.WordMultiplier,
                 //};
                 //frmTile.SetBackColorFrom(vtile);
-                BoardTiles.Add(new FormTile(this, vtile));
+                BoardTiles.Add(vtile);
             }
         }
 
@@ -106,14 +103,14 @@ namespace Dawg.Resolver.Winform.Test
                 var frmTile = BoardTiles.FirstOrDefault(f => f.Name == $"header_col{i}");
                 if (frmTile == null)
                 {
-                    frmTile = new FormTile(this, 0, i, $"header_col{i}", HeaderTilesBackColor) { Text = $"{i + 1}" };
+                    frmTile = new FormTile(0, i, $"header_col{i}", FormTile.HeaderTilesBackColor) { Text = $"{i + 1}" };
                     BoardTiles.Add(frmTile);
                 }
 
                 frmTile = BoardTiles.FirstOrDefault(f => f.Name == $"header_ligne{i}");
                 if (frmTile == null)
                 {
-                    frmTile = new FormTile(this, i, 0, $"header_ligne{i}", HeaderTilesBackColor) { Text = $"{game.Resolver.Alphabet.ElementAt(i).Char}" };
+                    frmTile = new FormTile(i, 0, $"header_ligne{i}", FormTile.HeaderTilesBackColor) { Text = $"{game.Solver.Alphabet.ElementAt(i).Char}" };
                     BoardTiles.Add(frmTile);
                 }
             }
@@ -135,7 +132,7 @@ namespace Dawg.Resolver.Winform.Test
                     word.Index = game.MoveIndex++;
                     word.IsPlayedByPlayer1 = p.Name == game.Player1.Name;
                     p.Moves.Add(word);
-                    game.Resolver.PlayedWords.Add(word);
+                    game.Solver.PlayedWords.Add(word);
                     DisplayPlayerWord(word);
                 }
                 foreach (var t in word.GetTiles())
@@ -157,7 +154,7 @@ namespace Dawg.Resolver.Winform.Test
                             t.WordIndex = word.Index;
 
                             if (t.IsPlayedByPlayer1.HasValue)
-                                frmTile.BackColor = t.IsPlayedByPlayer1.Value ? Player1MoveColor : Player2MoveColor;
+                                frmTile.BackColor = t.IsPlayedByPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
 
                         }
                     }
@@ -169,7 +166,7 @@ namespace Dawg.Resolver.Winform.Test
                     {
                         frmTile.SetBackColorFromInnerLetterType();
 
-                        game.CurrentPlayer.Rack.Remove(game.Resolver.Alphabet[26]);
+                        game.CurrentPlayer.Rack.Remove(game.Solver.Alphabet[26]);
                     }
 
                     else
@@ -282,7 +279,7 @@ namespace Dawg.Resolver.Winform.Test
         {
 
             if (LastPlayedTile == null) return;
-            var word = LastPlayedTile.Tile.GetWordFromTile(game, Game.CurrentWordDirection);
+            var word = LastPlayedTile.Tile.GetWordFromTile(Game.CurrentWordDirection);
             if (word == null) return;
             if (game.IsPlayer1)
                 PreviewWord(game.Player1, word, true);
@@ -323,10 +320,10 @@ namespace Dawg.Resolver.Winform.Test
             Cursor.Current = Cursors.WaitCursor;
             game.Bag.GetLetters(game.Player1, txtRackP1.Text.Trim());
             lsbHintWords.DisplayMember = "DisplayText";
-            var ret = game.Resolver.FindMoves(game, 150, Game.HintSortByBestScore);
+            var ret = game.Solver.FindMoves(150, Game.HintSortByBestScore);
             lsbInfos.Items.Insert(0, game.IsTransposed ? "Transposed" : "Not Transposed");
-            lsbInfos.Items.Insert(0, $"NbPossibleMoves={game.Resolver.NbPossibleMoves}");
-            lsbInfos.Items.Insert(0, $"NbAcceptedMoves={game.Resolver.NbAcceptedMoves}");
+            lsbInfos.Items.Insert(0, $"NbPossibleMoves={game.Solver.NbPossibleMoves}");
+            lsbInfos.Items.Insert(0, $"NbAcceptedMoves={game.Solver.NbAcceptedMoves}");
 
             lsbHintWords.DataSource = ret;
             Cursor.Current = Cursors.Default;
@@ -365,7 +362,7 @@ namespace Dawg.Resolver.Winform.Test
                     game.NoMoreMovesCount++;
 
                 }
-                var ret = game.Resolver.FindMoves(game, 60);
+                var ret = game.Solver.FindMoves(60);
                 lsbHintWords.Invoke((MethodInvoker)(() =>
                 {
                     using (var susp = new SuspendDrawingUpdate(lsbHintWords))
@@ -373,7 +370,7 @@ namespace Dawg.Resolver.Winform.Test
                 }));
                 if (ret.Any())
                 {
-                    var word = ret.Where(w => !game.Resolver.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).FirstOrDefault() as Word;
+                    var word = ret.Where(w => !game.Solver.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).FirstOrDefault() as Word;
                     if (word == null)//TODO CHECK || CurrentWord?.Text == word.Text)
                     {
                         game.EndGame = true;
@@ -553,7 +550,7 @@ namespace Dawg.Resolver.Winform.Test
                     var frmTile = FindFormTile(t);
                     if (t.IsValidated)
                     {
-                        frmTile.BackColor = t.IsPlayedByPlayer1.HasValue && t.IsPlayedByPlayer1.Value ? Player1MoveColor : Player2MoveColor;
+                        frmTile.BackColor = t.IsPlayedByPlayer1.HasValue && t.IsPlayedByPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
                     }
                     else
                     {
@@ -590,9 +587,9 @@ namespace Dawg.Resolver.Winform.Test
         private void lsbWords_SelectedIndexChanged(object sender, EventArgs e)
         {
             foreach (var c in gbBoard.Controls.OfType<FormTile>().Where(ft => ft.BackColor == Color.LightBlue))
-                c.BackColor = Player1MoveColor;
+                c.BackColor = FormTile.Player1MoveColor;
             foreach (var c in gbBoard.Controls.OfType<FormTile>().Where(ft => ft.BackColor == Color.LightCoral))
-                c.BackColor = Player2MoveColor;
+                c.BackColor = FormTile.Player2MoveColor;
             var word = lsbWords.SelectedItem as Word;
             if (word == null) return;
 
@@ -669,18 +666,18 @@ namespace Dawg.Resolver.Winform.Test
         }
         private void rbWordsWithFriends_CheckedChanged(object sender, EventArgs e)
         {
-            game.Resolver.Mode = rbGameStyleScrabble.Checked ? 'S' : 'W';
+            game.Solver.Mode = rbGameStyleScrabble.Checked ? 'S' : 'W';
             NewGame(CurrentDicoName, !ckKeepExistingBoard.Checked);
         }
 
         private void txtMotExiste_TextChanged(object sender, EventArgs e)
         {
-            lblMotExiste.ForeColor = game.Resolver.Dico.MotAdmis(txtMotExiste.Text.Trim()) ? Color.Green : Color.Red;
+            lblMotExiste.ForeColor = game.Solver.Dico.MotAdmis(txtMotExiste.Text.Trim()) ? Color.Green : Color.Red;
         }
 
         private void txtMotExiste_DoubleClick(object sender, EventArgs e)
         {
-            if (game.Resolver.Dico.MotAdmis(txtMotExiste.Text.Trim()))
+            if (game.Solver.Dico.MotAdmis(txtMotExiste.Text.Trim()))
                 Process.Start($"https://1mot.net/{txtMotExiste.Text.ToLower()}");
 
         }
@@ -713,7 +710,7 @@ namespace Dawg.Resolver.Winform.Test
             foreach (var tile in tiles.Where(t => t.WordIndex == lastWord.Index))
             {
 
-                game.Grid[tile.Ligne, tile.Col] = new FormTile(this, tile.Ligne, tile.Col);
+                game.Grid[tile.Ligne, tile.Col] = new FormTile(tile.Ligne, tile.Col);
                 game.Grid[tile.Ligne, tile.Col].Letter.Char = Game.EmptyChar;
             }
             //using (new SuspendDrawingUpdate(sender as Control))

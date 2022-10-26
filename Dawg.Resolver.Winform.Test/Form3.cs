@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 using DawgResolver.Model;
 
-namespace Dawg.Resolver.Winform.Test
+namespace Dawg.Solver.Winform.Test
 {
     public partial class FrmDebug : Form
     {
@@ -25,7 +25,7 @@ namespace Dawg.Resolver.Winform.Test
         {
             Game.Bag.GetLetters(Game.Player1, textBox1.Text);
             lsb.DisplayMember = "DisplayText";
-            var ret = Game.Resolver.FindMoves(Game);
+            var ret = Game.Solver.FindMoves();
             lsb.Items.Clear();
             foreach (var r in ret)
                 lsb.Items.Add(r);

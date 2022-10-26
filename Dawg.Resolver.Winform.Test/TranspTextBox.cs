@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-namespace Dawg.Resolver.Winform.Test
+namespace Dawg.Solver.Winform
 {
     public class TranspTextBox : TextBox
     {

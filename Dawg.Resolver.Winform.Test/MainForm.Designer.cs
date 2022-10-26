@@ -1,4 +1,4 @@
-﻿namespace Dawg.Resolver.Winform.Test
+﻿namespace Dawg.Solver.Winform
 {
     partial class MainForm
     {
@@ -75,7 +75,7 @@
             this.rbODS7 = new System.Windows.Forms.RadioButton();
             this.rbODS6 = new System.Windows.Forms.RadioButton();
             this.btnWordsFinder = new System.Windows.Forms.Button();
-            this.gbBoard = new Dawg.Resolver.Winform.Test.CustomGroupBox();
+            this.gbBoard = new Dawg.Solver.Winform.CustomGroupBox();
             this.nudCustomBoardSize = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             this.gbWordDirection.SuspendLayout();

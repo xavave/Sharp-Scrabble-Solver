@@ -5,18 +5,21 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace DawgResolver.Model
+using DawgResolver.Model;
+
+namespace Dawg.Solver.Winform
 {
     public class CustomExtendedTilesGridBuilder
     {
         private bool Init { get; }
-        public CustomExtendedTilesGridBuilder(bool init)
+        public CustomExtendedTilesGridBuilder( bool init)
         {
             Init = init;
+        
         }
         public CustomExtendedTilesGrid Build()
         {
-            var grid = new CustomExtendedTilesGrid(Game.DefaultInstance, Game.DefaultInstance.BoardSize, true);
+            var grid = new CustomExtendedTilesGrid(Game.DefaultInstance.BoardSize, true);
             if (Init) grid.InitGameBoardTiles();
             return grid;
         }
@@ -24,7 +27,7 @@ namespace DawgResolver.Model
     public class CustomExtendedTilesGrid : CustomGrid<IExtendedTile>
     {
         private static CustomExtendedTilesGrid instance = null;
-        public static CustomExtendedTilesGrid Instance => instance ?? (instance = new CustomExtendedTilesGridBuilder( true).Build());
+        public static CustomExtendedTilesGrid Instance => instance ?? (instance = new CustomExtendedTilesGridBuilder(true).Build());
         public override void SetArrayTile(int ligne, int colonne)
         {
             if (Tile != null)
@@ -35,9 +38,9 @@ namespace DawgResolver.Model
             base.SetArrayTile(ligne, colonne);
         }
 
-        public CustomExtendedTilesGrid(Game g, int boardSize, bool initialize, IExtendedTile defaultTile = default(IExtendedTile)) : base(boardSize, defaultTile, initialize)
+        public CustomExtendedTilesGrid(int boardSize, bool initialize, IExtendedTile defaultTile = default(IExtendedTile)) : base(boardSize, defaultTile, initialize)
         {
-         
+
         }
 
         public void InitGameBoardTiles()
@@ -45,7 +48,7 @@ namespace DawgResolver.Model
             // Définition des cases bonus
             var assembly = Assembly.GetExecutingAssembly();
 
-            string resourceName = assembly.GetManifestResourceNames().SingleOrDefault(str => str.EndsWith($"initial_board{Game.DefaultInstance.BoardSize}{Game.DefaultInstance.Resolver.Mode}.txt"));
+            string resourceName = assembly.GetManifestResourceNames().SingleOrDefault(str => str.EndsWith($"initial_board{Game.DefaultInstance.BoardSize}{Game.DefaultInstance.Solver.Mode}.txt"));
             if (string.IsNullOrWhiteSpace(resourceName)) return;
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream, true))
@@ -59,7 +62,7 @@ namespace DawgResolver.Model
                     foreach (var tp in w.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                     {
                         if (this[row, col] == null)
-                            this[row, col] = new GenericTile(Game.DefaultInstance.Resolver, row, col);
+                            this[row, col] = new FormTile(row, col);
                         else
                         {
 

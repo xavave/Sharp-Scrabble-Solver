@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Dawg;
+using Dawg.Solver.Winform;
 
 namespace DawgResolver.Model
 {
@@ -12,39 +12,34 @@ namespace DawgResolver.Model
     };
     public class Word
     {
-        Dictionnaire dico { get; }
         public bool IsPlayedByPlayer1 { get; set; }
         public int Index { get; set; }
-        private Game game { get; }
-        private Resolver resolver { get; }
-        private Word(Resolver r)
-        {
-            resolver = r;
-            dico = r.Dico;
-        }
-
-        public Word(Game g) : this(g.Resolver)
-        {
-            game = g;
-            StartTile = new GenericTile();
-        }
-        public int SetWord(bool validate)
-        {
-            this.StartTile.SetWord( Text, Direction, validate);
-            return this.Points;
-        }
         public bool Scramble { get; set; }
         public MovementDirection Direction { get; set; }
         public IExtendedTile StartTile { get; set; }
-        public int Points
-        {
-            get; set;
-        }
+        public int Points { get; set; }
         public string Text { get; set; }
+        public Word()
+        {
+        }
 
+        public int SetWord(bool validate)
+        {
+            this.StartTile.SetWord(Text, Direction, validate);
+            return this.Points;
+        }
+        public string ToCharString(List<Letter> lst)
+        {
+            var ret = "";
+            for (int i = 0; i < lst.Count(); i++)
+            {
+                ret += lst[i].Char;
+            }
+            return ret;
+        }
         public string DisplayInList(bool isPlayer1, List<Letter> lst)
         {
-            return $"{DateTime.Now:H:mm:ss} - {$"Player {(isPlayer1 ? '1' : '2')}:{lst.ToCharString()}"} --> {this}";
+            return $"{DateTime.Now:H:mm:ss} - {$"Player {(isPlayer1 ? '1' : '2')}:{ToCharString(lst)}"} --> {this}";
         }
 
 
@@ -60,14 +55,14 @@ namespace DawgResolver.Model
         {
             get
             {
-                return dico.MotAdmis(Text);
+                return Game.DefaultInstance.Solver.Dico.MotAdmis(Text);
             }
         }
         public HashSet<IExtendedTile> GetTiles()
         {
             var ret = new HashSet<IExtendedTile>();
             IExtendedTile t = null;
-            if (StartTile.Col == game.BoardSize - 1)
+            if (StartTile.Col == Game.DefaultInstance.BoardSize - 1)
                 t = StartTile.LeftTile.RightTile;
             else
                 t = StartTile.RightTile.LeftTile;
@@ -93,9 +88,9 @@ namespace DawgResolver.Model
 
         public override string ToString()
         {
-            var pos = $"{resolver.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
+            var pos = $"{Game.DefaultInstance.Solver.Alphabet[StartTile.Ligne]}{StartTile.Col + 1}";
             if (Direction == MovementDirection.Down)
-                pos = $"{StartTile.Col + 1}{resolver.Alphabet[StartTile.Ligne]}";
+                pos = $"{StartTile.Col + 1}{Game.DefaultInstance.Solver.Alphabet[StartTile.Ligne]}";
             return $"[{pos}] {Text} ({Points}){(Scramble ? "*" : "")}";
         }
         public bool Equals(Word w)
