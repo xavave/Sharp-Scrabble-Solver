@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.DesignerServices;
 using System.Windows.Forms;
+
 using DawgResolver.Model;
 
 namespace Dawg.Solver.Winform
@@ -16,19 +18,52 @@ namespace Dawg.Solver.Winform
         public static Color Player2MoveColor { get; } = Color.LightGreen;
         public static Color BothPlayersMoveColor { get; } = Color.GreenYellow;
 
-        public FormTile(int ligne, int col, string tileName = "", Color? color = null)
+        public FormTile(int ligne, int col, string tileName = null, Color? color = null)
         {
+            InitializeComponent();
             this.Ligne = ligne;
             this.Col = col;
             this.Letter = new Letter();
             this.Controllers = new Dictionary<int, int>();
-            this.Width = 30;
-            //Enabled = true;
-            this.Height = 28;
-            this.MaxLength = 1;
 
-            this.Font = new Font("Verdana", 14, FontStyle.Bold);
-            this.CharacterCasing = CharacterCasing.Upper;
+
+            Text = $"{this.Letter.Char}";
+
+            if (!string.IsNullOrWhiteSpace(Text))
+                this.BorderStyle = BorderStyle.Fixed3D;
+            else
+                this.BorderStyle = BorderStyle.FixedSingle;
+
+            if (string.IsNullOrEmpty(tileName))
+                Name = $"t{this.Ligne}_{this.Col}";
+            else
+                Name = tileName;
+
+            Click += FormTile_Click;
+            KeyUp += FormTile_KeyUp;
+            DoubleClick += FormTile_DoubleClick;
+
+            var spacing = 15;
+            if (Name.StartsWith("header_"))
+            {
+                this.BorderStyle = BorderStyle.Fixed3D;
+                if (Name.Contains($"_col"))
+                {
+                    Location = new Point(spacing + this.Width + this.Col * this.Width, spacing + this.Ligne * this.Height);
+                    Enabled = false;
+                }
+                else if (Name.Contains($"_ligne"))
+                {
+                    Location = new Point(spacing + this.Col * this.Width, spacing + this.Height + this.Ligne * this.Height);
+                    Enabled = false;
+                }
+            }
+            else
+                Location = new Point(spacing + this.Width + this.Col * this.Width, spacing + this.Height + this.Ligne * this.Height);
+        }
+
+        public void SetTileBackColor(Color? color = null)
+        {
             if (!color.HasValue)
             {
                 if (!IsPlayer1.HasValue)
@@ -45,35 +80,8 @@ namespace Dawg.Solver.Winform
                 this.BackColor = color.Value;
                 this.ForeColor = HeaderTilesForeColor;
             }
-            Text = this.Letter.Char.ToString();
-            if (!string.IsNullOrWhiteSpace(Text)) this.BorderStyle = BorderStyle.Fixed3D;
-            else this.BorderStyle = BorderStyle.FixedSingle;
-
-            if (tileName == "")
-                Name = $"t{this.Ligne}_{this.Col}";
-            else
-                Name = tileName;
-            Click += FormTile_Click;
-            KeyUp += FormTile_KeyUp;
-            DoubleClick += FormTile_DoubleClick;
-
-            if (Name.StartsWith("header_"))
-            {
-                this.BorderStyle = BorderStyle.Fixed3D;
-                if (Name.Contains($"_col"))
-                {
-                    Location = new Point(15 + this.Width + this.Col * this.Width, 15 + this.Ligne * this.Height);
-                    Enabled = false;
-                }
-                else if (Name.Contains($"_ligne"))
-                {
-                    Location = new Point(15 + this.Col * this.Width, 15 + this.Height + this.Ligne * this.Height);
-                    Enabled = false;
-                }
-            }
-            else
-                Location = new Point(15 + this.Width + this.Col * this.Width, 15 + this.Height + this.Ligne * this.Height);
         }
+
         //private MainForm Form { get; }
         public string TxtInfos { get; set; }
         public string ToString(string format, IFormatProvider formatProvider) => Serialize;
@@ -110,7 +118,7 @@ namespace Dawg.Solver.Winform
                 return TileType.Regular;
             }
         }
-        public bool IsEmpty => this == null || Letter == null || !Letter.HasValue() || Letter.Char == Game.EmptyChar;
+        public bool IsEmpty => this == null || Letter == null || !Letter.HasValue() || string.IsNullOrWhiteSpace($"{Letter.Char}");
         public IExtendedTile LeftTile => Col > 0 ? Game.DefaultInstance.Grid[this.Ligne, this.Col - 1] : null;
         public IExtendedTile RightTile => Col < Game.DefaultInstance.BoardSize - 1 ? Game.DefaultInstance.Grid[this.Ligne, this.Col + 1] : null;
         public IExtendedTile DownTile => Ligne < Game.DefaultInstance.BoardSize - 1 ? Game.DefaultInstance.Grid[this.Ligne + 1, this.Col] : null;
@@ -192,7 +200,7 @@ namespace Dawg.Solver.Winform
             word.ShowDefinition();
         }
 
-       
+
         public IExtendedTile FindFormTile(HashSet<IExtendedTile> boardTiles)
         {
             return boardTiles.FirstOrDefault(f => f.Name == $"t{this.Ligne}_{this.Col}");
@@ -207,7 +215,7 @@ namespace Dawg.Solver.Winform
             }
             else if (e.Control && e.KeyCode == Keys.L)
             {
-               //TODO Game.DefaultInstance.Load(boardTiles);
+                //TODO Game.DefaultInstance.Load(boardTiles);
                 return;
             }
             IExtendedTile frmTile = sender as FormTile;
@@ -343,16 +351,18 @@ namespace Dawg.Solver.Winform
 
         public void SetBackColorFrom(IExtendedTile t)
         {
-            this.BackColor = GetBackColorFrom(t);
+            this.BackColor = GetBackColorFromtileType(t);
         }
-        public Color GetBackColorFrom(IExtendedTile t)
+        public Color GetBackColorFromtileType(IExtendedTile t)
         {
             return Color.FromName(new TileColor(t.TileType).Name);
         }
 
         public void SetBackColorFromLetterType(IExtendedTile t)
         {
-            this.BackColor = Color.FromName(new TileColor(t.Letter.LetterType).Name);
+            var colorName = new TileColor(t.Letter.LetterType).Name;
+            if (string.IsNullOrEmpty(colorName)) colorName = GetBackColorFromtileType(t).Name;
+            this.BackColor = Color.FromName(colorName);
         }
         public void SetBackColorFromInnerLetterType()
         {
@@ -365,25 +375,31 @@ namespace Dawg.Solver.Winform
 
         public Word GetWordFromTile(MovementDirection direction)
         {
-            return null;
-            //TODO  return Tile.GetWordFromTile(direction);
+            var word = new Word();
+            var wordText = "";
+            this.GetNextTile( direction, ref wordText);
+
+            word.SetText(wordText, false);
+            return word;
+        }
+        public IExtendedTile GetNextTile(MovementDirection direction, ref string wordText)
+        {
+            var tileToCheck = direction == MovementDirection.Across ? this.RightTile : this.DownTile;
+            while (tileToCheck != null && !tileToCheck.IsEmpty || !tileToCheck.IsAnchor || !tileToCheck.IsValidated)
+            {
+                wordText += $"{tileToCheck.Letter}";
+                return tileToCheck.GetNextTile(direction, ref wordText);
+            }
+            return tileToCheck;
         }
 
-        //public void Initialize()
-        //{
-        //    Tile.Initialize();
-        //}
-
-
-
-        public void SetWord(string word, MovementDirection direction, bool validate = false)
+        public void SetWord(string text, MovementDirection direction, bool validate = false)
         {
-            if (word == "") return;
+            if (text == "") return;
 
+            this.SetFirstLetter(text.First(), Game.DefaultInstance.CurrentPlayer, validate);
 
-            this.SetFirstLetter(word.First(), Game.DefaultInstance.CurrentPlayer, validate);
-
-            foreach (var c in word.Skip(1))
+            foreach (var c in text.Skip(1))
             {
                 this.SetRightOrDownLetter(c, Game.DefaultInstance.CurrentPlayer, validate, direction);
 
@@ -429,6 +445,7 @@ namespace Dawg.Solver.Winform
         }
         public void CopyControllers(IDictionary<int, int> source)
         {
+            this.Controllers.Clear();
             foreach (var k in source.Keys)
             {
                 this.Controllers[k] = source[k];
@@ -449,8 +466,31 @@ namespace Dawg.Solver.Winform
                 IsValidated = this.IsValidated,
             };
             nTile.Letter.CopyFromOtherLetter(this.Letter);
+            nTile.SetTileBackColor(this.BackColor);
             nTile.CopyControllers(this.Controllers);
             return nTile;
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // FormTile
+            // 
+            this.BorderColor = System.Drawing.Color.Gray;
+            this.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            //this.Font = new Font("Verdana", 14, FontStyle.Bold);
+            this.ForeColor = System.Drawing.Color.Black;
+            this.MaxLength = 1;
+            this.Opacity = 60;
+            this.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Width = 30;
+            //Enabled = true;
+            this.Height = 28;
+
+            this.ResumeLayout(false);
+
         }
     }
 }

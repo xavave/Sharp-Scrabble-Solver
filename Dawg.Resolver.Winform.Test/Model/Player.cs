@@ -50,14 +50,14 @@ namespace DawgResolver.Model
 
         internal int Count() => Letters.Count;
         public override string ToString() => string.Join("", Letters.Select(s => s.Char));
-        public void RemoveLetterByIndex(List<Letter> letters, Letter letterToRemove)
+        public void RemoveLetterByIndex(Letter letterToRemove)
         {
-            var charIndex = letters.IndexOf(letterToRemove);
+            var charIndex = Letters.FindIndex(l=>l.Char== letterToRemove.Char);
             if (charIndex == -1) return;
-            letters.RemoveAt(charIndex);
+            Letters.RemoveAt(charIndex);
         }
         public bool Any() => Letters.Any();
-        public void Remove(Letter letter) => RemoveLetterByIndex(Letters, letter);
+        public void Remove(Letter letter) => RemoveLetterByIndex(letter);
 
         public PlayerRack Backup()
         {

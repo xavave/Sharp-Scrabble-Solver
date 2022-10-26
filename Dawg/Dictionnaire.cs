@@ -27,9 +27,9 @@ namespace Dawg
             }
         }
         public static string NomDicoDawg { get; set; }
-        public static string NomDicoDawgODS7 { get; set; } = "dico_dawgODS7.txt";
-        public static string NomDicoDawgODS6 = "dico_dawgODS6.txt";
-        public static string NomDicoDawgEN_Collins = "EN_Collins_dawg.txt";
+        public const string NomDicoDawgODS7 = "dico_dawgODS7.txt";
+        public const string NomDicoDawgODS6 = "dico_dawgODS6.txt";
+        public const  string NomDicoDawgEN_Collins = "EN_Collins_dawg.txt";
 
         public static string NomDicoReel { get; set; }//"ODS7.txt";
 

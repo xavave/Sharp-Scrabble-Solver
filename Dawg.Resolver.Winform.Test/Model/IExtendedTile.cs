@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Drawing;
 using Dawg.Solver.Winform;
 
 namespace DawgResolver.Model
@@ -44,6 +44,8 @@ namespace DawgResolver.Model
         void SetBackColorFromInnerTile();
         void SetBackColorFromInnerLetterType();
         IExtendedTile FindFormTile(HashSet<IExtendedTile> boardTiles);
+        void SetTileBackColor(Color? color = null);
+        IExtendedTile GetNextTile(MovementDirection direction, ref string wordText);
     }
 
 }

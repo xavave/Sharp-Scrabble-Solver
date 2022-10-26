@@ -55,6 +55,7 @@
             this.lblP2BestPlay = new System.Windows.Forms.Label();
             this.lsbWords = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.nudCustomBoardSize = new System.Windows.Forms.NumericUpDown();
             this.rbSize15 = new System.Windows.Forms.RadioButton();
             this.rbSize11 = new System.Windows.Forms.RadioButton();
             this.ckShowGrid = new System.Windows.Forms.CheckBox();
@@ -76,13 +77,12 @@
             this.rbODS6 = new System.Windows.Forms.RadioButton();
             this.btnWordsFinder = new System.Windows.Forms.Button();
             this.gbBoard = new Dawg.Solver.Winform.CustomGroupBox();
-            this.nudCustomBoardSize = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCustomBoardSize)).BeginInit();
             this.gbWordDirection.SuspendLayout();
             this.gbGameStyle.SuspendLayout();
             this.gbSortBy.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCustomBoardSize)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSearch
@@ -107,7 +107,7 @@
             // 
             this.lsbHintWords.FormattingEnabled = true;
             this.lsbHintWords.ItemHeight = 20;
-            this.lsbHintWords.Location = new System.Drawing.Point(12, 63);
+            this.lsbHintWords.Location = new System.Drawing.Point(-5, 78);
             this.lsbHintWords.Name = "lsbHintWords";
             this.lsbHintWords.Size = new System.Drawing.Size(259, 484);
             this.lsbHintWords.TabIndex = 8;
@@ -350,6 +350,29 @@
             this.groupBox1.TabIndex = 32;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Board Size";
+            // 
+            // nudCustomBoardSize
+            // 
+            this.nudCustomBoardSize.Location = new System.Drawing.Point(9, 74);
+            this.nudCustomBoardSize.Maximum = new decimal(new int[] {
+            18,
+            0,
+            0,
+            0});
+            this.nudCustomBoardSize.Minimum = new decimal(new int[] {
+            7,
+            0,
+            0,
+            0});
+            this.nudCustomBoardSize.Name = "nudCustomBoardSize";
+            this.nudCustomBoardSize.Size = new System.Drawing.Size(50, 26);
+            this.nudCustomBoardSize.TabIndex = 0;
+            this.nudCustomBoardSize.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.nudCustomBoardSize.ValueChanged += new System.EventHandler(this.nudCustomBoardSize_ValueChanged);
             // 
             // rbSize15
             // 
@@ -596,35 +619,14 @@
             // 
             // gbBoard
             // 
+            this.gbBoard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.gbBoard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbBoard.Location = new System.Drawing.Point(548, 5);
             this.gbBoard.Name = "gbBoard";
             this.gbBoard.Size = new System.Drawing.Size(772, 780);
             this.gbBoard.TabIndex = 11;
             this.gbBoard.TabStop = false;
             this.gbBoard.Text = "Board";
-            // 
-            // nudCustomBoardSize
-            // 
-            this.nudCustomBoardSize.Location = new System.Drawing.Point(9, 74);
-            this.nudCustomBoardSize.Maximum = new decimal(new int[] {
-            18,
-            0,
-            0,
-            0});
-            this.nudCustomBoardSize.Minimum = new decimal(new int[] {
-            7,
-            0,
-            0,
-            0});
-            this.nudCustomBoardSize.Name = "nudCustomBoardSize";
-            this.nudCustomBoardSize.Size = new System.Drawing.Size(50, 26);
-            this.nudCustomBoardSize.TabIndex = 0;
-            this.nudCustomBoardSize.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nudCustomBoardSize.ValueChanged += new System.EventHandler(this.nudCustomBoardSize_ValueChanged);
             // 
             // MainForm
             // 
@@ -674,6 +676,7 @@
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCustomBoardSize)).EndInit();
             this.gbWordDirection.ResumeLayout(false);
             this.gbWordDirection.PerformLayout();
             this.gbGameStyle.ResumeLayout(false);
@@ -682,7 +685,6 @@
             this.gbSortBy.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCustomBoardSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

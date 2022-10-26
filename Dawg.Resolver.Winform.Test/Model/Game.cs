@@ -336,7 +336,7 @@ namespace Dawg.Solver.Winform
         public int PreviewWord(Player p, Action<Word> displayWord, Word word, bool validateWord = false, bool addMove = true)
         {
             //ClearTilesInPlay(p);
-            int points = word.SetWord(validateWord);
+            int points = word.SetText("", validateWord);
             if (validateWord || points > 0)
             {
                 if (addMove)
@@ -348,43 +348,42 @@ namespace Dawg.Solver.Winform
                     displayWord.Invoke(word);
 
                 }
-                foreach (var t in word.GetTiles())
+                var wordTiles = word.GetTiles();
+                foreach (var tile in wordTiles)
                 {
                     //var frmTile = t.FindFormTile(boardTiles);
-                    if (t.IsEmpty)
+                    if (tile.IsEmpty)
                     {
-                        //frmTile.Invoke((MethodInvoker)(() =>
-                        //{
-                        t.SetBackColorFromInnerTile();
-
-                        //}));
+                        var formTile = tile as FormTile;
+                        formTile.Invoke((MethodInvoker)(() => formTile.SetBackColorFromInnerTile()));
                     }
                     else
                     {
-                        if (t.WordIndex == 0)
+                        if (tile.WordIndex == 0)
                         {
                             //frmTile.IsPlayedByPlayer1 = p == game.Player1;
-                            t.WordIndex = word.Index;
+                            tile.WordIndex = word.Index;
 
-                            if (t.IsPlayer1.HasValue)
-                                t.BackColor = t.IsPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
-
+                            if (tile.IsPlayer1.HasValue)
+                                tile.BackColor = tile.IsPlayer1.Value ? FormTile.Player1MoveColor : FormTile.Player2MoveColor;
                         }
+                        var formTile = tile as FormTile;
+                        formTile.Invoke((MethodInvoker)(() => formTile.Text = $"{tile.Letter}"));
                     }
 
-                    if (t.IsValidated)
+                    if (tile.IsValidated)
                         continue;
 
-                    if (t.Letter.LetterType == LetterType.Joker)
+                    if (tile.Letter.LetterType == LetterType.Joker)
                     {
-                        t.SetBackColorFromInnerLetterType();
+                        tile.SetBackColorFromInnerLetterType();
 
                         CurrentPlayer.Rack.Remove(Solver.DefaultInstance.Alphabet[26]);
                     }
 
                     else
                     {
-                        CurrentPlayer.Rack.Remove(t.Letter);
+                        CurrentPlayer.Rack.Remove(tile.Letter);
 
                     }
                 }
@@ -445,7 +444,7 @@ namespace Dawg.Solver.Winform
 
             }
             if (displayWord == null) return;
-            PreviewWords((w)=>displayWord, wordsCount);
+            PreviewWords((w) => displayWord, wordsCount);
 
         }
         private void PreviewWords(Func<Word, Action<Word>> displayWord, int wordsCount)

@@ -36,8 +36,8 @@ namespace Dawg.Solver.Winform
         long[,] Dictionary { get; set; }
         public long NbPossibleMoves { get; set; }
         public long NbAcceptedMoves { get; set; }
-        public BindingList<Letter> Alphabet => Mode == 'S' ?
-            new BindingList<Letter>(this.AlphabetScrabbleAvecJoker) : new BindingList<Letter>(this.AlphabetWWFAvecJoker);
+        public List<Letter> Alphabet => Mode == 'S' ?
+            new List<Letter>(this.AlphabetScrabbleAvecJoker) : new List<Letter>(this.AlphabetWWFAvecJoker);
         public Noeud Noeud { get; private set; }
         public Solver()
         {
@@ -102,15 +102,14 @@ namespace Dawg.Solver.Winform
             new Letter(Dictionnaire.DefaultInstance.Joker, 0, 2)
             };
 
-            Alphabet.ListChanged += (s, e) =>
-            {
+            //Alphabet.ListChanged += (s, e) =>
+            //{
 
-            };
+            //};
         }
 
-        public Letter FindLetterByIndex(BindingList<Letter> letters, Letter letter)
-        {
-            var charIndex = letters.IndexOf(letter);
+        public Letter FindLetterByIndex(List<Letter> letters, int charIndex)
+        {;
             if (charIndex == -1) return null;
             return letters[charIndex];
         }
@@ -138,15 +137,10 @@ namespace Dawg.Solver.Winform
             return new Letter(l[0].Skip(1).First(), int.Parse(l[1]), int.Parse(l[2]));
         }
 
-        public Letter FindLetterByChar(BindingList<Letter> letters, Char c)
-        {
-            var foundLetter = letters.FirstOrDefault(l => l.Char == c);
-            return FindLetterByIndex(letters, foundLetter);
-        }
-
         public Letter Find(char c)
         {
-            return FindLetterByChar(Alphabet, c);
+            var foundLetterIndex = Alphabet.FindIndex(l => l.Char == c);
+            return FindLetterByIndex(Alphabet, foundLetterIndex);
         }
         /// <summary>
         /// Pour chaque ancre identifiée,

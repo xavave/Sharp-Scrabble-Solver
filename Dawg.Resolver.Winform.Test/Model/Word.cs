@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 
 using Dawg;
@@ -23,12 +24,13 @@ namespace DawgResolver.Model
         public string Text { get; set; }
         public Word()
         {
-            IsPlayedByPlayer1= Game.DefaultInstance.IsPlayer1;
+            IsPlayedByPlayer1 = Game.DefaultInstance.IsPlayer1;
         }
 
-        public int SetWord(bool validate)
+        public int SetText(string text = "", bool validate = true)
         {
-            this.StartTile.SetWord(Text, Direction, validate);
+            if (text == "") text = this.Text;
+            this.StartTile.SetWord(text, Direction, validate);
             return this.Points;
         }
         public string ToCharString(List<Letter> lst)
@@ -51,48 +53,38 @@ namespace DawgResolver.Model
         }
 
 
-        public string Serialize
-        {
-            get
-            {
-                return $"{StartTile.Ligne};{StartTile.Col};{Text};{Points};{Direction};{(Scramble ? "*" : "-")};{Index}" + Environment.NewLine;
-            }
-        }
+        public string Serialize => $"{StartTile.Ligne};{StartTile.Col};{Text};{Points};{Direction};{(Scramble ? "*" : "-")};{Index}" + Environment.NewLine;
 
-        public bool IsAllowed
-        {
-            get
-            {
-                return Dictionnaire.DefaultInstance.MotAdmis(Text);
-            }
-        }
+
+        public bool IsAllowed => Dictionnaire.DefaultInstance.MotAdmis(Text);
+
         public HashSet<IExtendedTile> GetTiles()
         {
             var ret = new HashSet<IExtendedTile>();
-            IExtendedTile t = null;
-            if (StartTile.Col == Game.DefaultInstance.BoardSize - 1)
-                t = StartTile.LeftTile.RightTile;
+            IExtendedTile tile = null;
+            if (StartTile.Col == Game.DefaultInstance.BoardCenter)
+                tile = StartTile.LeftTile.RightTile;
             else
-                t = StartTile.RightTile.LeftTile;
+                tile = StartTile.RightTile.LeftTile;
 
-            ret.Add(t);
+            ret.Add(tile);
             for (int i = 1; i < Text.Length; i++)
             {
-                if (t != null)
+                if (tile != null)
                     if (Direction == MovementDirection.Across)
                     {
-                        t = t.RightTile;
+                        tile = tile.RightTile;
                     }
                     else
                     {
-                        t = t.DownTile;
+                        tile = tile.DownTile;
                     }
-                if (t != null)
-                    ret.Add(t);
+                if (tile != null)
+                    ret.Add(tile);
             }
             return ret;
         }
-
+        public bool Equals(Word w) => w.Direction == Direction && w.StartTile.Col == StartTile.Col && w.StartTile.Ligne == StartTile.Ligne && w.Text == Text;
 
         public override string ToString()
         {
@@ -101,9 +93,7 @@ namespace DawgResolver.Model
                 pos = $"{StartTile.Col + 1}{Solver.DefaultInstance.Alphabet[StartTile.Ligne]}";
             return $"[{pos}] {Text} ({Points}){(Scramble ? "*" : "")}";
         }
-        public bool Equals(Word w)
-        {
-            return w.Direction == Direction && w.StartTile.Col == StartTile.Col && w.StartTile.Ligne == StartTile.Ligne && w.Text == Text;
-        }
+
+
     }
 }

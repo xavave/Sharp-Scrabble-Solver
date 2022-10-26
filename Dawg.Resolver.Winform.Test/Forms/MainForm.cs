@@ -56,11 +56,11 @@ namespace Dawg.Solver.Winform
         {
             //ClearBoardTilesExceptHeaders();
 
-            //construct tiles with letter/word multipliers
-            ConstructBoardTiles();
-            //construct headers
+            //construct header tiles
             ConstructHeaderBoardTiles();
-
+            //construct game tiles with letter/word multipliers
+            ConstructBoardTiles();
+            //Display tiles
             SetGbBoardFromBoardTiles();
         }
 
@@ -77,13 +77,6 @@ namespace Dawg.Solver.Winform
 
             foreach (var vtile in game.Grid)
             {
-                //IExtendedTile frmTile = new FormTile(this, game, vtile)
-                //{
-                //    Text = vtile.Letter?.Char.ToString(),
-                //    LetterMultiplier = vtile.LetterMultiplier,
-                //    WordMultiplier = vtile.WordMultiplier,
-                //};
-                //frmTile.SetBackColorFrom(vtile);
                 BoardTiles.Add(vtile);
             }
         }
@@ -253,7 +246,7 @@ namespace Dawg.Solver.Winform
             if (string.IsNullOrWhiteSpace(txtRackP1.Text)) return;// || txtRackP1.Text.Any(c => !Game.AlphabetAvecJoker.Any(ch => c == ch.Char))) return;
             Cursor.Current = Cursors.WaitCursor;
             game.Bag.GetLetters(game.Player1, txtRackP1.Text.Trim());
-            lsbHintWords.DisplayMember = "DisplayText";
+            if (string.IsNullOrEmpty(lsbHintWords.DisplayMember)) lsbHintWords.DisplayMember = "DisplayText";
             var ret = Solver.DefaultInstance.FindMoves(150, Game.HintSortByBestScore);
             lsbInfos.Items.Insert(0, game.IsTransposed ? "Transposed" : "Not Transposed");
             lsbInfos.Items.Insert(0, $"NbPossibleMoves={Solver.DefaultInstance.NbPossibleMoves}");

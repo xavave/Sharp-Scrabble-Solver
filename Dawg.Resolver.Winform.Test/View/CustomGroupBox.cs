@@ -5,6 +5,11 @@ namespace Dawg.Solver.Winform
 {
     public class CustomGroupBox : GroupBox
     {
+        public CustomGroupBox()
+        {
+            InitializeComponent();
+        }
+
         public event EventHandler CustomEvent;
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -19,6 +24,19 @@ namespace Dawg.Solver.Winform
                     CustomEvent(this, e);
                 }
             }
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // CustomGroupBox
+            // 
+            this.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Size = new System.Drawing.Size(100, 200);
+            this.ResumeLayout(false);
+
         }
     }
     public class SuspendDrawingUpdate : IDisposable

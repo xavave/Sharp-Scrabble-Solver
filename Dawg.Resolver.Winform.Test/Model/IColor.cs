@@ -20,9 +20,7 @@
             switch (letterType)
             {
                 case LetterType.Joker: Name = "Gold"; break;
-               
-
-                default: break;
+                default:  break;
             }
         }
         public string Name { get; set; }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -71,8 +72,6 @@ namespace Dawg.Solver.Winform
                         if (string.IsNullOrEmpty(tp))
                             continue;
                         else
-
-
                             switch (tp.Trim())
                             {
                                 case "RE":
@@ -107,6 +106,7 @@ namespace Dawg.Solver.Winform
                                 default:
                                     throw new Exception($"Unknown tile type in inital_board file: {tp}");
                             }
+                        this[row, col].SetTileBackColor();
                         col += 1;
                     }
 

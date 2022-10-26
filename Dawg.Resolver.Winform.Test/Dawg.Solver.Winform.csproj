@@ -98,6 +98,9 @@
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\CustomGroupBox.resx">
+      <DependentUpon>CustomGroupBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\FormTile.resx">
       <DependentUpon>FormTile.cs</DependentUpon>
     </EmbeddedResource>

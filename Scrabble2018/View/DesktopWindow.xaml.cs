@@ -150,7 +150,7 @@ namespace Scrabble2018
 
         }
 
-        private void Copier(object sender, RoutedEventArgs e)
+        private void yCopier(object sender, RoutedEventArgs e)
         {
             //Button clickedButton = sender as Button;
             //if( clickedButton == null ) // safety reason
