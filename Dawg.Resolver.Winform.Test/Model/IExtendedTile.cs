@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using Dawg.Solver.Winform;
 
 namespace DawgResolver.Model
 {

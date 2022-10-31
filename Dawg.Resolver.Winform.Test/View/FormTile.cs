@@ -395,10 +395,10 @@ namespace Dawg.Solver.Winform
 
         public void SetWord(string text, MovementDirection direction, bool validate = false)
         {
-            if (text == "") return;
+            if (string.IsNullOrEmpty(text)) return;
 
             this.SetFirstLetter(text.First(), Game.DefaultInstance.CurrentPlayer, validate);
-
+        
             foreach (var c in text.Skip(1))
             {
                 this.SetRightOrDownLetter(c, Game.DefaultInstance.CurrentPlayer, validate, direction);
@@ -413,6 +413,7 @@ namespace Dawg.Solver.Winform
             {
                 if (nextTile.IsEmpty) nextTile.IsValidated = validate;
                 nextTile.Letter.CopyFromOtherLetter(Solver.DefaultInstance.Find(char.ToUpper(c)));
+                Game.DefaultInstance.Grid[nextTile.Ligne, nextTile.Col].Letter.CopyFromOtherLetter(nextTile.Letter);
 
                 if (char.IsLower(c)) nextTile.Letter.LetterType = LetterType.Joker;
 
@@ -420,8 +421,9 @@ namespace Dawg.Solver.Winform
                     p.Rack.Remove(Solver.DefaultInstance.Alphabet.ElementAt(26));
                 else
                     p.Rack.Remove(Solver.DefaultInstance.Alphabet.First(a => a.Char == char.ToUpper(c)));
-                return nextTile;
+
             }
+          
             return nextTile;
         }
         public IExtendedTile SetFirstLetter(char c, Player p, bool validate)
@@ -434,6 +436,7 @@ namespace Dawg.Solver.Winform
             if (this.IsEmpty) this.IsValidated = validate;
 
             this.Letter.CopyFromOtherLetter(Solver.DefaultInstance.Find(char.ToUpper(c)));
+            Game.DefaultInstance.Grid[this.Ligne, this.Col].Letter.CopyFromOtherLetter(this.Letter);
             if (char.IsLower(c))
                 this.Letter.LetterType = LetterType.Joker;
             if (this.Letter.LetterType == LetterType.Joker)

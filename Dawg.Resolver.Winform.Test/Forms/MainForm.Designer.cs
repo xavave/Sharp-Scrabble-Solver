@@ -116,6 +116,7 @@
             // txtBag
             // 
             this.txtBag.BackColor = System.Drawing.SystemColors.InfoText;
+            this.txtBag.Font = new System.Drawing.Font("Courier New", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.txtBag.ForeColor = System.Drawing.SystemColors.InactiveBorder;
             this.txtBag.Location = new System.Drawing.Point(12, 562);
             this.txtBag.Multiline = true;
@@ -126,6 +127,7 @@
             // txtGrid2
             // 
             this.txtGrid2.BackColor = System.Drawing.SystemColors.InfoText;
+            this.txtGrid2.Font = new System.Drawing.Font("Courier New", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
             this.txtGrid2.ForeColor = System.Drawing.SystemColors.InactiveBorder;
             this.txtGrid2.Location = new System.Drawing.Point(278, 189);
             this.txtGrid2.Multiline = true;

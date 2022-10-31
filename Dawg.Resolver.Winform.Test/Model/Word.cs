@@ -58,14 +58,14 @@ namespace DawgResolver.Model
 
         public bool IsAllowed => Dictionnaire.DefaultInstance.MotAdmis(Text);
 
-        public HashSet<IExtendedTile> GetTiles()
+        public List<IExtendedTile> GetTiles()
         {
-            var ret = new HashSet<IExtendedTile>();
-            IExtendedTile tile = null;
-            if (StartTile.Col == Game.DefaultInstance.BoardCenter)
-                tile = StartTile.LeftTile.RightTile;
-            else
-                tile = StartTile.RightTile.LeftTile;
+            var ret = new List<IExtendedTile>();
+            IExtendedTile tile = StartTile;
+            //if (StartTile.Col == Game.DefaultInstance.BoardCenter)
+            //    tile = StartTile.LeftTile.RightTile;
+            //else
+            //    tile = StartTile.RightTile.LeftTile;
 
             ret.Add(tile);
             for (int i = 1; i < Text.Length; i++)

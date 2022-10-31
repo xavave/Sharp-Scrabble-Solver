@@ -298,7 +298,7 @@ namespace Dawg.Solver.Winform
                 if (ret.Any())
                 {
                     var word = ret.Where(w => !Solver.DefaultInstance.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).FirstOrDefault() as Word;
-                    if (word == null)//TODO CHECK || CurrentWord?.Text == word.Text)
+                    if (word == null || CurrentWord?.Text == word.Text)
                     {
                         game.EndGame = true;
                         return;

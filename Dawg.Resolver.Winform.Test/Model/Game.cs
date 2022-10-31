@@ -64,8 +64,8 @@ namespace Dawg.Solver.Winform
         public string GenerateTextGrid(CustomExtendedTilesGrid Tiles, bool? printAnchor = false, bool printLetterValue = false)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("123456789012345");
-            sb.AppendLine("_______________");
+            sb.AppendLine("  123456789012345");
+            //sb.AppendLine("_______________");
             for (int ligne = 0; ligne < Tiles.GetLength(0); ligne++)
             {
                 sb.Append($"{Solver.DefaultInstance.Alphabet.ElementAt(ligne).Char}|");
@@ -99,7 +99,7 @@ namespace Dawg.Solver.Winform
                 }
                 sb.AppendLine();
             }
-            sb.AppendLine("_______________");
+            //sb.AppendLine("_______________");
             return sb.ToString();
         }
         public void TransposeGameGrid()
