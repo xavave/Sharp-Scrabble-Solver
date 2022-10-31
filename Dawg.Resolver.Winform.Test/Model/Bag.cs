@@ -5,7 +5,7 @@ using System.Text;
 
 using Dawg.Solver.Winform;
 
-namespace DawgResolver.Model
+namespace DawgSolver.Model
 {
     public class Bag
     {

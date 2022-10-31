@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-using DawgResolver.Model;
+using DawgSolver.Model;
 
 namespace Dawg.Solver.Winform
 {

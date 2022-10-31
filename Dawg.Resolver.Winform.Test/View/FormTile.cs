@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.DesignerServices;
 using System.Windows.Forms;
 
-using DawgResolver.Model;
+using DawgSolver.Model;
 
 namespace Dawg.Solver.Winform
 {

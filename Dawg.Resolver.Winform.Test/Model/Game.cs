@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-using DawgResolver.Model;
+using DawgSolver.Model;
 
 namespace Dawg.Solver.Winform
 {

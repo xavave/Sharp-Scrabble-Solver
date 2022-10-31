@@ -1,4 +1,4 @@
-﻿namespace DawgResolver.Model
+﻿namespace DawgSolver.Model
 {
     public interface IColor { }
     public struct TileColor : IColor

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using Dawg;
 using Dawg.Solver.Winform;
 
-namespace DawgResolver.Model
+namespace DawgSolver.Model
 {
     public class Letter : ICloneable, INotifyPropertyChanged
     {

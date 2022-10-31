@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DawgResolver
+namespace DawgSolver
 {
     public static class Extensions
     {

@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 
-using DawgResolver.Model;
+using DawgSolver.Model;
 
 namespace Dawg.Solver.Winform
 {

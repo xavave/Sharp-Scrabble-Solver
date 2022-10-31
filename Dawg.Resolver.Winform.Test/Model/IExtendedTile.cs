@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace DawgResolver.Model
+namespace DawgSolver.Model
 {
 
     public interface IBaseTile

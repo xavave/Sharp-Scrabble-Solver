@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 using Dawg.Solver.Winform;
 
-namespace DawgResolverTest
+namespace DawgSolverTest
 {
     class Program
     {

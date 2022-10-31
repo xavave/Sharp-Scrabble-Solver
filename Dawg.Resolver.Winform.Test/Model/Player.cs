@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DawgResolver.Model
+namespace DawgSolver.Model
 {
     public class Player
     {

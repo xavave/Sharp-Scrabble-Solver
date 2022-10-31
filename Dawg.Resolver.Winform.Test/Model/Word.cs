@@ -7,7 +7,7 @@ using System.Linq;
 using Dawg;
 using Dawg.Solver.Winform;
 
-namespace DawgResolver.Model
+namespace DawgSolver.Model
 {
     public enum MovementDirection
     {

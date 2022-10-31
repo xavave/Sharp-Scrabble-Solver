@@ -63,9 +63,9 @@
       <Project>{8DA2C29C-DD08-4CAF-92AF-84012420155A}</Project>
       <Name>Dawg.Solver.Winform</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DawgResolver\Dawg.Resolver.csproj">
+    <ProjectReference Include="..\DawgResolver\Dawg.Solver.csproj">
       <Project>{e12bb466-f92a-40dc-b0c7-4ce18ee15eb9}</Project>
-      <Name>Dawg.Resolver</Name>
+      <Name>Dawg.Solver</Name>
     </ProjectReference>
     <ProjectReference Include="..\Dawg\Dawg.csproj">
       <Project>{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}</Project>
