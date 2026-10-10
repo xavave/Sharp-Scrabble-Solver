@@ -176,15 +176,24 @@ namespace Dawg.Solver.Winform
                         // On ne peut que continuer le préfixe vers la droite
                         noeudActuel = 1;
                         string prefixe = "";
+                        bool prefixeValide = true;
                         for (int k = t.Col - t.AnchorLeftMinLimit; k < t.Col; k++)
                         {
                             if (Game.DefaultInstance.Grid[t.Ligne, k].Letter.HasValue())
                             {
                                 prefixe += Game.DefaultInstance.Grid[t.Ligne, k].Letter;
-                                Trouve(Game.DefaultInstance.Grid[t.Ligne, k].Letter.Char, ref noeudActuel);
+                                // Le résultat de Trouve était ignoré : si le préfixe déjà posé n'est le début
+                                // d'aucun mot (ex. HELENTZ saisi à la main), on restait sur le nœud précédent
+                                // (HELENT, terminal) et « HELENTZ » était proposé comme mot valide.
+                                if (!Trouve(Game.DefaultInstance.Grid[t.Ligne, k].Letter.Char, ref noeudActuel))
+                                {
+                                    prefixeValide = false;
+                                    break;
+                                }
                             }
                         }
-                        newWords.UnionWith(ExtendRight(prefixe.ToUpper(), ref leftLetters, 1, noeudActuel, t.Ligne, t.Col));
+                        if (prefixeValide)
+                            newWords.UnionWith(ExtendRight(prefixe.ToUpper(), ref leftLetters, 1, noeudActuel, t.Ligne, t.Col));
                     }
                 }
                 else
@@ -208,6 +217,8 @@ namespace Dawg.Solver.Winform
         public bool Trouve(int lettre, ref int noeud)
         {
             if (((char)lettre == ' ')) return false;
+            int idx = lettre - Dictionnaire.AscShift;
+            if (idx < 1 || idx > 26) return false;   // caractère hors A..Z : aucun arc
             if (Dictionnaire.DefaultInstance.Legacy[lettre - Dictionnaire.AscShift, noeud] == 0)
                 return false;
             else
@@ -218,7 +229,8 @@ namespace Dawg.Solver.Winform
         }
         public bool Trouve(char lettre, ref int noeud)
         {
-            return Trouve((int)lettre, ref noeud);
+            // Joker posé = minuscule : on cherche la lettre majuscule correspondante dans le DAWG.
+            return Trouve((int)char.ToUpperInvariant(lettre), ref noeud);
         }
 
 
@@ -543,6 +555,9 @@ namespace Dawg.Solver.Winform
             }
             // L'utilisation des 7 lettres du tirage rapporte en plus 50 points de bonus
             points = horizontalPoints * multiplier + verticalPoints + (UsedDraughtLetters == 7 ? 50 : 0);
+
+            // Un « coup » qui ne pose aucune lettre du chevalet n'en est pas un (mot déjà présent sur le plateau).
+            if (UsedDraughtLetters == 0) return retWords;
 
             NbPossibleMoves++;
             //if (LegalWords.Any() && points < LegalWords.Min(l => l.Points)) return;
