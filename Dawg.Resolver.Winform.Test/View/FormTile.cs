@@ -204,9 +204,28 @@ namespace Dawg.Solver.Winform
             if (m.Msg == WM_PAINT) PaintStyledLetter();
         }
 
-        // Pendant la saisie (case active), on laisse le rendu natif pour garder le curseur.
-        protected override void OnGotFocus(EventArgs e) { base.OnGotFocus(e); Invalidate(); }
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool HideCaret(IntPtr hWnd);
+
+        // Pendant la saisie (case active), la lettre garde aussi le rendu stylé (contour + couleur) ;
+        // le curseur natif est masqué et remplacé par un cadre + un trait « en cours d'édition ».
+        protected override void OnGotFocus(EventArgs e)
+        {
+            base.OnGotFocus(e);
+            if (TileStyle.Family != null && !Name.StartsWith("header_"))
+            {
+                HideCaret(Handle);
+                SelectAll();        // la frappe suivante remplace la lettre (MaxLength = 1)
+            }
+            Invalidate();
+        }
         protected override void OnLostFocus(EventArgs e) { base.OnLostFocus(e); Invalidate(); }
+        // Un clic dans la case active fait redessiner le texte natif (sélection) sans WM_PAINT : on repeint.
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+            if (Focused && TileStyle.Family != null) { HideCaret(Handle); Invalidate(); }
+        }
         protected override void OnTextChanged(EventArgs e) { base.OnTextChanged(e); Invalidate(); }
 
         /// <summary>Couleur du joueur qui a posé la lettre, ou null si non attribuée.</summary>
@@ -222,9 +241,10 @@ namespace Dawg.Solver.Winform
         private void PaintStyledLetter()
         {
             var family = TileStyle.Family;
-            if (family == null || Focused || !IsHandleCreated || Name.StartsWith("header_")) return;
+            if (family == null || !IsHandleCreated || Name.StartsWith("header_")) return;
             var text = Text?.Trim();
-            if (string.IsNullOrEmpty(text)) return;
+            bool editing = Focused;
+            if (string.IsNullOrEmpty(text) && !editing) return;
             try
             {
                 using (var g = CreateGraphics())
@@ -232,7 +252,18 @@ namespace Dawg.Solver.Winform
                     var rect = ClientRectangle;
                     var bg = BackColor.A == 0 ? (Parent?.BackColor ?? SystemColors.Window) : Color.FromArgb(255, BackColor);
                     using (var b = new SolidBrush(bg)) g.FillRectangle(b, rect);
-                    TileFonts.DrawOutlinedCentered(g, text, family, rect, OwnerFillColor() ?? TileStyle.NeutralFill, TileStyle.OutlineWidth);
+                    if (!string.IsNullOrEmpty(text))
+                        TileFonts.DrawOutlinedCentered(g, text, family, rect, OwnerFillColor() ?? TileStyle.NeutralFill, TileStyle.OutlineWidth);
+                    if (editing)
+                    {
+                        // Indicateur d'édition : cadre + trait en bas (remplace le curseur clignotant).
+                        int pw = Math.Max(2, rect.Height / 14);
+                        using (var pen = new Pen(SystemColors.Highlight, pw))
+                            g.DrawRectangle(pen, rect.X + pw / 2, rect.Y + pw / 2, rect.Width - pw, rect.Height - pw);
+                        int barW = rect.Width / 2, barH = Math.Max(2, rect.Height / 12);
+                        using (var bar = new SolidBrush(SystemColors.Highlight))
+                            g.FillRectangle(bar, rect.X + (rect.Width - barW) / 2, rect.Bottom - pw - barH - 1, barW, barH);
+                    }
                 }
             }
             catch (Exception ex)
