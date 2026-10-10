@@ -1,73 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Dawg</RootNamespace>
     <AssemblyName>Dawg</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <!-- On conserve le fichier AssemblyInfo.cs existant (pas de génération auto, sinon attributs en double) -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- Conserve le GUID attendu par le fichier solution -->
+    <ProjectGuid>{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}</ProjectGuid>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Scrabble_letters.ico</ApplicationIcon>
-  </PropertyGroup>
+
+  <!-- Ces fichiers existent sur disque mais n'étaient PAS compilés dans l'ancien projet.
+       On les exclut pour conserver exactement le même périmètre de compilation. -->
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
+    <Compile Remove="Noeud1Temps.cs" />
+    <Compile Remove="Noeud2Etapes.cs" />
   </ItemGroup>
+
+  <!-- On n'embarque QUE les DAWG compilés (dico_dawg*.txt + EN_Collins_dawg.txt).
+       Les listes de mots BRUTES (ex. "French ODS 8dictionary.txt", "liste_alpha_ODS9.txt")
+       sont des ENTRÉES du DawgBuilder : on ne les embarque pas (sinon ~9 Mo inutiles dans la DLL). -->
   <ItemGroup>
-    <Compile Include="Arc.cs" />
-    <Compile Include="Dictionnaire.cs" />
-    <Compile Include="Noeud.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TravailEnCours.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\dico_dawgODS6.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\dico_dawgODS7.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Remove="Resources\*.txt" />
+    <EmbeddedResource Include="Resources\dico_dawg*.txt" />
     <EmbeddedResource Include="Resources\EN_Collins_dawg.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Scrabble_letters.ico" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

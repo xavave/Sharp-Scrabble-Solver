@@ -1,5 +1,36 @@
-# Auto detect text files and perform LF normalization
-# https://www.davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
-*    text=auto
+# Normalisation des fins de ligne pour tout le dépôt.
+# Git stocke en LF dans le dépôt et restitue selon la plateforme (CRLF sous Windows).
+* text=auto
 
-*.cs text diff=csharp
+# Fichiers sources / texte : CRLF en checkout sous Windows (projet .NET/Visual Studio)
+*.cs        text eol=crlf
+*.csproj    text eol=crlf
+*.sln       text eol=crlf
+*.config    text eol=crlf
+*.resx      text eol=crlf
+*.xml       text eol=crlf
+*.json      text eol=crlf
+*.props     text eol=crlf
+*.targets   text eol=crlf
+*.settings  text eol=crlf
+*.md        text
+*.txt       text
+
+# Scripts : fins de ligne imposées selon l'OS cible
+*.ps1       text eol=crlf
+*.cmd       text eol=crlf
+*.bat       text eol=crlf
+*.sh        text eol=lf
+
+# Fichiers binaires : jamais de conversion
+*.ico       binary
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.bmp       binary
+*.dll       binary
+*.exe       binary
+*.pdb       binary
+*.snk       binary
+*.zip       binary

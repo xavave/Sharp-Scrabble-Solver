@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'interface - ANGLAIS (langue neutre / repli). Les clés Ctl_<NomDuControle> sont appliquées automatiquement aux contrôles du même nom. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Ctl_MainForm" xml:space="preserve"><value>Scrabble</value></data>
+  <data name="Ctl_btnSearch" xml:space="preserve"><value>Search</value></data>
+  <data name="Ctl_btnTranspose" xml:space="preserve"><value>Transpose</value></data>
+  <data name="Ctl_btnBackToRack" xml:space="preserve"><value>Back to rack</value></data>
+  <data name="Ctl_btnValidate" xml:space="preserve"><value>Validate word</value></data>
+  <data name="Ctl_btnDemo" xml:space="preserve"><value>AutoPlay 1</value></data>
+  <data name="Ctl_btnDemoAll" xml:space="preserve"><value>AutoPlay All</value></data>
+  <data name="Ctl_label1" xml:space="preserve"><value>P1</value></data>
+  <data name="Ctl_label2" xml:space="preserve"><value>P2</value></data>
+  <data name="Ctl_ckKeepExistingBoard" xml:space="preserve"><value>Keep tiles</value></data>
+  <data name="Ctl_btnLoadGame" xml:space="preserve"><value>Load game</value></data>
+  <data name="Ctl_btnSaveGame" xml:space="preserve"><value>Save game</value></data>
+  <data name="Ctl_btnNewGame" xml:space="preserve"><value>New game</value></data>
+  <data name="Ctl_groupBox1" xml:space="preserve"><value>Board size</value></data>
+  <data name="Ctl_ckShowGrid" xml:space="preserve"><value>Show dev grid</value></data>
+  <data name="Ctl_gbWordDirection" xml:space="preserve"><value>Word direction</value></data>
+  <data name="Ctl_rbWordDirDown" xml:space="preserve"><value>Down</value></data>
+  <data name="Ctl_rbWordDirRight" xml:space="preserve"><value>Across</value></data>
+  <data name="Ctl_gbGameStyle" xml:space="preserve"><value>Game style</value></data>
+  <data name="Ctl_rbGameStyleScrabble" xml:space="preserve"><value>Scrabble</value></data>
+  <data name="Ctl_rbWordsWithFriends" xml:space="preserve"><value>Words with friends</value></data>
+  <data name="Ctl_gbSortBy" xml:space="preserve"><value>Sort by</value></data>
+  <data name="Ctl_rbMaxLength" xml:space="preserve"><value>Max length</value></data>
+  <data name="Ctl_rbBestScore" xml:space="preserve"><value>Best score</value></data>
+  <data name="Ctl_lblMotExiste" xml:space="preserve"><value>Word exists?</value></data>
+  <data name="Ctl_btnUndoLast" xml:space="preserve"><value>Undo last</value></data>
+  <data name="Ctl_groupBox2" xml:space="preserve"><value>Dictionary</value></data>
+  <data name="Ctl_btnWordsFinder" xml:space="preserve"><value>Words finder</value></data>
+  <data name="Ctl_gbBoard" xml:space="preserve"><value>Board</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="PlayerName" xml:space="preserve"><value>Player {0}</value></data>
+  <data name="PlayerScore" xml:space="preserve"><value>Player {0} score: {1}</value></data>
+  <data name="PlayerBestPlay" xml:space="preserve"><value>Player {0} best play</value></data>
+  <data name="PlayerBestPlayValue" xml:space="preserve"><value>Player {0} best play: {1}</value></data>
+  <data name="CurrentRack" xml:space="preserve"><value>Player {0}: {1}</value></data>
+  <data name="BagEmpty" xml:space="preserve"><value>The bag is empty!</value></data>
+  <data name="NoWordsFound" xml:space="preserve"><value>Player {0}: {1} --&gt; no word found!</value></data>
+  <data name="StopAutoPlay" xml:space="preserve"><value>Stop AutoPlay</value></data>
+  <data name="GameEnded" xml:space="preserve"><value>Game ended</value></data>
+  <data name="PlayerWins" xml:space="preserve"><value>{0} wins with a score of {1}</value></data>
+  <data name="Draw" xml:space="preserve"><value>Draw: {0} points each</value></data>
+  <data name="DicoLoaded" xml:space="preserve"><value>Dictionary loaded: {0} ({1} nodes)</value></data>
+  <data name="DicoLoadError" xml:space="preserve"><value>[ERROR] loading dictionary {0}: {1}</value></data>
+  <data name="GenericError" xml:space="preserve"><value>[ERROR] {0}: {1} (see scrabble.log)</value></data>
+  <data name="Transposed" xml:space="preserve"><value>Transposed</value></data>
+  <data name="NotTransposed" xml:space="preserve"><value>Not transposed</value></data>
+  <data name="GameSaved" xml:space="preserve"><value>Game saved as {0}</value></data>
+  <data name="ColorHint" xml:space="preserve"><value>Click a column header to change that player's color (history and board)</value></data>
+  <data name="BoardFont" xml:space="preserve"><value>Board font</value></data>
+  <data name="StandardFont" xml:space="preserve"><value>(standard)</value></data>
+</root>

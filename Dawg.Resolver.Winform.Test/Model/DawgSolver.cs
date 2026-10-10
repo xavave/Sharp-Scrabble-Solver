@@ -344,21 +344,27 @@ namespace Dawg.Solver.Winform
 
             var backupGrid = Game.DefaultInstance.BackupGameGrid();
             //var vTiles = g.Grid;
+            Logger.Log("  FindMoves: DetectTiles (horizontal)...");
             Game.DefaultInstance.DetectTiles();
 
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
+            Logger.Log("  FindMoves: FindMovesPerAnchor (horizontal)...");
             foundWords.UnionWith(FindMovesPerAnchor());
             // Recherche des coups verticaux
             // par transposition de la grille, on refait tout le processus
             Game.DefaultInstance.RestoreGameGridFrom(backupGrid);
             Game.DefaultInstance.CurrentPlayer.Rack.Restore(backUpCurrentRack);
 
+            Logger.Log("  FindMoves: TransposeGameGrid...");
             Game.DefaultInstance.TransposeGameGrid();
+            Logger.Log("  FindMoves: DetectTiles (vertical)...");
             Game.DefaultInstance.DetectTiles();
             // Rechercher pour chaque case précédemment identifiée les différents coups possibles et les enregistrer
+            Logger.Log("  FindMoves: FindMovesPerAnchor (vertical)...");
             foundWords.UnionWith(FindMovesPerAnchor());
 
             //on remet la grille à son état initial
+            Logger.Log("  FindMoves: restauration grille + tri.");
             Game.DefaultInstance.RestoreGameGridFrom(backupGrid);
             Game.DefaultInstance.IsTransposed = false;
 

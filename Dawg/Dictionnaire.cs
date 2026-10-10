@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading;
-using System.Windows.Threading;
 
 namespace Dawg
 {
@@ -27,6 +29,8 @@ namespace Dawg
             }
         }
         public static string NomDicoDawg { get; set; }
+        public const string NomDicoDawgODS9 = "dico_dawgODS9.txt";
+        public const string NomDicoDawgODS8 = "dico_dawgODS8.txt";
         public const string NomDicoDawgODS7 = "dico_dawgODS7.txt";
         public const string NomDicoDawgODS6 = "dico_dawgODS6.txt";
         public const  string NomDicoDawgEN_Collins = "EN_Collins_dawg.txt";
@@ -42,7 +46,19 @@ namespace Dawg
         /// </summary>
         private Stopwatch chrono = new Stopwatch();
 
-        private Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+        // Remplacement du Dispatcher WPF (WindowsBase) par SynchronizationContext,
+        // disponible dans le runtime de base : permet de supprimer la dépendance à WPF
+        // et de cibler net10.0 (portable) tout en conservant le marshaling vers le thread
+        // qui a créé le Dictionnaire (typiquement le thread UI), s'il en existe un.
+        private readonly SynchronizationContext syncContext = SynchronizationContext.Current;
+
+        private void RunOnOwnerThread(Action action)
+        {
+            if (syncContext != null)
+                syncContext.Send(_ => action(), null); // synchrone, équivalent à Dispatcher.Invoke
+            else
+                action();
+        }
 
         /// <summary>
         /// Cette liste est consituée lors de la construction ou lors de la lecture du fichier compressé.
@@ -94,10 +110,7 @@ namespace Dawg
         {
             long duree = chrono.ElapsedMilliseconds;
             if (this.EtapeAtteinte != null)
-                dispatcher.Invoke(new Action(delegate
-                    {
-                        this.EtapeAtteinte(Texte + " Chrono: ", duree);
-                    }), DispatcherPriority.Send);
+                RunOnOwnerThread(() => this.EtapeAtteinte(Texte + " Chrono: ", duree));
         }
 
         /// <summary>
@@ -107,10 +120,7 @@ namespace Dawg
         private void AnnonceProgression(int Pourcent)
         {
             if (this.Progression != null)
-                dispatcher.Invoke(new Action(delegate
-                    {
-                        this.Progression(Pourcent);
-                    }), DispatcherPriority.Normal);
+                RunOnOwnerThread(() => this.Progression(Pourcent));
         }
 
         /// <summary>
@@ -193,6 +203,7 @@ namespace Dawg
             AnnonceEtape("Ecriture du fichier.");
 
             Noeud.Serialize(dawg, Mots.Count, NomDicoDawg);
+            AnnonceEtape($"Fichier DAWG écrit : {Path.GetFullPath(NomDicoDawg)}");
             chrono.Stop();
 
             //==================Ici la construction est finie
@@ -422,16 +433,47 @@ namespace Dawg
             this.TravailEnCours = TravailEnCours.ChargementFichierASCII;
 
             AnnonceEtape("Début du chargement du dictionnaire Ascii.");
-            //Chargemenent et tri par ordre alphabétique du dictionnaire Ascii
-            //Le cast en List<string> "coute" un peu de temps cependant, par la suite l'accès à certaines infos (le nombre d'enregistrement, le contenu de la collection en débug, etc.) est instanné
-            Mots = File.ReadAllLines(FileName).OrderBy(m => m).ToList();
-            AnnonceEtape(string.Format("Dictionnaire de {0:#,0} mots, chargé et trié.", Mots.Count));
+            // Normalisation indispensable pour construire un DAWG valide à partir d'une liste
+            // de mots quelconque (ex. ODS8) :
+            //  - MAJUSCULES (le DAWG est indexé sur A..Z via AscShift),
+            //  - suppression des diacritiques (É->E, Ç->C, Œ->OE... les lettres de Scrabble sont A..Z),
+            //  - on ne garde que les mots composés uniquement de A..Z (on écarte lignes vides,
+            //    espaces, tirets, apostrophes, chiffres, en-têtes...),
+            //  - dédoublonnage,
+            //  - tri ORDINAL (la construction du DAWG par préfixe commun exige un tri cohérent
+            //    avec la comparaison caractère par caractère ; un tri culturel peut la casser).
+            var lignesLues = File.ReadAllLines(FileName);
+            Mots = lignesLues
+                .Select(NormaliserMot)
+                .Where(m => m.Length > 0 && m.All(c => c >= 'A' && c <= 'Z'))
+                .Distinct()
+                .OrderBy(m => m, StringComparer.Ordinal)
+                .ToList();
+            AnnonceEtape(string.Format("Dictionnaire de {0:#,0} mots retenus (sur {1:#,0} lignes lues), normalisé et trié.", Mots.Count, lignesLues.Length));
 
             this.TravailEnCours = TravailEnCours.Aucun;
             chrono.Stop();
             return Mots.Any();
 
 
+        }
+
+        /// <summary>
+        /// Normalise un mot pour la construction du DAWG : trim, MAJUSCULES invariantes,
+        /// et suppression des signes diacritiques (accents, cédille).
+        /// </summary>
+        private static string NormaliserMot(string mot)
+        {
+            if (string.IsNullOrWhiteSpace(mot)) return string.Empty;
+            mot = mot.Trim().ToUpperInvariant();
+            var decompose = mot.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder(decompose.Length);
+            foreach (var c in decompose)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                    sb.Append(c);
+            }
+            return sb.ToString().Normalize(NormalizationForm.FormC);
         }
 
         /// <summary>
@@ -488,9 +530,32 @@ namespace Dawg
             //    }
             //}
             //else
-            if (File.Exists(nomdico))
+            // Résolution robuste du chemin : le fichier dico est copié à côté de l'exécutable.
+            // Selon le répertoire de travail (lancement depuis Visual Studio, raccourci, etc.),
+            // un chemin relatif peut échouer : on tente aussi le dossier de l'application.
+            var dicoPath = nomdico;
+            if (!File.Exists(dicoPath))
             {
-                noeuds = BuildDawgNoeuds(File.ReadAllText(nomdico));
+                var candidate = Path.Combine(AppContext.BaseDirectory, nomdico);
+                if (File.Exists(candidate)) dicoPath = candidate;
+            }
+            if (File.Exists(dicoPath))
+            {
+                noeuds = BuildDawgNoeuds(File.ReadAllText(dicoPath));
+            }
+            else
+            {
+                // Fallback : les dictionnaires DAWG sont aussi embarqués dans l'assembly Dawg
+                // (utile pour les dicos FR ODS6/ODS7 qui ne sont pas copiés à côté de l'exe).
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = assembly.GetManifestResourceNames()
+                    .FirstOrDefault(s => s.EndsWith(nomdico, StringComparison.OrdinalIgnoreCase));
+                if (resourceName != null)
+                {
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    using (StreamReader reader = new StreamReader(stream, true))
+                        noeuds = BuildDawgNoeuds(reader.ReadToEnd());
+                }
             }
             if (noeuds != null)
             {

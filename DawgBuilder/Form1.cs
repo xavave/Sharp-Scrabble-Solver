@@ -121,11 +121,32 @@ namespace Test_DAWG
 
         private void btnCreationDawg_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(Dictionnaire.NomDicoReel) || !File.Exists(Dictionnaire.NomDicoReel))
+            {
+                MessageBox.Show("Chargez d'abord une liste de mots (bouton de lecture du dico texte).");
+                return;
+            }
+
+            // Choix du fichier DAWG de sortie (nom par défaut dérivé de la liste chargée,
+            // ou dico_dawgODS8.txt pour l'ODS8).
+            using (var sfd = new SaveFileDialog()
+            {
+                Filter = "Fichier DAWG|*.txt",
+                DefaultExt = "txt",
+                RestoreDirectory = true,
+                FileName = "dico_dawgODS8.txt",
+                InitialDirectory = Path.GetDirectoryName(Dictionnaire.NomDicoReel)
+            })
+            {
+                if (sfd.ShowDialog() != DialogResult.OK) return;
+                Dictionnaire.NomDicoDawg = sfd.FileName; // chemin complet -> le DAWG sera écrit ici
+            }
+
             Cursor.Current = Cursors.WaitCursor;
+            // La construction tourne sur un thread dédié ; l'avancement s'affiche dans les listes,
+            // et le chemin final est journalisé à la fin ("Fichier DAWG écrit : ...").
             Dictionnaire.DefaultInstance.ConstruireDawgEnDeuxTemps();
-
             Cursor.Current = Cursors.Default;
-
         }
     }
 }

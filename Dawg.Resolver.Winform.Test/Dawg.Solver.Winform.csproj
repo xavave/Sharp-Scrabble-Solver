@@ -1,157 +1,49 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8DA2C29C-DD08-4CAF-92AF-84012420155A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Dawg.Resolver.Winform</RootNamespace>
     <AssemblyName>Dawg.Resolver.Winform</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
     <StartupObject>Dawg.Solver.Winform.Test.Program</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationIcon>Scrabble_letters.ico</ApplicationIcon>
+    <!-- On conserve l'AssemblyInfo.cs existant -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- Conserve le nommage classique des ressources de formulaires (resx dans des sous-dossiers) :
+         indispensable pour que les Form.resx (Forms\*, View\*) soient trouvés à l'exécution. -->
+    <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <ProjectGuid>{8DA2C29C-DD08-4CAF-92AF-84012420155A}</ProjectGuid>
   </PropertyGroup>
+
+  <!-- Seuls les plateaux de jeu sont nécessaires ici (chargés depuis CET assembly).
+       Tous les dictionnaires (ODS6/7/8/9 + EN_Collins) sont embarqués dans l'assembly Dawg
+       et chargés via le fallback ressources : plus aucun fichier dico côté WinForm. -->
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <None Remove="Resources\*.txt" />
+    <EmbeddedResource Include="Resources\initial_board*.txt" />
   </ItemGroup>
+
+  <!-- Polices des lettres du plateau : polices LIBRES (SIL OFL 1.1 / Apache 2.0, licences dans
+       Resources\Fonts\licenses), redistribuables et versionnées. Liste explicite : tout autre .ttf
+       présent dans le dossier (ex. anciennes polices Rostex, non libres) n'est PAS embarqué. -->
   <ItemGroup>
-    <Compile Include="View\CustomGrid.cs" />
-    <Compile Include="View\CustomGroupBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Model\DawgSolver.cs" />
-    <Compile Include="Forms\Form3.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Form3.Designer.cs">
-      <DependentUpon>Form3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Game.cs" />
-    <Compile Include="Forms\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="View\FormTile.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Model\Bag.cs" />
-    <Compile Include="Model\IColor.cs" />
-    <Compile Include="Model\IExtendedTile.cs" />
-    <Compile Include="Model\Letter.cs" />
-    <Compile Include="Model\Player.cs" />
-    <Compile Include="Model\TileType.cs" />
-    <Compile Include="Model\Word.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="View\TranspTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\WordsFinder.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\WordsFinder.Designer.cs">
-      <DependentUpon>WordsFinder.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Forms\Form3.resx">
-      <DependentUpon>Form3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\CustomGroupBox.resx">
-      <DependentUpon>CustomGroupBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\FormTile.resx">
-      <DependentUpon>FormTile.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <EmbeddedResource Include="Forms\WordsFinder.resx">
-      <DependentUpon>WordsFinder.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
+    <None Remove="Resources\Fonts\**" />
+    <EmbeddedResource Include="Resources\Fonts\TitanOne-Regular.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\LilitaOne-Regular.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\Bungee-Regular.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\LuckiestGuy-Regular.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\BowlbyOne-Regular.ttf" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="App.config" />
+    <ProjectReference Include="..\Dawg\Dawg.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Dawg\Dawg.csproj">
-      <Project>{95AF0C36-E8CB-422A-9060-ACA73CCD0C36}</Project>
-      <Name>Dawg</Name>
-    </ProjectReference>
+    <!-- Requis par Properties\Settings.Designer.cs (System.Configuration n'est plus dans le framework de base) -->
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\dico_dawgODS7.txt" />
-    <None Include="EN_Collins_dawg.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <EmbeddedResource Include="Resources\initial_board11S.txt" />
-    <EmbeddedResource Include="Resources\initial_board11W.txt" />
-    <EmbeddedResource Include="Resources\initial_board15S.txt" />
-    <EmbeddedResource Include="Resources\initial_board15W.txt" />
-    <Content Include="Scrabble_letters.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Collections.Immutable">
-      <Version>6.0.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

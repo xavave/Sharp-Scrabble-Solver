@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.DesignerServices;
 using System.Windows.Forms;
 
 using DawgSolver.Model;
@@ -186,7 +185,63 @@ namespace Dawg.Solver.Winform
                 return t;
             }
         }
-        public int WordIndex { get; set; } = 0;
+        private int _wordIndex;
+        /// <summary>Index du coup qui a posé la lettre (0 = aucun). Détermine la couleur de la lettre.</summary>
+        public int WordIndex
+        {
+            get => _wordIndex;
+            set { if (_wordIndex == value) return; _wordIndex = value; if (IsHandleCreated) Invalidate(); }
+        }
+
+        #region Rendu des lettres : contour noir + remplissage couleur du joueur
+
+        private const int WM_PAINT = 0x000F;
+
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+            // Le TextBox natif vient de dessiner sa lettre : on repeint la case par-dessus.
+            if (m.Msg == WM_PAINT) PaintStyledLetter();
+        }
+
+        // Pendant la saisie (case active), on laisse le rendu natif pour garder le curseur.
+        protected override void OnGotFocus(EventArgs e) { base.OnGotFocus(e); Invalidate(); }
+        protected override void OnLostFocus(EventArgs e) { base.OnLostFocus(e); Invalidate(); }
+        protected override void OnTextChanged(EventArgs e) { base.OnTextChanged(e); Invalidate(); }
+
+        /// <summary>Couleur du joueur qui a posé la lettre, ou null si non attribuée.</summary>
+        private Color? OwnerFillColor()
+        {
+            if (WordIndex <= 0) return null;
+            var g = Game.DefaultInstance;
+            if (g.Player1.Moves.Any(w => w.Index == WordIndex)) return TileStyle.Player1Fill;
+            if (g.Player2.Moves.Any(w => w.Index == WordIndex)) return TileStyle.Player2Fill;
+            return null;
+        }
+
+        private void PaintStyledLetter()
+        {
+            var family = TileStyle.Family;
+            if (family == null || Focused || !IsHandleCreated || Name.StartsWith("header_")) return;
+            var text = Text?.Trim();
+            if (string.IsNullOrEmpty(text)) return;
+            try
+            {
+                using (var g = CreateGraphics())
+                {
+                    var rect = ClientRectangle;
+                    var bg = BackColor.A == 0 ? (Parent?.BackColor ?? SystemColors.Window) : Color.FromArgb(255, BackColor);
+                    using (var b = new SolidBrush(bg)) g.FillRectangle(b, rect);
+                    TileFonts.DrawOutlinedCentered(g, text, family, rect, OwnerFillColor() ?? TileStyle.NeutralFill, TileStyle.OutlineWidth);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException($"PaintStyledLetter {Name}", ex);
+            }
+        }
+
+        #endregion
         Keys PreviousKey { get; set; }
         Keys CurrentKey { get; set; }
 
@@ -375,76 +430,86 @@ namespace Dawg.Solver.Winform
 
         public Word GetWordFromTile(MovementDirection direction)
         {
-            var word = new Word();
-            var wordText = "";
-            this.GetNextTile( direction, ref wordText);
+            // Remonte au début du mot (gauche pour un mot horizontal, haut pour un mot vertical),
+            // puis lit les lettres contiguës jusqu'à la première case vide.
+            var start = direction == MovementDirection.Across ? this.WordMostLeftTile : this.WordUpperTile;
+            if (start == null || start.IsEmpty) return null;
 
-            word.SetText(wordText, false);
-            return word;
+            var wordText = string.Empty;
+            IExtendedTile tile = start;
+            while (tile != null && !tile.IsEmpty)
+            {
+                wordText += tile.Letter.Char;
+                tile = direction == MovementDirection.Across ? tile.RightTile : tile.DownTile;
+            }
+
+            if (wordText.Length <= 1) return null;
+            return new Word { StartTile = start, Direction = direction, Text = wordText };
         }
+
         public IExtendedTile GetNextTile(MovementDirection direction, ref string wordText)
         {
+            // Avance d'une case dans la direction donnée tant que la case suivante est occupée,
+            // en accumulant les lettres. Protégé contre le dépassement de plateau (null).
             var tileToCheck = direction == MovementDirection.Across ? this.RightTile : this.DownTile;
-            while (tileToCheck != null && !tileToCheck.IsEmpty || !tileToCheck.IsAnchor || !tileToCheck.IsValidated)
-            {
-                wordText += $"{tileToCheck.Letter}";
-                return tileToCheck.GetNextTile(direction, ref wordText);
-            }
-            return tileToCheck;
+            if (tileToCheck == null || tileToCheck.IsEmpty)
+                return tileToCheck;
+
+            wordText += $"{tileToCheck.Letter}";
+            return tileToCheck.GetNextTile(direction, ref wordText);
         }
 
         public void SetWord(string text, MovementDirection direction, bool validate = false)
         {
             if (string.IsNullOrEmpty(text)) return;
 
-            this.SetFirstLetter(text.First(), Game.DefaultInstance.CurrentPlayer, validate);
-        
-            foreach (var c in text.Skip(1))
+            // On parcourt le plateau case par case à partir de la case de départ (this),
+            // dans la direction du mot, en posant une lettre par case.
+            // NB : les accesseurs RightTile/DownTile résolvent toujours la grille courante
+            // via les coordonnées Ligne/Col, donc même si 'this' provient d'une grille
+            // transposée (recherche verticale), le parcours reste correct sur la grille vivante.
+            var p = Game.DefaultInstance.CurrentPlayer;
+            IExtendedTile tile = this;
+            bool first = true;
+            foreach (var c in text)
             {
-                this.SetRightOrDownLetter(c, Game.DefaultInstance.CurrentPlayer, validate, direction);
+                if (!first)
+                    tile = direction == MovementDirection.Down ? tile.DownTile : tile.RightTile;
+                if (tile == null) break; // sécurité : on sort du plateau
 
+                SetLetterOnTile(tile, c, p, validate);
+                first = false;
             }
         }
-        private IExtendedTile SetRightOrDownLetter(char c, Player p, bool validate, MovementDirection direction)
-        {
-            var nextTile = direction == MovementDirection.Down ? this.DownTile : this.RightTile;
 
-            if (nextTile != null)
+        /// <summary>
+        /// Pose une lettre sur une case donnée et synchronise la grille vivante.
+        /// Seules les lettres réellement posées (case précédemment vide) sont retirées du chevalet :
+        /// les lettres déjà présentes sur le plateau (préfixes/suffixes croisés) ne doivent pas être consommées.
+        /// </summary>
+        private void SetLetterOnTile(IExtendedTile tile, char c, Player p, bool validate)
+        {
+            bool wasEmpty = tile.IsEmpty;
+            if (wasEmpty) tile.IsValidated = validate;
+
+            tile.Letter.CopyFromOtherLetter(Solver.DefaultInstance.Find(char.ToUpper(c)));
+            if (char.IsLower(c)) tile.Letter.LetterType = LetterType.Joker;
+
+            // Synchronise la case correspondante de la grille vivante si 'tile' est une référence
+            // issue d'une grille de travail (transposée) différente de la grille affichée.
+            var liveTile = Game.DefaultInstance.Grid[tile.Ligne, tile.Col];
+            if (!ReferenceEquals(liveTile, tile))
             {
-                if (nextTile.IsEmpty) nextTile.IsValidated = validate;
-                nextTile.Letter.CopyFromOtherLetter(Solver.DefaultInstance.Find(char.ToUpper(c)));
-                Game.DefaultInstance.Grid[nextTile.Ligne, nextTile.Col].Letter.CopyFromOtherLetter(nextTile.Letter);
-
-                if (char.IsLower(c)) nextTile.Letter.LetterType = LetterType.Joker;
-
-                if (nextTile.Letter.LetterType == LetterType.Joker)
-                    p.Rack.Remove(Solver.DefaultInstance.Alphabet.ElementAt(26));
-                else
-                    p.Rack.Remove(Solver.DefaultInstance.Alphabet.First(a => a.Char == char.ToUpper(c)));
-
+                liveTile.Letter.CopyFromOtherLetter(tile.Letter);
+                liveTile.IsValidated = tile.IsValidated;
             }
-          
-            return nextTile;
-        }
-        public IExtendedTile SetFirstLetter(char c, Player p, bool validate)
-        {
-            //IExtendedTile nextTile = null;
-            //if (this.Col == r.game.BoardSize - 1)
-            //    nextTile = this.LeftTile.RightTile;
-            //else nextTile = this.RightTile.LeftTile;
 
-            if (this.IsEmpty) this.IsValidated = validate;
+            if (!wasEmpty) return; // lettre déjà sur le plateau : on ne touche pas au chevalet
 
-            this.Letter.CopyFromOtherLetter(Solver.DefaultInstance.Find(char.ToUpper(c)));
-            Game.DefaultInstance.Grid[this.Ligne, this.Col].Letter.CopyFromOtherLetter(this.Letter);
-            if (char.IsLower(c))
-                this.Letter.LetterType = LetterType.Joker;
-            if (this.Letter.LetterType == LetterType.Joker)
+            if (tile.Letter.LetterType == LetterType.Joker)
                 p.Rack.Remove(Solver.DefaultInstance.Alphabet.ElementAt(26));
             else
-                p.Rack.Remove(this.Letter);
-            return this;
-
+                p.Rack.Remove(Solver.DefaultInstance.Alphabet.First(a => a.Char == char.ToUpper(c)));
         }
         public void CopyControllers(IDictionary<int, int> source)
         {
