@@ -580,6 +580,14 @@ namespace Dawg.Solver.Winform
                 lblP2BestPlay.Text = L.F("PlayerBestPlay", 2);
             }
             _tips.SetToolTip(lvWords, L.T("ColorHint"));
+
+            // Infobulles : clé « Tip_<NomDuControle> » dans Strings*.resx, appliquée automatiquement.
+            _tips.AutoPopDelay = 15000;
+            foreach (var c in AllControls(this))
+            {
+                var tip = string.IsNullOrEmpty(c.Name) ? null : L.TryT("Tip_" + c.Name);
+                if (tip != null) _tips.SetToolTip(c, tip);
+            }
         }
 
         private static System.Collections.Generic.IEnumerable<Control> AllControls(Control root)

@@ -15,6 +15,8 @@
   <data name="Ctl_label1" xml:space="preserve"><value>P1</value></data>
   <data name="Ctl_label2" xml:space="preserve"><value>P2</value></data>
   <data name="Ctl_ckKeepExistingBoard" xml:space="preserve"><value>Keep tiles</value></data>
+  <data name="Tip_ckKeepExistingBoard" xml:space="preserve"><value>Checked: "AutoPlay All" continues from the current board (tiles already placed, scores, bag and racks kept) instead of starting a new game.
+Useful to enter a position by hand and let the computer finish the game.</value></data>
   <data name="Ctl_btnLoadGame" xml:space="preserve"><value>Load game</value></data>
   <data name="Ctl_btnSaveGame" xml:space="preserve"><value>Save game</value></data>
   <data name="Ctl_btnNewGame" xml:space="preserve"><value>New game</value></data>

@@ -15,6 +15,8 @@
   <data name="Ctl_label1" xml:space="preserve"><value>J1</value></data>
   <data name="Ctl_label2" xml:space="preserve"><value>J2</value></data>
   <data name="Ctl_ckKeepExistingBoard" xml:space="preserve"><value>Garder lettres</value></data>
+  <data name="Tip_ckKeepExistingBoard" xml:space="preserve"><value>Coché : « AutoPlay All » repart du plateau actuel (lettres déjà posées, scores, sac et chevalets conservés) au lieu de commencer une nouvelle partie.
+Utile pour saisir une position à la main puis laisser l'ordinateur finir la partie.</value></data>
   <data name="Ctl_btnLoadGame" xml:space="preserve"><value>Charger</value></data>
   <data name="Ctl_btnSaveGame" xml:space="preserve"><value>Enregistrer</value></data>
   <data name="Ctl_btnNewGame" xml:space="preserve"><value>Nouv. partie</value></data>
