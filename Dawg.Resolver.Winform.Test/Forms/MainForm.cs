@@ -16,16 +16,45 @@ namespace Dawg.Solver.Winform
     {
 
 
-        public string CurrentDicoName { get; set; } = Dictionnaire.NomDicoDawgEN_Collins;
+        // Dictionnaire par défaut : FR ODS 9.
+        public string CurrentDicoName { get; set; } = Dictionnaire.NomDicoDawgODS9;
         public Game game => Game.DefaultInstance;
         public FormTile LastPlayedTile { get; set; }
         public HashSet<IExtendedTile> BoardTiles { get; }
+
+        // Empêche le handler rbDico_CheckedChanged de s'exécuter pendant InitializeComponent
+        // (quand rbODS9.Checked=true déclenche l'événement avant que les contrôles soient prêts).
+        private bool _initialized = false;
 
         public MainForm()
         {
             InitializeComponent();
             BoardTiles = gbBoard.Controls.OfType<IExtendedTile>().ToHashSet();
+            _initialized = true;
+            // Le singleton Dictionnaire est initialisé en anglais : on charge le dico par défaut (ODS9).
+            LoadDictionary(CurrentDicoName);
             NewGame(CurrentDicoName, true);
+        }
+
+        private void LoadDictionary(string nomDico)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                Logger.Log($"Chargement du dictionnaire -> {nomDico}");
+                Dictionnaire.DefaultInstance.ChargerFichierDAWG(nomDico);
+                CurrentDicoName = nomDico;
+                lsbInfos.Items.Insert(0, $"Dictionnaire chargé : {nomDico} ({Dictionnaire.DefaultInstance.NombreNoeuds} nœuds)");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException("Chargement du dictionnaire", ex);
+                lsbInfos.Items.Insert(0, $"[ERREUR] chargement dico {nomDico}: {ex.Message}");
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
         }
 
         private void NewGame(string nomDico, bool initUI)
@@ -43,7 +72,9 @@ namespace Dawg.Solver.Winform
                 lblP1BestPlay.Text = "Player 1 best play";
                 lblP2BestPlay.Text = "Player 2 best play";
                 txtRackP1.Text = txtRackP2.Text = "";
-                lsbWords.DisplayMember = "DisplayInList";
+                // "DisplayInList" n'est pas une propriété (c'est une méthode à paramètres) :
+                // on laisse la ListBox utiliser Word.ToString() -> "[H3] DJEMBE (25)".
+                lsbWords.DisplayMember = "";
                 lsbWords.Items.Clear();
                 lsbHintWords.DataSource = null;
                 lsbHintWords.Items.Clear();
@@ -225,7 +256,9 @@ namespace Dawg.Solver.Winform
         }
         private Word AddWord(Word word)
         {
-            lsbWords.Invoke((MethodInvoker)(() => lsbWords.Text = word.Text));
+            // Bug d'origine : lsbWords.Text = ... n'ajoute RIEN à une ListBox.
+            // On ajoute le coup en tête de l'historique (affiché via Word.ToString()).
+            lsbWords.Invoke((MethodInvoker)(() => lsbWords.Items.Insert(0, word)));
             return word;
         }
         //private bool ValidateWord(Player p)
@@ -283,12 +316,13 @@ namespace Dawg.Solver.Winform
                 game.EndGame = true;
                 return;
             }
-            System.Windows.Forms.Application.DoEvents();
             var playerNumber = game.IsPlayer1 ? "1" : "2";
             try
             {
+                Logger.Log($"-- Tour Player {playerNumber} (IsPlayer1={game.IsPlayer1}, NoMoreMovesCount={game.NoMoreMovesCount}) --");
                 Cursor.Current = Cursors.WaitCursor;
                 game.Bag.GetLetters(game.CurrentPlayer);
+                Logger.Log($"Player {playerNumber}: tirage OK (rack={game.CurrentPlayer.Rack}).");
                 if (game.Bag.LeftLettersCount == 0)
                 {
                     lsbInfos.Invoke((MethodInvoker)(() => lsbInfos.Items.Insert(0, "Le sac est vide !")));
@@ -302,45 +336,77 @@ namespace Dawg.Solver.Winform
                     game.NoMoreMovesCount++;
 
                 }
+                Logger.Log($"Player {playerNumber}: avant FindMoves...");
+                // IMPORTANT : FindMoves transpose la grille en créant des contrôles FormTile.
+                // Il DOIT donc tourner sur le thread UI (sinon ces contrôles sont créés sur un
+                // thread de fond qui meurt -> InvalidAsynchronousStateException lors du Invoke,
+                // et fuite de handles). La boucle AutoPlay tournant déjà sur le thread UI, l'appel
+                // est synchrone ; l'UI se fige brièvement pendant la recherche, ce qui est acceptable.
                 var ret = Solver.DefaultInstance.FindMoves(60);
-                lsbHintWords.Invoke((MethodInvoker)(() =>
+                Logger.Log($"Player {playerNumber} ({game.CurrentPlayer.Rack}) : {ret.Count} coups trouvés.");
+                // On est sur le thread UI : affectation directe (plus de Invoke superflu).
+                // Encadré pour qu'un éventuel souci de data binding n'interrompe pas le coup.
+                try
                 {
+                    Logger.Log($"Player {playerNumber}: binding lsbHintWords...");
                     using (var susp = new SuspendDrawingUpdate(lsbHintWords))
                         lsbHintWords.DataSource = ret;
-                }));
+                    Logger.Log($"Player {playerNumber}: binding lsbHintWords OK.");
+                }
+                catch (Exception bindEx)
+                {
+                    Logger.LogException($"binding lsbHintWords (Player {playerNumber})", bindEx);
+                }
                 if (ret.Any())
                 {
+                    Logger.Log($"Player {playerNumber}: sélection du coup...");
                     var word = ret.Where(w => !Solver.DefaultInstance.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).FirstOrDefault() as Word;
+                    Logger.Log($"Player {playerNumber}: coup choisi = {(word == null ? "aucun" : word.ToString())}.");
                     if (word == null || CurrentWord?.Text == word.Text)
                     {
+                        Logger.Log($"Player {playerNumber} : aucun nouveau coup jouable (meilleur déjà joué) -> fin de partie.");
                         game.EndGame = true;
                         return;
                     }
                     CurrentWord = word;
 
-                    int points = Game.DefaultInstance.PreviewWord(game.CurrentPlayer, (w) => AddWord(w), word, true);
+                    // On mémorise le joueur courant AVANT PreviewWord : celui-ci bascule IsPlayer1
+                    // quand validateWord=true, donc game.CurrentPlayer pointerait ensuite sur l'adversaire.
+                    var playingPlayer = game.CurrentPlayer;
+                    Logger.Log($"Player {playerNumber}: PreviewWord {word.Text} ({word.Direction})...");
+                    int points = Game.DefaultInstance.PreviewWord(playingPlayer, (w) => AddWord(w), word, true);
+                    Logger.Log($"Player {playerNumber}: PreviewWord terminé.");
+                    playingPlayer.Points += points;
+                    Logger.Log($"Player {playerNumber} joue {word} (+{points}) -> score {playingPlayer.Points}.");
                     RefreshBoard();
-                    game.CurrentPlayer.Points += points;
-
+                    Logger.Log($"Player {playerNumber}: plateau rafraîchi.");
                 }
                 else
                 {
                     game.NoMoreMovesCount++;
+                    Logger.Log($"Player {playerNumber} : aucun coup trouvé (NoMoreMovesCount={game.NoMoreMovesCount}).");
                     if (game.NoMoreMovesCount < 2)
                         InsertLsbText(lsbInfos, $"Player {playerNumber}:{game.CurrentPlayer.Rack} --> No words found !");
                     game.IsPlayer1 = !game.IsPlayer1;
                 }
                 game.Bag.GetLetters(game.CurrentPlayer);
                 SetPlayerRackText(game.IsPlayer1 ? txtRackP1 : txtRackP2);
+                Logger.Log($"Player {playerNumber}: fin de tour.");
 
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                lsbInfos.Items.Insert(0, ex.Message);
+                // IMPORTANT : on attrape TOUTES les exceptions (avant, seules les ArgumentException
+                // l'étaient, et le reste faisait planter AutoPlay en silence -> "figé").
+                Logger.LogException($"PlayDemo (Player {playerNumber})", ex);
+                InsertLsbText(lsbInfos, $"[ERREUR] {ex.GetType().Name}: {ex.Message} (voir scrabble.log)");
+                game.EndGame = true; // on arrête proprement la boucle AutoPlay plutôt que de la laisser figée
             }
             finally
             {
+                Logger.Log($"Player {playerNumber}: finally - avant Task.Delay({wait}).");
                 await Task.Delay(wait);
+                Logger.Log($"Player {playerNumber}: finally - après Task.Delay (thread={System.Threading.Thread.CurrentThread.ManagedThreadId}).");
                 Cursor.Current = Cursors.Default;
             }
 
@@ -369,23 +435,36 @@ namespace Dawg.Solver.Winform
         }
 
         Word CurrentWord { get; set; }
-        private void btnDemoAll_Click(object sender, EventArgs e)
+        private async void btnDemoAll_Click(object sender, EventArgs e)
         {
 
             if (game.CancelToken == null)
             {
                 NewGame(CurrentDicoName, !ckKeepExistingBoard.Checked);
                 game.CancelToken = new CancellationTokenSource();
-                game.CancelToken.Token.Register(() => CancelAction());
                 var btn = sender as Button;
                 btn.Text = "Stop AutoPlay";
-                var t = Task.Factory.StartNew(async () =>
+                Logger.Log("AutoPlay All : démarrage.");
+                // La boucle tourne désormais sur le THREAD UI (via async/await), et non plus
+                // sur un thread d'arrière-plan. Les reprises d'await se font sur le thread UI
+                // de façon déterministe (plus de deadlock/continuation perdue entre deux tours),
+                // et la seule partie coûteuse (FindMoves) est déportée en tâche de fond.
+                try
                 {
                     await LoopDemo(game.CancelToken);
-                }, game.CancelToken.Token);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException("btnDemoAll_Click", ex);
+                }
+                finally
+                {
+                    CancelAction();
+                }
             }
             else
             {
+                Logger.Log("AutoPlay All : demande d'arrêt.");
                 game.CancelToken.Cancel();
             }
         }
@@ -408,8 +487,11 @@ namespace Dawg.Solver.Winform
                         cancelToken.Token.ThrowIfCancellationRequested();
                         return;
                     }
+                    Logger.Log($"LoopDemo: nouvelle itération (EndGame={game.EndGame}).");
                     await PlayDemo(1000);
+                    Logger.Log($"LoopDemo: retour de PlayDemo (EndGame={game.EndGame}).");
                 }
+                Logger.Log($"LoopDemo: sortie de boucle (EndGame={game.EndGame}).");
                 if (game.EndGame)
                     ShowWinner(true);
             }
@@ -417,7 +499,17 @@ namespace Dawg.Solver.Winform
 
             catch (OperationCanceledException)
             {
+                Logger.Log("AutoPlay All : annulé par l'utilisateur.");
                 CancelAction();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException("LoopDemo", ex);
+                CancelAction();
+            }
+            finally
+            {
+                Logger.Log("AutoPlay All : boucle terminée.");
             }
 
         }
@@ -599,15 +691,25 @@ namespace Dawg.Solver.Winform
         private void rbDico_CheckedChanged(object sender, EventArgs e)
         {
             var rb = sender as RadioButton;
+            // On ignore l'événement pendant l'initialisation du formulaire, et pour le bouton
+            // qui vient de se décocher (CheckedChanged se déclenche aussi dans ce cas).
+            if (!_initialized || rb == null || !rb.Checked) return;
+
             var currentDico = Dictionnaire.NomDicoDawgEN_Collins;
             switch (rb.Name)
             {
                 case "rbODS6": currentDico = Dictionnaire.NomDicoDawgODS6; break;
-                case "rbrbODS7ODS6": currentDico = Dictionnaire.NomDicoDawgODS7; break;
-                case "rbEnCollins2019": break;
+                case "rbODS7": currentDico = Dictionnaire.NomDicoDawgODS7; break;   // (le nom du contrôle est bien rbODS7)
+                case "rbODS8": currentDico = Dictionnaire.NomDicoDawgODS8; break;
+                case "rbODS9": currentDico = Dictionnaire.NomDicoDawgODS9; break;
+                case "rbEnCollins2019": currentDico = Dictionnaire.NomDicoDawgEN_Collins; break;
                 default: break;
             }
-            NewGame(currentDico, !ckKeepExistingBoard.Checked);
+
+            // Le dictionnaire est un singleton chargé une seule fois : il faut explicitement
+            // recharger le DAWG pour que le changement prenne effet.
+            LoadDictionary(currentDico);
+            NewGame(CurrentDicoName, !ckKeepExistingBoard.Checked);
         }
 
         private void btnWordsFinder_Click(object sender, EventArgs e)

@@ -17,10 +17,12 @@
     <ProjectGuid>{8DA2C29C-DD08-4CAF-92AF-84012420155A}</ProjectGuid>
   </PropertyGroup>
 
-  <!-- Plateaux de jeu + dictionnaire ODS7 embarqués ; EN_Collins copié à côté de l'exe (chargé par fichier) -->
+  <!-- Seuls les plateaux de jeu sont nécessaires ici (chargés depuis CET assembly).
+       Les dictionnaires sont embarqués dans l'assembly Dawg : pas besoin d'embarquer à nouveau
+       dico_dawgODS7.txt côté WinForm (doublon). EN_Collins reste copié à côté de l'exe. -->
   <ItemGroup>
     <None Remove="Resources\*.txt" />
-    <EmbeddedResource Include="Resources\*.txt" />
+    <EmbeddedResource Include="Resources\initial_board*.txt" />
     <None Update="EN_Collins_dawg.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

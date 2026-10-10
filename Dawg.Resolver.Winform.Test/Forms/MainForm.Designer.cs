@@ -75,6 +75,8 @@
             this.rbEnCollins2019 = new System.Windows.Forms.RadioButton();
             this.rbODS7 = new System.Windows.Forms.RadioButton();
             this.rbODS6 = new System.Windows.Forms.RadioButton();
+            this.rbODS8 = new System.Windows.Forms.RadioButton();
+            this.rbODS9 = new System.Windows.Forms.RadioButton();
             this.btnWordsFinder = new System.Windows.Forms.Button();
             this.gbBoard = new Dawg.Solver.Winform.CustomGroupBox();
             this.groupBox1.SuspendLayout();
@@ -560,13 +562,15 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.rbEnCollins2019);
+            this.groupBox2.Controls.Add(this.rbODS9);
+            this.groupBox2.Controls.Add(this.rbODS8);
             this.groupBox2.Controls.Add(this.rbODS7);
             this.groupBox2.Controls.Add(this.rbODS6);
             this.groupBox2.Location = new System.Drawing.Point(138, 754);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox2.Size = new System.Drawing.Size(404, 53);
+            this.groupBox2.Size = new System.Drawing.Size(404, 85);
             this.groupBox2.TabIndex = 34;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Dictionary";
@@ -574,8 +578,7 @@
             // rbEnCollins2019
             // 
             this.rbEnCollins2019.AutoSize = true;
-            this.rbEnCollins2019.Checked = true;
-            this.rbEnCollins2019.Location = new System.Drawing.Point(234, 22);
+            this.rbEnCollins2019.Location = new System.Drawing.Point(117, 50);
             this.rbEnCollins2019.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbEnCollins2019.Name = "rbEnCollins2019";
             this.rbEnCollins2019.Size = new System.Drawing.Size(146, 24);
@@ -608,6 +611,32 @@
             this.rbODS6.Text = "FR ODS 6";
             this.rbODS6.UseVisualStyleBackColor = true;
             this.rbODS6.CheckedChanged += new System.EventHandler(this.rbDico_CheckedChanged);
+            //
+            // rbODS8
+            //
+            this.rbODS8.AutoSize = true;
+            this.rbODS8.Location = new System.Drawing.Point(225, 22);
+            this.rbODS8.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.rbODS8.Name = "rbODS8";
+            this.rbODS8.Size = new System.Drawing.Size(108, 24);
+            this.rbODS8.TabIndex = 3;
+            this.rbODS8.Text = "FR ODS 8";
+            this.rbODS8.UseVisualStyleBackColor = true;
+            this.rbODS8.CheckedChanged += new System.EventHandler(this.rbDico_CheckedChanged);
+            //
+            // rbODS9
+            //
+            this.rbODS9.AutoSize = true;
+            this.rbODS9.Checked = true;
+            this.rbODS9.Location = new System.Drawing.Point(9, 50);
+            this.rbODS9.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.rbODS9.Name = "rbODS9";
+            this.rbODS9.Size = new System.Drawing.Size(108, 24);
+            this.rbODS9.TabIndex = 4;
+            this.rbODS9.TabStop = true;
+            this.rbODS9.Text = "FR ODS 9";
+            this.rbODS9.UseVisualStyleBackColor = true;
+            this.rbODS9.CheckedChanged += new System.EventHandler(this.rbDico_CheckedChanged);
             // 
             // btnWordsFinder
             // 
@@ -740,6 +769,8 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton rbODS7;
         private System.Windows.Forms.RadioButton rbODS6;
+        private System.Windows.Forms.RadioButton rbODS8;
+        private System.Windows.Forms.RadioButton rbODS9;
         private System.Windows.Forms.RadioButton rbEnCollins2019;
         private System.Windows.Forms.Button btnWordsFinder;
         private System.Windows.Forms.NumericUpDown nudCustomBoardSize;

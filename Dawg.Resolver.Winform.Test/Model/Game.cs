@@ -341,6 +341,17 @@ namespace Dawg.Solver.Winform
 
         public int PreviewWord(Player p, Action<Word> displayWord, Word word, bool validateWord = false, bool addMove = true)
         {
+            // Ré-ancrage du StartTile sur la tuile VIVANTE de la grille (mêmes coordonnées).
+            // Pour un mot vertical, le StartTile provient de la grille transposée pendant la
+            // recherche : c'est un contrôle temporaire, hors de la grille affichée (et possiblement
+            // créé sur un autre thread). On repointe sur le contrôle réel du plateau pour que la
+            // pose, l'affichage et les Invoke se fassent sur les bonnes tuiles.
+            if (word?.StartTile != null)
+            {
+                int l = word.StartTile.Ligne, c = word.StartTile.Col;
+                if (l >= 0 && c >= 0 && l < BoardSize && c < BoardSize)
+                    word.StartTile = Grid[l, c];
+            }
             //ClearTilesInPlay(p);
             int points = word.SetText("", validateWord);
             if (validateWord || points > 0)

@@ -17,10 +17,13 @@
     <Compile Remove="Noeud2Etapes.cs" />
   </ItemGroup>
 
-  <!-- Dictionnaires DAWG embarqués (le SDK ne les embarque pas automatiquement) -->
+  <!-- On n'embarque QUE les DAWG compilés (dico_dawg*.txt + EN_Collins_dawg.txt).
+       Les listes de mots BRUTES (ex. "French ODS 8dictionary.txt", "liste_alpha_ODS9.txt")
+       sont des ENTRÉES du DawgBuilder : on ne les embarque pas (sinon ~9 Mo inutiles dans la DLL). -->
   <ItemGroup>
     <None Remove="Resources\*.txt" />
-    <EmbeddedResource Include="Resources\*.txt" />
+    <EmbeddedResource Include="Resources\dico_dawg*.txt" />
+    <EmbeddedResource Include="Resources\EN_Collins_dawg.txt" />
   </ItemGroup>
 
 </Project>
