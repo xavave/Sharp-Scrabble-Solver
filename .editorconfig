@@ -1,0 +1,12 @@
+root = true
+
+[*.cs]
+# Analyseurs WinForms introduits avec .NET 9/10.
+# WFO1000 signale des propriétés publiques read/write sur des contrôles/composants
+# custom (FormTile, TranspTextBox, MainForm, Form3) qui ne déclarent pas comment le
+# concepteur Windows Forms doit sérialiser leur valeur.
+# Ici ce sont des propriétés de logique métier (runtime), jamais éditées ni sérialisées
+# par le concepteur : l'avertissement est un faux positif, on le désactive.
+# (Alternative « propre » : annoter chaque propriété avec
+#  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)].)
+dotnet_diagnostic.WFO1000.severity = none
