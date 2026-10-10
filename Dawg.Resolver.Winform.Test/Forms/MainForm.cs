@@ -323,19 +323,14 @@ namespace Dawg.Solver.Winform
                 Cursor.Current = Cursors.WaitCursor;
                 game.Bag.GetLetters(game.CurrentPlayer);
                 Logger.Log($"Player {playerNumber}: tirage OK (rack={game.CurrentPlayer.Rack}).");
+                // Sac vide : simple information. Ce n'est PAS une fin de tour : le joueur peut
+                // encore jouer avec les lettres de son chevalet. On n'incrémente donc plus
+                // NoMoreMovesCount ici (c'est la branche "aucun coup -> passe" qui le fait).
                 if (game.Bag.LeftLettersCount == 0)
-                {
                     lsbInfos.Invoke((MethodInvoker)(() => lsbInfos.Items.Insert(0, "Le sac est vide !")));
-                    game.NoMoreMovesCount++;
-                }
 
                 lblCurrentRack.Invoke((MethodInvoker)(() => lblCurrentRack.Text = $"Player {playerNumber} :{game.CurrentPlayer.Rack}"));
 
-                if (!game.CurrentPlayer.Rack.Any())
-                {
-                    game.NoMoreMovesCount++;
-
-                }
                 Logger.Log($"Player {playerNumber}: avant FindMoves...");
                 // IMPORTANT : FindMoves transpose la grille en créant des contrôles FormTile.
                 // Il DOIT donc tourner sur le thread UI (sinon ces contrôles sont créés sur un
@@ -357,17 +352,19 @@ namespace Dawg.Solver.Winform
                 {
                     Logger.LogException($"binding lsbHintWords (Player {playerNumber})", bindEx);
                 }
-                if (ret.Any())
+                Logger.Log($"Player {playerNumber}: sélection du coup...");
+                // Dédoublonnage par POSITION + TEXTE + DIRECTION (Word.Equals), et NON par Serialize :
+                // Serialize inclut l'Index, donc un candidat (Index=0) n'égalait jamais un coup déjà
+                // joué (Index>0) -> le même mot (ex. KEUF) pouvait être rejoué et recompté.
+                var word = ret
+                    .Where(w => !Solver.DefaultInstance.PlayedWords.Any(pw => pw.Equals(w)))
+                    .OrderByDescending(r => r.Points)
+                    .FirstOrDefault() as Word;
+                Logger.Log($"Player {playerNumber}: coup choisi = {(word == null ? "aucun" : word.ToString())}.");
+
+                if (word != null)
                 {
-                    Logger.Log($"Player {playerNumber}: sélection du coup...");
-                    var word = ret.Where(w => !Solver.DefaultInstance.PlayedWords.Any(pw => pw.Serialize == w.Serialize)).OrderByDescending(r => r.Points).FirstOrDefault() as Word;
-                    Logger.Log($"Player {playerNumber}: coup choisi = {(word == null ? "aucun" : word.ToString())}.");
-                    if (word == null || CurrentWord?.Text == word.Text)
-                    {
-                        Logger.Log($"Player {playerNumber} : aucun nouveau coup jouable (meilleur déjà joué) -> fin de partie.");
-                        game.EndGame = true;
-                        return;
-                    }
+                    game.NoMoreMovesCount = 0; // un coup a été joué : on réarme le compteur de passes
                     CurrentWord = word;
 
                     // On mémorise le joueur courant AVANT PreviewWord : celui-ci bascule IsPlayer1
@@ -383,11 +380,14 @@ namespace Dawg.Solver.Winform
                 }
                 else
                 {
+                    // Aucun NOUVEAU coup jouable : le joueur passe. La partie se termine seulement
+                    // quand les deux joueurs passent consécutivement (NoMoreMovesCount > 1, testé en
+                    // haut de PlayDemo).
                     game.NoMoreMovesCount++;
-                    Logger.Log($"Player {playerNumber} : aucun coup trouvé (NoMoreMovesCount={game.NoMoreMovesCount}).");
+                    Logger.Log($"Player {playerNumber} : aucun nouveau coup -> passe (NoMoreMovesCount={game.NoMoreMovesCount}).");
                     if (game.NoMoreMovesCount < 2)
                         InsertLsbText(lsbInfos, $"Player {playerNumber}:{game.CurrentPlayer.Rack} --> No words found !");
-                    game.IsPlayer1 = !game.IsPlayer1;
+                    game.IsPlayer1 = !game.IsPlayer1; // le joueur passe son tour
                 }
                 game.Bag.GetLetters(game.CurrentPlayer);
                 SetPlayerRackText(game.IsPlayer1 ? txtRackP1 : txtRackP2);
