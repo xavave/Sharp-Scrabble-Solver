@@ -158,7 +158,7 @@ namespace DawgSolver.Model
         /// Dessine une ligne de texte alignée à gauche et centrée verticalement dans <paramref name="rect"/> :
         /// contour noir + remplissage <paramref name="fill"/> (même rendu que les lettres du plateau).
         /// </summary>
-        public static void DrawOutlinedLine(Graphics g, string text, FontFamily family, Rectangle rect, Color fill, float outline)
+        public static void DrawOutlinedLine(Graphics g, string text, FontFamily family, Rectangle rect, Color fill, float outline, bool center = false)
         {
             if (string.IsNullOrEmpty(text) || family == null || rect.Height <= 2) return;
             var oldSmoothing = g.SmoothingMode;
@@ -173,7 +173,8 @@ namespace DawgSolver.Model
                     using (var m = new Matrix())
                     {
                         // (Prepend : la mise à l'échelle s'applique avant la translation)
-                        m.Translate(rect.X + outline + 3, rect.Y + rect.Height / 2f);
+                        float x = center ? rect.X + (rect.Width - b.Right * fit) / 2f : rect.X + outline + 3;
+                        m.Translate(x, rect.Y + rect.Height / 2f);
                         m.Scale(fit, fit);
                         m.Translate(0, -(b.Y + b.Height / 2f));
                         path.Transform(m);

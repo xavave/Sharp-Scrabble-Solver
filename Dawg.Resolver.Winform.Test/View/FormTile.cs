@@ -394,7 +394,7 @@ namespace Dawg.Solver.Winform
 
             TxtInfos += "Controlers:" + Environment.NewLine;
             foreach (var c in t.Controllers)
-                TxtInfos += $"{Solver.DefaultInstance.Alphabet[c.Key]}:{c.Value}{Environment.NewLine}";
+                TxtInfos += $"{ControllerLabel(c.Key)}:{c.Value}{Environment.NewLine}";
             //TODO
             //Form.lsbInfos.Items.Clear();
             //foreach (var l in TxtInfos.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
@@ -511,6 +511,18 @@ namespace Dawg.Solver.Winform
             else
                 p.Rack.Remove(Solver.DefaultInstance.Alphabet.First(a => a.Char == char.ToUpper(c)));
         }
+        /// <summary>
+        /// Libellé d'une clé de Controllers. Les clés sont (code ASCII de la lettre - AscShift) :
+        /// 1..26 = A..Z, -1 = joker '?' ; 26 sert aussi de marqueur « aucune contrainte » (partagé avec Z).
+        /// L'ancien code indexait Alphabet[c.Key] -> ArgumentOutOfRangeException pour la clé -1 (joker).
+        /// </summary>
+        private static string ControllerLabel(int key)
+        {
+            if (key == 26) return "Z/*";
+            int code = key + global::Dawg.Dictionnaire.AscShift;
+            return code >= 32 && code < 127 ? ((char)code).ToString() : $"#{key}";
+        }
+
         public void CopyControllers(IDictionary<int, int> source)
         {
             this.Controllers.Clear();

@@ -28,692 +28,700 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnSearch = new System.Windows.Forms.Button();
-            this.txtRackP1 = new System.Windows.Forms.TextBox();
-            this.lsbHintWords = new System.Windows.Forms.ListBox();
-            this.txtBag = new System.Windows.Forms.TextBox();
-            this.txtGrid2 = new System.Windows.Forms.TextBox();
-            this.btnTranspose = new System.Windows.Forms.Button();
-            this.btnBackToRack = new System.Windows.Forms.Button();
-            this.btnValidate = new System.Windows.Forms.Button();
-            this.btnDemo = new System.Windows.Forms.Button();
-            this.lblPlayer1Score = new System.Windows.Forms.Label();
-            this.lblPlayer2Score = new System.Windows.Forms.Label();
-            this.btnDemoAll = new System.Windows.Forms.Button();
-            this.txtRackP2 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lblCurrentRack = new System.Windows.Forms.Label();
-            this.ckKeepExistingBoard = new System.Windows.Forms.CheckBox();
-            this.lsbInfos = new System.Windows.Forms.ListBox();
-            this.btnLoadGame = new System.Windows.Forms.Button();
-            this.btnSaveGame = new System.Windows.Forms.Button();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btnNewGame = new System.Windows.Forms.Button();
-            this.lblP1BestPlay = new System.Windows.Forms.Label();
-            this.lblP2BestPlay = new System.Windows.Forms.Label();
-            this.lvWords = new System.Windows.Forms.ListView();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.nudCustomBoardSize = new System.Windows.Forms.NumericUpDown();
-            this.rbSize15 = new System.Windows.Forms.RadioButton();
-            this.rbSize11 = new System.Windows.Forms.RadioButton();
-            this.ckShowGrid = new System.Windows.Forms.CheckBox();
-            this.gbWordDirection = new System.Windows.Forms.GroupBox();
-            this.rbWordDirDown = new System.Windows.Forms.RadioButton();
-            this.rbWordDirRight = new System.Windows.Forms.RadioButton();
-            this.gbGameStyle = new System.Windows.Forms.GroupBox();
-            this.rbGameStyleScrabble = new System.Windows.Forms.RadioButton();
-            this.rbWordsWithFriends = new System.Windows.Forms.RadioButton();
-            this.gbSortBy = new System.Windows.Forms.GroupBox();
-            this.rbMaxLength = new System.Windows.Forms.RadioButton();
-            this.rbBestScore = new System.Windows.Forms.RadioButton();
-            this.txtMotExiste = new System.Windows.Forms.TextBox();
-            this.lblMotExiste = new System.Windows.Forms.Label();
-            this.btnUndoLast = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.rbEnCollins2019 = new System.Windows.Forms.RadioButton();
-            this.rbODS7 = new System.Windows.Forms.RadioButton();
-            this.rbODS6 = new System.Windows.Forms.RadioButton();
-            this.rbODS8 = new System.Windows.Forms.RadioButton();
-            this.rbODS9 = new System.Windows.Forms.RadioButton();
-            this.btnWordsFinder = new System.Windows.Forms.Button();
-            this.gbBoard = new Dawg.Solver.Winform.CustomGroupBox();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCustomBoardSize)).BeginInit();
-            this.gbWordDirection.SuspendLayout();
-            this.gbGameStyle.SuspendLayout();
-            this.gbSortBy.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.SuspendLayout();
+            btnSearch = new System.Windows.Forms.Button();
+            txtRackP1 = new System.Windows.Forms.TextBox();
+            lsbHintWords = new System.Windows.Forms.ListBox();
+            txtBag = new System.Windows.Forms.TextBox();
+            txtGrid2 = new System.Windows.Forms.TextBox();
+            btnTranspose = new System.Windows.Forms.Button();
+            btnBackToRack = new System.Windows.Forms.Button();
+            btnValidate = new System.Windows.Forms.Button();
+            btnDemo = new System.Windows.Forms.Button();
+            lblPlayer1Score = new System.Windows.Forms.Label();
+            lblPlayer2Score = new System.Windows.Forms.Label();
+            btnDemoAll = new System.Windows.Forms.Button();
+            txtRackP2 = new System.Windows.Forms.TextBox();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            lblCurrentRack = new System.Windows.Forms.Label();
+            ckKeepExistingBoard = new System.Windows.Forms.CheckBox();
+            lsbInfos = new System.Windows.Forms.ListBox();
+            btnLoadGame = new System.Windows.Forms.Button();
+            btnSaveGame = new System.Windows.Forms.Button();
+            saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            btnNewGame = new System.Windows.Forms.Button();
+            lblP1BestPlay = new System.Windows.Forms.Label();
+            lblP2BestPlay = new System.Windows.Forms.Label();
+            lvWords = new System.Windows.Forms.ListView();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            nudCustomBoardSize = new System.Windows.Forms.NumericUpDown();
+            rbSize15 = new System.Windows.Forms.RadioButton();
+            rbSize11 = new System.Windows.Forms.RadioButton();
+            ckShowGrid = new System.Windows.Forms.CheckBox();
+            gbWordDirection = new System.Windows.Forms.GroupBox();
+            rbWordDirDown = new System.Windows.Forms.RadioButton();
+            rbWordDirRight = new System.Windows.Forms.RadioButton();
+            gbGameStyle = new System.Windows.Forms.GroupBox();
+            rbGameStyleScrabble = new System.Windows.Forms.RadioButton();
+            rbWordsWithFriends = new System.Windows.Forms.RadioButton();
+            gbSortBy = new System.Windows.Forms.GroupBox();
+            rbMaxLength = new System.Windows.Forms.RadioButton();
+            rbBestScore = new System.Windows.Forms.RadioButton();
+            txtMotExiste = new System.Windows.Forms.TextBox();
+            lblMotExiste = new System.Windows.Forms.Label();
+            btnUndoLast = new System.Windows.Forms.Button();
+            groupBox2 = new System.Windows.Forms.GroupBox();
+            rbEnCollins2019 = new System.Windows.Forms.RadioButton();
+            rbODS9 = new System.Windows.Forms.RadioButton();
+            rbODS8 = new System.Windows.Forms.RadioButton();
+            rbODS7 = new System.Windows.Forms.RadioButton();
+            rbODS6 = new System.Windows.Forms.RadioButton();
+            btnWordsFinder = new System.Windows.Forms.Button();
+            gbBoard = new CustomGroupBox();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudCustomBoardSize).BeginInit();
+            gbWordDirection.SuspendLayout();
+            gbGameStyle.SuspendLayout();
+            gbSortBy.SuspendLayout();
+            groupBox2.SuspendLayout();
+            SuspendLayout();
             // 
             // btnSearch
             // 
-            this.btnSearch.Location = new System.Drawing.Point(464, 3);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(75, 35);
-            this.btnSearch.TabIndex = 7;
-            this.btnSearch.Text = "Search";
-            this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            btnSearch.Location = new System.Drawing.Point(516, 4);
+            btnSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Size = new System.Drawing.Size(83, 44);
+            btnSearch.TabIndex = 7;
+            btnSearch.Text = "Search";
+            btnSearch.UseVisualStyleBackColor = true;
+            btnSearch.Click += btnSearch_Click;
             // 
             // txtRackP1
             // 
-            this.txtRackP1.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.txtRackP1.Location = new System.Drawing.Point(321, 3);
-            this.txtRackP1.Name = "txtRackP1";
-            this.txtRackP1.Size = new System.Drawing.Size(134, 26);
-            this.txtRackP1.TabIndex = 5;
+            txtRackP1.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
+            txtRackP1.Location = new System.Drawing.Point(357, 4);
+            txtRackP1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            txtRackP1.Name = "txtRackP1";
+            txtRackP1.Size = new System.Drawing.Size(148, 31);
+            txtRackP1.TabIndex = 5;
             // 
             // lsbHintWords
             // 
-            this.lsbHintWords.FormattingEnabled = true;
-            this.lsbHintWords.ItemHeight = 20;
-            this.lsbHintWords.Location = new System.Drawing.Point(-5, 78);
-            this.lsbHintWords.Name = "lsbHintWords";
-            this.lsbHintWords.Size = new System.Drawing.Size(259, 484);
-            this.lsbHintWords.TabIndex = 8;
-            this.lsbHintWords.Click += new System.EventHandler(this.lsb_Click);
+            lsbHintWords.FormattingEnabled = true;
+            lsbHintWords.Location = new System.Drawing.Point(-6, 98);
+            lsbHintWords.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            lsbHintWords.Name = "lsbHintWords";
+            lsbHintWords.Size = new System.Drawing.Size(287, 604);
+            lsbHintWords.TabIndex = 8;
+            lsbHintWords.Click += lsb_Click;
             // 
             // txtBag
             // 
-            this.txtBag.BackColor = System.Drawing.SystemColors.InfoText;
-            this.txtBag.Font = new System.Drawing.Font("Courier New", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.txtBag.ForeColor = System.Drawing.SystemColors.InactiveBorder;
-            this.txtBag.Location = new System.Drawing.Point(12, 562);
-            this.txtBag.Multiline = true;
-            this.txtBag.Name = "txtBag";
-            this.txtBag.Size = new System.Drawing.Size(376, 147);
-            this.txtBag.TabIndex = 9;
+            txtBag.BackColor = System.Drawing.SystemColors.InfoText;
+            txtBag.Font = new System.Drawing.Font("Courier New", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            txtBag.ForeColor = System.Drawing.SystemColors.InactiveBorder;
+            txtBag.Location = new System.Drawing.Point(13, 702);
+            txtBag.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            txtBag.Multiline = true;
+            txtBag.Name = "txtBag";
+            txtBag.Size = new System.Drawing.Size(417, 183);
+            txtBag.TabIndex = 9;
             // 
             // txtGrid2
             // 
-            this.txtGrid2.BackColor = System.Drawing.SystemColors.InfoText;
-            this.txtGrid2.Font = new System.Drawing.Font("Courier New", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, ((byte)(0)));
-            this.txtGrid2.ForeColor = System.Drawing.SystemColors.InactiveBorder;
-            this.txtGrid2.Location = new System.Drawing.Point(278, 189);
-            this.txtGrid2.Multiline = true;
-            this.txtGrid2.Name = "txtGrid2";
-            this.txtGrid2.Size = new System.Drawing.Size(264, 366);
-            this.txtGrid2.TabIndex = 10;
+            txtGrid2.BackColor = System.Drawing.SystemColors.InfoText;
+            txtGrid2.Font = new System.Drawing.Font("Courier New", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel, 0);
+            txtGrid2.ForeColor = System.Drawing.SystemColors.InactiveBorder;
+            txtGrid2.Location = new System.Drawing.Point(309, 236);
+            txtGrid2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            txtGrid2.Multiline = true;
+            txtGrid2.Name = "txtGrid2";
+            txtGrid2.Size = new System.Drawing.Size(293, 456);
+            txtGrid2.TabIndex = 10;
             // 
             // btnTranspose
             // 
-            this.btnTranspose.Location = new System.Drawing.Point(290, 122);
-            this.btnTranspose.Name = "btnTranspose";
-            this.btnTranspose.Size = new System.Drawing.Size(112, 38);
-            this.btnTranspose.TabIndex = 12;
-            this.btnTranspose.Text = "Transpose";
-            this.btnTranspose.UseVisualStyleBackColor = true;
-            this.btnTranspose.Click += new System.EventHandler(this.btnTranspose_Click);
+            btnTranspose.Location = new System.Drawing.Point(322, 152);
+            btnTranspose.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnTranspose.Name = "btnTranspose";
+            btnTranspose.Size = new System.Drawing.Size(124, 48);
+            btnTranspose.TabIndex = 12;
+            btnTranspose.Text = "Transpose";
+            btnTranspose.UseVisualStyleBackColor = true;
+            btnTranspose.Click += btnTranspose_Click;
             // 
             // btnBackToRack
             // 
-            this.btnBackToRack.Location = new System.Drawing.Point(420, 122);
-            this.btnBackToRack.Name = "btnBackToRack";
-            this.btnBackToRack.Size = new System.Drawing.Size(118, 38);
-            this.btnBackToRack.TabIndex = 13;
-            this.btnBackToRack.Text = "BackToRack";
-            this.btnBackToRack.UseVisualStyleBackColor = true;
-            this.btnBackToRack.Click += new System.EventHandler(this.btnBackToRack_Click);
+            btnBackToRack.Location = new System.Drawing.Point(467, 152);
+            btnBackToRack.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnBackToRack.Name = "btnBackToRack";
+            btnBackToRack.Size = new System.Drawing.Size(131, 48);
+            btnBackToRack.TabIndex = 13;
+            btnBackToRack.Text = "BackToRack";
+            btnBackToRack.UseVisualStyleBackColor = true;
+            btnBackToRack.Click += btnBackToRack_Click;
             // 
             // btnValidate
             // 
-            this.btnValidate.Location = new System.Drawing.Point(398, 562);
-            this.btnValidate.Name = "btnValidate";
-            this.btnValidate.Size = new System.Drawing.Size(141, 51);
-            this.btnValidate.TabIndex = 15;
-            this.btnValidate.Text = "Validate Word";
-            this.btnValidate.UseVisualStyleBackColor = true;
-            this.btnValidate.Click += new System.EventHandler(this.btnValidate_Click);
+            btnValidate.Location = new System.Drawing.Point(442, 702);
+            btnValidate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnValidate.Name = "btnValidate";
+            btnValidate.Size = new System.Drawing.Size(157, 64);
+            btnValidate.TabIndex = 15;
+            btnValidate.Text = "Validate Word";
+            btnValidate.UseVisualStyleBackColor = true;
+            btnValidate.Click += btnValidate_Click;
             // 
             // btnDemo
             // 
-            this.btnDemo.Location = new System.Drawing.Point(16, 717);
-            this.btnDemo.Name = "btnDemo";
-            this.btnDemo.Size = new System.Drawing.Size(116, 32);
-            this.btnDemo.TabIndex = 16;
-            this.btnDemo.Text = "AutoPlay 1";
-            this.btnDemo.UseVisualStyleBackColor = true;
-            this.btnDemo.Click += new System.EventHandler(this.btnDemo_Click);
+            btnDemo.Location = new System.Drawing.Point(18, 896);
+            btnDemo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnDemo.Name = "btnDemo";
+            btnDemo.Size = new System.Drawing.Size(129, 40);
+            btnDemo.TabIndex = 16;
+            btnDemo.Text = "AutoPlay 1";
+            btnDemo.UseVisualStyleBackColor = true;
+            btnDemo.Click += btnDemo_Click;
             // 
             // lblPlayer1Score
             // 
-            this.lblPlayer1Score.AutoSize = true;
-            this.lblPlayer1Score.BackColor = System.Drawing.Color.LightYellow;
-            this.lblPlayer1Score.Location = new System.Drawing.Point(1334, 12);
-            this.lblPlayer1Score.Name = "lblPlayer1Score";
-            this.lblPlayer1Score.Size = new System.Drawing.Size(74, 20);
-            this.lblPlayer1Score.TabIndex = 17;
-            this.lblPlayer1Score.Text = "P1 Score";
+            lblPlayer1Score.AutoSize = true;
+            lblPlayer1Score.BackColor = System.Drawing.Color.LightYellow;
+            lblPlayer1Score.Location = new System.Drawing.Point(1482, 15);
+            lblPlayer1Score.Name = "lblPlayer1Score";
+            lblPlayer1Score.Size = new System.Drawing.Size(81, 25);
+            lblPlayer1Score.TabIndex = 17;
+            lblPlayer1Score.Text = "P1 Score";
             // 
             // lblPlayer2Score
             // 
-            this.lblPlayer2Score.AutoSize = true;
-            this.lblPlayer2Score.BackColor = System.Drawing.Color.LightGreen;
-            this.lblPlayer2Score.Location = new System.Drawing.Point(1334, 43);
-            this.lblPlayer2Score.Name = "lblPlayer2Score";
-            this.lblPlayer2Score.Size = new System.Drawing.Size(74, 20);
-            this.lblPlayer2Score.TabIndex = 18;
-            this.lblPlayer2Score.Text = "P2 Score";
+            lblPlayer2Score.AutoSize = true;
+            lblPlayer2Score.BackColor = System.Drawing.Color.LightGreen;
+            lblPlayer2Score.Location = new System.Drawing.Point(1482, 54);
+            lblPlayer2Score.Name = "lblPlayer2Score";
+            lblPlayer2Score.Size = new System.Drawing.Size(81, 25);
+            lblPlayer2Score.TabIndex = 18;
+            lblPlayer2Score.Text = "P2 Score";
             // 
             // btnDemoAll
             // 
-            this.btnDemoAll.Location = new System.Drawing.Point(138, 717);
-            this.btnDemoAll.Name = "btnDemoAll";
-            this.btnDemoAll.Size = new System.Drawing.Size(116, 32);
-            this.btnDemoAll.TabIndex = 19;
-            this.btnDemoAll.Text = "AutoPlay All";
-            this.btnDemoAll.UseVisualStyleBackColor = true;
-            this.btnDemoAll.Click += new System.EventHandler(this.btnDemoAll_Click);
+            btnDemoAll.Location = new System.Drawing.Point(153, 896);
+            btnDemoAll.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnDemoAll.Name = "btnDemoAll";
+            btnDemoAll.Size = new System.Drawing.Size(129, 40);
+            btnDemoAll.TabIndex = 19;
+            btnDemoAll.Text = "AutoPlay All";
+            btnDemoAll.UseVisualStyleBackColor = true;
+            btnDemoAll.Click += btnDemoAll_Click;
             // 
             // txtRackP2
             // 
-            this.txtRackP2.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.txtRackP2.Location = new System.Drawing.Point(321, 37);
-            this.txtRackP2.Name = "txtRackP2";
-            this.txtRackP2.Size = new System.Drawing.Size(134, 26);
-            this.txtRackP2.TabIndex = 20;
+            txtRackP2.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
+            txtRackP2.Location = new System.Drawing.Point(357, 46);
+            txtRackP2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            txtRackP2.Name = "txtRackP2";
+            txtRackP2.Size = new System.Drawing.Size(148, 31);
+            txtRackP2.TabIndex = 20;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(290, 6);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(28, 20);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "P1";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(322, 8);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(32, 25);
+            label1.TabIndex = 21;
+            label1.Text = "P1";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(290, 40);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(28, 20);
-            this.label2.TabIndex = 22;
-            this.label2.Text = "P2";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(322, 50);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(32, 25);
+            label2.TabIndex = 22;
+            label2.Text = "P2";
             // 
             // lblCurrentRack
             // 
-            this.lblCurrentRack.AutoSize = true;
-            this.lblCurrentRack.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCurrentRack.Location = new System.Drawing.Point(741, 825);
-            this.lblCurrentRack.Name = "lblCurrentRack";
-            this.lblCurrentRack.Size = new System.Drawing.Size(0, 37);
-            this.lblCurrentRack.TabIndex = 23;
+            lblCurrentRack.AutoSize = true;
+            lblCurrentRack.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblCurrentRack.Location = new System.Drawing.Point(823, 1031);
+            lblCurrentRack.Name = "lblCurrentRack";
+            lblCurrentRack.Size = new System.Drawing.Size(0, 37);
+            lblCurrentRack.TabIndex = 23;
             // 
             // ckKeepExistingBoard
             // 
-            this.ckKeepExistingBoard.AutoSize = true;
-            this.ckKeepExistingBoard.Location = new System.Drawing.Point(260, 722);
-            this.ckKeepExistingBoard.Name = "ckKeepExistingBoard";
-            this.ckKeepExistingBoard.Size = new System.Drawing.Size(108, 24);
-            this.ckKeepExistingBoard.TabIndex = 24;
-            this.ckKeepExistingBoard.Text = "Keep Tiles";
-            this.ckKeepExistingBoard.UseVisualStyleBackColor = true;
+            ckKeepExistingBoard.AutoSize = true;
+            ckKeepExistingBoard.Location = new System.Drawing.Point(289, 902);
+            ckKeepExistingBoard.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            ckKeepExistingBoard.Name = "ckKeepExistingBoard";
+            ckKeepExistingBoard.Size = new System.Drawing.Size(116, 29);
+            ckKeepExistingBoard.TabIndex = 24;
+            ckKeepExistingBoard.Text = "Keep Tiles";
+            ckKeepExistingBoard.UseVisualStyleBackColor = true;
             // 
             // lsbInfos
             // 
-            this.lsbInfos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lsbInfos.FormattingEnabled = true;
-            this.lsbInfos.ItemHeight = 20;
-            this.lsbInfos.Location = new System.Drawing.Point(1324, 78);
-            this.lsbInfos.Name = "lsbInfos";
-            this.lsbInfos.Size = new System.Drawing.Size(432, 284);
-            this.lsbInfos.TabIndex = 25;
+            lsbInfos.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lsbInfos.FormattingEnabled = true;
+            lsbInfos.Location = new System.Drawing.Point(1471, 98);
+            lsbInfos.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            lsbInfos.Name = "lsbInfos";
+            lsbInfos.Size = new System.Drawing.Size(480, 354);
+            lsbInfos.TabIndex = 25;
             // 
             // btnLoadGame
             // 
-            this.btnLoadGame.Location = new System.Drawing.Point(290, 69);
-            this.btnLoadGame.Name = "btnLoadGame";
-            this.btnLoadGame.Size = new System.Drawing.Size(112, 46);
-            this.btnLoadGame.TabIndex = 26;
-            this.btnLoadGame.Text = "Load Game";
-            this.btnLoadGame.UseVisualStyleBackColor = true;
-            this.btnLoadGame.Click += new System.EventHandler(this.btnLoadGame_Click);
+            btnLoadGame.Location = new System.Drawing.Point(322, 86);
+            btnLoadGame.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnLoadGame.Name = "btnLoadGame";
+            btnLoadGame.Size = new System.Drawing.Size(124, 58);
+            btnLoadGame.TabIndex = 26;
+            btnLoadGame.Text = "Load Game";
+            btnLoadGame.UseVisualStyleBackColor = true;
+            btnLoadGame.Click += btnLoadGame_Click;
             // 
             // btnSaveGame
             // 
-            this.btnSaveGame.Location = new System.Drawing.Point(420, 69);
-            this.btnSaveGame.Name = "btnSaveGame";
-            this.btnSaveGame.Size = new System.Drawing.Size(118, 46);
-            this.btnSaveGame.TabIndex = 27;
-            this.btnSaveGame.Text = "Save Game";
-            this.btnSaveGame.UseVisualStyleBackColor = true;
-            this.btnSaveGame.Click += new System.EventHandler(this.btnSaveGame_Click);
+            btnSaveGame.Location = new System.Drawing.Point(467, 86);
+            btnSaveGame.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnSaveGame.Name = "btnSaveGame";
+            btnSaveGame.Size = new System.Drawing.Size(131, 58);
+            btnSaveGame.TabIndex = 27;
+            btnSaveGame.Text = "Save Game";
+            btnSaveGame.UseVisualStyleBackColor = true;
+            btnSaveGame.Click += btnSaveGame_Click;
             // 
             // saveFileDialog1
             // 
-            this.saveFileDialog1.Filter = "Scrabble Game|*.gam";
-            this.saveFileDialog1.OverwritePrompt = false;
-            this.saveFileDialog1.RestoreDirectory = true;
+            saveFileDialog1.Filter = "Scrabble Game|*.gam";
+            saveFileDialog1.OverwritePrompt = false;
+            saveFileDialog1.RestoreDirectory = true;
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.DefaultExt = "gam";
-            this.openFileDialog1.FileName = "Game";
-            this.openFileDialog1.Filter = "Scrabble Game|*.gam";
-            this.openFileDialog1.RestoreDirectory = true;
+            openFileDialog1.DefaultExt = "gam";
+            openFileDialog1.FileName = "Game";
+            openFileDialog1.Filter = "Scrabble Game|*.gam";
+            openFileDialog1.RestoreDirectory = true;
             // 
             // btnNewGame
             // 
-            this.btnNewGame.Location = new System.Drawing.Point(16, 755);
-            this.btnNewGame.Name = "btnNewGame";
-            this.btnNewGame.Size = new System.Drawing.Size(116, 32);
-            this.btnNewGame.TabIndex = 28;
-            this.btnNewGame.Text = "New game";
-            this.btnNewGame.UseVisualStyleBackColor = true;
-            this.btnNewGame.Click += new System.EventHandler(this.btnNewGame_Click);
+            btnNewGame.Location = new System.Drawing.Point(18, 944);
+            btnNewGame.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnNewGame.Name = "btnNewGame";
+            btnNewGame.Size = new System.Drawing.Size(129, 40);
+            btnNewGame.TabIndex = 28;
+            btnNewGame.Text = "New game";
+            btnNewGame.UseVisualStyleBackColor = true;
+            btnNewGame.Click += btnNewGame_Click;
             // 
             // lblP1BestPlay
             // 
-            this.lblP1BestPlay.AutoSize = true;
-            this.lblP1BestPlay.BackColor = System.Drawing.Color.LightYellow;
-            this.lblP1BestPlay.Location = new System.Drawing.Point(1502, 12);
-            this.lblP1BestPlay.Name = "lblP1BestPlay";
-            this.lblP1BestPlay.Size = new System.Drawing.Size(72, 20);
-            this.lblP1BestPlay.TabIndex = 29;
-            this.lblP1BestPlay.Text = "best play";
+            lblP1BestPlay.AutoSize = true;
+            lblP1BestPlay.BackColor = System.Drawing.Color.LightYellow;
+            lblP1BestPlay.Location = new System.Drawing.Point(1669, 15);
+            lblP1BestPlay.Name = "lblP1BestPlay";
+            lblP1BestPlay.Size = new System.Drawing.Size(84, 25);
+            lblP1BestPlay.TabIndex = 29;
+            lblP1BestPlay.Text = "best play";
             // 
             // lblP2BestPlay
             // 
-            this.lblP2BestPlay.AutoSize = true;
-            this.lblP2BestPlay.BackColor = System.Drawing.Color.LightGreen;
-            this.lblP2BestPlay.Location = new System.Drawing.Point(1502, 43);
-            this.lblP2BestPlay.Name = "lblP2BestPlay";
-            this.lblP2BestPlay.Size = new System.Drawing.Size(72, 20);
-            this.lblP2BestPlay.TabIndex = 30;
-            this.lblP2BestPlay.Text = "best play";
+            lblP2BestPlay.AutoSize = true;
+            lblP2BestPlay.BackColor = System.Drawing.Color.LightGreen;
+            lblP2BestPlay.Location = new System.Drawing.Point(1669, 54);
+            lblP2BestPlay.Name = "lblP2BestPlay";
+            lblP2BestPlay.Size = new System.Drawing.Size(84, 25);
+            lblP2BestPlay.TabIndex = 30;
+            lblP2BestPlay.Text = "best play";
             // 
-            // lvWords (historique des coups, 2 colonnes : configuré dans MainForm.SetupWordsListView)
+            // lvWords
             // 
-            this.lvWords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvWords.Location = new System.Drawing.Point(1324, 368);
-            this.lvWords.Name = "lvWords";
-            this.lvWords.Size = new System.Drawing.Size(432, 504);
-            this.lvWords.TabIndex = 31;
+            lvWords.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lvWords.Location = new System.Drawing.Point(1471, 460);
+            lvWords.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            lvWords.Name = "lvWords";
+            lvWords.Size = new System.Drawing.Size(480, 629);
+            lvWords.TabIndex = 31;
+            lvWords.UseCompatibleStateImageBehavior = false;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.nudCustomBoardSize);
-            this.groupBox1.Controls.Add(this.rbSize15);
-            this.groupBox1.Controls.Add(this.rbSize11);
-            this.groupBox1.Location = new System.Drawing.Point(18, 795);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox1.Size = new System.Drawing.Size(114, 105);
-            this.groupBox1.TabIndex = 32;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Board Size";
+            groupBox1.Controls.Add(nudCustomBoardSize);
+            groupBox1.Controls.Add(rbSize15);
+            groupBox1.Controls.Add(rbSize11);
+            groupBox1.Location = new System.Drawing.Point(20, 994);
+            groupBox1.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            groupBox1.Size = new System.Drawing.Size(127, 131);
+            groupBox1.TabIndex = 32;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Board Size";
             // 
             // nudCustomBoardSize
             // 
-            this.nudCustomBoardSize.Location = new System.Drawing.Point(9, 74);
-            this.nudCustomBoardSize.Maximum = new decimal(new int[] {
-            18,
-            0,
-            0,
-            0});
-            this.nudCustomBoardSize.Minimum = new decimal(new int[] {
-            7,
-            0,
-            0,
-            0});
-            this.nudCustomBoardSize.Name = "nudCustomBoardSize";
-            this.nudCustomBoardSize.Size = new System.Drawing.Size(50, 26);
-            this.nudCustomBoardSize.TabIndex = 0;
-            this.nudCustomBoardSize.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nudCustomBoardSize.ValueChanged += new System.EventHandler(this.nudCustomBoardSize_ValueChanged);
+            nudCustomBoardSize.Location = new System.Drawing.Point(10, 92);
+            nudCustomBoardSize.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            nudCustomBoardSize.Maximum = new decimal(new int[] { 18, 0, 0, 0 });
+            nudCustomBoardSize.Minimum = new decimal(new int[] { 7, 0, 0, 0 });
+            nudCustomBoardSize.Name = "nudCustomBoardSize";
+            nudCustomBoardSize.Size = new System.Drawing.Size(56, 31);
+            nudCustomBoardSize.TabIndex = 0;
+            nudCustomBoardSize.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            nudCustomBoardSize.ValueChanged += nudCustomBoardSize_ValueChanged;
             // 
             // rbSize15
             // 
-            this.rbSize15.AutoSize = true;
-            this.rbSize15.Checked = true;
-            this.rbSize15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rbSize15.Location = new System.Drawing.Point(8, 48);
-            this.rbSize15.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbSize15.Name = "rbSize15";
-            this.rbSize15.Size = new System.Drawing.Size(49, 21);
-            this.rbSize15.TabIndex = 1;
-            this.rbSize15.TabStop = true;
-            this.rbSize15.Text = "15";
-            this.rbSize15.UseVisualStyleBackColor = true;
-            this.rbSize15.CheckedChanged += new System.EventHandler(this.rbSize15_CheckedChanged);
+            rbSize15.AutoSize = true;
+            rbSize15.Checked = true;
+            rbSize15.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            rbSize15.Location = new System.Drawing.Point(9, 60);
+            rbSize15.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbSize15.Name = "rbSize15";
+            rbSize15.Size = new System.Drawing.Size(49, 21);
+            rbSize15.TabIndex = 1;
+            rbSize15.TabStop = true;
+            rbSize15.Text = "15";
+            rbSize15.UseVisualStyleBackColor = true;
+            rbSize15.CheckedChanged += rbSize15_CheckedChanged;
             // 
             // rbSize11
             // 
-            this.rbSize11.AutoSize = true;
-            this.rbSize11.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rbSize11.Location = new System.Drawing.Point(8, 22);
-            this.rbSize11.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbSize11.Name = "rbSize11";
-            this.rbSize11.Size = new System.Drawing.Size(49, 21);
-            this.rbSize11.TabIndex = 0;
-            this.rbSize11.Text = "11";
-            this.rbSize11.UseVisualStyleBackColor = true;
+            rbSize11.AutoSize = true;
+            rbSize11.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            rbSize11.Location = new System.Drawing.Point(9, 28);
+            rbSize11.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbSize11.Name = "rbSize11";
+            rbSize11.Size = new System.Drawing.Size(49, 21);
+            rbSize11.TabIndex = 0;
+            rbSize11.Text = "11";
+            rbSize11.UseVisualStyleBackColor = true;
             // 
             // ckShowGrid
             // 
-            this.ckShowGrid.AutoSize = true;
-            this.ckShowGrid.Location = new System.Drawing.Point(290, 166);
-            this.ckShowGrid.Name = "ckShowGrid";
-            this.ckShowGrid.Size = new System.Drawing.Size(134, 24);
-            this.ckShowGrid.TabIndex = 33;
-            this.ckShowGrid.Text = "Show dev grid";
-            this.ckShowGrid.UseVisualStyleBackColor = true;
-            this.ckShowGrid.CheckedChanged += new System.EventHandler(this.ckShowGrid_CheckedChanged);
+            ckShowGrid.AutoSize = true;
+            ckShowGrid.Location = new System.Drawing.Point(322, 208);
+            ckShowGrid.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            ckShowGrid.Name = "ckShowGrid";
+            ckShowGrid.Size = new System.Drawing.Size(153, 29);
+            ckShowGrid.TabIndex = 33;
+            ckShowGrid.Text = "Show dev grid";
+            ckShowGrid.UseVisualStyleBackColor = true;
+            ckShowGrid.CheckedChanged += ckShowGrid_CheckedChanged;
             // 
             // gbWordDirection
             // 
-            this.gbWordDirection.Controls.Add(this.rbWordDirDown);
-            this.gbWordDirection.Controls.Add(this.rbWordDirRight);
-            this.gbWordDirection.Location = new System.Drawing.Point(398, 620);
-            this.gbWordDirection.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.gbWordDirection.Name = "gbWordDirection";
-            this.gbWordDirection.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.gbWordDirection.Size = new System.Drawing.Size(141, 88);
-            this.gbWordDirection.TabIndex = 33;
-            this.gbWordDirection.TabStop = false;
-            this.gbWordDirection.Text = "word direction";
+            gbWordDirection.Controls.Add(rbWordDirDown);
+            gbWordDirection.Controls.Add(rbWordDirRight);
+            gbWordDirection.Location = new System.Drawing.Point(442, 775);
+            gbWordDirection.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            gbWordDirection.Name = "gbWordDirection";
+            gbWordDirection.Padding = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            gbWordDirection.Size = new System.Drawing.Size(157, 110);
+            gbWordDirection.TabIndex = 33;
+            gbWordDirection.TabStop = false;
+            gbWordDirection.Text = "word direction";
             // 
             // rbWordDirDown
             // 
-            this.rbWordDirDown.AutoSize = true;
-            this.rbWordDirDown.Location = new System.Drawing.Point(12, 52);
-            this.rbWordDirDown.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbWordDirDown.Name = "rbWordDirDown";
-            this.rbWordDirDown.Size = new System.Drawing.Size(75, 24);
-            this.rbWordDirDown.TabIndex = 1;
-            this.rbWordDirDown.Text = "Down";
-            this.rbWordDirDown.UseVisualStyleBackColor = true;
-            this.rbWordDirDown.CheckedChanged += new System.EventHandler(this.rbWordDirDown_CheckedChanged);
+            rbWordDirDown.AutoSize = true;
+            rbWordDirDown.Location = new System.Drawing.Point(13, 65);
+            rbWordDirDown.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbWordDirDown.Name = "rbWordDirDown";
+            rbWordDirDown.Size = new System.Drawing.Size(84, 29);
+            rbWordDirDown.TabIndex = 1;
+            rbWordDirDown.Text = "Down";
+            rbWordDirDown.UseVisualStyleBackColor = true;
+            rbWordDirDown.CheckedChanged += rbWordDirDown_CheckedChanged;
             // 
             // rbWordDirRight
             // 
-            this.rbWordDirRight.AutoSize = true;
-            this.rbWordDirRight.Checked = true;
-            this.rbWordDirRight.Location = new System.Drawing.Point(12, 29);
-            this.rbWordDirRight.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbWordDirRight.Name = "rbWordDirRight";
-            this.rbWordDirRight.Size = new System.Drawing.Size(83, 24);
-            this.rbWordDirRight.TabIndex = 0;
-            this.rbWordDirRight.TabStop = true;
-            this.rbWordDirRight.Text = "Across";
-            this.rbWordDirRight.UseVisualStyleBackColor = true;
+            rbWordDirRight.AutoSize = true;
+            rbWordDirRight.Checked = true;
+            rbWordDirRight.Location = new System.Drawing.Point(13, 36);
+            rbWordDirRight.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbWordDirRight.Name = "rbWordDirRight";
+            rbWordDirRight.Size = new System.Drawing.Size(90, 29);
+            rbWordDirRight.TabIndex = 0;
+            rbWordDirRight.TabStop = true;
+            rbWordDirRight.Text = "Across";
+            rbWordDirRight.UseVisualStyleBackColor = true;
             // 
             // gbGameStyle
             // 
-            this.gbGameStyle.Controls.Add(this.rbGameStyleScrabble);
-            this.gbGameStyle.Controls.Add(this.rbWordsWithFriends);
-            this.gbGameStyle.Location = new System.Drawing.Point(138, 812);
-            this.gbGameStyle.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.gbGameStyle.Name = "gbGameStyle";
-            this.gbGameStyle.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.gbGameStyle.Size = new System.Drawing.Size(213, 88);
-            this.gbGameStyle.TabIndex = 33;
-            this.gbGameStyle.TabStop = false;
-            this.gbGameStyle.Text = "Game Style";
+            gbGameStyle.Controls.Add(rbGameStyleScrabble);
+            gbGameStyle.Controls.Add(rbWordsWithFriends);
+            gbGameStyle.Location = new System.Drawing.Point(153, 1015);
+            gbGameStyle.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            gbGameStyle.Name = "gbGameStyle";
+            gbGameStyle.Padding = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            gbGameStyle.Size = new System.Drawing.Size(237, 110);
+            gbGameStyle.TabIndex = 33;
+            gbGameStyle.TabStop = false;
+            gbGameStyle.Text = "Game Style";
             // 
             // rbGameStyleScrabble
             // 
-            this.rbGameStyleScrabble.AutoSize = true;
-            this.rbGameStyleScrabble.Checked = true;
-            this.rbGameStyleScrabble.Location = new System.Drawing.Point(20, 52);
-            this.rbGameStyleScrabble.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbGameStyleScrabble.Name = "rbGameStyleScrabble";
-            this.rbGameStyleScrabble.Size = new System.Drawing.Size(97, 24);
-            this.rbGameStyleScrabble.TabIndex = 1;
-            this.rbGameStyleScrabble.TabStop = true;
-            this.rbGameStyleScrabble.Text = "Scrabble";
-            this.rbGameStyleScrabble.UseVisualStyleBackColor = true;
-            this.rbGameStyleScrabble.CheckedChanged += new System.EventHandler(this.rbGameStyleScrabble_CheckedChanged);
+            rbGameStyleScrabble.AutoSize = true;
+            rbGameStyleScrabble.Checked = true;
+            rbGameStyleScrabble.Location = new System.Drawing.Point(22, 65);
+            rbGameStyleScrabble.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbGameStyleScrabble.Name = "rbGameStyleScrabble";
+            rbGameStyleScrabble.Size = new System.Drawing.Size(105, 29);
+            rbGameStyleScrabble.TabIndex = 1;
+            rbGameStyleScrabble.TabStop = true;
+            rbGameStyleScrabble.Text = "Scrabble";
+            rbGameStyleScrabble.UseVisualStyleBackColor = true;
+            rbGameStyleScrabble.CheckedChanged += rbGameStyleScrabble_CheckedChanged;
             // 
             // rbWordsWithFriends
             // 
-            this.rbWordsWithFriends.AutoSize = true;
-            this.rbWordsWithFriends.Location = new System.Drawing.Point(20, 26);
-            this.rbWordsWithFriends.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbWordsWithFriends.Name = "rbWordsWithFriends";
-            this.rbWordsWithFriends.Size = new System.Drawing.Size(164, 24);
-            this.rbWordsWithFriends.TabIndex = 0;
-            this.rbWordsWithFriends.Text = "Words with friends";
-            this.rbWordsWithFriends.UseVisualStyleBackColor = true;
-            this.rbWordsWithFriends.CheckedChanged += new System.EventHandler(this.rbWordsWithFriends_CheckedChanged);
+            rbWordsWithFriends.AutoSize = true;
+            rbWordsWithFriends.Location = new System.Drawing.Point(22, 32);
+            rbWordsWithFriends.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbWordsWithFriends.Name = "rbWordsWithFriends";
+            rbWordsWithFriends.Size = new System.Drawing.Size(186, 29);
+            rbWordsWithFriends.TabIndex = 0;
+            rbWordsWithFriends.Text = "Words with friends";
+            rbWordsWithFriends.UseVisualStyleBackColor = true;
+            rbWordsWithFriends.CheckedChanged += rbWordsWithFriends_CheckedChanged;
             // 
             // gbSortBy
             // 
-            this.gbSortBy.Controls.Add(this.rbMaxLength);
-            this.gbSortBy.Controls.Add(this.rbBestScore);
-            this.gbSortBy.Location = new System.Drawing.Point(12, 5);
-            this.gbSortBy.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.gbSortBy.Name = "gbSortBy";
-            this.gbSortBy.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.gbSortBy.Size = new System.Drawing.Size(266, 58);
-            this.gbSortBy.TabIndex = 33;
-            this.gbSortBy.TabStop = false;
-            this.gbSortBy.Text = "Sort by";
+            gbSortBy.Controls.Add(rbMaxLength);
+            gbSortBy.Controls.Add(rbBestScore);
+            gbSortBy.Location = new System.Drawing.Point(13, 6);
+            gbSortBy.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            gbSortBy.Name = "gbSortBy";
+            gbSortBy.Padding = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            gbSortBy.Size = new System.Drawing.Size(296, 72);
+            gbSortBy.TabIndex = 33;
+            gbSortBy.TabStop = false;
+            gbSortBy.Text = "Sort by";
             // 
             // rbMaxLength
             // 
-            this.rbMaxLength.AutoSize = true;
-            this.rbMaxLength.Location = new System.Drawing.Point(136, 22);
-            this.rbMaxLength.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbMaxLength.Name = "rbMaxLength";
-            this.rbMaxLength.Size = new System.Drawing.Size(111, 24);
-            this.rbMaxLength.TabIndex = 1;
-            this.rbMaxLength.Text = "Max length";
-            this.rbMaxLength.UseVisualStyleBackColor = true;
-            this.rbMaxLength.CheckedChanged += new System.EventHandler(this.rbMaxLength_CheckedChanged);
+            rbMaxLength.AutoSize = true;
+            rbMaxLength.Location = new System.Drawing.Point(151, 28);
+            rbMaxLength.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbMaxLength.Name = "rbMaxLength";
+            rbMaxLength.Size = new System.Drawing.Size(125, 29);
+            rbMaxLength.TabIndex = 1;
+            rbMaxLength.Text = "Max length";
+            rbMaxLength.UseVisualStyleBackColor = true;
+            rbMaxLength.CheckedChanged += rbMaxLength_CheckedChanged;
             // 
             // rbBestScore
             // 
-            this.rbBestScore.AutoSize = true;
-            this.rbBestScore.Checked = true;
-            this.rbBestScore.Location = new System.Drawing.Point(15, 22);
-            this.rbBestScore.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbBestScore.Name = "rbBestScore";
-            this.rbBestScore.Size = new System.Drawing.Size(110, 24);
-            this.rbBestScore.TabIndex = 0;
-            this.rbBestScore.TabStop = true;
-            this.rbBestScore.Text = "Best score";
-            this.rbBestScore.UseVisualStyleBackColor = true;
+            rbBestScore.AutoSize = true;
+            rbBestScore.Checked = true;
+            rbBestScore.Location = new System.Drawing.Point(17, 28);
+            rbBestScore.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbBestScore.Name = "rbBestScore";
+            rbBestScore.Size = new System.Drawing.Size(117, 29);
+            rbBestScore.TabIndex = 0;
+            rbBestScore.TabStop = true;
+            rbBestScore.Text = "Best score";
+            rbBestScore.UseVisualStyleBackColor = true;
             // 
             // txtMotExiste
             // 
-            this.txtMotExiste.Location = new System.Drawing.Point(358, 837);
-            this.txtMotExiste.Name = "txtMotExiste";
-            this.txtMotExiste.Size = new System.Drawing.Size(158, 26);
-            this.txtMotExiste.TabIndex = 34;
-            this.txtMotExiste.TextChanged += new System.EventHandler(this.txtMotExiste_TextChanged);
-            this.txtMotExiste.DoubleClick += new System.EventHandler(this.txtMotExiste_DoubleClick);
+            txtMotExiste.Location = new System.Drawing.Point(398, 1046);
+            txtMotExiste.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            txtMotExiste.Name = "txtMotExiste";
+            txtMotExiste.Size = new System.Drawing.Size(175, 31);
+            txtMotExiste.TabIndex = 34;
+            txtMotExiste.TextChanged += txtMotExiste_TextChanged;
+            txtMotExiste.DoubleClick += txtMotExiste_DoubleClick;
             // 
             // lblMotExiste
             // 
-            this.lblMotExiste.AutoSize = true;
-            this.lblMotExiste.Location = new System.Drawing.Point(392, 815);
-            this.lblMotExiste.Name = "lblMotExiste";
-            this.lblMotExiste.Size = new System.Drawing.Size(108, 20);
-            this.lblMotExiste.TabIndex = 35;
-            this.lblMotExiste.Text = "Words exists?";
+            lblMotExiste.AutoSize = true;
+            lblMotExiste.Location = new System.Drawing.Point(436, 1019);
+            lblMotExiste.Name = "lblMotExiste";
+            lblMotExiste.Size = new System.Drawing.Size(120, 25);
+            lblMotExiste.TabIndex = 35;
+            lblMotExiste.Text = "Words exists?";
             // 
             // btnUndoLast
             // 
-            this.btnUndoLast.Location = new System.Drawing.Point(398, 715);
-            this.btnUndoLast.Name = "btnUndoLast";
-            this.btnUndoLast.Size = new System.Drawing.Size(141, 46);
-            this.btnUndoLast.TabIndex = 36;
-            this.btnUndoLast.Text = "Undo Last";
-            this.btnUndoLast.UseVisualStyleBackColor = true;
-            this.btnUndoLast.Click += new System.EventHandler(this.btnUndoLast_Click);
+            btnUndoLast.Location = new System.Drawing.Point(442, 894);
+            btnUndoLast.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnUndoLast.Name = "btnUndoLast";
+            btnUndoLast.Size = new System.Drawing.Size(157, 58);
+            btnUndoLast.TabIndex = 36;
+            btnUndoLast.Text = "Undo Last";
+            btnUndoLast.UseVisualStyleBackColor = true;
+            btnUndoLast.Click += btnUndoLast_Click;
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.rbEnCollins2019);
-            this.groupBox2.Controls.Add(this.rbODS9);
-            this.groupBox2.Controls.Add(this.rbODS8);
-            this.groupBox2.Controls.Add(this.rbODS7);
-            this.groupBox2.Controls.Add(this.rbODS6);
-            this.groupBox2.Location = new System.Drawing.Point(138, 754);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox2.Size = new System.Drawing.Size(404, 85);
-            this.groupBox2.TabIndex = 34;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Dictionary";
+            groupBox2.Controls.Add(rbEnCollins2019);
+            groupBox2.Controls.Add(rbODS9);
+            groupBox2.Controls.Add(rbODS8);
+            groupBox2.Controls.Add(rbODS7);
+            groupBox2.Controls.Add(rbODS6);
+            groupBox2.Location = new System.Drawing.Point(153, 942);
+            groupBox2.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Padding = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            groupBox2.Size = new System.Drawing.Size(449, 106);
+            groupBox2.TabIndex = 34;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Dictionary";
             // 
             // rbEnCollins2019
             // 
-            this.rbEnCollins2019.AutoSize = true;
-            this.rbEnCollins2019.Location = new System.Drawing.Point(117, 50);
-            this.rbEnCollins2019.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbEnCollins2019.Name = "rbEnCollins2019";
-            this.rbEnCollins2019.Size = new System.Drawing.Size(146, 24);
-            this.rbEnCollins2019.TabIndex = 2;
-            this.rbEnCollins2019.TabStop = true;
-            this.rbEnCollins2019.Text = "EN Collins 2019";
-            this.rbEnCollins2019.UseVisualStyleBackColor = true;
-            this.rbEnCollins2019.CheckedChanged += new System.EventHandler(this.rbDico_CheckedChanged);
+            rbEnCollins2019.AutoSize = true;
+            rbEnCollins2019.Location = new System.Drawing.Point(130, 62);
+            rbEnCollins2019.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbEnCollins2019.Name = "rbEnCollins2019";
+            rbEnCollins2019.Size = new System.Drawing.Size(161, 29);
+            rbEnCollins2019.TabIndex = 2;
+            rbEnCollins2019.TabStop = true;
+            rbEnCollins2019.Text = "EN Collins 2019";
+            rbEnCollins2019.UseVisualStyleBackColor = true;
+            rbEnCollins2019.CheckedChanged += rbDico_CheckedChanged;
+            // 
+            // rbODS9
+            // 
+            rbODS9.AutoSize = true;
+            rbODS9.Checked = true;
+            rbODS9.Location = new System.Drawing.Point(10, 62);
+            rbODS9.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbODS9.Name = "rbODS9";
+            rbODS9.Size = new System.Drawing.Size(114, 29);
+            rbODS9.TabIndex = 4;
+            rbODS9.TabStop = true;
+            rbODS9.Text = "FR ODS 9";
+            rbODS9.UseVisualStyleBackColor = true;
+            rbODS9.CheckedChanged += rbDico_CheckedChanged;
+            // 
+            // rbODS8
+            // 
+            rbODS8.AutoSize = true;
+            rbODS8.Location = new System.Drawing.Point(250, 28);
+            rbODS8.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbODS8.Name = "rbODS8";
+            rbODS8.Size = new System.Drawing.Size(114, 29);
+            rbODS8.TabIndex = 3;
+            rbODS8.Text = "FR ODS 8";
+            rbODS8.UseVisualStyleBackColor = true;
+            rbODS8.CheckedChanged += rbDico_CheckedChanged;
             // 
             // rbODS7
             // 
-            this.rbODS7.AutoSize = true;
-            this.rbODS7.Location = new System.Drawing.Point(117, 22);
-            this.rbODS7.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbODS7.Name = "rbODS7";
-            this.rbODS7.Size = new System.Drawing.Size(108, 24);
-            this.rbODS7.TabIndex = 1;
-            this.rbODS7.Text = "FR ODS 7";
-            this.rbODS7.UseVisualStyleBackColor = true;
-            this.rbODS7.CheckedChanged += new System.EventHandler(this.rbDico_CheckedChanged);
+            rbODS7.AutoSize = true;
+            rbODS7.Location = new System.Drawing.Point(130, 28);
+            rbODS7.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbODS7.Name = "rbODS7";
+            rbODS7.Size = new System.Drawing.Size(114, 29);
+            rbODS7.TabIndex = 1;
+            rbODS7.Text = "FR ODS 7";
+            rbODS7.UseVisualStyleBackColor = true;
+            rbODS7.CheckedChanged += rbDico_CheckedChanged;
             // 
             // rbODS6
             // 
-            this.rbODS6.AutoSize = true;
-            this.rbODS6.Location = new System.Drawing.Point(9, 22);
-            this.rbODS6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbODS6.Name = "rbODS6";
-            this.rbODS6.Size = new System.Drawing.Size(108, 24);
-            this.rbODS6.TabIndex = 0;
-            this.rbODS6.Text = "FR ODS 6";
-            this.rbODS6.UseVisualStyleBackColor = true;
-            this.rbODS6.CheckedChanged += new System.EventHandler(this.rbDico_CheckedChanged);
-            //
-            // rbODS8
-            //
-            this.rbODS8.AutoSize = true;
-            this.rbODS8.Location = new System.Drawing.Point(225, 22);
-            this.rbODS8.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbODS8.Name = "rbODS8";
-            this.rbODS8.Size = new System.Drawing.Size(108, 24);
-            this.rbODS8.TabIndex = 3;
-            this.rbODS8.Text = "FR ODS 8";
-            this.rbODS8.UseVisualStyleBackColor = true;
-            this.rbODS8.CheckedChanged += new System.EventHandler(this.rbDico_CheckedChanged);
-            //
-            // rbODS9
-            //
-            this.rbODS9.AutoSize = true;
-            this.rbODS9.Checked = true;
-            this.rbODS9.Location = new System.Drawing.Point(9, 50);
-            this.rbODS9.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbODS9.Name = "rbODS9";
-            this.rbODS9.Size = new System.Drawing.Size(108, 24);
-            this.rbODS9.TabIndex = 4;
-            this.rbODS9.TabStop = true;
-            this.rbODS9.Text = "FR ODS 9";
-            this.rbODS9.UseVisualStyleBackColor = true;
-            this.rbODS9.CheckedChanged += new System.EventHandler(this.rbDico_CheckedChanged);
+            rbODS6.AutoSize = true;
+            rbODS6.Location = new System.Drawing.Point(10, 28);
+            rbODS6.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            rbODS6.Name = "rbODS6";
+            rbODS6.Size = new System.Drawing.Size(114, 29);
+            rbODS6.TabIndex = 0;
+            rbODS6.Text = "FR ODS 6";
+            rbODS6.UseVisualStyleBackColor = true;
+            rbODS6.CheckedChanged += rbDico_CheckedChanged;
             // 
             // btnWordsFinder
             // 
-            this.btnWordsFinder.Location = new System.Drawing.Point(376, 869);
-            this.btnWordsFinder.Name = "btnWordsFinder";
-            this.btnWordsFinder.Size = new System.Drawing.Size(116, 32);
-            this.btnWordsFinder.TabIndex = 37;
-            this.btnWordsFinder.Text = "Words finder";
-            this.btnWordsFinder.UseVisualStyleBackColor = true;
-            this.btnWordsFinder.Click += new System.EventHandler(this.btnWordsFinder_Click);
+            btnWordsFinder.Location = new System.Drawing.Point(418, 1086);
+            btnWordsFinder.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            btnWordsFinder.Name = "btnWordsFinder";
+            btnWordsFinder.Size = new System.Drawing.Size(129, 40);
+            btnWordsFinder.TabIndex = 37;
+            btnWordsFinder.Text = "Words finder";
+            btnWordsFinder.UseVisualStyleBackColor = true;
+            btnWordsFinder.Click += btnWordsFinder_Click;
             // 
             // gbBoard
             // 
-            this.gbBoard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.gbBoard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gbBoard.Location = new System.Drawing.Point(548, 5);
-            this.gbBoard.Name = "gbBoard";
-            this.gbBoard.Size = new System.Drawing.Size(772, 780);
-            this.gbBoard.TabIndex = 11;
-            this.gbBoard.TabStop = false;
-            this.gbBoard.Text = "Board";
+            gbBoard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            gbBoard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            gbBoard.Location = new System.Drawing.Point(611, 7);
+            gbBoard.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            gbBoard.Name = "gbBoard";
+            gbBoard.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            gbBoard.Size = new System.Drawing.Size(858, 975);
+            gbBoard.TabIndex = 11;
+            gbBoard.TabStop = false;
+            gbBoard.Text = "Board";
             // 
             // MainForm
             // 
-            this.AcceptButton = this.btnSearch;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1770, 902);
-            this.Controls.Add(this.btnWordsFinder);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.btnUndoLast);
-            this.Controls.Add(this.lblMotExiste);
-            this.Controls.Add(this.txtMotExiste);
-            this.Controls.Add(this.gbSortBy);
-            this.Controls.Add(this.gbGameStyle);
-            this.Controls.Add(this.gbWordDirection);
-            this.Controls.Add(this.ckShowGrid);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.lvWords);
-            this.Controls.Add(this.lblP2BestPlay);
-            this.Controls.Add(this.lblP1BestPlay);
-            this.Controls.Add(this.btnNewGame);
-            this.Controls.Add(this.btnSaveGame);
-            this.Controls.Add(this.btnLoadGame);
-            this.Controls.Add(this.lsbInfos);
-            this.Controls.Add(this.ckKeepExistingBoard);
-            this.Controls.Add(this.lblCurrentRack);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtRackP2);
-            this.Controls.Add(this.btnDemoAll);
-            this.Controls.Add(this.lblPlayer2Score);
-            this.Controls.Add(this.lblPlayer1Score);
-            this.Controls.Add(this.btnDemo);
-            this.Controls.Add(this.btnValidate);
-            this.Controls.Add(this.btnBackToRack);
-            this.Controls.Add(this.btnTranspose);
-            this.Controls.Add(this.gbBoard);
-            this.Controls.Add(this.txtGrid2);
-            this.Controls.Add(this.txtBag);
-            this.Controls.Add(this.lsbHintWords);
-            this.Controls.Add(this.btnSearch);
-            this.Controls.Add(this.txtRackP1);
-            this.Name = "MainForm";
-            this.Text = "Scrabble";
-            this.Click += new System.EventHandler(this.MainForm_Click);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCustomBoardSize)).EndInit();
-            this.gbWordDirection.ResumeLayout(false);
-            this.gbWordDirection.PerformLayout();
-            this.gbGameStyle.ResumeLayout(false);
-            this.gbGameStyle.PerformLayout();
-            this.gbSortBy.ResumeLayout(false);
-            this.gbSortBy.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AcceptButton = btnSearch;
+            AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(1967, 1128);
+            Controls.Add(btnWordsFinder);
+            Controls.Add(groupBox2);
+            Controls.Add(btnUndoLast);
+            Controls.Add(lblMotExiste);
+            Controls.Add(txtMotExiste);
+            Controls.Add(gbSortBy);
+            Controls.Add(gbGameStyle);
+            Controls.Add(gbWordDirection);
+            Controls.Add(ckShowGrid);
+            Controls.Add(groupBox1);
+            Controls.Add(lvWords);
+            Controls.Add(lblP2BestPlay);
+            Controls.Add(lblP1BestPlay);
+            Controls.Add(btnNewGame);
+            Controls.Add(btnSaveGame);
+            Controls.Add(btnLoadGame);
+            Controls.Add(lsbInfos);
+            Controls.Add(ckKeepExistingBoard);
+            Controls.Add(lblCurrentRack);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(txtRackP2);
+            Controls.Add(btnDemoAll);
+            Controls.Add(lblPlayer2Score);
+            Controls.Add(lblPlayer1Score);
+            Controls.Add(btnDemo);
+            Controls.Add(btnValidate);
+            Controls.Add(btnBackToRack);
+            Controls.Add(btnTranspose);
+            Controls.Add(gbBoard);
+            Controls.Add(txtGrid2);
+            Controls.Add(txtBag);
+            Controls.Add(lsbHintWords);
+            Controls.Add(btnSearch);
+            Controls.Add(txtRackP1);
+            Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            Name = "MainForm";
+            Text = "Scrabble";
+            Click += MainForm_Click;
+            KeyPress += MainForm_KeyPress;
+            KeyUp += MainForm_KeyUp;
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudCustomBoardSize).EndInit();
+            gbWordDirection.ResumeLayout(false);
+            gbWordDirection.PerformLayout();
+            gbGameStyle.ResumeLayout(false);
+            gbGameStyle.PerformLayout();
+            gbSortBy.ResumeLayout(false);
+            gbSortBy.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -312,7 +312,7 @@ namespace Dawg.Solver.Winform
         private void SetupResizableBoard()
         {
             _rightColumn = Controls.Cast<Control>()
-                .Where(c => c != gbBoard && c.Left >= gbBoard.Right - 2)
+                .Where(c => c != gbBoard && c != lblCurrentRack && c.Left >= gbBoard.Right - 2)
                 .ToList();
             foreach (var c in _rightColumn)
             {
@@ -350,6 +350,7 @@ namespace Dawg.Solver.Winform
                 lblCurrentRack.Top = pnlSettingsBar.Bottom + 2;
             }
             else lblCurrentRack.Top = gbBoard.Bottom + 4;
+            UpdateRackLabelLayout();
             ResumeLayout(true);
         }
 
@@ -519,12 +520,12 @@ namespace Dawg.Solver.Winform
             }
             else
             {
+                // Le libellé occupe toute la largeur sous le plateau (texte centré, réduit s'il est trop long) :
+                // plus de dépendance à une mesure de texte, et aucun autre contrôle ne peut le recouvrir.
                 lblCurrentRack.AutoSize = false;
-                lblCurrentRack.Height = _rackLabelHeight;
-                // Mesure avec la hauteur RÉELLE de la zone de dessin (elle peut différer après mise à l'échelle DPI).
-                int h = lblCurrentRack.ClientSize.Height;
-                int w = TileFonts.MeasureLineWidth(lblCurrentRack.Text, family, h, RackOutline);
-                lblCurrentRack.Width = Math.Max(10, w + (lblCurrentRack.Width - lblCurrentRack.ClientSize.Width));
+                lblCurrentRack.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                lblCurrentRack.Bounds = new Rectangle(gbBoard.Left, lblCurrentRack.Top, gbBoard.Width, _rackLabelHeight);
+                lblCurrentRack.BringToFront();
             }
             lblCurrentRack.Invalidate();
         }
@@ -539,7 +540,7 @@ namespace Dawg.Solver.Winform
             var bg = lblCurrentRack.BackColor.A == 255 ? lblCurrentRack.BackColor : (lblCurrentRack.Parent?.BackColor ?? BackColor);
             using (var b = new SolidBrush(bg)) e.Graphics.FillRectangle(b, lblCurrentRack.ClientRectangle);
             TileFonts.DrawOutlinedLine(e.Graphics, lblCurrentRack.Text, family, lblCurrentRack.ClientRectangle,
-                                       _rackIsPlayer1 ? TileStyle.Player1Fill : TileStyle.Player2Fill, RackOutline);
+                                       _rackIsPlayer1 ? TileStyle.Player1Fill : TileStyle.Player2Fill, RackOutline, center: true);
         }
 
         /// <summary>
@@ -803,9 +804,11 @@ namespace Dawg.Solver.Winform
         private async Task PlayDemo(int wait = 0)
         {
 
+            if (game.EndScoresApplied) { game.EndGame = true; return; }   // partie déjà terminée
             if (game.NoMoreMovesCount > 1)
             {
-                game.EndGame = true;
+                // Blocage : les deux joueurs ont passé -> chacun perd la valeur de ses lettres restantes.
+                ApplyEndGameScores(null);
                 return;
             }
             var playerNumber = game.IsPlayer1 ? "1" : "2";
@@ -874,6 +877,14 @@ namespace Dawg.Solver.Winform
                     Logger.Log($"Player {playerNumber} joue {word} (+{points}) -> score {playingPlayer.Points}.");
                     RefreshBoard();
                     Logger.Log($"Player {playerNumber}: plateau rafraîchi.");
+
+                    // Règle officielle : la partie s'arrête dès qu'un joueur a posé toutes ses lettres
+                    // alors que le sac est vide.
+                    if (game.Bag.LeftLettersCount == 0 && playingPlayer.Rack.Count() == 0)
+                    {
+                        ApplyEndGameScores(playingPlayer);
+                        return;
+                    }
                 }
                 else
                 {
@@ -907,6 +918,39 @@ namespace Dawg.Solver.Winform
                 Cursor.Current = Cursors.Default;
             }
 
+        }
+
+        /// <summary>
+        /// Décompte de fin de partie (règle FFSc) :
+        /// - <paramref name="finisher"/> non null (il a vidé son chevalet, sac vide) : l'adversaire perd
+        ///   la valeur de ses lettres restantes et le finisseur la gagne ;
+        /// - null (blocage, deux passes consécutives) : chaque joueur perd la valeur de ses lettres.
+        /// </summary>
+        private void ApplyEndGameScores(Player finisher)
+        {
+            game.EndGame = true;
+            if (game.EndScoresApplied) return;
+            game.EndScoresApplied = true;
+
+            int Rest(Player p) => p.Rack.Letters.Sum(l => l.Value);
+            int r1 = Rest(game.Player1), r2 = Rest(game.Player2);
+            if (finisher != null)
+            {
+                var other = finisher == game.Player1 ? game.Player2 : game.Player1;
+                int rest = Rest(other);
+                other.Points -= rest;
+                finisher.Points += rest;
+                InsertLsbText(lsbInfos, L.F("EndRackEmpty", finisher == game.Player1 ? 1 : 2, rest, other.Rack));
+            }
+            else
+            {
+                game.Player1.Points -= r1;
+                game.Player2.Points -= r2;
+                InsertLsbText(lsbInfos, L.F("EndBlocked", r1, r2));
+            }
+            Logger.Log($"Fin de partie : finisseur={(finisher == null ? "aucun (blocage)" : finisher.Name)}, reste P1={r1}, P2={r2} -> scores {game.Player1.Points}/{game.Player2.Points}.");
+            DisplayScores();
+            if (game.CancelToken == null) ShowWinner(true);   // coup joué manuellement (hors AutoPlay All)
         }
 
         private void SetPlayerRackText(TextBox txt)

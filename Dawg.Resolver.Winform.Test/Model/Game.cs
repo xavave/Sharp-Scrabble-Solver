@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,6 +30,8 @@ namespace Dawg.Solver.Winform
         public static char Joker;
         public bool IsPlayer1 { get; set; } = true;
         public bool EndGame { get; set; } = false;
+        /// <summary>Décompte de fin de partie (lettres restantes sur les chevalets) déjà appliqué.</summary>
+        public bool EndScoresApplied { get; set; } = false;
         public Bag Bag { get; private set; }
         public Player Player1 { get; set; }
         public Player Player2 { get; set; }
@@ -512,6 +514,7 @@ namespace Dawg.Solver.Winform
             IsTransposed = false;
             NoMoreMovesCount = 0;
             EndGame = false;
+            EndScoresApplied = false;
             IsPlayer1 = true;
             MoveIndex = 1;
 

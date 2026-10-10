@@ -45,6 +45,8 @@
   <data name="StopAutoPlay" xml:space="preserve"><value>Stop AutoPlay</value></data>
   <data name="GameEnded" xml:space="preserve"><value>Game ended</value></data>
   <data name="PlayerWins" xml:space="preserve"><value>{0} wins with a score of {1}</value></data>
+  <data name="EndRackEmpty" xml:space="preserve"><value>Player {0} has no tiles left: +{1} points (opponent's rack: {2})</value></data>
+  <data name="EndBlocked" xml:space="preserve"><value>Game blocked: Player 1 loses {0}, Player 2 loses {1} points (tiles left)</value></data>
   <data name="Draw" xml:space="preserve"><value>Draw: {0} points each</value></data>
   <data name="DicoLoaded" xml:space="preserve"><value>Dictionary loaded: {0} ({1} nodes)</value></data>
   <data name="DicoLoadError" xml:space="preserve"><value>[ERROR] loading dictionary {0}: {1}</value></data>

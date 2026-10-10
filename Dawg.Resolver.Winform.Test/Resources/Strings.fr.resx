@@ -45,6 +45,8 @@
   <data name="StopAutoPlay" xml:space="preserve"><value>Arrêter</value></data>
   <data name="GameEnded" xml:space="preserve"><value>Partie terminée</value></data>
   <data name="PlayerWins" xml:space="preserve"><value>{0} gagne avec {1} points</value></data>
+  <data name="EndRackEmpty" xml:space="preserve"><value>Joueur {0} n'a plus de lettres : +{1} points (chevalet adverse : {2})</value></data>
+  <data name="EndBlocked" xml:space="preserve"><value>Partie bloquée : Joueur 1 perd {0}, Joueur 2 perd {1} points (lettres restantes)</value></data>
   <data name="Draw" xml:space="preserve"><value>Égalité : {0} points chacun</value></data>
   <data name="DicoLoaded" xml:space="preserve"><value>Dictionnaire chargé : {0} ({1} nœuds)</value></data>
   <data name="DicoLoadError" xml:space="preserve"><value>[ERREUR] chargement du dictionnaire {0} : {1}</value></data>
