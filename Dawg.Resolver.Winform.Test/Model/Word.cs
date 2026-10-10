@@ -49,7 +49,7 @@ namespace DawgSolver.Model
         public void ShowDefinition()
         {
             if (!string.IsNullOrWhiteSpace(this.Text))
-                Process.Start($"https://1mot.net/{this.Text.ToLower()}");
+                Process.Start(new ProcessStartInfo($"https://1mot.net/{this.Text.ToLower()}") { UseShellExecute = true });
         }
 
 

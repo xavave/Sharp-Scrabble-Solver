@@ -218,16 +218,22 @@ namespace Dawg.Solver.Winform
 
         public void CleanTiles()
         {
+            // Ne nettoie QUE l'état transitoire de recherche (ancres + contrôleurs) et les
+            // lettres non validées (aperçus). Les lettres déjà jouées (validées) et les
+            // multiplicateurs de cases bonus doivent être préservés d'un coup à l'autre,
+            // sinon le plateau est effacé dès le 2e coup (bug AutoPlay All).
             foreach (var t in Grid.OfType<IExtendedTile>().ToList())
             {
                 if (t.AnchorLeftMaxLimit != 0) t.AnchorLeftMaxLimit = 0;
                 if (t.AnchorLeftMinLimit != 0) t.AnchorLeftMinLimit = 0;
                 t.Controllers.Clear();
-                t.Letter.Char = Game.EmptyChar;
-                t.Letter.Value = 0;
-                t.Letter.Count = 0;
-                t.LetterMultiplier = 1;
-                t.WordMultiplier = 1;
+
+                if (!t.IsValidated && !t.IsEmpty)
+                {
+                    t.Letter.Char = Game.EmptyChar;
+                    t.Letter.Value = 0;
+                    t.Letter.Count = 0;
+                }
             }
         }
         /// <summary>
@@ -374,18 +380,11 @@ namespace Dawg.Solver.Winform
                     if (tile.IsValidated)
                         continue;
 
+                    // Le retrait des lettres du chevalet est désormais géré de façon unique
+                    // dans Word.SetText -> IExtendedTile.SetWord (seules les lettres réellement posées
+                    // sont consommées). On ne conserve ici que l'affichage spécifique au joker.
                     if (tile.Letter.LetterType == LetterType.Joker)
-                    {
                         tile.SetBackColorFromInnerLetterType();
-
-                        CurrentPlayer.Rack.Remove(Solver.DefaultInstance.Alphabet[26]);
-                    }
-
-                    else
-                    {
-                        CurrentPlayer.Rack.Remove(tile.Letter);
-
-                    }
                 }
 
                 if (validateWord)
@@ -497,12 +496,37 @@ namespace Dawg.Solver.Winform
             Bag = Bag.Build();
             Player1.Moves.Clear();
             Player2.Moves.Clear();
+            Player1.Points = 0;
+            Player2.Points = 0;
             IsTransposed = false;
             NoMoreMovesCount = 0;
             EndGame = false;
             IsPlayer1 = true;
             MoveIndex = 1;
 
+        }
+
+        /// <summary>
+        /// Réinitialise complètement une partie : propriétés de jeu (sac, coups, scores)
+        /// ET état des cases du plateau (lettres, validation, index, ancres, contrôleurs).
+        /// Les multiplicateurs de cases bonus sont conservés (ils ne dépendent que de la
+        /// taille/mode du plateau). À appeler pour une "Nouvelle partie".
+        /// </summary>
+        public void ResetGame()
+        {
+            InitGameProperties();
+            foreach (var t in Grid.OfType<IExtendedTile>().ToList())
+            {
+                t.Letter.Char = Game.EmptyChar;
+                t.Letter.Value = 0;
+                t.Letter.Count = 0;
+                t.Letter.LetterType = LetterType.Regular;
+                t.IsValidated = false;
+                t.WordIndex = 0;
+                t.AnchorLeftMinLimit = 0;
+                t.AnchorLeftMaxLimit = 0;
+                t.Controllers.Clear();
+            }
         }
 
         //public List<Letter> ClearTilesInPlay(Player p)

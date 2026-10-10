@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows.Threading;
 
 namespace Dawg
 {
@@ -42,7 +41,19 @@ namespace Dawg
         /// </summary>
         private Stopwatch chrono = new Stopwatch();
 
-        private Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+        // Remplacement du Dispatcher WPF (WindowsBase) par SynchronizationContext,
+        // disponible dans le runtime de base : permet de supprimer la dépendance à WPF
+        // et de cibler net10.0 (portable) tout en conservant le marshaling vers le thread
+        // qui a créé le Dictionnaire (typiquement le thread UI), s'il en existe un.
+        private readonly SynchronizationContext syncContext = SynchronizationContext.Current;
+
+        private void RunOnOwnerThread(Action action)
+        {
+            if (syncContext != null)
+                syncContext.Send(_ => action(), null); // synchrone, équivalent à Dispatcher.Invoke
+            else
+                action();
+        }
 
         /// <summary>
         /// Cette liste est consituée lors de la construction ou lors de la lecture du fichier compressé.
@@ -94,10 +105,7 @@ namespace Dawg
         {
             long duree = chrono.ElapsedMilliseconds;
             if (this.EtapeAtteinte != null)
-                dispatcher.Invoke(new Action(delegate
-                    {
-                        this.EtapeAtteinte(Texte + " Chrono: ", duree);
-                    }), DispatcherPriority.Send);
+                RunOnOwnerThread(() => this.EtapeAtteinte(Texte + " Chrono: ", duree));
         }
 
         /// <summary>
@@ -107,10 +115,7 @@ namespace Dawg
         private void AnnonceProgression(int Pourcent)
         {
             if (this.Progression != null)
-                dispatcher.Invoke(new Action(delegate
-                    {
-                        this.Progression(Pourcent);
-                    }), DispatcherPriority.Normal);
+                RunOnOwnerThread(() => this.Progression(Pourcent));
         }
 
         /// <summary>
@@ -488,9 +493,18 @@ namespace Dawg
             //    }
             //}
             //else
-            if (File.Exists(nomdico))
+            // Résolution robuste du chemin : le fichier dico est copié à côté de l'exécutable.
+            // Selon le répertoire de travail (lancement depuis Visual Studio, raccourci, etc.),
+            // un chemin relatif peut échouer : on tente aussi le dossier de l'application.
+            var dicoPath = nomdico;
+            if (!File.Exists(dicoPath))
             {
-                noeuds = BuildDawgNoeuds(File.ReadAllText(nomdico));
+                var candidate = Path.Combine(AppContext.BaseDirectory, nomdico);
+                if (File.Exists(candidate)) dicoPath = candidate;
+            }
+            if (File.Exists(dicoPath))
+            {
+                noeuds = BuildDawgNoeuds(File.ReadAllText(dicoPath));
             }
             if (noeuds != null)
             {

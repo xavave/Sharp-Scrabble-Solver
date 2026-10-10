@@ -34,6 +34,9 @@ namespace Dawg.Solver.Winform
 
             if (initUI)
             {
+                // Réinitialise réellement la partie (sac, coups, scores) et vide le plateau.
+                game.ResetGame();
+
                 txtGrid2.Visible = ckShowGrid.Checked;
                 lsbInfos.Items.Clear();
                 lblPlayer1Score.Text = lblPlayer2Score.Text = "";
@@ -42,11 +45,20 @@ namespace Dawg.Solver.Winform
                 txtRackP1.Text = txtRackP2.Text = "";
                 lsbWords.DisplayMember = "DisplayInList";
                 lsbWords.Items.Clear();
+                lsbHintWords.DataSource = null;
+                lsbHintWords.Items.Clear();
                 txtBag.Text = game.Bag.GetBagContent();
 
                 if (ckShowGrid.Checked) txtGrid2.Text = game.GenerateTextGrid(game.Grid, true);
 
                 RefreshGridTiles();
+
+                // Remet l'affichage des cases à zéro (texte vide + couleur selon le type de case).
+                foreach (var ft in BoardTiles.OfType<FormTile>().Where(t => !t.Name.StartsWith("header_")))
+                {
+                    ft.Text = string.Empty;
+                    ft.SetBackColorFromInnerTile();
+                }
             }
             Cursor.Current = Cursors.Default;
 
@@ -201,8 +213,9 @@ namespace Dawg.Solver.Winform
         private void btnValidate_Click(object sender, EventArgs e)
         {
 
-            if (LastPlayedTile == null) return;
-            var word = LastPlayedTile.GetWordFromTile(Game.CurrentWordDirection);
+            var lastPlayed = game.LastPlayedTile ?? LastPlayedTile;
+            if (lastPlayed == null) return;
+            var word = lastPlayed.GetWordFromTile(Game.CurrentWordDirection);
             if (word == null) return;
             if (game.IsPlayer1)
                 Game.DefaultInstance.PreviewWord(game.Player1, (w) => AddWord(w), word, true);
@@ -544,7 +557,7 @@ namespace Dawg.Solver.Winform
         private void txtMotExiste_DoubleClick(object sender, EventArgs e)
         {
             if (Dictionnaire.DefaultInstance.MotAdmis(txtMotExiste.Text.Trim()))
-                Process.Start($"https://1mot.net/{txtMotExiste.Text.ToLower()}");
+                Process.Start(new ProcessStartInfo($"https://1mot.net/{txtMotExiste.Text.ToLower()}") { UseShellExecute = true });
 
         }
 
