@@ -513,12 +513,12 @@ namespace Dawg.Solver.Winform
         }
         /// <summary>
         /// Libellé d'une clé de Controllers. Les clés sont (code ASCII de la lettre - AscShift) :
-        /// 1..26 = A..Z, -1 = joker '?' ; 26 sert aussi de marqueur « aucune contrainte » (partagé avec Z).
+        /// 1..26 = A..Z ; Game.AnyLetterKey = marqueur de case (« * »).
         /// L'ancien code indexait Alphabet[c.Key] -> ArgumentOutOfRangeException pour la clé -1 (joker).
         /// </summary>
         private static string ControllerLabel(int key)
         {
-            if (key == 26) return "Z/*";
+            if (key == Game.AnyLetterKey) return "*";
             int code = key + global::Dawg.Dictionnaire.AscShift;
             return code >= 32 && code < 127 ? ((char)code).ToString() : $"#{key}";
         }

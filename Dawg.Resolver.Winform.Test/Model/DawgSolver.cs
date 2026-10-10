@@ -235,6 +235,17 @@ namespace Dawg.Solver.Winform
         /// <param name="colonne"></param>
         /// <param name="boardSize"></param>
         /// <param name="isTransposed"></param>
+        /// <summary>
+        /// La lettre d'index <paramref name="letterKey"/> (1 = A ... 26 = Z) peut-elle être posée sur la case
+        /// sans former de mot vertical invalide ? Corrige deux bugs : l'ancien test lisait la clé i - 1
+        /// (la lettre PRÉCÉDENTE : B vérifiait A...) et utilisait la clé 26 (= Z) comme marqueur « case libre ».
+        /// </summary>
+        private static bool LetterAllowed(IExtendedTile t, int letterKey)
+        {
+            if (t.Controllers.TryGetValue(Game.AnyLetterKey, out var any) && any == Game.AnyLetterFree) return true;
+            return t.Controllers.TryGetValue(letterKey, out var pts) && pts > 0;
+        }
+
         private HashSet<Word> ExtendRight(string partialWord, ref List<Letter> leftLetters, int minSize, int noeud, int ligne, int colonne)
         {
             bool jokerInDraught = leftLetters.Any(l => l.Char == Dictionnaire.DefaultInstance.Joker);
@@ -264,7 +275,7 @@ namespace Dawg.Solver.Winform
 
                             if (char.ToUpper(leftLetters[l].Char) == (char)(i + Dictionnaire.AscShift))
                             {
-                                if (((t.Controllers.ContainsKey(i - 1) && t.Controllers[i - 1] > 0)) || t.Controllers[26] == 26)
+                                if (LetterAllowed(t, i))
                                 // Pour chacune des lettres qui répondent au précédent critère dans le tirage
                                 {
                                     // Si la lettre permet également de former des mots verticalement
@@ -291,7 +302,7 @@ namespace Dawg.Solver.Winform
                             else if (l < leftLetters.Count() && leftLetters[l].Char == Dictionnaire.DefaultInstance.Joker)
                             {
                                 // Cas d'un joker
-                                if (((t.Controllers.ContainsKey(i - 1) && t.Controllers[i - 1] > 0)) || t.Controllers[26] == 26)
+                                if (LetterAllowed(t, i))
                                 {
                                     // Si une lettre quelconque (représentée par le joker) permet également de former des mots verticalement
                                     // (cette information a été préalablement déterminée dans la procédure Determiner_Controleurs)

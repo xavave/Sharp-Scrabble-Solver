@@ -13,6 +13,16 @@ namespace Dawg.Solver.Winform
 
     public sealed class Game
     {
+        /// <summary>
+        /// Clés du dictionnaire IExtendedTile.Controllers :
+        /// 1..26 = lettres A..Z (code ASCII - AscShift) -> points du mot vertical formé (0 = lettre interdite) ;
+        /// <see cref="AnyLetterKey"/> = marqueur de case (valeur <see cref="AnyLetterFree"/> = aucune contrainte verticale,
+        /// sinon nombre de lettres admises). Avant, ce marqueur utilisait la clé 26, partagée avec Z :
+        /// le score vertical du Z était écrasé et le Z pouvait être faussement autorisé ou interdit.
+        /// </summary>
+        public const int AnyLetterKey = 27;
+        public const int AnyLetterFree = 26;
+
         static readonly Game instance = new Game();
 
         // Explicit static constructor to tell C# compiler not to mark type as beforefieldinit
@@ -202,7 +212,7 @@ namespace Dawg.Solver.Winform
 
                 foreach (var t in Grid.OfType<IExtendedTile>().Where(g => g.Col == BoardCenter || g.Ligne == BoardCenter))
                 {
-                    t.Controllers[26] = 26;
+                    t.Controllers[AnyLetterKey] = AnyLetterFree;
                 }
 
             }
@@ -285,26 +295,28 @@ namespace Dawg.Solver.Winform
                     L = 0;
                     foreach (var c in Solver.DefaultInstance.Alphabet)
                     {
+                        int key = ((int)c.Char) - Dictionnaire.AscShift;
+                        if (key < 1 || key > 26) continue;   // joker '?' : pas une lettre, pas de contrôleur
                         var mot = wordStart + c.Char + wordEnd;
                         if (mot.Length > 1 && Dictionnaire.DefaultInstance.MotAdmis(mot))
                         {
-                            Grid[t.Ligne, t.Col].Controllers[((int)c.Char) - Dictionnaire.AscShift] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
+                            Grid[t.Ligne, t.Col].Controllers[key] = (points + c.Value * t.LetterMultiplier) * t.WordMultiplier;
                             L++;
                         }
                         else
-                            Grid[t.Ligne, t.Col].Controllers[((int)c.Char) - Dictionnaire.AscShift] = 0;
+                            Grid[t.Ligne, t.Col].Controllers[key] = 0;
                     }
 
                     //Si aucune lettre ne se trouve ni au dessus ni en dessous de la case, il n'y aucune contrainte à respecter
                     //toutes les lettres peuvent être placées dans la case considérée.
                     if (string.IsNullOrWhiteSpace(wordStart + wordEnd))
-                        t.Controllers[26] = 26;
+                        t.Controllers[AnyLetterKey] = AnyLetterFree;
                     else
-                        t.Controllers[26] = L;
+                        t.Controllers[AnyLetterKey] = L;
                 }
                 else
                 {
-                    if (t.IsEmpty) t.Controllers[26] = 26;
+                    if (t.IsEmpty) t.Controllers[AnyLetterKey] = AnyLetterFree;
                 }
             }
 
