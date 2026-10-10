@@ -59,4 +59,18 @@ Utile pour saisir une position à la main puis laisser l'ordinateur finir la par
   <data name="ColorHint" xml:space="preserve"><value>Cliquez sur l'en-tête d'une colonne pour changer la couleur du joueur (historique et plateau)</value></data>
   <data name="BoardFont" xml:space="preserve"><value>Police plateau</value></data>
   <data name="StandardFont" xml:space="preserve"><value>(standard)</value></data>
+  <data name="WF_Title" xml:space="preserve"><value>Chercheur de mots</value></data>
+  <data name="WF_Letters" xml:space="preserve"><value>Tirage</value></data>
+  <data name="WF_Pattern" xml:space="preserve"><value>Motif</value></data>
+  <data name="WF_Search" xml:space="preserve"><value>Chercher</value></data>
+  <data name="WF_Length" xml:space="preserve"><value>Longueur</value></data>
+  <data name="WF_LengthAll" xml:space="preserve"><value>(0 = toutes)</value></data>
+  <data name="WF_AllLetters" xml:space="preserve"><value>Utiliser toutes les lettres</value></data>
+  <data name="WF_Help" xml:space="preserve"><value>Tirage : vos lettres, ? = joker (vide = toutes les lettres permises).  Motif (facultatif) : lettres imposées, ? = une case, * = plusieurs cases.
+Ex. tirage AEINRST seul = anagrammes ; motif B??JOUR ; tirage ONAT + motif *TION. Les jokers apparaissent en minuscules. Double-clic = définition.</value></data>
+  <data name="WF_TipLetters" xml:space="preserve"><value>Lettres disponibles, chacune utilisable une fois. ? = joker.</value></data>
+  <data name="WF_TipPattern" xml:space="preserve"><value>Lettres imposées à leur place. ? = une case libre, * = zéro ou plusieurs cases. La longueur est alors donnée par le motif.</value></data>
+  <data name="WF_NeedInput" xml:space="preserve"><value>Saisissez un tirage et/ou un motif.</value></data>
+  <data name="WF_Found" xml:space="preserve"><value>{0} mots trouvés ({1} ms)</value></data>
+  <data name="WF_Truncated" xml:space="preserve"><value>(liste limitée)</value></data>
 </root>
