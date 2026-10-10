@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.DesignerServices;
 using System.Windows.Forms;
 
 using DawgSolver.Model;
