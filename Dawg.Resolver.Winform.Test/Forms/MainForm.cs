@@ -505,6 +505,7 @@ namespace Dawg.Solver.Winform
             _rackLabelHeight = Math.Max(20, lblCurrentRack.Height);   // hauteur de la police d'origine
             lblCurrentRack.Paint += LblCurrentRack_Paint;
             lblCurrentRack.TextChanged += (s, e) => UpdateRackLabelLayout();
+            lblCurrentRack.FontChanged += (s, e) => UpdateRackLabelLayout();   // mise à l'échelle DPI
             UpdateRackLabelLayout();
         }
 
@@ -519,8 +520,11 @@ namespace Dawg.Solver.Winform
             else
             {
                 lblCurrentRack.AutoSize = false;
-                int w = TileFonts.MeasureLineWidth(lblCurrentRack.Text, family, _rackLabelHeight, RackOutline);
-                lblCurrentRack.Size = new Size(Math.Max(10, w), _rackLabelHeight);
+                lblCurrentRack.Height = _rackLabelHeight;
+                // Mesure avec la hauteur RÉELLE de la zone de dessin (elle peut différer après mise à l'échelle DPI).
+                int h = lblCurrentRack.ClientSize.Height;
+                int w = TileFonts.MeasureLineWidth(lblCurrentRack.Text, family, h, RackOutline);
+                lblCurrentRack.Width = Math.Max(10, w + (lblCurrentRack.Width - lblCurrentRack.ClientSize.Width));
             }
             lblCurrentRack.Invalidate();
         }

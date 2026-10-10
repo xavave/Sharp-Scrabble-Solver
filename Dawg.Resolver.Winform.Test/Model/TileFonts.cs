@@ -151,7 +151,7 @@ namespace DawgSolver.Model
         {
             if (string.IsNullOrEmpty(text) || family == null || height <= 0) return 0;
             using (BuildLinePath(text, family, height * 0.60f, out var b))
-                return (int)Math.Ceiling(b.Right + 2 * outline + 6);
+                return (int)Math.Ceiling(b.Right + 2 * outline + 6 + height * 0.15f);   // marge de sécurité
         }
 
         /// <summary>
@@ -167,9 +167,15 @@ namespace DawgSolver.Model
             {
                 using (var path = BuildLinePath(text, family, rect.Height * 0.60f, out var b))
                 {
+                    // Garde-fou : si le texte est plus large que la zone, on le réduit pour qu'il tienne en entier.
+                    float avail = rect.Width - 2 * outline - 6;
+                    float fit = b.Right > avail && b.Right > 0 ? avail / b.Right : 1f;
                     using (var m = new Matrix())
                     {
-                        m.Translate(rect.X + outline + 3, rect.Y + (rect.Height - b.Height) / 2f - b.Y);
+                        // (Prepend : la mise à l'échelle s'applique avant la translation)
+                        m.Translate(rect.X + outline + 3, rect.Y + rect.Height / 2f);
+                        m.Scale(fit, fit);
+                        m.Translate(0, -(b.Y + b.Height / 2f));
                         path.Transform(m);
                     }
                     using (var pen = new Pen(Color.Black, outline * 2) { LineJoin = LineJoin.Round })
