@@ -3,6 +3,8 @@
 Migration manuelle de la **chaîne WinForm** : `Dawg` → `DawgResolver` → `Dawg.Solver.Winform`.
 Les autres projets de la solution (WPF, Xamarin `Scrabbler.Universal`, consoles) ne sont **pas** touchés.
 
+> Nettoyage sécurité : les projets abandonnés `dawgResolverTestGui` (CefSharp/Chromium 75-98) et `Scrabbler.Universal` (Xamarin.Forms 4.4, UWP) ainsi que `XFScrabbleResolver.sln` ont été retirés du dépôt (alertes Dependabot critique/high). Ils restent accessibles dans l'historique git via le tag `legacy-before-cleanup`.
+
 ## Cibles
 
 | Projet | Avant | Après |
