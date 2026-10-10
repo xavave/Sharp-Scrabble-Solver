@@ -207,3 +207,7 @@ $RECYCLE.BIN/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+# Polices Rostex (licence usage personnel uniquement, non redistribuables) : jamais versionnées.
+# Les polices libres (OFL/Apache) de Resources/Fonts, elles, sont versionnées.
+**/Rostex*.ttf
+**/Rostex*.otf

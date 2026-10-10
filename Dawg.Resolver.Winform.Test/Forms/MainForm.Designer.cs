@@ -53,7 +53,7 @@
             this.btnNewGame = new System.Windows.Forms.Button();
             this.lblP1BestPlay = new System.Windows.Forms.Label();
             this.lblP2BestPlay = new System.Windows.Forms.Label();
-            this.lsbWords = new System.Windows.Forms.ListBox();
+            this.lvWords = new System.Windows.Forms.ListView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.nudCustomBoardSize = new System.Windows.Forms.NumericUpDown();
             this.rbSize15 = new System.Windows.Forms.RadioButton();
@@ -327,19 +327,15 @@
             this.lblP2BestPlay.TabIndex = 30;
             this.lblP2BestPlay.Text = "best play";
             // 
-            // lsbWords
+            // lvWords (historique des coups, 2 colonnes : configuré dans MainForm.SetupWordsListView)
             // 
-            this.lsbWords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.lvWords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lsbWords.FormattingEnabled = true;
-            this.lsbWords.ItemHeight = 20;
-            this.lsbWords.Location = new System.Drawing.Point(1324, 368);
-            this.lsbWords.Name = "lsbWords";
-            this.lsbWords.Size = new System.Drawing.Size(432, 504);
-            this.lsbWords.TabIndex = 31;
-            this.lsbWords.SelectedIndexChanged += new System.EventHandler(this.lsbWords_SelectedIndexChanged);
-            this.lsbWords.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lsbWords_MouseDoubleClick);
+            this.lvWords.Location = new System.Drawing.Point(1324, 368);
+            this.lvWords.Name = "lvWords";
+            this.lvWords.Size = new System.Drawing.Size(432, 504);
+            this.lvWords.TabIndex = 31;
             // 
             // groupBox1
             // 
@@ -675,7 +671,7 @@
             this.Controls.Add(this.gbWordDirection);
             this.Controls.Add(this.ckShowGrid);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.lsbWords);
+            this.Controls.Add(this.lvWords);
             this.Controls.Add(this.lblP2BestPlay);
             this.Controls.Add(this.lblP1BestPlay);
             this.Controls.Add(this.btnNewGame);
@@ -748,7 +744,7 @@
         private System.Windows.Forms.Button btnNewGame;
         private System.Windows.Forms.Label lblP1BestPlay;
         private System.Windows.Forms.Label lblP2BestPlay;
-        public System.Windows.Forms.ListBox lsbWords;
+        public System.Windows.Forms.ListView lvWords;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton rbSize15;
         private System.Windows.Forms.RadioButton rbSize11;

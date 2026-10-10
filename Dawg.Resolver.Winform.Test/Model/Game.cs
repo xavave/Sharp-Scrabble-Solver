@@ -496,7 +496,7 @@ namespace Dawg.Solver.Winform
             {
                 var ret = this.Serialise();
                 File.WriteAllText(sfd.FileName, ret);
-                MessageBox.Show($"Game saved as {sfd.FileName}");
+                MessageBox.Show(L.F("GameSaved", sfd.FileName));
                 //this.Text = $"Scrabble ({sfd.FileName})";
                 ofd.FileName = sfd.FileName;
 

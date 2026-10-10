@@ -18,14 +18,23 @@
   </PropertyGroup>
 
   <!-- Seuls les plateaux de jeu sont nécessaires ici (chargés depuis CET assembly).
-       Les dictionnaires sont embarqués dans l'assembly Dawg : pas besoin d'embarquer à nouveau
-       dico_dawgODS7.txt côté WinForm (doublon). EN_Collins reste copié à côté de l'exe. -->
+       Tous les dictionnaires (ODS6/7/8/9 + EN_Collins) sont embarqués dans l'assembly Dawg
+       et chargés via le fallback ressources : plus aucun fichier dico côté WinForm. -->
   <ItemGroup>
     <None Remove="Resources\*.txt" />
     <EmbeddedResource Include="Resources\initial_board*.txt" />
-    <None Update="EN_Collins_dawg.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+  </ItemGroup>
+
+  <!-- Polices des lettres du plateau : polices LIBRES (SIL OFL 1.1 / Apache 2.0, licences dans
+       Resources\Fonts\licenses), redistribuables et versionnées. Liste explicite : tout autre .ttf
+       présent dans le dossier (ex. anciennes polices Rostex, non libres) n'est PAS embarqué. -->
+  <ItemGroup>
+    <None Remove="Resources\Fonts\**" />
+    <EmbeddedResource Include="Resources\Fonts\TitanOne-Regular.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\LilitaOne-Regular.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\Bungee-Regular.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\LuckiestGuy-Regular.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\BowlbyOne-Regular.ttf" />
   </ItemGroup>
 
   <ItemGroup>

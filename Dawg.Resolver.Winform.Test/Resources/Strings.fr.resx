@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'interface - FRANCAIS. Mêmes clés que Strings.resx. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Ctl_MainForm" xml:space="preserve"><value>Scrabble</value></data>
+  <data name="Ctl_btnSearch" xml:space="preserve"><value>Chercher</value></data>
+  <data name="Ctl_btnTranspose" xml:space="preserve"><value>Transposer</value></data>
+  <data name="Ctl_btnBackToRack" xml:space="preserve"><value>Au chevalet</value></data>
+  <data name="Ctl_btnValidate" xml:space="preserve"><value>Valider le mot</value></data>
+  <data name="Ctl_btnDemo" xml:space="preserve"><value>Coup auto</value></data>
+  <data name="Ctl_btnDemoAll" xml:space="preserve"><value>Partie auto</value></data>
+  <data name="Ctl_label1" xml:space="preserve"><value>J1</value></data>
+  <data name="Ctl_label2" xml:space="preserve"><value>J2</value></data>
+  <data name="Ctl_ckKeepExistingBoard" xml:space="preserve"><value>Garder lettres</value></data>
+  <data name="Ctl_btnLoadGame" xml:space="preserve"><value>Charger</value></data>
+  <data name="Ctl_btnSaveGame" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="Ctl_btnNewGame" xml:space="preserve"><value>Nouv. partie</value></data>
+  <data name="Ctl_groupBox1" xml:space="preserve"><value>Taille plateau</value></data>
+  <data name="Ctl_ckShowGrid" xml:space="preserve"><value>Grille debug</value></data>
+  <data name="Ctl_gbWordDirection" xml:space="preserve"><value>Sens du mot</value></data>
+  <data name="Ctl_rbWordDirDown" xml:space="preserve"><value>Vertical</value></data>
+  <data name="Ctl_rbWordDirRight" xml:space="preserve"><value>Horizontal</value></data>
+  <data name="Ctl_gbGameStyle" xml:space="preserve"><value>Type de jeu</value></data>
+  <data name="Ctl_rbGameStyleScrabble" xml:space="preserve"><value>Scrabble</value></data>
+  <data name="Ctl_rbWordsWithFriends" xml:space="preserve"><value>Words with friends</value></data>
+  <data name="Ctl_gbSortBy" xml:space="preserve"><value>Trier par</value></data>
+  <data name="Ctl_rbMaxLength" xml:space="preserve"><value>Longueur max</value></data>
+  <data name="Ctl_rbBestScore" xml:space="preserve"><value>Meilleur score</value></data>
+  <data name="Ctl_lblMotExiste" xml:space="preserve"><value>Mot valide ?</value></data>
+  <data name="Ctl_btnUndoLast" xml:space="preserve"><value>Annuler coup</value></data>
+  <data name="Ctl_groupBox2" xml:space="preserve"><value>Dictionnaire</value></data>
+  <data name="Ctl_btnWordsFinder" xml:space="preserve"><value>Trouve-mots</value></data>
+  <data name="Ctl_gbBoard" xml:space="preserve"><value>Plateau</value></data>
+  <data name="Language" xml:space="preserve"><value>Langue</value></data>
+  <data name="PlayerName" xml:space="preserve"><value>Joueur {0}</value></data>
+  <data name="PlayerScore" xml:space="preserve"><value>Score joueur {0} : {1}</value></data>
+  <data name="PlayerBestPlay" xml:space="preserve"><value>Meilleur coup J{0}</value></data>
+  <data name="PlayerBestPlayValue" xml:space="preserve"><value>Meilleur coup J{0} : {1}</value></data>
+  <data name="CurrentRack" xml:space="preserve"><value>Joueur {0} : {1}</value></data>
+  <data name="BagEmpty" xml:space="preserve"><value>Le sac est vide !</value></data>
+  <data name="NoWordsFound" xml:space="preserve"><value>Joueur {0} : {1} --&gt; aucun mot trouvé !</value></data>
+  <data name="StopAutoPlay" xml:space="preserve"><value>Arrêter</value></data>
+  <data name="GameEnded" xml:space="preserve"><value>Partie terminée</value></data>
+  <data name="PlayerWins" xml:space="preserve"><value>{0} gagne avec {1} points</value></data>
+  <data name="Draw" xml:space="preserve"><value>Égalité : {0} points chacun</value></data>
+  <data name="DicoLoaded" xml:space="preserve"><value>Dictionnaire chargé : {0} ({1} nœuds)</value></data>
+  <data name="DicoLoadError" xml:space="preserve"><value>[ERREUR] chargement du dictionnaire {0} : {1}</value></data>
+  <data name="GenericError" xml:space="preserve"><value>[ERREUR] {0} : {1} (voir scrabble.log)</value></data>
+  <data name="Transposed" xml:space="preserve"><value>Transposé</value></data>
+  <data name="NotTransposed" xml:space="preserve"><value>Non transposé</value></data>
+  <data name="GameSaved" xml:space="preserve"><value>Partie enregistrée sous {0}</value></data>
+  <data name="ColorHint" xml:space="preserve"><value>Cliquez sur l'en-tête d'une colonne pour changer la couleur du joueur (historique et plateau)</value></data>
+  <data name="BoardFont" xml:space="preserve"><value>Police plateau</value></data>
+  <data name="StandardFont" xml:space="preserve"><value>(standard)</value></data>
+</root>

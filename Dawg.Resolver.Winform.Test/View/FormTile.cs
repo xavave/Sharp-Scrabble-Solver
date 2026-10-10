@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -185,7 +185,63 @@ namespace Dawg.Solver.Winform
                 return t;
             }
         }
-        public int WordIndex { get; set; } = 0;
+        private int _wordIndex;
+        /// <summary>Index du coup qui a posé la lettre (0 = aucun). Détermine la couleur de la lettre.</summary>
+        public int WordIndex
+        {
+            get => _wordIndex;
+            set { if (_wordIndex == value) return; _wordIndex = value; if (IsHandleCreated) Invalidate(); }
+        }
+
+        #region Rendu des lettres : contour noir + remplissage couleur du joueur
+
+        private const int WM_PAINT = 0x000F;
+
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+            // Le TextBox natif vient de dessiner sa lettre : on repeint la case par-dessus.
+            if (m.Msg == WM_PAINT) PaintStyledLetter();
+        }
+
+        // Pendant la saisie (case active), on laisse le rendu natif pour garder le curseur.
+        protected override void OnGotFocus(EventArgs e) { base.OnGotFocus(e); Invalidate(); }
+        protected override void OnLostFocus(EventArgs e) { base.OnLostFocus(e); Invalidate(); }
+        protected override void OnTextChanged(EventArgs e) { base.OnTextChanged(e); Invalidate(); }
+
+        /// <summary>Couleur du joueur qui a posé la lettre, ou null si non attribuée.</summary>
+        private Color? OwnerFillColor()
+        {
+            if (WordIndex <= 0) return null;
+            var g = Game.DefaultInstance;
+            if (g.Player1.Moves.Any(w => w.Index == WordIndex)) return TileStyle.Player1Fill;
+            if (g.Player2.Moves.Any(w => w.Index == WordIndex)) return TileStyle.Player2Fill;
+            return null;
+        }
+
+        private void PaintStyledLetter()
+        {
+            var family = TileStyle.Family;
+            if (family == null || Focused || !IsHandleCreated || Name.StartsWith("header_")) return;
+            var text = Text?.Trim();
+            if (string.IsNullOrEmpty(text)) return;
+            try
+            {
+                using (var g = CreateGraphics())
+                {
+                    var rect = ClientRectangle;
+                    var bg = BackColor.A == 0 ? (Parent?.BackColor ?? SystemColors.Window) : Color.FromArgb(255, BackColor);
+                    using (var b = new SolidBrush(bg)) g.FillRectangle(b, rect);
+                    TileFonts.DrawOutlinedCentered(g, text, family, rect, OwnerFillColor() ?? TileStyle.NeutralFill, TileStyle.OutlineWidth);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException($"PaintStyledLetter {Name}", ex);
+            }
+        }
+
+        #endregion
         Keys PreviousKey { get; set; }
         Keys CurrentKey { get; set; }
 
